@@ -76,14 +76,32 @@ class RestoRankTableViewController: UITableViewController {
     }
     */
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        if let identifier = segue.identifier{
+            switch identifier{
+            case "showRestoDetail":
+                if let cell = sender as? RestoRankTableViewCell,
+                    let indexPath = tableView.indexPath(for: cell),
+                    let seguedToResto = segue.destination as? RestoDetailViewController{
+                    print("segue \(indexPath.row)")
+                    //tmp
+                    let text = basicModel.restoList[indexPath.row].restoName
+                    print("This is a Segue with \(text)")
+                    // Segue
+                    seguedToResto.titleCell = text
+                }else{print("here")}
+        
+                
+            default: break
+            }
+        }
+        
     }
-    */
+    
 
 }
