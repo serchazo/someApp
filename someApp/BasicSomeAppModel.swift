@@ -22,3 +22,20 @@ struct BasicResto {
     var restoName:String
     var shortDescription:String
 }
+
+enum BasicCity:String{
+    case Singapore = "Singapore"
+    case KualaLumpur = "Kuala Lumpur"
+    case Cebu = "Cebu"
+    case Manila = "Manila"
+    case HongKong = "Hong Kong"
+}
+
+enum BasicFood:String{
+    case Chinese = "Chinese"
+    case Burger = "Burger"
+    case Italian = "Italian"
+    case Pizza = "Pizza"
+    case Indian = "Indian"
+    case Japanse = "Japanese"
+}
