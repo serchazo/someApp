@@ -8,8 +8,7 @@
 
 import UIKit
 
-class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ItemChooserViewDelegate {
     // MARK: Temorary model
     var basicModel = BasicModel()
     
@@ -51,6 +50,11 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
 
     }
     
+    //Broadcasting stuff
+    func itemChooserReceiveItem(_ sender: Int) {
+        print("hoa \(sender)")
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
@@ -68,12 +72,15 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
                     seguedToResto.titleCell = text
                 }
             case "cityChoser":
-                if let seguedToCityChooser = segue.destination as? CityChooserViewController{
+                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
                     seguedToCityChooser.setPickerValue(withData: .City)
+                    seguedToCityChooser.delegate = self
+                    
                 }
             case "FoodChoser":
-                if let seguedToCityChooser = segue.destination as? CityChooserViewController{
+                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
                     seguedToCityChooser.setPickerValue(withData: .Food)
+                    seguedToCityChooser.delegate = self
                 }
                 
             default: break

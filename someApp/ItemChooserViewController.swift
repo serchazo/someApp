@@ -8,7 +8,11 @@
 
 import UIKit
 
-class CityChooserViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
+protocol ItemChooserViewDelegate: class{
+    func itemChooserReceiveItem(_ sender: Int)
+}
+
+class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,10 +20,11 @@ class CityChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
         // Do any additional setup after loading the view.
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(true)
-        print("test")
-    }
+    // Broadcast messages
+    weak var delegate: ItemChooserViewDelegate?
+    
+    
+    // MARK: UIPicker stuff
     
     @IBOutlet weak var picker: UIPickerView!{
         didSet{
@@ -28,8 +33,6 @@ class CityChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
         }
     }
     
-    
-    /* UIPicker stuff */
     var pickerData = ["",""]
     var selectedRow = 0
     
@@ -54,8 +57,7 @@ class CityChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedRow = row
+        self.delegate?.itemChooserReceiveItem(selectedRow)
         print("test \(selectedRow)")
     }
-    
-
 }
