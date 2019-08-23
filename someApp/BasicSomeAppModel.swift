@@ -23,7 +23,12 @@ struct BasicResto {
     var shortDescription:String
 }
 
-enum BasicCity:String{
+enum BasicSelection:String {
+    case City
+    case Food
+}
+
+enum BasicCity:String, CaseIterable{
     case Singapore = "Singapore"
     case KualaLumpur = "Kuala Lumpur"
     case Cebu = "Cebu"
@@ -31,7 +36,7 @@ enum BasicCity:String{
     case HongKong = "Hong Kong"
 }
 
-enum BasicFood:String{
+enum BasicFood:String, CaseIterable{
     case Chinese = "Chinese"
     case Burger = "Burger"
     case Italian = "Italian"
