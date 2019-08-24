@@ -37,6 +37,8 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
+    @IBOutlet weak var restoRankTableHeader: UIView!
+    
     // Selection stuff
     @IBOutlet weak var foodButton: UIButton!
     @IBOutlet weak var cityButton: UIButton!
@@ -47,6 +49,9 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Some setup
+        restoRankTableView.tableHeaderView = restoRankTableHeader
 
     }
     
