@@ -10,6 +10,7 @@ import UIKit
 
 class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ItemChooserViewDelegate {
     
+    // Class Variables
     var currentCity: BasicCity = .Singapore{
         didSet{
             restoRankTableView.reloadData()
@@ -20,6 +21,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
            return basicModel.getSomeRestoList(fromCity: currentCity)
         }
     }
+    var currentFood: BasicFood!
     
     /* Table View Stuff */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -52,8 +54,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @IBOutlet weak var restoRankTableHeader: UIView!
     
-    // Selection stuff
-    @IBOutlet weak var foodButton: UIButton!
+    // MARK: Selection stuff
     @IBOutlet weak var cityButton: UIButton!
     
     @IBAction func someSelector(_ sender: UIButton) {
@@ -65,6 +66,8 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
         
         //Some setup
         restoRankTableView.tableHeaderView = restoRankTableHeader
+        print(currentFood.rawValue)
+        print(currentCity)
         
 
     }
