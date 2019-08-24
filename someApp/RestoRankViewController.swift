@@ -20,7 +20,9 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
             //Configure the cell
-            cell.testLabel.text = basicModel.restoList[indexPath.row].restoName
+            cell.restoNameLabel.text = basicModel.restoList[indexPath.row].restoName
+            cell.restoShortDescLabel.text = basicModel.restoList[indexPath.row].shortDescription
+            cell.restoPointsLabel.text = "Points: \(basicModel.restoList[indexPath.row].numberOfPoints)"
             
             return cell
         }else{
@@ -52,6 +54,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
         
         //Some setup
         restoRankTableView.tableHeaderView = restoRankTableHeader
+        
 
     }
     
@@ -69,10 +72,8 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
                 if let cell = sender as? RestoRankTableViewCell,
                     let indexPath = tableView.indexPath(for: cell),
                     let seguedToResto = segue.destination as? RestoDetailViewController{
-                    print("segue \(indexPath.row)")
                     //tmp
                     let text = basicModel.restoList[indexPath.row].restoName
-                    print("This is a Segue with \(text)")
                     // Segue
                     seguedToResto.titleCell = text
                 }

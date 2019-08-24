@@ -12,7 +12,7 @@ class BasicModel{
     var restoList = [BasicResto]()
     init(){
         for n in 1...5{
-            restoList.append(BasicResto(restoName: "resto \(n)", shortDescription: "description \(n)"))
+            restoList.append(BasicResto(restoName: "resto \(n)", shortDescription: "description \(n)",numberOfPoints: n, otherInfo: "Some info here"))
         }
     }
 }
@@ -21,6 +21,8 @@ class BasicModel{
 struct BasicResto {
     var restoName:String
     var shortDescription:String
+    var numberOfPoints:Int
+    var otherInfo:String
 }
 
 enum BasicSelection:String {

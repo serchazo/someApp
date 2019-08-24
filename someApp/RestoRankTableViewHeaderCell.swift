@@ -1,23 +1,19 @@
 //
-//  RestoRankTableViewCell.swift
+//  RestoRankTableViewHeaderCell.swift
 //  someApp
 //
-//  Created by Sergio Ortiz on 22.08.19.
+//  Created by Sergio Ortiz on 24.08.19.
 //  Copyright © 2019 sergioortiz.com. All rights reserved.
 //
 
 import UIKit
 
-class RestoRankTableViewCell: UITableViewCell {
+class RestoRankTableViewHeaderCell: UITableViewCell {
+    
+    
+    @IBOutlet weak var someLable: UILabel!
+    
 
-    @IBOutlet weak var restoNameLabel: UILabel!
-    @IBOutlet weak var restoShortDescLabel: UILabel!
-    @IBOutlet weak var restoPointsLabel: UILabel!
-    @IBOutlet weak var restoOtherInfoLabel: UILabel!
-    
-    @IBOutlet weak var restoImageView: UIImageView!
-    
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
