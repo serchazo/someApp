@@ -8,10 +8,11 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource {
+class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
     
     //To probably change later
     var foodData = basicModel.foodList
+    var currentCity:BasicCity = .Singapore 
     
     //
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -45,8 +46,19 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
         }
     }
     
+    // MARK: Broadcasting stuff
+    func itemChooserReceiveCity(_ sender: BasicCity) {
+        currentCity = sender
+        cityNavBarButton.title = sender.rawValue 
+        
+    }
+    
     // MARK: - Navigation
 
+    @IBOutlet weak var cityNavBarButton: UIBarButtonItem!
+    
+    
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -58,7 +70,14 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
                     //Don't forget the outlet colllectionView to avoid the ambiguous ref
                     let indexPath = collectionView.indexPath(for: cell),
                     let seguedDestinationVC = segue.destination as? RestoRankViewController{
-                    seguedDestinationVC.currentFood = foodData[indexPath.row].foodtype
+                    seguedDestinationVC.currentFood = foodData[indexPath.row]
+                    seguedDestinationVC.currentCity = currentCity
+                }
+            case "cityChoser":
+                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
+                    seguedToCityChooser.setPickerValue(withData: .City)
+                    seguedToCityChooser.delegate = self
+                    
                 }
             default: break
             }

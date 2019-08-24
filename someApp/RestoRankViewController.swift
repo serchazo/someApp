@@ -8,20 +8,16 @@
 
 import UIKit
 
-class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ItemChooserViewDelegate {
+class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // Class Variables
-    var currentCity: BasicCity = .Singapore{
-        didSet{
-            restoRankTableView.reloadData()
-        }
-    }
+    var currentCity: BasicCity!
+    var currentFood: BasicFoodType!
     var currentRestoList: [BasicResto]{
         get{
            return basicModel.getSomeRestoList(fromCity: currentCity)
         }
     }
-    var currentFood: BasicFood!
     
     /* Table View Stuff */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -53,35 +49,21 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     @IBOutlet weak var restoRankTableHeader: UIView!
+    @IBOutlet weak var tableHeaderFoodIcon: UILabel!
+    @IBOutlet weak var tableHeaderFoodName: UILabel!
+    
     
     // MARK: Selection stuff
-    @IBOutlet weak var cityButton: UIButton!
-    
-    @IBAction func someSelector(_ sender: UIButton) {
-        // TBD
-    }
-   
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //Some setup
         restoRankTableView.tableHeaderView = restoRankTableHeader
-        print(currentFood.rawValue)
-        print(currentCity)
-        
-
+        tableHeaderFoodIcon.text = currentFood.foodIcon
+        tableHeaderFoodName.text = "Best \(currentFood.foodDescription) restaurants in \(currentCity.rawValue)"
     }
     
-    //Broadcasting stuff
-    func itemChooserReceiveItem(_ sender: Int, withType: BasicSelection) {
-        print("hoa \(sender)")
-    }
-    func itemChooserReceiveCity(_ sender: BasicCity) {
-        currentCity = sender
-    }
-    func itemChooserReceiveFood(_ sender: BasicFood) {
-        print(sender.rawValue)
-    }
+
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -97,17 +79,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
                     // Segue
                     seguedToResto.titleCell = text
                 }
-            case "cityChoser":
-                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue(withData: .City)
-                    seguedToCityChooser.delegate = self
-                    
-                }
-            case "FoodChoser":
-                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue(withData: .Food)
-                    seguedToCityChooser.delegate = self
-                }
+            
                 
             default: break
             }
