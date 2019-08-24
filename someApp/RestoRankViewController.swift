@@ -9,20 +9,31 @@
 import UIKit
 
 class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ItemChooserViewDelegate {
-    // MARK: Temorary model
-    var basicModel = BasicModel()
+    
+    var currentCity: BasicCity = .Singapore{
+        didSet{
+            restoRankTableView.reloadData()
+        }
+    }
+    var currentRestoList: [BasicResto]{
+        get{
+           return basicModel.getSomeRestoList(fromCity: currentCity)
+        }
+    }
     
     /* Table View Stuff */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return basicModel.restoList.count
+        return currentRestoList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
             //Configure the cell
-            cell.restoNameLabel.text = basicModel.restoList[indexPath.row].restoName
-            cell.restoShortDescLabel.text = basicModel.restoList[indexPath.row].shortDescription
-            cell.restoPointsLabel.text = "Points: \(basicModel.restoList[indexPath.row].numberOfPoints)"
+            let thisResto = currentRestoList[indexPath.row]
+            cell.restoNameLabel.text = thisResto.restoName
+            cell.restoShortDescLabel.text = thisResto.shortDescription
+            cell.restoPointsLabel.text = "Points: \(thisResto.numberOfPoints)"
+            cell.restoOtherInfoLabel.text = thisResto.otherInfo
             
             return cell
         }else{
@@ -59,8 +70,14 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     //Broadcasting stuff
-    func itemChooserReceiveItem(_ sender: Int) {
+    func itemChooserReceiveItem(_ sender: Int, withType: BasicSelection) {
         print("hoa \(sender)")
+    }
+    func itemChooserReceiveCity(_ sender: BasicCity) {
+        currentCity = sender
+    }
+    func itemChooserReceiveFood(_ sender: BasicFood) {
+        print(sender.rawValue)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -73,7 +90,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
                     let indexPath = tableView.indexPath(for: cell),
                     let seguedToResto = segue.destination as? RestoDetailViewController{
                     //tmp
-                    let text = basicModel.restoList[indexPath.row].restoName
+                    let text = currentRestoList[indexPath.row].restoName
                     // Segue
                     seguedToResto.titleCell = text
                 }

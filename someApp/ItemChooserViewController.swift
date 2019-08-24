@@ -9,7 +9,9 @@
 import UIKit
 
 protocol ItemChooserViewDelegate: class{
-    func itemChooserReceiveItem(_ sender: Int)
+    func itemChooserReceiveItem(_ sender: Int, withType: BasicSelection)
+    func itemChooserReceiveCity(_ sender: BasicCity)
+    func itemChooserReceiveFood(_ sender: BasicFood)
 }
 
 class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
@@ -35,6 +37,7 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
     
     var pickerData = ["",""]
     var selectedRow = 0
+    var dataSelection:BasicSelection = .City
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -42,8 +45,12 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
     
     func setPickerValue(withData: BasicSelection){
         switch(withData){
-        case .City: pickerData = BasicCity.allCases.map {$0.rawValue}
-        case .Food: pickerData = BasicFood.allCases.map {$0.rawValue}
+        case .City:
+            pickerData = BasicCity.allCases.map {$0.rawValue}
+            dataSelection = .City
+        case .Food:
+            pickerData = BasicFood.allCases.map {$0.rawValue}
+            dataSelection = .Food
         }
     }
     
@@ -51,13 +58,23 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
         return pickerData.count
     }
     
+    // Set picker values
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return pickerData[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedRow = row
-        self.delegate?.itemChooserReceiveItem(selectedRow)
-        print("test \(selectedRow)")
+        switch(dataSelection){
+        case .City:
+            if let possibleCity = BasicCity(rawValue: pickerData[row]){
+                self.delegate?.itemChooserReceiveCity(possibleCity)
+            }
+        case .Food:
+            if let possibleFood = BasicFood(rawValue: pickerData[row]){
+                self.delegate?.itemChooserReceiveFood(possibleFood)
+            }
+        }
+        
     }
 }
