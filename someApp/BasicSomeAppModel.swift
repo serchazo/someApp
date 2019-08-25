@@ -18,8 +18,13 @@ class BasicModel{
     init(){
         //Initialize restos
         for city in BasicCity.allCases{
-            for n in 1...10 {
-                restoList.append(BasicResto(restoCity: city, restoName: "resto \(city.rawValue) \(n)", shortDescription: "description \(n)",numberOfPoints: n, otherInfo: "City: \(city.rawValue)"))
+            for food in BasicFood.allCases{
+                for n in 1...10 {
+                    let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
+                    tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
+                    tmpResto.tags.append(food)
+                    restoList.append(tmpResto)
+                }
             }
         }
         
@@ -51,17 +56,36 @@ class BasicModel{
 var basicModel = BasicModel()
 
 // This part will be improved later on
-struct BasicUser{
+class BasicUser{
     let userName:String
     var userPassword:String
+    var myRankings:[BasicRanking]
+    
+    init(userName:String, userPassword:String){
+        self.userName = userName
+        self.userPassword = userPassword
+        myRankings = [BasicRanking]()
+    }
 }
 
-struct BasicResto {
+class BasicResto {
     let restoCity:BasicCity
     let restoName:String
-    var shortDescription:String
-    var numberOfPoints:Int
-    var otherInfo:String
+    var shortDescription = ""
+    var numberOfPoints = 0
+    var otherInfo = ""
+    var tags = [BasicFood]()
+    
+    init(restoCity:BasicCity, restoName:String){
+        self.restoCity = restoCity
+        self.restoName = restoName
+    }
+}
+
+struct BasicRanking{
+    let cityOfRanking:BasicCity
+    let typeOfFood:BasicFood
+    var ranking:[BasicResto]
 }
 
 struct BasicFoodType{

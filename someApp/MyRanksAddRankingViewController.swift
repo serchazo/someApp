@@ -1,18 +1,23 @@
 //
-//  SearchViewController.swift
+//  MyRanksAddRankingViewController.swift
 //  someApp
 //
-//  Created by Sergio Ortiz on 24.08.19.
+//  Created by Sergio Ortiz on 25.08.19.
 //  Copyright © 2019 sergioortiz.com. All rights reserved.
 //
 
 import UIKit
 
-class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
-    
+protocol MyRanksAddRankingViewDelegate: class{
+    func addRankingReceiveCity(_ sender: BasicCity)
+    func addRankingReceiveFoodType(_ sender: BasicFood)
+}
+
+class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
+
     //To probably change later
     var foodData = basicModel.foodList
-    var currentCity:BasicCity = .Singapore 
+    var currentCity:BasicCity = .Singapore
     
     //
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -30,10 +35,19 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
         }
     }
     
-
+    // Action when a cell is pressed
+    weak var delegate: MyRanksAddRankingViewDelegate!
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.delegate?.addRankingReceiveFoodType(foodData[indexPath.row].foodtype)
+        self.delegate?.addRankingReceiveCity(currentCity)
+        
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
     
@@ -49,39 +63,30 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
     // MARK: Broadcasting stuff
     func itemChooserReceiveCity(_ sender: BasicCity) {
         currentCity = sender
-        cityNavBarButton.title = sender.rawValue 
+        cityNavBarButton.title = sender.rawValue
         
     }
     
+    
+    
     // MARK: - Navigation
-
     @IBOutlet weak var cityNavBarButton: UIBarButtonItem!
     @IBOutlet weak var searchBar: UISearchBar!
-    
-    
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
         if let identifier = segue.identifier{
-            switch(identifier){
-            case "GoNinjaGo":
-                if let cell = sender as? SearchFoodCell,
-                    //Don't forget the outlet colllectionView to avoid the ambiguous ref
-                    let indexPath = collectionView.indexPath(for: cell),
-                    let seguedDestinationVC = segue.destination as? RestoRankViewController{
-                    seguedDestinationVC.currentFood = foodData[indexPath.row]
-                    seguedDestinationVC.currentCity = currentCity
-                }
+            switch identifier{
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
                     seguedToCityChooser.setPickerValue(withData: .City)
                     seguedToCityChooser.delegate = self
-                    
                 }
-            default: break
+            default:break
             }
+            
         }
     }
  
