@@ -15,7 +15,11 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     var currentFood: BasicFoodType!
     var currentRestoList: [BasicResto]{
         get{
-           return basicModel.getSomeRestoList(fromCity: currentCity)
+            if currentFood != nil{
+                return basicModel.getSomeRestoList(fromCity: currentCity,ofFoodType: currentFood!.foodType)
+            }else{
+                return basicModel.getSomeRestoList(fromCity: currentCity)
+            }
         }
     }
     

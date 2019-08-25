@@ -9,8 +9,7 @@
 import UIKit
 
 protocol MyRanksAddRankingViewDelegate: class{
-    func addRankingReceiveCity(_ sender: BasicCity)
-    func addRankingReceiveFoodType(_ sender: BasicFood)
+    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood)
 }
 
 class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
@@ -26,7 +25,7 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodData[indexPath.row].foodtype
+            cell.cellBasicFood = foodData[indexPath.row].foodType
             cell.cellLabel.text = foodData[indexPath.row].foodDescription
             cell.cellIcon.text = foodData[indexPath.row].foodIcon
             return cell
@@ -39,8 +38,7 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
     weak var delegate: MyRanksAddRankingViewDelegate!
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.delegate?.addRankingReceiveFoodType(foodData[indexPath.row].foodtype)
-        self.delegate?.addRankingReceiveCity(currentCity)
+        self.delegate?.addRankingReceiveInfoToCreate(basicCity: currentCity, basicFood: foodData[indexPath.row].foodType)
         
         self.navigationController?.popViewController(animated: true)
     }

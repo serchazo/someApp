@@ -31,15 +31,15 @@ class BasicModel{
         // Initialize food Icons
         for food in BasicFood.allCases{
             switch(food){
-            case .Burger: foodList.append(BasicFoodType(foodtype: .Burger, foodDescription: food.rawValue, foodIcon: "🍔"))
-            case .Italian: foodList.append(BasicFoodType(foodtype: .Italian, foodDescription: food.rawValue, foodIcon: "🍝"))
-            case .Pizza: foodList.append(BasicFoodType(foodtype: .Pizza, foodDescription: food.rawValue, foodIcon: "🍕"))
-            case .Mexican: foodList.append(BasicFoodType(foodtype: .Mexican, foodDescription: food.rawValue, foodIcon: "🌮"))
-            case .Japanese: foodList.append(BasicFoodType(foodtype: .Japanese, foodDescription: food.rawValue, foodIcon: "🍱"))
-            case .Salad: foodList.append(BasicFoodType(foodtype: .Salad, foodDescription: food.rawValue, foodIcon: "🥗"))
-            case .Patisserie: foodList.append(BasicFoodType(foodtype: .Patisserie, foodDescription: food.rawValue, foodIcon: "🧁"))
-            case .Cafe: foodList.append(BasicFoodType(foodtype: .Cafe, foodDescription: food.rawValue, foodIcon: "☕️"))
-            case .CocktailBar: foodList.append(BasicFoodType(foodtype: .CocktailBar, foodDescription: food.rawValue, foodIcon: "🍹"))
+            case .Burger: foodList.append(BasicFoodType(foodType: .Burger, foodDescription: food.rawValue, foodIcon: "🍔"))
+            case .Italian: foodList.append(BasicFoodType(foodType: .Italian, foodDescription: food.rawValue, foodIcon: "🍝"))
+            case .Pizza: foodList.append(BasicFoodType(foodType: .Pizza, foodDescription: food.rawValue, foodIcon: "🍕"))
+            case .Mexican: foodList.append(BasicFoodType(foodType: .Mexican, foodDescription: food.rawValue, foodIcon: "🌮"))
+            case .Japanese: foodList.append(BasicFoodType(foodType: .Japanese, foodDescription: food.rawValue, foodIcon: "🍱"))
+            case .Salad: foodList.append(BasicFoodType(foodType: .Salad, foodDescription: food.rawValue, foodIcon: "🥗"))
+            case .Patisserie: foodList.append(BasicFoodType(foodType: .Patisserie, foodDescription: food.rawValue, foodIcon: "🧁"))
+            case .Cafe: foodList.append(BasicFoodType(foodType: .Cafe, foodDescription: food.rawValue, foodIcon: "☕️"))
+            case .CocktailBar: foodList.append(BasicFoodType(foodType: .CocktailBar, foodDescription: food.rawValue, foodIcon: "🍹"))
             }
         }
         
@@ -52,6 +52,10 @@ class BasicModel{
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
         return restoList.filter {$0.restoCity == fromCity}
     }
+    func getSomeRestoList(fromCity:BasicCity, ofFoodType: BasicFood) -> [BasicResto] {
+        return restoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType)}
+    }
+    
 }
 var basicModel = BasicModel()
 
@@ -82,14 +86,18 @@ class BasicResto {
     }
 }
 
-struct BasicRanking{
+class BasicRanking{
     let cityOfRanking:BasicCity
     let typeOfFood:BasicFood
-    var ranking:[BasicResto]
+    var restoList = [BasicResto]()
+    init(cityOfRanking:BasicCity, typeOfFood:BasicFood){
+        self.cityOfRanking = cityOfRanking
+        self.typeOfFood = typeOfFood
+    }
 }
 
 struct BasicFoodType{
-    let foodtype:BasicFood
+    let foodType:BasicFood
     let foodDescription:String
     let foodIcon:String
 }

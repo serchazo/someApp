@@ -21,7 +21,7 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodData[indexPath.row].foodtype
+            cell.cellBasicFood = foodData[indexPath.row].foodType
             cell.cellLabel.text = foodData[indexPath.row].foodDescription
             cell.cellIcon.text = foodData[indexPath.row].foodIcon
             return cell

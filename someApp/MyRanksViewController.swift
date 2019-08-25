@@ -49,16 +49,12 @@ class MyRanksViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - Navigation
-    func addRankingReceiveCity(_ sender: BasicCity) {
-        currentCity = sender
-        print(currentCity.rawValue)
+    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood) {
+        //Update the list
+        user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
+        myRanksTable.reloadData()
+
     }
-    
-    func addRankingReceiveFoodType(_ sender: BasicFood) {
-        print(sender.rawValue)
-    }
-    
-    
     
      
     // In a storyboard-based application, you will often want to do a little preparation before navigation
