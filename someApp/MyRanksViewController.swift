@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MyRanksViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MyRanksAddRankingViewDelegate {
+class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
     var user:BasicUser!
     var currentCity:BasicCity = .Singapore
@@ -27,27 +27,6 @@ class MyRanksViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return user.myRankings.count + 1
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        switch(indexPath.row){
-        case 0..<user.myRankings.count:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath) as? MyRanksTableViewCell {
-            cell.cellIcon.text = "\(indexPath.row)"
-            cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood.rawValue
-            cell.cellCity.text = user.myRankings[indexPath.row].cityOfRanking.rawValue
-            return cell
-            }else{
-                fatalError("Marche pas.")
-            }
-        default:
-            return tableView.dequeueReusableCell(withIdentifier: "AddNewRankingCell", for: indexPath)
-        }
-    }
-    
     // MARK: - Navigation
     func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood) {
         //Update the list
@@ -56,7 +35,6 @@ class MyRanksViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     }
     
-     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -67,5 +45,29 @@ class MyRanksViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
+}
+
+// MARK: table stuff
+extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return user.myRankings.count + 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        switch(indexPath.row){
+        case 0..<user.myRankings.count:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath) as? MyRanksTableViewCell {
+                cell.cellIcon.text = "\(indexPath.row)"
+                cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood.rawValue
+                cell.cellCity.text = user.myRankings[indexPath.row].cityOfRanking.rawValue
+                return cell
+            }else{
+                fatalError("Marche pas.")
+            }
+        default:
+            return tableView.dequeueReusableCell(withIdentifier: "AddNewRankingCell", for: indexPath)
+        }
+    }
 }

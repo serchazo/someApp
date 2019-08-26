@@ -7,14 +7,71 @@
 //
 
 import UIKit
+import MapKit
 
-class MyRanksEditRankingViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+protocol HandleMapSearch {
+    func dropPinZoomIn(placemark:MKPlacemark)
+}
+
+class MyRanksEditRankingViewController: UIViewController {
     
     var currentCity: BasicCity!
     var currentFood: BasicFood!
     var currentRanking: BasicRanking?
     
-    //Table stuff
+    //Map vars
+    var locationManager = CLLocationManager()
+    var resultSearchController:UISearchController? = nil
+    var selectedPin: MKPlacemark? = nil
+    
+    @IBOutlet weak var mapView: MKMapView!
+    
+    
+    // Outlets
+    @IBOutlet weak var editRankingTable: UITableView!{
+        didSet{
+            editRankingTable.dataSource = self
+            editRankingTable.delegate = self
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // MapKit stuff
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        // Permission dialog
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+        
+        // Instantiate the search bar
+        let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! MyRanksSearchResultsTableViewController
+        resultSearchController = UISearchController(searchResultsController: locationSearchTable)
+        resultSearchController?.searchResultsUpdater = locationSearchTable
+        
+        //Set up the search bar
+        let searchBar = resultSearchController!.searchBar
+        searchBar.sizeToFit()
+        searchBar.placeholder = "Search for places"
+        navigationItem.titleView = resultSearchController?.searchBar
+        
+        //Configure the search controller appearance
+        resultSearchController?.hidesNavigationBarDuringPresentation = false
+        resultSearchController?.dimsBackgroundDuringPresentation = true
+        definesPresentationContext = true
+        
+        //link to the mapView
+        locationSearchTable.mapView = mapView
+        
+        //for the pin
+        //locationSearchTable.handleMapSearchDelegate = self
+    }
+
+}
+
+// MARK: Extension for the Table stuff
+extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if currentRanking != nil {
             return currentRanking!.restoList.count
@@ -36,33 +93,30 @@ class MyRanksEditRankingViewController: UIViewController, UITableViewDelegate, U
             fatalError("Marche pas.")
         }
     }
-    
-    // Outlets
-    
-    @IBOutlet weak var editRankingSearchBar: UISearchBar!
-    @IBOutlet weak var editRankingTable: UITableView!{
-        didSet{
-            editRankingTable.dataSource = self
-            editRankingTable.delegate = self
+}
+
+// MARK: Extension for the CLLocationManagerDelegate
+extension MyRanksEditRankingViewController : CLLocationManagerDelegate{
+    private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            locationManager.requestLocation()
         }
     }
     
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            
+            let region = MKCoordinateRegion(
+                center: location.coordinate, //The center of the region
+                span: span) // The zoom level
+            mapView.setRegion(region, animated: false)
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error: \(error)")
     }
-    */
-
+    
 }

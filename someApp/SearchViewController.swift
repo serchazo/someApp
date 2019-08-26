@@ -8,22 +8,36 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
+class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,ItemChooserViewDelegate {
     
     //To probably change later
     var foodData = basicModel.foodList
     var currentCity:BasicCity = .Singapore 
+    
+    // MARK: Font of the cells
+    private var font: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+    }
+    
+    // MARK: Hook-up to a constraint
     
     //
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return foodData.count
     }
     
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
             cell.cellBasicFood = foodData[indexPath.row].foodType
+            
+            let foodIconText = NSAttributedString(string: foodData[indexPath.row].foodIcon, attributes: [.font: font])
+            cell.cellIcon.attributedText = foodIconText
+            
+            //cell.cellIcon.text = foodData[indexPath.row].foodIcon
             cell.cellLabel.text = foodData[indexPath.row].foodDescription
-            cell.cellIcon.text = foodData[indexPath.row].foodIcon
+            
             return cell
         }else{
             fatalError("No cell")
@@ -43,6 +57,7 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
         didSet{
             foodSelectorCollection.dataSource = self
             foodSelectorCollection.delegate = self
+            
         }
     }
     
@@ -56,9 +71,6 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
     // MARK: - Navigation
 
     @IBOutlet weak var cityNavBarButton: UIBarButtonItem!
-    @IBOutlet weak var searchBar: UISearchBar!
-    
-    
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
