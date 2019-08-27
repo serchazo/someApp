@@ -8,47 +8,41 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,ItemChooserViewDelegate {
+class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     //To probably change later
     var foodData = basicModel.foodList
     var currentCity:BasicCity = .Singapore 
-    
-    // MARK: Font of the cells
-    private var font: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
-    }
-    
-    // MARK: Hook-up to a constraint
-    
-    //
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return foodData.count
-    }
-    
-    
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodData[indexPath.row].foodType
-            
-            let foodIconText = NSAttributedString(string: foodData[indexPath.row].foodIcon, attributes: [.font: font])
-            cell.cellIcon.attributedText = foodIconText
-            
-            //cell.cellIcon.text = foodData[indexPath.row].foodIcon
-            cell.cellLabel.text = foodData[indexPath.row].foodDescription
-            
-            return cell
-        }else{
-            fatalError("No cell")
-        }
-    }
-    
 
+    //Listen for changes in the Accessibility font
+    private var accessibilityPropertyObserver: NSObjectProtocol?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        accessibilityPropertyObserver = NotificationCenter.default.addObserver(
+            forName: UIContentSizeCategory.didChangeNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { notification in
+                self.reloadText()
+        })
+    }
+
+    func reloadText(){
+        foodSelectorCollection.reloadData()
+        titleCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: [.font: titleFont])
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let observer = self.accessibilityPropertyObserver{
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     //Do this to avoid the "ambiguous reference" in the prepare to Segue
@@ -57,9 +51,9 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
         didSet{
             foodSelectorCollection.dataSource = self
             foodSelectorCollection.delegate = self
-            
         }
     }
+    @IBOutlet weak var titleCell: UILabel!
     
     // MARK: Broadcasting stuff
     func itemChooserReceiveCity(_ sender: BasicCity) {
@@ -99,3 +93,58 @@ class SearchViewController: UIViewController, UICollectionViewDelegate,UICollect
  
 
 }
+
+// MARK : Extension for Collection stuff
+
+extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSource{
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return foodData.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+            cell.cellBasicFood = foodData[indexPath.row].foodType
+            
+            let foodIconText = NSAttributedString(string: foodData[indexPath.row].foodIcon, attributes: [.font: iconFont])
+            cell.cellIcon.attributedText = foodIconText
+            
+            let foodTitleText = NSAttributedString(string: foodData[indexPath.row].foodDescription, attributes: [.font: cellTitleFont])
+            cell.cellLabel.attributedText = foodTitleText
+            
+            return cell
+        }else{
+            fatalError("No cell")
+        }
+    }
+}
+
+
+// MARK: Layout stuff
+extension SearchViewController: UICollectionViewDelegateFlowLayout{
+    // MARK: Font of the cells
+    private var iconFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+    }
+    
+    private var cellTitleFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
+    }
+    
+    private var titleFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+    }
+    
+    var cellHeight:CGFloat{
+        get{
+            return CGFloat(iconFont.lineHeight + cellTitleFont.lineHeight + 10.0)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cellWidth = (view.frame.width-10)/2
+        return CGSize(width: cellWidth, height: cellHeight)
+    }
+}
+
+

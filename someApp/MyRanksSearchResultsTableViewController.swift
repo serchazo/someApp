@@ -39,11 +39,11 @@ class MyRanksSearchResultsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedItem = matchingMapItems[indexPath.row].placemark
-        print("\(matchingMapItems[indexPath.row].phoneNumber!)")
-        print("\(matchingMapItems[indexPath.row].description)")
-        print("\(matchingMapItems[indexPath.row].name!)")
-        print("\(matchingMapItems[indexPath.row].url!)")
-        print("\(matchingMapItems[indexPath.row].placemark)")
+        //print("\(selectedItem.phoneNumber!)")
+        //print("\(selectedItem.description)")
+        //print("\(selectedItem.name!)")
+        //print("\(selectedItem.url!)")
+        print("\(selectedItem)")
         //handleMapSearchDelegate?.dropPinZoomIn(placemark: selectedItem)
         dismiss(animated: true, completion: nil)
     }
