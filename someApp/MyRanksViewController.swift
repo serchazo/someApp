@@ -71,3 +71,22 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
         }
     }
 }
+
+// MARK: Some view stuff
+extension MyRanksViewController{
+    private var iconFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+    }
+    
+    private var cellTitleFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
+    }
+    
+    private var cellCityNameFont:UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return CGFloat(iconFont.lineHeight + 10.0)
+    }
+}

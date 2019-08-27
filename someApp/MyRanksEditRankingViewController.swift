@@ -20,11 +20,11 @@ class MyRanksEditRankingViewController: UIViewController {
     var currentRanking: BasicRanking?
     
     //Map vars
-    var locationManager = CLLocationManager()
+    //var locationManager = CLLocationManager()
     var resultSearchController:UISearchController? = nil
     var selectedPin: MKPlacemark? = nil
     
-    @IBOutlet weak var mapView: MKMapView!
+    //@IBOutlet weak var mapView: MKMapView!
     
     
     // Outlets
@@ -39,16 +39,23 @@ class MyRanksEditRankingViewController: UIViewController {
         super.viewDidLoad()
 
         // MapKit stuff
-        locationManager.delegate = self
+        /*
+         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         // Permission dialog
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+        */
         
         // Instantiate the search bar
-        let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! MyRanksSearchResultsTableViewController
-        resultSearchController = UISearchController(searchResultsController: locationSearchTable)
-        resultSearchController?.searchResultsUpdater = locationSearchTable
+        //let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! MyRanksSearchResultsTableViewController
+        //resultSearchController = UISearchController(searchResultsController: locationSearchTable)
+        //resultSearchController?.searchResultsUpdater = locationSearchTable
+        
+        //searchViewController
+        let locationSearchView = storyboard!.instantiateViewController(withIdentifier: "searchViewController") as! MyRanksMapSearchViewController
+        resultSearchController = UISearchController(searchResultsController: locationSearchView)
+        resultSearchController?.searchResultsUpdater = locationSearchView
         
         //Set up the search bar
         let searchBar = resultSearchController!.searchBar
@@ -62,7 +69,8 @@ class MyRanksEditRankingViewController: UIViewController {
         definesPresentationContext = true
         
         //link to the mapView
-        locationSearchTable.mapView = mapView
+        //locationSearchTable.mapView = mapView
+        //locationSearchView.mapView = mapView
         
         //for the pin
         //locationSearchTable.handleMapSearchDelegate = self
@@ -95,6 +103,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
     }
 }
 
+/*
 // MARK: Extension for the CLLocationManagerDelegate
 extension MyRanksEditRankingViewController : CLLocationManagerDelegate{
     private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
@@ -120,3 +129,4 @@ extension MyRanksEditRankingViewController : CLLocationManagerDelegate{
     }
     
 }
+*/
