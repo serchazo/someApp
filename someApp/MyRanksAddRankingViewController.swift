@@ -12,7 +12,7 @@ protocol MyRanksAddRankingViewDelegate: class{
     func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood)
 }
 
-class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource, ItemChooserViewDelegate {
+class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource {
 
     //To probably change later
     var foodData = basicModel.foodList
@@ -58,15 +58,6 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
         }
     }
     
-    // MARK: Broadcasting stuff
-    func itemChooserReceiveCity(_ sender: BasicCity) {
-        currentCity = sender
-        cityNavBarButton.title = sender.rawValue
-        
-    }
-    
-    
-    
     // MARK: - Navigation
     @IBOutlet weak var cityNavBarButton: UIBarButtonItem!
     
@@ -85,5 +76,14 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
             }
             
         }
+    }
+}
+
+
+extension MyRanksAddRankingViewController: ItemChooserViewDelegate {
+    func itemChooserReceiveCity(_ sender: BasicCity) {
+        currentCity = sender
+        cityNavBarButton.title = sender.rawValue
+        
     }
 }

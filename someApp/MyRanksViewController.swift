@@ -12,6 +12,8 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
     var user:BasicUser!
     var currentCity:BasicCity = .Singapore
+    
+    var selectedRow = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,12 +39,20 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        if let seguedMVC = segue.destination as? MyRanksAddRankingViewController{
-            seguedMVC.delegate = self 
-        }
         
+        switch segue.identifier {
+        case "editRestoList":
+            if let seguedMVC = segue.destination as? MyRanksEditRankingViewController{
+                seguedMVC.currentCity = self.currentCity
+                seguedMVC.currentRanking = user.myRankings[selectedRow]
+            }
+        case "addRanking":
+            if let seguedMVC = segue.destination as? MyRanksAddRankingViewController{
+                seguedMVC.delegate = self
+            }
+        default: 
+            break
+        }
     }
     
 }
@@ -52,6 +62,10 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return user.myRankings.count + 1
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        selectedRow = indexPath.row
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
