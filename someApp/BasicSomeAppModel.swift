@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MapKit
 
 class BasicModel{
     
@@ -77,7 +78,9 @@ class BasicResto {
     let restoName:String
     var shortDescription = ""
     var numberOfPoints = 0
-    var otherInfo = ""
+    var restoURL: URL?
+    var address = ""
+    var mapItem: MKMapItem?
     var tags = [BasicFood]()
     
     init(restoCity:BasicCity, restoName:String){

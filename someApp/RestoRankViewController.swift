@@ -35,7 +35,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
             cell.restoNameLabel.text = thisResto.restoName
             cell.restoShortDescLabel.text = thisResto.shortDescription
             cell.restoPointsLabel.text = "Points: \(thisResto.numberOfPoints)"
-            cell.restoOtherInfoLabel.text = thisResto.otherInfo
+            cell.restoOtherInfoLabel.text = thisResto.address
             
             return cell
         }else{

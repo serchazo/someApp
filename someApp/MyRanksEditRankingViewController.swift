@@ -65,7 +65,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                 currentRanking != nil {
                 cell.restoImage.text = "Pic"
                 cell.restoName.text = currentRanking!.restoList[indexPath.row].restoName
-                cell.restoImage.text = "Some info."
+                cell.restoTmpInfo.text = "Here: \(currentRanking!.restoList[indexPath.row].address)"
                 return cell
             }else{
                 fatalError("Marche pas.")
@@ -78,8 +78,16 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
 
 extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
-        print("\(someMapItem.placemark)")
         let tmpResto = BasicResto(restoCity: currentCity, restoName: someMapItem.placemark.name!)
+        
+        if someMapItem.placemark.formattedAddress != nil{
+            tmpResto.address = someMapItem.placemark.formattedAddress!
+        }
+        
+        if someMapItem.url != nil{
+            tmpResto.restoURL = someMapItem.url
+        }
+        tmpResto.mapItem = someMapItem
         currentRanking?.restoList.append(tmpResto)
         editRankingTable.reloadData()
     }
