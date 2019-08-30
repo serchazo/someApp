@@ -10,14 +10,17 @@ import UIKit
 
 class RestoDetailViewController: UIViewController {
     
-    var titleCell: String = "Some title"
-
-    @IBOutlet weak var restoTitle: UILabel!
-    @IBOutlet weak var restoLongDescription: UILabel!
+    var restoName:String!
+    
+    @IBOutlet weak var restoDetailTable: UITableView!{
+        didSet{
+            restoDetailTable.delegate = self
+            restoDetailTable.dataSource = self
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        restoTitle?.text = titleCell
         // Do any additional setup after loading the view.
     }
     
@@ -31,5 +34,18 @@ class RestoDetailViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+}
 
+extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "RestoNameCell", for: indexPath)
+        cell.textLabel!.text = restoName!
+        return cell
+    }
+    
+    
 }

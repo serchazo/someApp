@@ -76,7 +76,6 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.currentFood = user.myRankings[tmpIndexPath.row].typeOfFood
                     seguedMVC.currentRanking = user.myRankings[tmpIndexPath.row]
-                    print(tmpIndexPath.row)
                 }
             }
         case "addRanking":

@@ -16,9 +16,9 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
     var currentRestoList: [BasicResto]{
         get{
             if currentFood != nil{
-                return basicModel.getSomeRestoList(fromCity: currentCity,ofFoodType: currentFood!.foodType)
+                return basicModel.getSomeRestoList(fromCity: currentCity,ofFoodType: currentFood!.foodType).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
             }else{
-                return basicModel.getSomeRestoList(fromCity: currentCity)
+                return basicModel.getSomeRestoList(fromCity: currentCity).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
             }
         }
     }
@@ -81,7 +81,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
                     //tmp
                     let text = currentRestoList[indexPath.row].restoName
                     // Segue
-                    seguedToResto.titleCell = text
+                    seguedToResto.restoName = text 
                 }
             
                 
