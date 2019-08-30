@@ -14,7 +14,7 @@ class MyRanksEditRankingViewController: UIViewController {
     //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
     var currentFood: BasicFood!
-    var currentRanking: BasicRanking?
+    var currentRanking: BasicRanking!
     
     // Outlets
     @IBOutlet weak var editRankingTable: UITableView!{
@@ -22,6 +22,8 @@ class MyRanksEditRankingViewController: UIViewController {
             editRankingTable.dataSource = self
             editRankingTable.delegate = self
             editRankingTable.dragDelegate = self
+            editRankingTable.dragInteractionEnabled = true
+            editRankingTable.dropDelegate = self
         }
     }
     
@@ -105,7 +107,6 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
         tmpResto.tags.append(currentFood)
         
         if !currentRanking!.addToRanking(resto: tmpResto){
-            print("aja!")
             let alert = UIAlertController(
                 title: "Duplicate restaurant",
                 message: "The restaurant is already in your ranking.",
@@ -150,28 +151,59 @@ extension MyRanksEditRankingViewController{
 // MARK : Extension for Drag
 extension MyRanksEditRankingViewController: UITableViewDragDelegate{
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        print("hao")
+        session.localContext = tableView
         return dragItems(at: indexPath)
     }
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
-        let tempString = currentRanking!.restoList[indexPath.row].restoName
-        let dragItem = UIDragItem(itemProvider: NSItemProvider(object: NSAttributedString(string: tempString)))
-        dragItem.localObject = tempString
-        return [dragItem]
         
-        /*
         if let restoNameToDrag = (editRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
             dragItem.localObject = restoNameToDrag
-            print("ok")
             return[dragItem]
-            
         }else{
-            print("oh oh")
             return []
         }
- */
     }
+}
+
+// MARK : Drop stuff
+extension MyRanksEditRankingViewController : UITableViewDropDelegate {
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        return session.canLoadObjects(ofClass: NSAttributedString.self)
+    }
+    
+     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+     let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
+     return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
+     }
+    
+    
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
+        for item in coordinator.items{
+            //The drag is coming from myself (no need to look at the local context to know it's coming from me)
+            if let sourceIndexPath = item.sourceIndexPath{
+                //if let attributtedString = item.dragItem.localObject as? NSAttributedString{
+                // Garde-fous: we need to keep the view and model in synch
+                editRankingTable.performBatchUpdates(
+                    {
+                        //Update the model here
+                        let tempResto = currentRanking!.restoList[sourceIndexPath.row]
+                        currentRanking!.restoList.remove(at: sourceIndexPath.row)
+                        currentRanking!.restoList.insert(tempResto, at: destinationIndexPath.row)
+                        // DO NOT RELOAD DATA HERE!!
+                        // Delete row and then insert row instead
+                        editRankingTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
+                        editRankingTable.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
+                })
+                coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
+                //}
+                editRankingTable.reloadData()
+            }
+        }
+    }
+
+    
     
 }
