@@ -54,26 +54,29 @@ class MyRanksEditRankingViewController: UIViewController {
 
 // MARK: Extension for the Table stuff
 extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewDataSource{
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if currentRanking != nil {
-            return currentRanking!.restoList.count+1
-        }else{
-            return 1
+        switch(section){
+        case 0:
+            if currentRanking != nil {
+                return currentRanking!.restoList.count
+            }else{
+                return 0
+            }
+        case 1: return 1
+        default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var itemCount:Int{
-            get{
-                if currentRanking != nil {return currentRanking!.restoList.count}
-                else{ return 0}
-            }
-        }
         
-        switch(indexPath.row){
-        case 0..<itemCount:
-        
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath) as? MyRanksEditRankingTableViewCell,
+        if indexPath.section == 0 {
+            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
+            if let cell = tmpCell as? MyRanksEditRankingTableViewCell,
                 currentRanking != nil {
                 cell.restoForThisCell = currentRanking!.restoList[indexPath.row]
                 cell.restoImage.text = "Pic"
@@ -81,11 +84,10 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                 cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
                 let restoAddress = currentRanking!.restoList[indexPath.row].address
                 cell.restoTmpInfo.attributedText = NSAttributedString(string: restoAddress, attributes: [.font : restorantAddressFont])
-                return cell
-            }else{
-                fatalError("Marche pas.")
             }
-        default:
+            return tmpCell
+            
+        }else{
             return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
         }
     }
@@ -156,8 +158,8 @@ extension MyRanksEditRankingViewController: UITableViewDragDelegate{
     }
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
-        
-        if let restoNameToDrag = (editRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
+        // We don't allow dragging of the "Add ranking" cell
+        if indexPath.section == 0, let restoNameToDrag = (editRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
             dragItem.localObject = restoNameToDrag
             return[dragItem]
@@ -174,8 +176,12 @@ extension MyRanksEditRankingViewController : UITableViewDropDelegate {
     }
     
      func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-     let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
-     return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
+        if let indexPath = destinationIndexPath, indexPath.section == 0{
+            let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
+            return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
+        }else{
+            return UITableViewDropProposal(operation: .cancel)
+        }
      }
     
     

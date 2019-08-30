@@ -34,10 +34,7 @@ class TempInit : NSObject, CLLocationManagerDelegate {
         let location = locationManager.location
         boundingRegion = MKCoordinateRegion(center: location!.coordinate, latitudinalMeters: 12_000, longitudinalMeters: 12_000)
         
-        giveMeTheRestoList(for: ["Shake Shack","Black Tap", "Burger Joint"])
-        
-        
-        
+        //giveMeTheRestoList(for: ["Shake Shack","Black Tap", "Burger Joint"])
     }
     
     func giveMeTheRestoList(for restoListArray: [String])->[MKMapItem]{

@@ -63,8 +63,6 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
             present(alert, animated: false, completion: nil)
             
         }
-        
-
     }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -95,8 +93,16 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
 // MARK: table stuff
 extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return user.myRankings.count + 1
+        switch(section){
+        case 0: return user.myRankings.count
+        case 1: return 1
+        default: return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -104,18 +110,15 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        switch(indexPath.row){
-        case 0..<user.myRankings.count:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath) as? MyRanksTableViewCell {
+        if indexPath.section == 0 {
+            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
+            if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.cellIcon.text = "\(indexPath.row)"
                 cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood.rawValue
                 cell.cellCity.text = user.myRankings[indexPath.row].cityOfRanking.rawValue
-                return cell
-            }else{
-                fatalError("Marche pas.")
             }
-        default:
+            return tmpCell
+        }else{
             return tableView.dequeueReusableCell(withIdentifier: "AddNewRankingCell", for: indexPath)
         }
     }
@@ -148,10 +151,15 @@ extension MyRanksViewController: UITableViewDragDelegate {
     }
     
     private func dragItem(at indexPath: IndexPath) -> [UIDragItem]{
-        let attributedString = NSAttributedString(string: "test")
-        let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
-        dragItem.localObject = attributedString
-        return[dragItem]
+        // We don't allow dragging of the "Add ranking" cell 
+        if indexPath.section == 0{
+            let attributedString = NSAttributedString(string: "test")
+            let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
+            dragItem.localObject = attributedString
+            return[dragItem]
+        }else{
+            return []
+        }
     }
 }
 
@@ -162,8 +170,13 @@ extension MyRanksViewController: UITableViewDropDelegate{
     }
     
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
-        return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
+        if let indexPath = destinationIndexPath, indexPath.section == 0{
+            let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
+            return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
+        }else{
+            return UITableViewDropProposal(operation: .cancel)
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
