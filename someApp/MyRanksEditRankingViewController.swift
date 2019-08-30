@@ -21,6 +21,7 @@ class MyRanksEditRankingViewController: UIViewController {
         didSet{
             editRankingTable.dataSource = self
             editRankingTable.delegate = self
+            editRankingTable.dragDelegate = self
         }
     }
     
@@ -72,6 +73,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
         
             if let cell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath) as? MyRanksEditRankingTableViewCell,
                 currentRanking != nil {
+                cell.restoForThisCell = currentRanking!.restoList[indexPath.row]
                 cell.restoImage.text = "Pic"
                 let restoName = "\(indexPath.row + 1). \(currentRanking!.restoList[indexPath.row].restoName)"
                 cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
@@ -143,4 +145,33 @@ extension MyRanksEditRankingViewController{
         let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
         return CGFloat(cellHeight)
     }
+}
+
+// MARK : Extension for Drag
+extension MyRanksEditRankingViewController: UITableViewDragDelegate{
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        print("hao")
+        return dragItems(at: indexPath)
+    }
+    
+    private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
+        let tempString = currentRanking!.restoList[indexPath.row].restoName
+        let dragItem = UIDragItem(itemProvider: NSItemProvider(object: NSAttributedString(string: tempString)))
+        dragItem.localObject = tempString
+        return [dragItem]
+        
+        /*
+        if let restoNameToDrag = (editRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
+            let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
+            dragItem.localObject = restoNameToDrag
+            print("ok")
+            return[dragItem]
+            
+        }else{
+            print("oh oh")
+            return []
+        }
+ */
+    }
+    
 }

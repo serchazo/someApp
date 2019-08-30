@@ -9,6 +9,7 @@
 import Foundation
 import MapKit
 
+
 class BasicModel{
     
     // This part will in theory disappear with the DB
@@ -49,6 +50,11 @@ class BasicModel{
         for n in 1...5{
             userList.append(BasicUser(userName: "user\(n)", userPassword: "user\(n)"))
         }
+        
+        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Burger))
+        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Italian))
+        //userList[0].myRankings[0].addToRanking(resto: BasicResto(restoCity: .Singapore, restoName: "Some resto"))
+        //userList[0].myRankings[0].addToRanking(resto: BasicResto(restoCity: .Singapore, restoName: "Another resto"))
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
