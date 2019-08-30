@@ -20,6 +20,13 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
         // Do any additional setup after loading the view.
         print("Hello \(user.userName)")
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var myRanksTable: UITableView!{
@@ -32,8 +39,27 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     // MARK: - Navigation
     func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood) {
         //Update the list
-        user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
-        myRanksTable.reloadData()
+        if (user.myRankings.filter {$0.cityOfRanking == basicCity && $0.typeOfFood == basicFood}).count == 0 {
+            user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
+            myRanksTable.reloadData()
+        }else{
+            // Resto already in list
+            let alert = UIAlertController(
+                title: "Duplicate ranking",
+                message: "You already have a \(basicFood.rawValue) ranking in \(basicCity.rawValue).",
+                preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: {
+                    (action: UIAlertAction)->Void in
+                    //do nothing
+            }))
+            present(alert, animated: false, completion: nil)
+            
+        }
+        
 
     }
     
@@ -44,6 +70,7 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
         case "editRestoList":
             if let seguedMVC = segue.destination as? MyRanksEditRankingViewController{
                 seguedMVC.currentCity = self.currentCity
+                seguedMVC.currentFood = user.myRankings[selectedRow].typeOfFood
                 seguedMVC.currentRanking = user.myRankings[selectedRow]
             }
         case "addRanking":
@@ -65,6 +92,7 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        print(indexPath.row)
         selectedRow = indexPath.row
     }
     

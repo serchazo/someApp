@@ -108,6 +108,14 @@ class MyRanksMapSearchViewController: UIViewController {
         locationManager.requestLocation()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
     // MARK : Some search functions
     
     /// - Parameter suggestedCompletion: A search completion provided by `MKLocalSearchCompleter` when tapping on a search completion table row
@@ -210,6 +218,8 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     //TODO: Improve this one
+    
+    
     func parseAddress(selectedItem:MKPlacemark) -> String {
         // put a space between "4" and "Melrose Place"
         let firstSpace = (selectedItem.subThoroughfare != nil &&
@@ -236,6 +246,7 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
         )
         return addressLine
     }
+     
 }
 
 // MARK: Location stuff

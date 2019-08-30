@@ -11,6 +11,7 @@ import MapKit
 
 class MyRanksEditRankingViewController: UIViewController {
     
+    //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
     var currentFood: BasicFood!
     var currentRanking: BasicRanking?
@@ -25,7 +26,15 @@ class MyRanksEditRankingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
+        // Deselect the row when segued pops
+        if let indexPath = editRankingTable.indexPathForSelectedRow {
+            editRankingTable.deselectRow(at: indexPath, animated: true)
+        }
     }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -64,8 +73,10 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
             if let cell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath) as? MyRanksEditRankingTableViewCell,
                 currentRanking != nil {
                 cell.restoImage.text = "Pic"
-                cell.restoName.text = currentRanking!.restoList[indexPath.row].restoName
-                cell.restoTmpInfo.text = "Here: \(currentRanking!.restoList[indexPath.row].address)"
+                let restoName = "\(indexPath.row + 1). \(currentRanking!.restoList[indexPath.row].restoName)"
+                cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
+                let restoAddress = currentRanking!.restoList[indexPath.row].address
+                cell.restoTmpInfo.attributedText = NSAttributedString(string: restoAddress, attributes: [.font : restorantAddressFont])
                 return cell
             }else{
                 fatalError("Marche pas.")
@@ -76,6 +87,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
     }
 }
 
+// MARK : get stuff from the segued view and process the info
 extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
         let tmpResto = BasicResto(restoCity: currentCity, restoName: someMapItem.placemark.name!)
@@ -88,8 +100,47 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
             tmpResto.restoURL = someMapItem.url
         }
         tmpResto.mapItem = someMapItem
-        currentRanking?.restoList.append(tmpResto)
+        tmpResto.tags.append(currentFood)
+        
+        if !currentRanking!.addToRanking(resto: tmpResto){
+            print("aja!")
+            let alert = UIAlertController(
+                title: "Duplicate restaurant",
+                message: "The restaurant is already in your ranking.",
+                preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: {
+                    (action: UIAlertAction)->Void in
+                    //do nothing
+            }))
+            present(alert, animated: false, completion: nil)
+        }
+        
         editRankingTable.reloadData()
     }
     
+}
+
+
+// MARK: Some view stuff
+extension MyRanksEditRankingViewController{
+    private var iconFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+    }
+    
+    private var restorantNameFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+    }
+    
+    private var restorantAddressFont:UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
+        return CGFloat(cellHeight)
+    }
 }

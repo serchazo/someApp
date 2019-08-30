@@ -12,19 +12,20 @@ import MapKit
 class BasicModel{
     
     // This part will in theory disappear with the DB
-    var restoList = [BasicResto]()
+    var modelRestoList = [BasicResto]()
     var userList = [BasicUser]()
     var foodList = [BasicFoodType]()
+    //var tempInit = TempInit()
     
     init(){
-        //Initialize restos
+        // Old one
         for city in BasicCity.allCases{
             for food in BasicFood.allCases{
-                for n in 1...10 {
+                for n in 1...5 {
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
                     tmpResto.tags.append(food)
-                    restoList.append(tmpResto)
+                    modelRestoList.append(tmpResto)
                 }
             }
         }
@@ -51,10 +52,20 @@ class BasicModel{
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
-        return restoList.filter {$0.restoCity == fromCity}
+        return modelRestoList.filter {$0.restoCity == fromCity}
     }
     func getSomeRestoList(fromCity:BasicCity, ofFoodType: BasicFood) -> [BasicResto] {
-        return restoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType)}
+        return modelRestoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType)}
+    }
+    // Some setters
+    func addRestoToModel(resto: BasicResto) {
+        if (modelRestoList.filter {$0.mapItem?.hashValue == resto.mapItem?.hashValue}).count == 0{
+            modelRestoList.append(resto)
+        }
+    }
+    //
+    func updateScore(forResto: BasicResto, withPoints: Int){
+        (modelRestoList.filter {$0.mapItem?.hashValue == forResto.mapItem?.hashValue})[0].numberOfPoints += withPoints
     }
     
 }
@@ -81,7 +92,7 @@ class BasicResto {
     var restoURL: URL?
     var address = ""
     var mapItem: MKMapItem?
-    var tags = [BasicFood]()
+    var tags: [BasicFood] = []
     
     init(restoCity:BasicCity, restoName:String){
         self.restoCity = restoCity
@@ -96,6 +107,16 @@ class BasicRanking{
     init(cityOfRanking:BasicCity, typeOfFood:BasicFood){
         self.cityOfRanking = cityOfRanking
         self.typeOfFood = typeOfFood
+    }
+    func addToRanking(resto: BasicResto) -> Bool {
+        if (restoList.filter {$0.mapItem?.hashValue == resto.mapItem?.hashValue}).count > 0{
+            return false
+        }else{
+            restoList.append(resto)
+            basicModel.addRestoToModel(resto: resto)
+            basicModel.updateScore(forResto: resto, withPoints: 10-restoList.count)
+            return true
+        }
     }
 }
 
