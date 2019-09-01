@@ -80,10 +80,8 @@ class RestoRankViewController: UIViewController {
                 if let cell = sender as? RestoRankTableViewCell,
                     let indexPath = tableView.indexPath(for: cell),
                     let seguedToResto = segue.destination as? RestoDetailViewController{
-                    //tmp
-                    let text = currentRestoList[indexPath.row].restoName
                     // Segue
-                    seguedToResto.restoName = text 
+                    seguedToResto.currentResto = currentRestoList[indexPath.row]
                 }
             
                 

@@ -24,8 +24,9 @@ class BasicModel{
             for food in BasicFood.allCases{
                 for n in 1...5 {
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
-                    tmpResto.address = "Some street, some number, \(city)"
+                    tmpResto.address = "No address available."
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
+                    tmpResto.restoURL = URL(string: "https://www.google.com")
                     tmpResto.tags.append(food)
                     modelRestoList.append(tmpResto)
                 }
