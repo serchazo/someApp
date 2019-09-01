@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RestoRankViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class RestoRankViewController: UIViewController {
     
     // Class Variables
     var currentCity: BasicCity!
@@ -22,26 +22,8 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
             }
         }
     }
-    
-    /* Table View Stuff */
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentRestoList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
-            //Configure the cell
-            let thisResto = currentRestoList[indexPath.row]
-            cell.restoNameLabel.text = thisResto.restoName
-            cell.restoShortDescLabel.text = thisResto.shortDescription
-            cell.restoPointsLabel.text = "Points: \(thisResto.numberOfPoints)"
-            cell.restoOtherInfoLabel.text = thisResto.address
-            
-            return cell
-        }else{
-            fatalError("Marche pas.")
-        }
-    }
+    let refreshControl = UIRefreshControl()
+
     
     // MARK: outlets
     @IBOutlet var tableView: UITableView!
@@ -49,6 +31,7 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
         didSet{
             restoRankTableView.dataSource = self
             restoRankTableView.delegate = self
+            restoRankTableView.refreshControl = refreshControl
         }
     }
     
@@ -65,6 +48,25 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
         restoRankTableView.tableHeaderView = restoRankTableHeader
         tableHeaderFoodIcon.text = currentFood.foodIcon
         tableHeaderFoodName.text = "Best \(currentFood.foodDescription) restaurants in \(currentCity.rawValue)"
+        
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Deselect the row when segued pops
+        if let indexPath = restoRankTableView.indexPathForSelectedRow {
+            restoRankTableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    @objc private func refreshData(_ sender: Any) {
+        // Fetch Weather Data
+        restoRankTableView.reloadData()
+        self.refreshControl.endRefreshing()
+        //self.activityIndicatorView.stopAnimating()
     }
     
 
@@ -89,6 +91,46 @@ class RestoRankViewController: UIViewController, UITableViewDelegate, UITableVie
             }
         }
     }
+}
+
+// MARK : Table stuff
+extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return currentRestoList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
+            //Configure the cell
+            let thisResto = currentRestoList[indexPath.row]
+            cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.restoName, attributes: [.font : restorantNameFont])
+            cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.numberOfPoints)", attributes: [.font : restorantPointsFont])
+            cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.address, attributes: [.font : restorantAddressFont])
+            
+            return cell
+        }else{
+            fatalError("Marche pas.")
+        }
+    }
+}
 
 
+// MARK: Some view stuff
+extension RestoRankViewController{
+    private var restorantNameFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .title3).withSize(23.0))
+    }
+    
+    private var restorantPointsFont:UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
+    }
+    
+    private var restorantAddressFont:UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
+        return CGFloat(cellHeight)
+    }
 }

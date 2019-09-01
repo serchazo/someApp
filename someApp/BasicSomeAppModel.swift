@@ -24,6 +24,7 @@ class BasicModel{
             for food in BasicFood.allCases{
                 for n in 1...5 {
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
+                    tmpResto.address = "Some street, some number, \(city)"
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
                     tmpResto.tags.append(food)
                     modelRestoList.append(tmpResto)
@@ -114,6 +115,8 @@ class BasicRanking{
         self.cityOfRanking = cityOfRanking
         self.typeOfFood = typeOfFood
     }
+    
+    //Add ranking to resto
     func addToRanking(resto: BasicResto) -> Bool {
         if (restoList.filter {$0.mapItem?.hashValue == resto.mapItem?.hashValue}).count > 0{
             return false
@@ -123,6 +126,27 @@ class BasicRanking{
             basicModel.updateScore(forResto: resto, withPoints: 10-restoList.count)
             return true
         }
+    }
+    
+    //Update ranking
+    func updateList(sourceIndex: Int, destinationIndex: Int){
+        //Update the number of points
+        if sourceIndex<destinationIndex{
+            for index in (sourceIndex+1)...destinationIndex{
+                restoList[index].numberOfPoints += 1
+            }
+            restoList[sourceIndex].numberOfPoints -= (destinationIndex - sourceIndex)
+        }else{
+            for index in destinationIndex...(sourceIndex-1){
+                restoList[index].numberOfPoints -= 1
+            }
+            restoList[sourceIndex].numberOfPoints += (sourceIndex - destinationIndex)
+        }
+        
+        //Update the list
+        let tempResto = restoList[sourceIndex]
+        restoList.remove(at: sourceIndex)
+        restoList.insert(tempResto, at: destinationIndex)
     }
 }
 

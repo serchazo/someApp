@@ -195,9 +195,7 @@ extension MyRanksEditRankingViewController : UITableViewDropDelegate {
                 editRankingTable.performBatchUpdates(
                     {
                         //Update the model here
-                        let tempResto = currentRanking!.restoList[sourceIndexPath.row]
-                        currentRanking!.restoList.remove(at: sourceIndexPath.row)
-                        currentRanking!.restoList.insert(tempResto, at: destinationIndexPath.row)
+                        currentRanking!.updateList(sourceIndex: sourceIndexPath.row, destinationIndex: destinationIndexPath.row)
                         // DO NOT RELOAD DATA HERE!!
                         // Delete row and then insert row instead
                         editRankingTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
