@@ -157,7 +157,6 @@ class MyRanksMapSearchViewController: UIViewController {
             self?.coolMap.region = region!
             self?.dropPinZoomIn(placemark: tmpPlacemark!)
             
-            
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
     }
@@ -217,7 +216,6 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     //TODO: Improve this one
-    
     
     func parseAddress(selectedItem:MKPlacemark) -> String {
         // put a space between "4" and "Melrose Place"

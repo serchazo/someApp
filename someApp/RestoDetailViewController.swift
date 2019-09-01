@@ -40,7 +40,7 @@ class RestoDetailViewController: UIViewController {
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         switch(identifier){
         case "showMapDetail":
-            if currentResto.mapItem != nil{
+            if currentResto.mapItems.count > 0{
                 return true
             }else{
                 // No map information: generate an alert
@@ -72,8 +72,8 @@ class RestoDetailViewController: UIViewController {
         // Pass the selected object to the new view controller.
         switch(segue.identifier){
         case "showMapDetail":
-            if currentResto.mapItem != nil, let seguedMapMVC = segue.destination as? RestoDetailMapVC{
-                seguedMapMVC.mapItem = currentResto.mapItem!
+            if currentResto.mapItems.count > 0, let seguedMapMVC = segue.destination as? RestoDetailMapVC{
+                seguedMapMVC.mapItems = currentResto.mapItems
             }
         default:break
         }

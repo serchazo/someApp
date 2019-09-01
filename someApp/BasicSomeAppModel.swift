@@ -8,6 +8,7 @@
 
 import Foundation
 import MapKit
+import CoreLocation
 
 
 class BasicModel{
@@ -16,7 +17,7 @@ class BasicModel{
     var modelRestoList = [BasicResto]()
     var userList = [BasicUser]()
     var foodList = [BasicFoodType]()
-    //var tempInit = TempInit()
+    var locationManager = CLLocationManager()
     
     init(){
         // Old one
@@ -24,7 +25,6 @@ class BasicModel{
             for food in BasicFood.allCases{
                 for n in 1...5 {
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
-                    tmpResto.address = "No address available."
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
                     tmpResto.restoURL = URL(string: "https://www.google.com")
                     tmpResto.tags.append(food)
@@ -55,8 +55,6 @@ class BasicModel{
         
         userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Burger))
         userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Italian))
-        //userList[0].myRankings[0].addToRanking(resto: BasicResto(restoCity: .Singapore, restoName: "Some resto"))
-        //userList[0].myRankings[0].addToRanking(resto: BasicResto(restoCity: .Singapore, restoName: "Another resto"))
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
@@ -67,13 +65,13 @@ class BasicModel{
     }
     // Some setters
     func addRestoToModel(resto: BasicResto) {
-        if (modelRestoList.filter {$0.mapItem?.hashValue == resto.mapItem?.hashValue}).count == 0{
+        if (modelRestoList.filter {$0.restoCity == resto.restoCity && $0.restoName == resto.restoName}).count == 0{
             modelRestoList.append(resto)
         }
     }
     //
     func updateScore(forResto: BasicResto, withPoints: Int){
-        (modelRestoList.filter {$0.mapItem?.hashValue == forResto.mapItem?.hashValue})[0].numberOfPoints += withPoints
+        (modelRestoList.filter {$0.restoCity == forResto.restoCity && $0.restoName == forResto.restoName})[0].numberOfPoints += withPoints
     }
     
 }
@@ -98,13 +96,33 @@ class BasicResto {
     var shortDescription = ""
     var numberOfPoints = 0
     var restoURL: URL?
-    var address = ""
-    var mapItem: MKMapItem?
+    
+    var address:String{
+        get{
+            switch(mapItems.count){
+            case 0: return "No address available."
+            case 1:
+                if mapItems[0].placemark.formattedAddress != nil {
+                    return mapItems[0].placemark.formattedAddress!
+                }else{
+                    return "No address available."
+                }
+            default: return "Multiple adresses."
+            }
+        }
+    }
+    var mapItems: [MKMapItem] = []
     var tags: [BasicFood] = []
     
     init(restoCity:BasicCity, restoName:String){
         self.restoCity = restoCity
         self.restoName = restoName
+    }
+    // Add a new placemark
+    func addPlaceItemToResto(placeItem: MKMapItem){
+        if !(mapItems.filter({$0.placemark.hashValue == placeItem.hashValue}).count > 0){
+            mapItems.append(placeItem)
+        }
     }
 }
 
@@ -119,7 +137,7 @@ class BasicRanking{
     
     //Add ranking to resto
     func addToRanking(resto: BasicResto) -> Bool {
-        if (restoList.filter {$0.mapItem?.hashValue == resto.mapItem?.hashValue}).count > 0{
+        if (restoList.filter {$0.restoCity == resto.restoCity && $0.restoName == resto.restoName}).count > 0{
             return false
         }else{
             restoList.append(resto)

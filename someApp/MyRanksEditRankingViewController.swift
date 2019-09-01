@@ -98,14 +98,10 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
         let tmpResto = BasicResto(restoCity: currentCity, restoName: someMapItem.placemark.name!)
         
-        if someMapItem.placemark.formattedAddress != nil{
-            tmpResto.address = someMapItem.placemark.formattedAddress!
-        }
-        
         if someMapItem.url != nil{
             tmpResto.restoURL = someMapItem.url
         }
-        tmpResto.mapItem = someMapItem
+        tmpResto.mapItems.append(someMapItem)
         tmpResto.tags.append(currentFood)
         
         if !currentRanking!.addToRanking(resto: tmpResto){

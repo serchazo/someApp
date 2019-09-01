@@ -16,33 +16,45 @@ class RestoDetailMapVC: UIViewController {
             mapView.delegate = self
         }
     }
-    var mapItem = MKMapItem()
+    var mapItems = [MKMapItem]()
     var selectedPin:MKPlacemark? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Get the placemark from the Item
-        let placemark = mapItem.placemark
-        selectedPin = placemark
-        
-        // The anotation
-        mapView.removeAnnotations(mapView.annotations)
+        //
+        var zoomRect:MKMapRect = MKMapRect.null
         
         // Make sure `MKPinAnnotationView` and the reuse identifier is recognized in this map view.
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: "pin")
+        mapView.removeAnnotations(mapView.annotations)
         
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = placemark.coordinate
-        annotation.title = placemark.name
+        //Add the annotations
+        for mapItem in mapItems{
+            let placemark = mapItem.placemark
+            selectedPin = placemark
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = placemark.coordinate
+            annotation.title = placemark.name
+            
+            mapView.addAnnotation(annotation)
+            
+            let tempPoint = MKMapPoint(placemark.coordinate)
+            let pointRect = MKMapRect(x: tempPoint.x, y: tempPoint.y, width: 0.1, height: 0.1)
+            zoomRect = zoomRect.union(pointRect)
+
+        }
+                
+        mapView.setVisibleMapRect(zoomRect, animated: true)
         
         // Do any additional setup after loading the view.
         let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        let region = MKCoordinateRegion(center: placemark.coordinate, span: span)
-        mapView.addAnnotation(annotation)
+        let region = MKCoordinateRegion(center: mapItems[0].placemark.coordinate, span: span)
         mapView.setRegion(region, animated: true)
         
+        
     }
+    
     
     /*
     // MARK: - Navigation
@@ -98,8 +110,11 @@ extension RestoDetailMapVC: MKMapViewDelegate{
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        //let location = view.annotation
+        //let location = view.mk
         let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-        mapItem.openInMaps(launchOptions: launchOptions)
+        mapItems[0].openInMaps(launchOptions: launchOptions)
     }
 }
+
+
+
