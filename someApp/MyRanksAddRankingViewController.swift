@@ -9,13 +9,14 @@
 import UIKit
 
 protocol MyRanksAddRankingViewDelegate: class{
-    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood)
+    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: String)
 }
 
 class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource {
 
     //To probably change later
-    var foodData = basicModel.old_foodList
+    //var old_foodData = basicModel.old_foodList
+    var foodData = basicModel.foodList
     var currentCity:BasicCity = .Singapore
     
     //
@@ -25,9 +26,9 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodData[indexPath.row].foodType
-            cell.cellLabel.text = foodData[indexPath.row].foodDescription
-            cell.cellIcon.text = foodData[indexPath.row].foodIcon
+            cell.cellBasicFood = foodData[indexPath.row].key
+            cell.cellLabel.text = foodData[indexPath.row].name
+            cell.cellIcon.text = foodData[indexPath.row].icon
             return cell
         }else{
             fatalError("No cell")
@@ -38,7 +39,7 @@ class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegat
     weak var delegate: MyRanksAddRankingViewDelegate!
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.delegate?.addRankingReceiveInfoToCreate(basicCity: currentCity, basicFood: foodData[indexPath.row].foodType)
+        self.delegate?.addRankingReceiveInfoToCreate(basicCity: currentCity, basicFood: foodData[indexPath.row].key)
         
         self.navigationController?.popViewController(animated: true)
     }

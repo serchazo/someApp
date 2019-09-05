@@ -12,6 +12,6 @@ class SearchFoodCell: UICollectionViewCell {
     
     @IBOutlet weak var cellIcon: UILabel!
     @IBOutlet weak var cellLabel: UILabel!
-    var cellBasicFood:BasicFood!
+    var cellBasicFood = ""
     
 }

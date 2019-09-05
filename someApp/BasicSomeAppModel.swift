@@ -11,36 +11,18 @@ import MapKit
 import Firebase
 
 class BasicModel{
+    let dbRootRef: DatabaseReference!
+    let dbFoodTypeRoot: DatabaseReference!
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
     var userList = [BasicUser]()
-    var old_foodList = [BasicFoodType]()
     var foodList: [FoodType] = []
     
     init(){
         // test part
-        let dbRootRef = Database.database().reference()
-        let dbFoodTypeRoot = dbRootRef.child("foodType")
-        
-        dbFoodTypeRoot.observe(.value, with: {snapshot in
-            var tmpFoodList: [FoodType] = []
-            
-            for child in snapshot.children{
-                if let childSnapshot = child as? DataSnapshot,
-                    let foodItem = FoodType(snapshot: childSnapshot){
-                    tmpFoodList.append(foodItem)
-                }
-            }
-            self.foodList = tmpFoodList
-            
-            for food in self.foodList{
-                print("name \(food.name) with icon \(food.icon)")
-            }
-        })
-        
-        
-        
+        dbRootRef = Database.database().reference()
+        dbFoodTypeRoot = dbRootRef.child("foodType")
         
         // Old one
         for city in BasicCity.allCases{
@@ -49,25 +31,10 @@ class BasicModel{
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
                     tmpResto.restoURL = URL(string: "https://www.google.com")
-                    tmpResto.tags.append(food)
+                    tmpResto.tags.append(food.rawValue)
                     tmpResto.comments.append(Comment(date: Date(), user: "user1", commentText: "Terrific restorant!"))
                     modelRestoList.append(tmpResto)
                 }
-            }
-        }
-        
-        // Initialize food Icons
-        for food in BasicFood.allCases{
-            switch(food){
-            case .Burger: old_foodList.append(BasicFoodType(foodType: .Burger, foodDescription: food.rawValue, foodIcon: "🍔"))
-            case .Italian: old_foodList.append(BasicFoodType(foodType: .Italian, foodDescription: food.rawValue, foodIcon: "🍝"))
-            case .Pizza: old_foodList.append(BasicFoodType(foodType: .Pizza, foodDescription: food.rawValue, foodIcon: "🍕"))
-            case .Mexican: old_foodList.append(BasicFoodType(foodType: .Mexican, foodDescription: food.rawValue, foodIcon: "🌮"))
-            case .Japanese: old_foodList.append(BasicFoodType(foodType: .Japanese, foodDescription: food.rawValue, foodIcon: "🍱"))
-            case .Salad: old_foodList.append(BasicFoodType(foodType: .Salad, foodDescription: food.rawValue, foodIcon: "🥗"))
-            case .Patisserie: old_foodList.append(BasicFoodType(foodType: .Patisserie, foodDescription: food.rawValue, foodIcon: "🧁"))
-            case .Cafe: old_foodList.append(BasicFoodType(foodType: .Cafe, foodDescription: food.rawValue, foodIcon: "☕️"))
-            case .CocktailBar: old_foodList.append(BasicFoodType(foodType: .CocktailBar, foodDescription: food.rawValue, foodIcon: "🍹"))
             }
         }
         
@@ -76,15 +43,15 @@ class BasicModel{
             userList.append(BasicUser(userName: "user\(n)", userPassword: "user\(n)"))
         }
         
-        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Burger))
-        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: .Italian))
+        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: "burger"))
+        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: "italian"))
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
         return modelRestoList.filter {$0.restoCity == fromCity}
     }
-    func getSomeRestoList(fromCity:BasicCity, ofFoodType: BasicFood) -> [BasicResto] {
-        return modelRestoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType)}
+    func getSomeRestoList(fromCity:BasicCity, ofFoodType: FoodType) -> [BasicResto] {
+        return modelRestoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType.key)}
     }
     // Some setters
     func addRestoToModel(resto: BasicResto) {
@@ -126,7 +93,7 @@ class BasicResto {
         }
     }
     var mapItems: [MKMapItem] = []
-    var tags: [BasicFood] = []
+    var tags: [String] = []
     
     init(restoCity:BasicCity, restoName:String){
         self.restoCity = restoCity
@@ -156,9 +123,10 @@ class Comment{
 
 class BasicRanking{
     let cityOfRanking:BasicCity
-    let typeOfFood:BasicFood
+    var typeOfFood = ""
     var restoList = [BasicResto]()
-    init(cityOfRanking:BasicCity, typeOfFood:BasicFood){
+    
+    init(cityOfRanking:BasicCity, typeOfFood:String){
         self.cityOfRanking = cityOfRanking
         self.typeOfFood = typeOfFood
     }
@@ -197,19 +165,13 @@ class BasicRanking{
     }
 }
 
-struct BasicFoodType{
-    let foodType:BasicFood
-    let foodDescription:String
-    let foodIcon:String
-}
-
 enum BasicSelection:String {
     case City
     case Food
 }
 
 struct BasicPoint {
-    let typeOfFood: BasicFood
+    let typeOfFood: String
     var nbPoints: Int
 }
 
@@ -221,14 +183,15 @@ enum BasicCity: String, CaseIterable {
     case HongKong = "Hong Kong"
     }
 
+
 enum BasicFood:String, CaseIterable{
-    case Burger = "Burger"
-    case Italian = "Italian"
-    case Pizza = "Pizza"
-    case Mexican = "Mexican"
-    case Japanese = "Japanese"
-    case Salad = "Salad"
-    case Cafe = "Cafe"
-    case CocktailBar = "Cocktail Bar"
-    case Patisserie = "Patisserie"
+    case Burger = "burger"
+    case Italian = "italian"
+    case Pizza = "pizza"
+    case Mexican = "mexican"
+    case Japanese = "japanese"
+    case Salad = "salad"
+    case Cafe = "cafe"
+    case CocktailBar = "cocktail Bar"
+    case Patisserie = "patisserie"
 }

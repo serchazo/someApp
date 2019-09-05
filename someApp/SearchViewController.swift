@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import Firebase
 
 class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     //To probably change later
-    var foodData = basicModel.old_foodList
+    var foodList:[FoodType] = []
     var currentCity:BasicCity = .Singapore 
 
     //Listen for changes in the Accessibility font
@@ -35,7 +36,23 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Do any additional setup after loading the view.
+        
+        // Get the list from the Database (an observer)
+        basicModel.dbFoodTypeRoot.observe(.value, with: {snapshot in
+            var tmpFoodList: [FoodType] = []
+            
+            for child in snapshot.children{
+                if let childSnapshot = child as? DataSnapshot,
+                    let foodItem = FoodType(snapshot: childSnapshot){
+                    tmpFoodList.append(foodItem)
+                }
+            }
+            self.foodList = tmpFoodList
+            self.foodSelectorCollection.reloadData()
+        })
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -77,7 +94,7 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
                     //Don't forget the outlet colllectionView to avoid the ambiguous ref
                     let indexPath = collectionView.indexPath(for: cell),
                     let seguedDestinationVC = segue.destination as? RestoRankViewController{
-                    seguedDestinationVC.currentFood = foodData[indexPath.row]
+                    seguedDestinationVC.currentFood = foodList[indexPath.row]
                     seguedDestinationVC.currentCity = currentCity
                 }
             case "cityChoser":
@@ -99,17 +116,17 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
 extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return foodData.count
+        return foodList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodData[indexPath.row].foodType
+            cell.cellBasicFood = foodList[indexPath.row].key
             
-            let foodIconText = NSAttributedString(string: foodData[indexPath.row].foodIcon, attributes: [.font: iconFont])
+            let foodIconText = NSAttributedString(string: foodList[indexPath.row].icon, attributes: [.font: iconFont])
             cell.cellIcon.attributedText = foodIconText
             
-            let foodTitleText = NSAttributedString(string: foodData[indexPath.row].foodDescription, attributes: [.font: cellTitleFont])
+            let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.font: cellTitleFont])
             cell.cellLabel.attributedText = foodTitleText
             
             return cell

@@ -41,7 +41,7 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     }
     
     // MARK: - Navigation
-    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: BasicFood) {
+    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: String) {
         //Update the list
         if (user.myRankings.filter {$0.cityOfRanking == basicCity && $0.typeOfFood == basicFood}).count == 0 {
             user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
@@ -50,7 +50,7 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
             // Resto already in list
             let alert = UIAlertController(
                 title: "Duplicate ranking",
-                message: "You already have a \(basicFood.rawValue) ranking in \(basicCity.rawValue).",
+                message: "You already have a \(basicFood) ranking in \(basicCity.rawValue).",
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
@@ -113,7 +113,7 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.cellIcon.text = "\(indexPath.row)"
-                cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood.rawValue
+                cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood
                 cell.cellCity.text = user.myRankings[indexPath.row].cityOfRanking.rawValue
             }
             return tmpCell

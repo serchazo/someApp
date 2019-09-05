@@ -12,16 +12,8 @@ class RestoRankViewController: UIViewController {
     
     // Class Variables
     var currentCity: BasicCity!
-    var currentFood: BasicFoodType!
-    var currentRestoList: [BasicResto]{
-        get{
-            if currentFood != nil{
-                return basicModel.getSomeRestoList(fromCity: currentCity,ofFoodType: currentFood!.foodType).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
-            }else{
-                return basicModel.getSomeRestoList(fromCity: currentCity).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
-            }
-        }
-    }
+    var currentFood: FoodType!
+    var currentRestoList: [BasicResto]!
     let refreshControl = UIRefreshControl()
 
     
@@ -44,10 +36,18 @@ class RestoRankViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Initialize the current resto list
+        if currentFood != nil{
+            currentRestoList = basicModel.getSomeRestoList(fromCity: currentCity,
+                ofFoodType: currentFood).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
+        }else{
+            currentRestoList = basicModel.getSomeRestoList(fromCity: currentCity).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
+        }
+        
         //Some setup
         restoRankTableView.tableHeaderView = restoRankTableHeader
-        tableHeaderFoodIcon.text = currentFood.foodIcon
-        tableHeaderFoodName.text = "Best \(currentFood.foodDescription) restaurants in \(currentCity.rawValue)"
+        tableHeaderFoodIcon.text = currentFood.icon
+        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.rawValue)"
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)

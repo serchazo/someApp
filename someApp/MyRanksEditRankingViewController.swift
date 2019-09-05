@@ -13,7 +13,7 @@ class MyRanksEditRankingViewController: UIViewController {
     
     //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
-    var currentFood: BasicFood!
+    var currentFood: String = ""
     var currentRanking: BasicRanking!
     
     // Outlets
