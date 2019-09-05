@@ -11,7 +11,7 @@ import UIKit
 class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     //To probably change later
-    var foodData = basicModel.foodList
+    var foodData = basicModel.old_foodList
     var currentCity:BasicCity = .Singapore 
 
     //Listen for changes in the Accessibility font

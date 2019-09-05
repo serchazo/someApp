@@ -8,15 +8,40 @@
 
 import Foundation
 import MapKit
+import Firebase
 
 class BasicModel{
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
     var userList = [BasicUser]()
-    var foodList = [BasicFoodType]()
+    var old_foodList = [BasicFoodType]()
+    var foodList: [FoodType] = []
     
     init(){
+        // test part
+        let dbRootRef = Database.database().reference()
+        let dbFoodTypeRoot = dbRootRef.child("foodType")
+        
+        dbFoodTypeRoot.observe(.value, with: {snapshot in
+            var tmpFoodList: [FoodType] = []
+            
+            for child in snapshot.children{
+                if let childSnapshot = child as? DataSnapshot,
+                    let foodItem = FoodType(snapshot: childSnapshot){
+                    tmpFoodList.append(foodItem)
+                }
+            }
+            self.foodList = tmpFoodList
+            
+            for food in self.foodList{
+                print("name \(food.name) with icon \(food.icon)")
+            }
+        })
+        
+        
+        
+        
         // Old one
         for city in BasicCity.allCases{
             for food in BasicFood.allCases{
@@ -34,15 +59,15 @@ class BasicModel{
         // Initialize food Icons
         for food in BasicFood.allCases{
             switch(food){
-            case .Burger: foodList.append(BasicFoodType(foodType: .Burger, foodDescription: food.rawValue, foodIcon: "🍔"))
-            case .Italian: foodList.append(BasicFoodType(foodType: .Italian, foodDescription: food.rawValue, foodIcon: "🍝"))
-            case .Pizza: foodList.append(BasicFoodType(foodType: .Pizza, foodDescription: food.rawValue, foodIcon: "🍕"))
-            case .Mexican: foodList.append(BasicFoodType(foodType: .Mexican, foodDescription: food.rawValue, foodIcon: "🌮"))
-            case .Japanese: foodList.append(BasicFoodType(foodType: .Japanese, foodDescription: food.rawValue, foodIcon: "🍱"))
-            case .Salad: foodList.append(BasicFoodType(foodType: .Salad, foodDescription: food.rawValue, foodIcon: "🥗"))
-            case .Patisserie: foodList.append(BasicFoodType(foodType: .Patisserie, foodDescription: food.rawValue, foodIcon: "🧁"))
-            case .Cafe: foodList.append(BasicFoodType(foodType: .Cafe, foodDescription: food.rawValue, foodIcon: "☕️"))
-            case .CocktailBar: foodList.append(BasicFoodType(foodType: .CocktailBar, foodDescription: food.rawValue, foodIcon: "🍹"))
+            case .Burger: old_foodList.append(BasicFoodType(foodType: .Burger, foodDescription: food.rawValue, foodIcon: "🍔"))
+            case .Italian: old_foodList.append(BasicFoodType(foodType: .Italian, foodDescription: food.rawValue, foodIcon: "🍝"))
+            case .Pizza: old_foodList.append(BasicFoodType(foodType: .Pizza, foodDescription: food.rawValue, foodIcon: "🍕"))
+            case .Mexican: old_foodList.append(BasicFoodType(foodType: .Mexican, foodDescription: food.rawValue, foodIcon: "🌮"))
+            case .Japanese: old_foodList.append(BasicFoodType(foodType: .Japanese, foodDescription: food.rawValue, foodIcon: "🍱"))
+            case .Salad: old_foodList.append(BasicFoodType(foodType: .Salad, foodDescription: food.rawValue, foodIcon: "🥗"))
+            case .Patisserie: old_foodList.append(BasicFoodType(foodType: .Patisserie, foodDescription: food.rawValue, foodIcon: "🧁"))
+            case .Cafe: old_foodList.append(BasicFoodType(foodType: .Cafe, foodDescription: food.rawValue, foodIcon: "☕️"))
+            case .CocktailBar: old_foodList.append(BasicFoodType(foodType: .CocktailBar, foodDescription: food.rawValue, foodIcon: "🍹"))
             }
         }
         
@@ -76,17 +101,7 @@ class BasicModel{
 var basicModel = BasicModel()
 
 // This part will be improved later on
-class BasicUser{
-    let userName:String
-    var userPassword:String
-    var myRankings:[BasicRanking]
-    
-    init(userName:String, userPassword:String){
-        self.userName = userName
-        self.userPassword = userPassword
-        myRankings = [BasicRanking]()
-    }
-}
+
 
 class BasicResto {
     let restoCity:BasicCity

@@ -15,7 +15,7 @@ protocol MyRanksAddRankingViewDelegate: class{
 class MyRanksAddRankingViewController: UIViewController, UICollectionViewDelegate,UICollectionViewDataSource {
 
     //To probably change later
-    var foodData = basicModel.foodList
+    var foodData = basicModel.old_foodList
     var currentCity:BasicCity = .Singapore
     
     //

@@ -110,7 +110,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="2598.5507246376815" y="-844.41964285714278"/>
+            <point key="canvasLocation" x="2284" y="-882"/>
         </scene>
         <!--Resto Rank View Controller-->
         <scene sceneID="jcc-Fz-1xY">
@@ -258,7 +258,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nfp-N4-VUg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="580" y="-867"/>
+            <point key="canvasLocation" x="317" y="-867"/>
         </scene>
         <!--Basic User Selector View Controller-->
         <scene sceneID="Ott-ul-puK">
@@ -892,7 +892,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="boL-OA-W39" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1689.8550724637682" y="-844.41964285714278"/>
+            <point key="canvasLocation" x="1348" y="-867"/>
         </scene>
         <!--Favorites View Controller-->
         <scene sceneID="Agg-Ch-xf9">
@@ -927,7 +927,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p1a-aN-hWF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="123" y="457"/>
+            <point key="canvasLocation" x="316" y="494"/>
         </scene>
         <!--My Ranks Add Ranking View Controller-->
         <scene sceneID="5BQ-cP-Svb">
