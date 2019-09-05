@@ -88,7 +88,7 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
         case 0: return 4
-        case 1: return 0 // number of comments
+        case 1: return currentResto.comments.count // number of comments
         default: return 0
         }
     }
@@ -126,11 +126,43 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
         }else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsCell", for: indexPath)
-            cell.textLabel!.text = "Some comment"
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsCell", for: indexPath) as? RestoDetailCommentCell{
+                cell.comment = currentResto!.comments[indexPath.row]
+                cell.dateLabel.text = "1 Jan 1979"
+                cell.userLable.text = "some user"
+                cell.commentLabel.text = "This resto is terrific!"
+                
+                return cell
+            }else{
+                fatalError("No comment cell possible")
+            }
+            
         }
     }
+}
+
+// MARK: Some view stuff
+extension RestoDetailViewController{
+    private var iconFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+    }
     
+    private var restorantNameFont: UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+    }
     
+    private var restorantAddressFont:UIFont{
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0{
+            return CGFloat(44)
+        }else if indexPath.section == 1{
+            let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 145.0
+            return CGFloat(cellHeight)
+        }else{
+            return CGFloat(0)
+        }
+    }
 }

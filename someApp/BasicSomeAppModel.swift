@@ -8,8 +8,6 @@
 
 import Foundation
 import MapKit
-import CoreLocation
-
 
 class BasicModel{
     
@@ -17,7 +15,6 @@ class BasicModel{
     var modelRestoList = [BasicResto]()
     var userList = [BasicUser]()
     var foodList = [BasicFoodType]()
-    var locationManager = CLLocationManager()
     
     init(){
         // Old one
@@ -28,6 +25,7 @@ class BasicModel{
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
                     tmpResto.restoURL = URL(string: "https://www.google.com")
                     tmpResto.tags.append(food)
+                    tmpResto.comments.append(Comment(date: Date(), user: "user1", commentText: "Terrific restorant!"))
                     modelRestoList.append(tmpResto)
                 }
             }
@@ -96,6 +94,7 @@ class BasicResto {
     var shortDescription = ""
     var numberOfPoints = 0
     var restoURL: URL?
+    var comments: [Comment] = []
     
     var address:String{
         get{
@@ -123,6 +122,20 @@ class BasicResto {
         if !(mapItems.filter({$0.placemark.hashValue == placeItem.hashValue}).count > 0){
             mapItems.append(placeItem)
         }
+    }
+}
+
+// Comment class
+class Comment{
+    let date: Date
+    let user: String
+    let commentText: String
+    var likes:[String] = []
+    var dislikes:[String] = []
+    init(date: Date, user: String, commentText: String){
+        self.date = date
+        self.user = user
+        self.commentText = commentText
     }
 }
 
