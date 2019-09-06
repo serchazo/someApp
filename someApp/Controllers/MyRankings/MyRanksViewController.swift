@@ -9,11 +9,12 @@
 import UIKit
 import Firebase
 
-class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
+class MyRanksViewController: UIViewController {
     
     var user:User!
     var currentCity:BasicCity = .Singapore
     var rankings:[Ranking] = []
+    var rankingReferenceForUser: DatabaseReference!
     
 
     override func viewDidLoad() {
@@ -26,7 +27,8 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
             self.user = user
             
             // 2. Once we get the user, update!
-            basicModel.dbRankingsPerUser.child("userTest").observe(.value, with: {snapshot in
+            self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
+            self.rankingReferenceForUser.observe(.value, with: {snapshot in
                 //
                 var tmpRankings: [Ranking] = []
                 
@@ -63,32 +65,6 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
         }
     }
     
-    // MARK: - Navigation
-    func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: String) {
-        // TODO : Update the list
-        /*
-        if (user.myRankings.filter {$0.cityOfRanking == basicCity && $0.typeOfFood == basicFood}).count == 0 {
-            user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
-            myRanksTable.reloadData()
-        }else{
-            // Resto already in list
-            let alert = UIAlertController(
-                title: "Duplicate ranking",
-                message: "You already have a \(basicFood) ranking in \(basicCity.rawValue).",
-                preferredStyle: .alert)
-            
-            alert.addAction(UIAlertAction(
-                title: "OK",
-                style: .default,
-                handler: {
-                    (action: UIAlertAction)->Void in
-                    //do nothing
-            }))
-            present(alert, animated: false, completion: nil)
-            
-        }*/
-    }
-    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -114,7 +90,38 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
 }
 
-// MARK: table stuff
+// MARK : update the ranking list when we receive the event from the menu choser
+extension MyRanksViewController: MyRanksAddRankingViewDelegate{
+    func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
+        
+        // Test if we already have that ranking in our list
+        if (rankings.filter {$0.city == inCity && $0.foodKey == withFood.key}).count == 0{
+            // If we don't have the ranking, we add it to Firebase
+            let newRanking = Ranking(city: inCity, foodKey: withFood.key)
+            // Create a child reference with autoID
+            let newRankingRef = rankingReferenceForUser.childByAutoId()
+            // set value
+            newRankingRef.setValue(newRanking.toAnyObject())
+        }else{
+            // Resto already in list
+            let alert = UIAlertController(
+                title: "Duplicate ranking",
+                message: "You already have a \(withFood.name) ranking in \(inCity).",
+                preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: {
+                    (action: UIAlertAction)->Void in
+                    //do nothing
+            }))
+            present(alert, animated: false, completion: nil)
+        }
+    }
+}
+
+// MARK : table stuff
 extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -138,6 +145,7 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.cellIcon.text = "\(indexPath.row)"
+                // TODO : the foodkey should be replace with the name of the food
                 cell.cellTitle.text = rankings[indexPath.row].foodKey
                 cell.cellCity.text = rankings[indexPath.row].city
             }
