@@ -13,7 +13,8 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     //To probably change later
     var foodList:[FoodType] = []
-    var currentCity:BasicCity = .Singapore 
+    var currentCity:BasicCity = .Singapore
+    var user: User!
 
     //Listen for changes in the Accessibility font
     private var accessibilityPropertyObserver: NSObjectProtocol?
@@ -37,8 +38,6 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-        
         // Get the list from the Database (an observer)
         basicModel.dbFoodTypeRoot.observe(.value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
@@ -53,6 +52,11 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
             self.foodSelectorCollection.reloadData()
         })
         
+        // Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -120,6 +124,22 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO : while loading display a spinner
+        
+        guard foodList.count != 0 else {
+            print("mmmm")
+            let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
+            if let cell = tmpCell as? SpinnerCollectionViewCell{
+                print("here")
+                cell.spinner.style = .gray
+                cell.spinner.startAnimating()
+                return cell
+            }else{
+                return tmpCell
+            }
+        }
+        
+        // then go
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
             cell.cellBasicFood = foodList[indexPath.row].key
             

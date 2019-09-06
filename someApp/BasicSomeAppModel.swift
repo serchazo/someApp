@@ -13,6 +13,7 @@ import Firebase
 class BasicModel{
     let dbRootRef: DatabaseReference!
     let dbFoodTypeRoot: DatabaseReference!
+    let dbRankingsPerUser: DatabaseReference!
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
@@ -23,10 +24,11 @@ class BasicModel{
         // test part
         dbRootRef = Database.database().reference()
         dbFoodTypeRoot = dbRootRef.child("foodType")
+        dbRankingsPerUser = dbRootRef.child("rankingsPerUser")
         
         // Old one
         for city in BasicCity.allCases{
-            for food in BasicFood.allCases{
+            for food in BasicFoodTemp.allCases{
                 for n in 1...5 {
                     let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
                     tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
@@ -37,14 +39,6 @@ class BasicModel{
                 }
             }
         }
-        
-        //Initialize Users
-        for n in 1...5{
-            userList.append(BasicUser(userName: "user\(n)", userPassword: "user\(n)"))
-        }
-        
-        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: "burger"))
-        userList[0].myRankings.append(BasicRanking(cityOfRanking: .Singapore, typeOfFood: "italian"))
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
@@ -133,6 +127,7 @@ class BasicRanking{
     
     //Add ranking to resto
     func addToRanking(resto: BasicResto) -> Bool {
+        print("Add new resto \(resto.restoName), \(resto.restoCity), \(resto.tags)")
         if (restoList.filter {$0.restoCity == resto.restoCity && $0.restoName == resto.restoName}).count > 0{
             return false
         }else{
@@ -184,7 +179,7 @@ enum BasicCity: String, CaseIterable {
     }
 
 
-enum BasicFood:String, CaseIterable{
+enum BasicFoodTemp:String, CaseIterable{
     case Burger = "burger"
     case Italian = "italian"
     case Pizza = "pizza"

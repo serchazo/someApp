@@ -40,7 +40,7 @@ class FoodType{
         self.icon = icon
     }
     
-    // Turn GroceryItem to a Dictionary
+    // Turn FoodType to a Dictionary
     func toAnyObject() -> Any {
         return[
             "geography" : geography,

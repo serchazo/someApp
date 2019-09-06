@@ -7,19 +7,42 @@
 //
 
 import UIKit
+import Firebase
 
 class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
-    var user:BasicUser!
+    var user:User!
     var currentCity:BasicCity = .Singapore
+    var rankings:[Ranking] = []
     
-    //var selectedRow = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        print("Hello \(user.userName)")
+        
+        // 1. Get the logged in user - needed for the next step
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            // 2. Once we get the user, update!
+            basicModel.dbRankingsPerUser.child("userTest").observe(.value, with: {snapshot in
+                //
+                var tmpRankings: [Ranking] = []
+                
+                for ranksPerUserAny in snapshot.children {
+                    if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
+                        let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
+                            tmpRankings.append(rankingItem)
+                    }
+                }
+                self.rankings = tmpRankings
+                self.myRanksTable.reloadData()
+            })
+        }
     }
+    
+    //
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -42,7 +65,8 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
     
     // MARK: - Navigation
     func addRankingReceiveInfoToCreate(basicCity: BasicCity, basicFood: String) {
-        //Update the list
+        // TODO : Update the list
+        /*
         if (user.myRankings.filter {$0.cityOfRanking == basicCity && $0.typeOfFood == basicFood}).count == 0 {
             user.myRankings.append(BasicRanking(cityOfRanking: basicCity, typeOfFood: basicFood))
             myRanksTable.reloadData()
@@ -62,7 +86,7 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
             }))
             present(alert, animated: false, completion: nil)
             
-        }
+        }*/
     }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -74,8 +98,9 @@ class MyRanksViewController: UIViewController, MyRanksAddRankingViewDelegate {
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     seguedMVC.currentCity = self.currentCity
-                    seguedMVC.currentFood = user.myRankings[tmpIndexPath.row].typeOfFood
-                    seguedMVC.currentRanking = user.myRankings[tmpIndexPath.row]
+                    // TODO : nah
+                    seguedMVC.currentFood = "" //user.myRankings[tmpIndexPath.row].typeOfFood
+                    //seguedMVC.currentRanking = user.myRankings[tmpIndexPath.row]
                 }
             }
         case "addRanking":
@@ -98,7 +123,7 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
-        case 0: return user.myRankings.count
+        case 0: return rankings.count
         case 1: return 1
         default: return 0
         }
@@ -113,8 +138,8 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.cellIcon.text = "\(indexPath.row)"
-                cell.cellTitle.text = user.myRankings[indexPath.row].typeOfFood
-                cell.cellCity.text = user.myRankings[indexPath.row].cityOfRanking.rawValue
+                cell.cellTitle.text = rankings[indexPath.row].foodKey
+                cell.cellCity.text = rankings[indexPath.row].city
             }
             return tmpCell
         }else{
@@ -187,10 +212,10 @@ extension MyRanksViewController: UITableViewDropDelegate{
                 // Garde-fous: we need to keep the view and model in synch
                 myRanksTable.performBatchUpdates(
                     {
-                        //Update the model here
-                        let tempRanking = user.myRankings[sourceIndexPath.row]
-                        user.myRankings.remove(at: sourceIndexPath.row)
-                        user.myRankings.insert(tempRanking, at: destinationIndexPath.row)
+                        // TODO : Update the model here
+                        //let tempRanking = user.myRankings[sourceIndexPath.row]
+                        //user.myRankings.remove(at: sourceIndexPath.row)
+                        //user.myRankings.insert(tempRanking, at: destinationIndexPath.row)
                         // DO NOT RELOAD DATA HERE!!
                         // Delete row and then insert row instead
                         myRanksTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
