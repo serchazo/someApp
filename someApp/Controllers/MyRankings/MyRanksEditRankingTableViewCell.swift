@@ -14,7 +14,7 @@ class MyRanksEditRankingTableViewCell: UITableViewCell {
     @IBOutlet weak var restoName: UILabel!
     @IBOutlet weak var restoTmpInfo: UILabel!
     
-    var restoForThisCell:BasicResto!
+    var restoForThisCell:Resto!
     
     override func awakeFromNib() {
         super.awakeFromNib()

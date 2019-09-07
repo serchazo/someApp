@@ -14,6 +14,9 @@ class BasicModel{
     let dbRootRef: DatabaseReference!
     let dbFoodTypeRoot: DatabaseReference!
     let dbRankingsPerUser: DatabaseReference!
+    let dbRanking: DatabaseReference!
+    let dbResto: DatabaseReference!
+    let dbRestoPoints : DatabaseReference!
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
@@ -25,6 +28,9 @@ class BasicModel{
         dbRootRef = Database.database().reference()
         dbFoodTypeRoot = dbRootRef.child("foodType")
         dbRankingsPerUser = dbRootRef.child("rankingsPerUser")
+        dbRanking = dbRootRef.child("rankingDetail")
+        dbResto = dbRootRef.child("resto")
+        dbRestoPoints = dbRootRef.child("resto-points")
         
         // Old one
         for city in BasicCity.allCases{

@@ -15,11 +15,11 @@ class Ranking{
     let city: String
     let foodKey: String
     
-    init(city: String, foodKey: String, key: String = ""){
+    init(city: String, foodKey: String){
         self.ref = nil
         self.city = city
         self.foodKey = foodKey
-        self.key = key
+        self.key = city.lowercased() + "-" + foodKey
     }
     
     init?(snapshot: DataSnapshot){

@@ -28,7 +28,7 @@ class MyRanksViewController: UIViewController {
             
             // 2. Once we get the user, update!
             self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
-            self.rankingReferenceForUser.observe(.value, with: {snapshot in
+            self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
                 //
                 var tmpRankings: [Ranking] = []
                 
@@ -98,10 +98,11 @@ extension MyRanksViewController: MyRanksAddRankingViewDelegate{
         if (rankings.filter {$0.city == inCity && $0.foodKey == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
             let newRanking = Ranking(city: inCity, foodKey: withFood.key)
-            // Create a child reference with autoID
-            let newRankingRef = rankingReferenceForUser.childByAutoId()
-            // set value
+            // Create a child reference and update the value
+            let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
+            
+            
         }else{
             // Resto already in list
             let alert = UIAlertController(
