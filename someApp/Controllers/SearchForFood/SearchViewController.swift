@@ -96,6 +96,8 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
             case "GoNinjaGo":
                 if let cell = sender as? SearchFoodCell,
                     //Don't forget the outlet colllectionView to avoid the ambiguous ref
+                    
+                    
                     let indexPath = collectionView.indexPath(for: cell),
                     let seguedDestinationVC = segue.destination as? RestoRankViewController{
                     seguedDestinationVC.currentFood = foodList[indexPath.row]

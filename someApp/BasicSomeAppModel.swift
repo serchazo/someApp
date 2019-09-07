@@ -32,19 +32,6 @@ class BasicModel{
         dbResto = dbRootRef.child("resto")
         dbRestoPoints = dbRootRef.child("resto-points")
         
-        // Old one
-        for city in BasicCity.allCases{
-            for food in BasicFoodTemp.allCases{
-                for n in 1...5 {
-                    let tmpResto = BasicResto(restoCity: city, restoName: "\(food.rawValue) resto \(city.rawValue) \(n)")
-                    tmpResto.shortDescription = "This is a short description of \(tmpResto.restoName) in the city of\(tmpResto.restoCity.rawValue)"
-                    tmpResto.restoURL = URL(string: "https://www.google.com")
-                    tmpResto.tags.append(food.rawValue)
-                    tmpResto.comments.append(Comment(date: Date(), user: "user1", commentText: "Terrific restorant!"))
-                    modelRestoList.append(tmpResto)
-                }
-            }
-        }
     }
     // Some getters
     func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
@@ -169,11 +156,6 @@ class BasicRanking{
 enum BasicSelection:String {
     case City
     case Food
-}
-
-struct BasicPoint {
-    let typeOfFood: String
-    var nbPoints: Int
 }
 
 enum BasicCity: String, CaseIterable {

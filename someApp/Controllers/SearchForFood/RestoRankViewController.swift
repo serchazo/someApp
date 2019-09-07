@@ -7,13 +7,16 @@
 //
 
 import UIKit
+import Firebase
 
 class RestoRankViewController: UIViewController {
+    var restoDatabaseReference: DatabaseReference!
+    var restoPointsDatabaseReference: DatabaseReference!
+    var thisRanking: [Resto] = []
     
     // Class Variables
     var currentCity: BasicCity!
     var currentFood: FoodType!
-    var currentRestoList: [BasicResto]!
     let refreshControl = UIRefreshControl()
 
     
@@ -36,13 +39,12 @@ class RestoRankViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Initialize the current resto list
-        if currentFood != nil{
-            currentRestoList = basicModel.getSomeRestoList(fromCity: currentCity,
-                ofFoodType: currentFood).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
-        }else{
-            currentRestoList = basicModel.getSomeRestoList(fromCity: currentCity).sorted(by: {$0.numberOfPoints > $1.numberOfPoints})
-        }
+        //Initialize the references
+        let tmpRef = basicModel.dbRestoPoints.child(currentCity.rawValue)
+        restoPointsDatabaseReference = tmpRef.child(currentFood.key)
+        restoDatabaseReference = basicModel.dbResto
+        
+        updateTableFromDatabase()
         
         //Some setup
         restoRankTableView.tableHeaderView = restoRankTableHeader
@@ -53,6 +55,42 @@ class RestoRankViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
+    ///
+    func updateTableFromDatabase(){
+        restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
+            var count = 0
+            var tmpRestoList:[Resto] = []
+            // I. Get the values
+            for child in snapshot.children{
+                if let snapChild = child as? DataSnapshot,
+                    let value = snapChild.value as? [String: AnyObject],
+                    let points = value["points"] as? Int{
+                    // II. Get the restaurants
+                    self.restoDatabaseReference.child(snapChild.key).observeSingleEvent(of: .value, with: {shot in
+                        let tmpResto = Resto(snapshot: shot)
+                        if tmpResto != nil {
+                            tmpResto!.nbPoints = points
+                            print(tmpResto!.url.absoluteString)
+                            tmpRestoList.append(tmpResto!)
+                        }
+                        // Trick! If we have processed all children then we reload the Data
+                        count += 1
+                        if count == snapshot.childrenCount {
+                            self.thisRanking = tmpRestoList
+                            self.thisRanking.sort(by: {$0.nbPoints > $1.nbPoints})
+                            self.restoRankTableView.reloadData()
+                        }
+                        
+                    })
+                    
+                }
+                
+            }
+        })
+    }
+    
+    
+    ///
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -81,7 +119,7 @@ class RestoRankViewController: UIViewController {
                     let indexPath = tableView.indexPath(for: cell),
                     let seguedToResto = segue.destination as? RestoDetailViewController{
                     // Segue
-                    seguedToResto.currentResto = currentRestoList[indexPath.row]
+                    seguedToResto.currentResto = thisRanking[indexPath.row]
                 }
             
                 
@@ -94,16 +132,16 @@ class RestoRankViewController: UIViewController {
 // MARK : Table stuff
 extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentRestoList.count
+        return thisRanking.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
             //Configure the cell
-            let thisResto = currentRestoList[indexPath.row]
-            cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.restoName, attributes: [.font : restorantNameFont])
-            cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.numberOfPoints)", attributes: [.font : restorantPointsFont])
-            cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.address, attributes: [.font : restorantAddressFont])
+            let thisResto = thisRanking[indexPath.row]
+            cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
+            cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
+            cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])
             
             return cell
         }else{

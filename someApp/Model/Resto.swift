@@ -15,6 +15,7 @@ class Resto{
     let name: String
     var url: URL!
     let city: String
+    var nbPoints:Int = 0 //This is a helper value, don't put on the -> Any
     
     
     init(name: String, city: String, url: String = "") {
@@ -38,7 +39,7 @@ class Resto{
         self.name = name
         self.city = city
         
-        if let url = value["url"] as? String {self.url = URL(fileURLWithPath: url)} else {self.url = nil}
+        if let url = value["url"] as? String {self.url = URL(string: url) } else {self.url = nil}
     }
     
     // Turn Ranking to a Dictionary

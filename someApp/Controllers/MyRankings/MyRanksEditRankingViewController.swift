@@ -60,7 +60,6 @@ class MyRanksEditRankingViewController: UIViewController {
                         let tmpResto = Resto(snapshot: shot)
                         if tmpResto != nil {
                             tmpRanking[position-1] = tmpResto!
-                            //tmpRanking.insert(tmpResto!, at: (position-1))
                         }
                         // Trick! If we have processed all children then we reload the Data
                         count += 1
@@ -198,14 +197,14 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
         
         // II. Update the number of points
         // II.1. First get the number of points
-        restoPointsDatabaseReference.observeSingleEvent(of: .value, with: {snapshot in
+        restoPointsDatabaseReference.child(key).observeSingleEvent(of: .value, with: {snapshot in
             var currentPoints:Int
             if let value = snapshot.value as? [String: AnyObject],
-                let points = value[key] as? Int
+                let points = value["points"] as? Int
             {
                 currentPoints = points
                 // II.2. Then update
-                self.restoPointsDatabaseReference.updateChildValues([key:(currentPoints + (15-position-1))])
+                self.restoPointsDatabaseReference.child(key).updateChildValues(["points":(currentPoints + (15-position-1))])
             }
         })
         

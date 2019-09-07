@@ -11,7 +11,7 @@ import SafariServices
 
 class RestoDetailViewController: UIViewController {
     
-    var currentResto: BasicResto!
+    var currentResto: Resto!
     
     @IBOutlet weak var restoDetailTable: UITableView!{
         didSet{
@@ -38,6 +38,7 @@ class RestoDetailViewController: UIViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        /*
         switch(identifier){
         case "showMapDetail":
             if currentResto.mapItems.count > 0{
@@ -63,9 +64,11 @@ class RestoDetailViewController: UIViewController {
             }
         default: return false
         }
-        
+ */
+        return true 
     }
     
+    /*
     //Prepare
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -77,7 +80,7 @@ class RestoDetailViewController: UIViewController {
             }
         default:break
         }
-    }
+    }*/
 }
 
 extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
@@ -88,17 +91,17 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
         case 0: return 4
-        case 1: return currentResto.comments.count // number of comments
+        case 1: return 0 //currentResto.comments.count // number of comments
         default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && indexPath.row == 2 {
-            if currentResto.restoURL != nil{
+            if currentResto.url != nil{
                 let config = SFSafariViewController.Configuration()
                 config.entersReaderIfAvailable = true
-                let vc = SFSafariViewController(url: currentResto.restoURL!, configuration: config)
+                let vc = SFSafariViewController(url: currentResto.url, configuration: config)
                 present(vc, animated: true)
             }
         }
@@ -108,17 +111,17 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RestoNameCell", for: indexPath)
-                cell.textLabel!.text = currentResto!.restoName
+                cell.textLabel!.text = currentResto.name
                 return cell
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RestoAddressCell", for: indexPath)
                 cell.textLabel!.text = "Address: "
-                cell.detailTextLabel!.text = currentResto!.address
+                cell.detailTextLabel!.text = "Need to get address" //currentResto!.address
                 return cell
             }else if indexPath.row == 2 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RestoURLCell", for: indexPath)
                 cell.textLabel!.text = "URL: "
-                cell.detailTextLabel!.text = currentResto!.restoURL?.absoluteString
+                cell.detailTextLabel!.text = currentResto.url.absoluteString
                 return cell
             }else{
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsTitleCell", for: indexPath)
@@ -127,7 +130,7 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
             }
         }else{
             if let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsCell", for: indexPath) as? RestoDetailCommentCell{
-                cell.comment = currentResto!.comments[indexPath.row]
+                //cell.comment = "TODO: comment" //currentResto!.comments[indexPath.row]
                 cell.dateLabel.text = "1 Jan 1979"
                 cell.userLable.text = "some user"
                 cell.commentLabel.text = "This resto is terrific!"
