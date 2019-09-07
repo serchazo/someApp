@@ -27,21 +27,26 @@ class MyRanksViewController: UIViewController {
             self.user = user
             
             // 2. Once we get the user, update!
-            self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
-            self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
-                //
-                var tmpRankings: [Ranking] = []
-                
-                for ranksPerUserAny in snapshot.children {
-                    if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
-                        let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
-                            tmpRankings.append(rankingItem)
-                    }
-                }
-                self.rankings = tmpRankings
-                self.myRanksTable.reloadData()
-            })
+            self.updateTablewithRanking()
+            
         }
+    }
+    
+    func updateTablewithRanking(){
+        self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
+        self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
+            //
+            var tmpRankings: [Ranking] = []
+            
+            for ranksPerUserAny in snapshot.children {
+                if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
+                    let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
+                    tmpRankings.append(rankingItem)
+                }
+            }
+            self.rankings = tmpRankings
+            self.myRanksTable.reloadData()
+        })
     }
     
     //
@@ -73,10 +78,9 @@ class MyRanksViewController: UIViewController {
             if let seguedMVC = segue.destination as? MyRanksEditRankingViewController{
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
+                    // HERE
                     seguedMVC.currentCity = self.currentCity
-                    // TODO : nah
-                    seguedMVC.currentFood = "" //user.myRankings[tmpIndexPath.row].typeOfFood
-                    //seguedMVC.currentRanking = user.myRankings[tmpIndexPath.row]
+                    seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
                 }
             }
         case "addRanking":
@@ -101,10 +105,10 @@ extension MyRanksViewController: MyRanksAddRankingViewDelegate{
             // Create a child reference and update the value
             let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
-            
+            updateTablewithRanking()
             
         }else{
-            // Resto already in list
+            // Ranking already in list
             let alert = UIAlertController(
                 title: "Duplicate ranking",
                 message: "You already have a \(withFood.name) ranking in \(inCity).",

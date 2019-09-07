@@ -77,19 +77,21 @@ class MyRanksEditRankingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        thisRankingId = "singapore-burger"
-        thisRankingFoodKey = "burger"
-        // TODO : Get the logged in user
-        
-        
-        // Update the DB References
-        rankingDatabaseReference = basicModel.dbRanking.child("userTest"+"-"+thisRankingId)
-        restoDatabaseReference = basicModel.dbResto
-        let tmpRef = basicModel.dbRestoPoints.child(currentCity.rawValue)
-        restoPointsDatabaseReference = tmpRef.child(thisRankingFoodKey)
-        
-        updateTableFromDatabase()
-   
+        thisRankingId = currentCity.rawValue.lowercased() + "-" + currentFood
+        // Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            // Update the DB References
+            self.rankingDatabaseReference = basicModel.dbRanking.child(user.uid+"-"+self.thisRankingId)
+            self.restoDatabaseReference = basicModel.dbResto
+            let tmpRef = basicModel.dbRestoPoints.child(self.currentCity.rawValue)
+            self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
+            
+            self.updateTableFromDatabase()
+        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
