@@ -17,6 +17,7 @@ class BasicModel{
     let dbRanking: DatabaseReference!
     let dbResto: DatabaseReference!
     let dbRestoPoints : DatabaseReference!
+    let dbRestoAddress : DatabaseReference!
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
@@ -31,6 +32,7 @@ class BasicModel{
         dbRanking = dbRootRef.child("rankingDetail")
         dbResto = dbRootRef.child("resto")
         dbRestoPoints = dbRootRef.child("resto-points")
+        dbRestoAddress = dbRootRef.child("resto-address")
         
     }
     // Some getters

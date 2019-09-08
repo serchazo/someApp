@@ -70,7 +70,6 @@ class RestoRankViewController: UIViewController {
                         let tmpResto = Resto(snapshot: shot)
                         if tmpResto != nil {
                             tmpResto!.nbPoints = points
-                            print(tmpResto!.url.absoluteString)
                             tmpRestoList.append(tmpResto!)
                         }
                         // Trick! If we have processed all children then we reload the Data

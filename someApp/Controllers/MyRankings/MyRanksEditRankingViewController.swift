@@ -17,11 +17,11 @@ class MyRanksEditRankingViewController: UIViewController {
     var rankingDatabaseReference: DatabaseReference!
     var restoDatabaseReference: DatabaseReference!
     var restoPointsDatabaseReference: DatabaseReference!
+    var restoAddressDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
     
     //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
-    var currentFood: String = ""
     
     // Outlets
     @IBOutlet weak var editRankingTable: UITableView!{
@@ -76,7 +76,7 @@ class MyRanksEditRankingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        thisRankingId = currentCity.rawValue.lowercased() + "-" + currentFood
+        thisRankingId = currentCity.rawValue.lowercased() + "-" + thisRankingFoodKey
         // Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -87,6 +87,7 @@ class MyRanksEditRankingViewController: UIViewController {
             self.restoDatabaseReference = basicModel.dbResto
             let tmpRef = basicModel.dbRestoPoints.child(self.currentCity.rawValue)
             self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
+            self.restoAddressDatabaseReference = basicModel.dbRestoAddress
             
             self.updateTableFromDatabase()
         }
@@ -109,9 +110,7 @@ class MyRanksEditRankingViewController: UIViewController {
         if let seguedMVC = segue.destination as? MyRanksMapSearchViewController{
             seguedMVC.delegate = self
         }
-        
     }
-
 }
 
 // MARK: Extension for the Table stuff
@@ -139,7 +138,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                 cell.restoImage.text = "Pic"
                 let restoName = "\(indexPath.row + 1). \(thisRanking[indexPath.row].name)"
                 cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
-                let restoAddress = "Get address" //thisRanking[indexPath.row]
+                let restoAddress = thisRanking[indexPath.row].address
                 cell.restoTmpInfo.attributedText = NSAttributedString(string: restoAddress, attributes: [.font : restorantAddressFont])
             }
             return tmpCell
@@ -156,37 +155,66 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
         // Build a tmpResto with the data from the delegation
         let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.rawValue)
-        if someMapItem.url != nil{
-            tmpResto.url = someMapItem.url!
+        // Add details
+        if someMapItem.url != nil{ tmpResto.url = someMapItem.url! }
+        if someMapItem.phoneNumber != nil {tmpResto.phoneNumber = someMapItem.phoneNumber!}
+        if someMapItem.placemark.formattedAddress != nil {
+            tmpResto.address = someMapItem.placemark.formattedAddress!
         }
         
         // 1. Verify if the resto exists in the ranking
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()
         }else{
-            addRestoToModel(resto: tmpResto)
-            addRestoToRanking(key: tmpResto.key, position: thisRanking.count)
-            updateTableFromDatabase()
+            addRestoToModel(resto: tmpResto, withMapItem: someMapItem)
         }
-        editRankingTable.reloadData()
     }
     
     // Add resto to model
-    func addRestoToModel(resto: Resto){
-        // 2. Verify if the resto exists in the resto list
+    func addRestoToModel(resto: Resto, withMapItem: MKMapItem){
+        // A. Check if the resto exists in the resto list
         restoDatabaseReference.child(resto.key).observeSingleEvent(of: .value, with: { (snapshot) in
             if snapshot.exists() {
-                print("No need to Add")
+                //I. if it exists, then do nothing
+                //print("No need to Add")
             }else{
-                // Create a child reference with autoID and set the value
+                // II. We need to add the resto many places
+                
+                // Add the resto to the Resto table
                 let newRankingRef = self.restoDatabaseReference.child(resto.key)
                 newRankingRef.setValue(resto.toAnyObject())
+                
+                // Add the resto to the Points table
+                let newRankingCityPointsRef = self.restoPointsDatabaseReference.child(resto.key)
+                let newRankingNbPointsRef = newRankingCityPointsRef.child("points")
+                newRankingNbPointsRef.setValue(0)
+                
+                // Add the resto to the Address table
+                self.addrestoAddressToModel(mapItem: withMapItem, toRestoKey: resto.key)
             }
+            // B. even if it exists, we add to our ranking
+            self.addRestoToRanking(key: resto.key, position: self.thisRanking.count)
+            self.updateTableFromDatabase()
         })
     }
     
-    func positionToAny(position: Int, restoKey: String) -> Any{
-        return ["position": position, "restoId": restoKey]
+    // Add restoAddressToModel
+    func addrestoAddressToModel(mapItem: MKMapItem, toRestoKey: String){
+        
+        let restoAddress = RestoMapArray(fromMapItem: mapItem)
+        let encoder = JSONEncoder()
+        
+        do {
+            let encodedMapItem = try encoder.encode(restoAddress)
+            let encodedMapItemForFirebase = NSString(data: encodedMapItem, encoding: String.Encoding.utf8.rawValue)
+            //let str = String(decoding: encoded, as: UTF8.self)
+            let newRestoAddressRef = restoAddressDatabaseReference.child(toRestoKey)
+            let again = newRestoAddressRef.child("address")
+            again.setValue(encodedMapItemForFirebase)
+            
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     // Add resto to ranking
@@ -226,6 +254,11 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
         }))
         present(alert, animated: false, completion: nil)
     }
+    // Helper func to convert to Any
+    func positionToAny(position: Int, restoKey: String) -> Any{
+        return ["position": position, "restoId": restoKey]
+    }
+    
 }
 
 
