@@ -657,7 +657,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="upN-uG-cpb" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <customObject id="Vuo-Gd-sCT" customClass="LocationManager" customModule="someApp" customModuleProvider="target"/>
             </objects>
-            <point key="canvasLocation" x="4452" y="992"/>
+            <point key="canvasLocation" x="4626" y="1316"/>
         </scene>
         <!--Resto Detail View Controller-->
         <scene sceneID="21f-mp-yMa">

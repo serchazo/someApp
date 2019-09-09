@@ -14,11 +14,17 @@ class MyRanksEditRankingViewController: UIViewController {
     var user: User!
     var thisRankingId: String!
     var thisRankingFoodKey: String!
+    var thisRankingDescription: String = ""
     var rankingDatabaseReference: DatabaseReference!
+    var rankingsPeruserDBRef: DatabaseReference!
     var restoDatabaseReference: DatabaseReference!
     var restoPointsDatabaseReference: DatabaseReference!
     var restoAddressDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
+    
+    //For Edit the description swipe-up
+    var transparentView = UIView()
+    var editDescriptionTableView = UITableView()
     
     //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
@@ -42,8 +48,54 @@ class MyRanksEditRankingViewController: UIViewController {
         return tmpRestoList
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        thisRankingId = currentCity.rawValue.lowercased() + "-" + thisRankingFoodKey
+        // Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            // Update the DB References
+            self.rankingDatabaseReference = basicModel.dbRanking.child(user.uid+"-"+self.thisRankingId)
+            let tmpRankingsPeruser = basicModel.dbRankingsPerUser.child(user.uid)
+            self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
+            
+            self.restoDatabaseReference = basicModel.dbResto
+            
+            let tmpRef = basicModel.dbRestoPoints.child(self.currentCity.rawValue)
+            self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
+            self.restoAddressDatabaseReference = basicModel.dbRestoAddress
+            
+            self.updateTableFromDatabase()
+        }
+        
+        // Define the properties for the editDescription TableView
+        editDescriptionTableView.delegate = self
+        editDescriptionTableView.dataSource = self
+        editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Deselect the row when segued pops
+        if let indexPath = editRankingTable.indexPathForSelectedRow {
+            editRankingTable.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
     // Call this function to update the table
     func updateTableFromDatabase(){
+        // Get the description
+        self.rankingsPeruserDBRef.observeSingleEvent(of: .value, with: {snapshot in
+            if let rankingItem = Ranking(snapshot: snapshot){
+                self.thisRankingDescription = rankingItem.description
+            }
+        })
+        
+        // Big update
         self.rankingDatabaseReference.observeSingleEvent(of: .value, with: {snapshot in
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
             var count = 0
@@ -73,36 +125,6 @@ class MyRanksEditRankingViewController: UIViewController {
         })
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        thisRankingId = currentCity.rawValue.lowercased() + "-" + thisRankingFoodKey
-        // Get the logged in user
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            
-            // Update the DB References
-            self.rankingDatabaseReference = basicModel.dbRanking.child(user.uid+"-"+self.thisRankingId)
-            self.restoDatabaseReference = basicModel.dbResto
-            let tmpRef = basicModel.dbRestoPoints.child(self.currentCity.rawValue)
-            self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
-            self.restoAddressDatabaseReference = basicModel.dbRestoAddress
-            
-            self.updateTableFromDatabase()
-        }
-
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Deselect the row when segued pops
-        if let indexPath = editRankingTable.indexPathForSelectedRow {
-            editRankingTable.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -117,40 +139,139 @@ class MyRanksEditRankingViewController: UIViewController {
 extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        // test if the table is the EditDescription pop-up
+        if tableView == self.editDescriptionTableView{
+            return 1
+        }else{
+            // the normal table
+            return 3
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section){
-        case 0:
+        // test if the table is the EditDescription pop-up
+        if tableView == self.editDescriptionTableView{
             return 1
-        case 1:
-            return thisRanking.count
-        case 2: return 1
-        default: return 0
+        }else{
+            // The normal table
+            switch(section){
+            case 0:
+                return 1
+            case 1:
+                return thisRanking.count
+            case 2: return 1
+            default: return 0
+            }
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath)
-            
-            return cell
-        }
-        else if indexPath.section == 1 {
-            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
-            if let cell = tmpCell as? MyRanksEditRankingTableViewCell {
-                cell.restoForThisCell = thisRanking[indexPath.row]
-                cell.restoImage.text = "Pic"
-                let restoName = "\(indexPath.row + 1). \(thisRanking[indexPath.row].name)"
-                cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
-                let restoAddress = thisRanking[indexPath.row].address
-                cell.restoTmpInfo.attributedText = NSAttributedString(string: restoAddress, attributes: [.font : restorantAddressFont])
+        // test if the table is the EditDescription pop-up
+        if tableView == self.editDescriptionTableView{
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "EditDescriptionCell", for: indexPath) as? MyRanksEditDescriptionCell{
+                return cell
+            }else{
+                fatalError("Unable to create cell")
             }
-            return tmpCell
             
         }else{
-            return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
+            // The normal table
+            if indexPath.section == 0 {
+                // The Description cell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath)
+                cell.detailTextLabel!.text = thisRankingDescription
+                return cell
+            }
+            else if indexPath.section == 1 {
+                // Restaurants cells
+                let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
+                if let cell = tmpCell as? MyRanksEditRankingTableViewCell {
+                    cell.restoForThisCell = thisRanking[indexPath.row]
+                    cell.restoImage.text = "Pic"
+                    let restoName = "\(indexPath.row + 1). \(thisRanking[indexPath.row].name)"
+                    cell.restoName.attributedText = NSAttributedString(string: restoName, attributes: [.font: restorantNameFont])
+                    let restoAddress = thisRanking[indexPath.row].address
+                    cell.restoTmpInfo.attributedText = NSAttributedString(string: restoAddress, attributes: [.font : restorantAddressFont])
+                }
+                return tmpCell
+                
+            }else{
+                // The last cell : Add resto to ranking
+                return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
+            }
+        }
+    }
+    
+    // If we press on a cell
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == self.editRankingTable && indexPath.section == 0{
+            print("let's Edit!")
+            
+            
+            let window = UIApplication.shared.keyWindow
+            transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            transparentView.frame = self.view.frame
+            window?.addSubview(transparentView)
+            
+            // Add the table
+            let screenSize = UIScreen.main.bounds.size
+            editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height * 0.8)
+            window?.addSubview(editDescriptionTableView)
+            
+            // Go back to "normal" if we tap
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
+            transparentView.addGestureRecognizer(tapGesture)
+            
+            // Cool "slide-up" animation when appearing
+            transparentView.alpha = 0
+            UIView.animate(withDuration: 0.5,
+                           delay: 0,
+                           usingSpringWithDamping: 1.0,
+                           initialSpringVelocity: 1.0,
+                           options: .curveEaseInOut,
+                           animations: {
+                            self.transparentView.alpha = 0.5 //Start at 0, go to 0.5
+                            self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height - screenSize.height * 0.8 , width: screenSize.width, height: screenSize.height * 0.8)
+                            },
+                           completion: nil)
+            
+          
+        }
+    }
+    
+    @objc func onClickTransparentView(){
+        // Animation when disapearing
+        let screenSize = UIScreen.main.bounds.size
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.transparentView.alpha = 0 //Start at value above, go to 0
+                        self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height , width: screenSize.width, height: screenSize.height * 0.8)
+                        },
+                       completion: nil)
+        
+        // Deselect the row to go back to normal
+        if let indexPath = editRankingTable.indexPathForSelectedRow {
+            editRankingTable.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Test if it's the Edit Description table
+        if tableView == self.editDescriptionTableView {
+            return 450
+        }else{
+            // The normal table
+            if indexPath.section == 2 {
+                let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
+                return CGFloat(cellHeight)
+            }else{
+                return UITableView.automaticDimension
+            }
+            
         }
     }
 }
@@ -213,7 +334,6 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
         do {
             let encodedMapItem = try encoder.encode(restoAddress)
             let encodedMapItemForFirebase = NSString(data: encodedMapItem, encoding: String.Encoding.utf8.rawValue)
-            //let str = String(decoding: encoded, as: UTF8.self)
             let newRestoAddressRef = restoAddressDatabaseReference.child(toRestoKey)
             let again = newRestoAddressRef.child("address")
             again.setValue(encodedMapItemForFirebase)
@@ -268,7 +388,7 @@ extension MyRanksEditRankingViewController: MyRanksMapSearchViewDelegate{
 }
 
 
-// MARK: Some view stuff
+// MARK: The fonts
 extension MyRanksEditRankingViewController{
     private var iconFont: UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
@@ -280,16 +400,6 @@ extension MyRanksEditRankingViewController{
     
     private var restorantAddressFont:UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 2 {
-            let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
-            return CGFloat(cellHeight)
-        }else{
-            return UITableView.automaticDimension
-        }
-        
     }
 }
 

@@ -18,6 +18,7 @@ class BasicModel{
     let dbResto: DatabaseReference!
     let dbRestoPoints : DatabaseReference!
     let dbRestoAddress : DatabaseReference!
+    let themeColor : UIColor!
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
@@ -33,6 +34,7 @@ class BasicModel{
         dbResto = dbRootRef.child("resto")
         dbRestoPoints = dbRootRef.child("resto-points")
         dbRestoAddress = dbRootRef.child("resto-address")
+        themeColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
         
     }
     // Some getters

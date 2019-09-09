@@ -97,6 +97,8 @@ class MyRanksViewController: UIViewController {
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     // HERE
+                    
+                    // I should send Ranking, Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
                 }
