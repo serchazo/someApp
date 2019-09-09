@@ -10,10 +10,9 @@ import UIKit
 
 class MyRanksTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var cellIcon: UILabel!
-    @IBOutlet weak var cellTitle: UILabel!
-    
-    @IBOutlet weak var cellCity: UILabel!
+    @IBOutlet weak var iconLabel: UILabel!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     
     override func awakeFromNib() {
@@ -23,8 +22,9 @@ class MyRanksTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
+    
+    
 
 }

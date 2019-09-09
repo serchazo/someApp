@@ -14,12 +14,14 @@ class Ranking{
     let key: String
     let city: String
     let foodKey: String
+    let description: String
     
-    init(city: String, foodKey: String){
+    init(city: String, foodKey: String, description: String = ""){
         self.ref = nil
         self.city = city
         self.foodKey = foodKey
         self.key = city.lowercased() + "-" + foodKey
+        self.description = description
     }
     
     init?(snapshot: DataSnapshot){
@@ -29,6 +31,10 @@ class Ranking{
             let foodKey = value["foodKey"] as? String else {
                 return nil
         }
+        if let description = value["description"] as? String{
+            self.description = description
+        } else { self.description = ""}
+        
         self.ref = snapshot.ref
         self.key = snapshot.key
         self.city = city
@@ -39,6 +45,7 @@ class Ranking{
     func toAnyObject() -> Any {
         return[
             "city" : city,
-            "foodKey" : foodKey]
+            "foodKey" : foodKey,
+            "description" : description]
     }
 }

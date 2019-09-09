@@ -8,10 +8,13 @@
 
 import UIKit
 import SafariServices
+import Firebase
+import MapKit
 
 class RestoDetailViewController: UIViewController {
-    
     var currentResto: Resto!
+    var dbAddressReference: DatabaseReference!
+    var mapItem: MKMapItem!
     
     @IBOutlet weak var restoDetailTable: UITableView!{
         didSet{
@@ -23,6 +26,7 @@ class RestoDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        dbAddressReference = basicModel.dbRestoAddress.child(currentResto.key)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,6 +42,17 @@ class RestoDetailViewController: UIViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        // Get the map from the database
+        self.dbAddressReference.observeSingleEvent(of: .value, with: {snapshot in
+            let value = snapshot.value as? [String: AnyObject]
+            //let tmpMapItem:MKMapItem = RestoMapArray(from: address!).restoMapItem
+            //let str = String(decoding: encoded, as: UTF8.self)
+
+            
+        })
+        
+        return false 
+        
         /*
         switch(identifier){
         case "showMapDetail":
@@ -65,7 +80,6 @@ class RestoDetailViewController: UIViewController {
         default: return false
         }
  */
-        return true 
     }
     
     /*
@@ -90,14 +104,21 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
-        case 0: return 4
+        case 0: return 5
         case 1: return 0 //currentResto.comments.count // number of comments
         default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && indexPath.row == 2 {
+        //Call the restaurant
+        if indexPath.section == 0 && indexPath.row == 2{
+            let tmpModifiedPhone = String(currentResto.phoneNumber.filter { !" \n\t\r".contains($0) })
+            guard let number = URL(string: "tel://" + tmpModifiedPhone) else { return }
+            UIApplication.shared.open(number)
+        }
+        //Go to URL
+        else if indexPath.section == 0 && indexPath.row == 3 {
             if currentResto.url != nil{
                 let config = SFSafariViewController.Configuration()
                 config.entersReaderIfAvailable = true
@@ -106,6 +127,9 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
             }
         }
     }
+    
+
+    //
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
@@ -116,9 +140,14 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RestoAddressCell", for: indexPath)
                 cell.textLabel!.text = "Address: "
-                cell.detailTextLabel!.text = "Need to get address" //currentResto!.address
+                cell.detailTextLabel!.text = currentResto!.address
                 return cell
             }else if indexPath.row == 2 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "RestoPhoneCell", for: indexPath)
+                cell.textLabel!.text = "Phone: "
+                cell.detailTextLabel!.text = currentResto.phoneNumber
+                return cell
+            }else if indexPath.row == 3 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RestoURLCell", for: indexPath)
                 cell.textLabel!.text = "URL: "
                 cell.detailTextLabel!.text = currentResto.url.absoluteString

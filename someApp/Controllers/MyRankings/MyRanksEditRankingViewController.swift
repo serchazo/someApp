@@ -117,21 +117,27 @@ class MyRanksEditRankingViewController: UIViewController {
 extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
         case 0:
+            return 1
+        case 1:
             return thisRanking.count
-        case 1: return 1
+        case 2: return 1
         default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath)
+            
+            return cell
+        }
+        else if indexPath.section == 1 {
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
             if let cell = tmpCell as? MyRanksEditRankingTableViewCell {
                 cell.restoForThisCell = thisRanking[indexPath.row]
@@ -277,8 +283,13 @@ extension MyRanksEditRankingViewController{
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
-        return CGFloat(cellHeight)
+        if indexPath.section == 2 {
+            let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
+            return CGFloat(cellHeight)
+        }else{
+            return UITableView.automaticDimension
+        }
+        
     }
 }
 

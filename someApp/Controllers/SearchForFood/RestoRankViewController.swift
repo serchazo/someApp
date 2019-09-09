@@ -100,10 +100,9 @@ class RestoRankViewController: UIViewController {
     }
     
     @objc private func refreshData(_ sender: Any) {
-        // Fetch Weather Data
-        restoRankTableView.reloadData()
+        // If pull down the table, then refresh data
+        updateTableFromDatabase()
         self.refreshControl.endRefreshing()
-        //self.activityIndicatorView.stopAnimating()
     }
     
 
@@ -120,8 +119,6 @@ class RestoRankViewController: UIViewController {
                     // Segue
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                 }
-            
-                
             default: break
             }
         }
@@ -142,6 +139,8 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
             cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
             cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])
             
+            cell.decorateCell()
+            
             return cell
         }else{
             fatalError("Marche pas.")
@@ -152,6 +151,13 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
 
 // MARK: Some view stuff
 extension RestoRankViewController{
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
+        return CGFloat(cellHeight)
+    }
+    
+    // MARK : Fonts
     private var restorantNameFont: UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .title3).withSize(23.0))
     }
@@ -162,10 +168,5 @@ extension RestoRankViewController{
     
     private var restorantAddressFont:UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
-        return CGFloat(cellHeight)
     }
 }

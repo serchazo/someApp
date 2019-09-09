@@ -14,7 +14,9 @@ class MyRanksViewController: UIViewController {
     var user:User!
     var currentCity:BasicCity = .Singapore
     var rankings:[Ranking] = []
+    var foodItems:[FoodType] = []
     var rankingReferenceForUser: DatabaseReference!
+    var foodDBReference: DatabaseReference!
     
 
     override func viewDidLoad() {
@@ -27,25 +29,41 @@ class MyRanksViewController: UIViewController {
             self.user = user
             
             // 2. Once we get the user, update!
+            self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
+            self.foodDBReference = basicModel.dbFoodTypeRoot
             self.updateTablewithRanking()
             
         }
     }
     
     func updateTablewithRanking(){
-        self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
         self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
+            var tmpFoodType: [FoodType] = []
+            var count = 0
             
             for ranksPerUserAny in snapshot.children {
                 if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
                     let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
                     tmpRankings.append(rankingItem)
+                    
+                    //Get food type
+                    self.foodDBReference.child(rankingItem.foodKey).observeSingleEvent(of: .value, with: { foodSnapshot in
+                        let foodItem = FoodType(snapshot: foodSnapshot)
+                        tmpFoodType.append(foodItem!)
+                        // Apply the trick when using Joins
+                        count += 1
+                        if count == snapshot.childrenCount {
+                            self.foodItems = tmpFoodType
+                            self.rankings = tmpRankings
+                            self.myRanksTable.reloadData()
+                        }
+                        
+                    })
+                    
                 }
             }
-            self.rankings = tmpRankings
-            self.myRanksTable.reloadData()
         })
     }
     
@@ -135,8 +153,12 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section){
-        case 0: return rankings.count
-        case 1: return 1
+        case 0:
+            guard rankings.count == foodItems.count else { return 1 }
+            return rankings.count
+        case 1:
+            guard rankings.count == foodItems.count else { return 0 }
+            return 1
         default: return 0
         }
     }
@@ -146,13 +168,23 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard rankings.count > 0 && rankings.count == foodItems.count else{
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "Waiting for services"
+            let spinner = UIActivityIndicatorView(style: .gray)
+            spinner.startAnimating()
+            cell.accessoryView = spinner
+            
+            return cell
+        }
+        
         if indexPath.section == 0 {
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
-                cell.cellIcon.text = "\(indexPath.row)"
-                // TODO : the foodkey should be replace with the name of the food
-                cell.cellTitle.text = rankings[indexPath.row].foodKey
-                cell.cellCity.text = rankings[indexPath.row].city
+                cell.iconLabel.text = foodItems[indexPath.row].icon
+                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
+                cell.titleLabel.text = tmpTitleText
+                cell.descriptionLabel.text = rankings[indexPath.row].description
             }
             return tmpCell
         }else{
@@ -175,9 +207,10 @@ extension MyRanksViewController{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
     }
     
+    /*
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(iconFont.lineHeight + 10.0)
-    }
+    }*/
 }
 
 // MARK : drag delegate
@@ -207,6 +240,7 @@ extension MyRanksViewController: UITableViewDropDelegate{
     }
     
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        
         if let indexPath = destinationIndexPath, indexPath.section == 0{
             let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
             return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)

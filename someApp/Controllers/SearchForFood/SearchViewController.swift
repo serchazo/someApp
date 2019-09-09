@@ -15,6 +15,12 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     var foodList:[FoodType] = []
     var currentCity:BasicCity = .Singapore
     var user: User!
+    
+    // Extension can't have stored vars, so we define here
+    private let sectionInsets = UIEdgeInsets(top: 40.0,
+                                             left: 10.0,
+                                             bottom: 40.0,
+                                             right: 10.0)
 
     //Listen for changes in the Accessibility font
     private var accessibilityPropertyObserver: NSObjectProtocol?
@@ -37,6 +43,9 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // The title text
+        reloadText()
         
         // Get the list from the Database (an observer)
         basicModel.dbFoodTypeRoot.observe(.value, with: {snapshot in
@@ -149,6 +158,8 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.font: cellTitleFont])
             cell.cellLabel.attributedText = foodTitleText
             
+            cell.decorateCell()
+            
             return cell
         }else{
             fatalError("No cell")
@@ -159,6 +170,32 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
 
 // MARK: Layout stuff
 extension SearchViewController: UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        //
+        let paddingSpace = sectionInsets.left * 3
+        let availableWidth = view.frame.width - paddingSpace
+        let widthPerItem = availableWidth / 2
+        
+        // Height is calculated in the font section
+        
+        return CGSize(width: widthPerItem, height: cellHeight)
+    }
+    
+    // Returns the spacing between the cells, headers, and footers. A constant is used to store the value.
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return sectionInsets
+    }
+    
+    // This method controls the spacing between each line in the layout. You want this to match the padding at the left and right.
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return sectionInsets.left
+    }
+    
     // MARK: Font of the cells
     private var iconFont: UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
@@ -169,18 +206,13 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     }
     
     private var titleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
     
     var cellHeight:CGFloat{
         get{
-            return CGFloat(iconFont.lineHeight + cellTitleFont.lineHeight + 10.0)
+            return CGFloat(iconFont.lineHeight + cellTitleFont.lineHeight + 20.0)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cellWidth = (view.frame.width-10)/2
-        return CGSize(width: cellWidth, height: cellHeight)
     }
 }
 
