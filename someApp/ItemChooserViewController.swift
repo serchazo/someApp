@@ -38,7 +38,7 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
         return 1
     }
     
-    func setPickerValue(withData: BasicSelection){
+    func setPickerValue(){
         pickerData = BasicCity.allCases.map {$0.rawValue}
     }
     

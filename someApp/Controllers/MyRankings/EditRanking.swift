@@ -140,12 +140,10 @@ class EditRanking: UIViewController {
         if let identifier = segue.identifier{
             switch identifier{
             case EditRanking.showRestoDetail:
-                if let cell = sender as? MyRanksEditDescriptionCell,
+                if let cell = sender as? MyRanksEditRankingTableViewCell,
                     let indexPath = editRankingTable.indexPath(for: cell),
                     let seguedToResto = segue.destination as? MyRestoDetail{
-                    // Segue
-                    
-                    //seguedToResto.currentResto = thisRanking[indexPath.row]
+                    seguedToResto.currentResto = thisRanking[indexPath.row]
                 }
             case EditRanking.addResto:
                 if let seguedMVC = segue.destination as? MyRanksMapSearchViewController{

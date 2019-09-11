@@ -14,6 +14,7 @@ class MyRanks: UIViewController {
     // Class constants
     static let addRanking = "addRankSegue"
     static let showRakingDetail = "editRestoList"
+    static let screenSize = UIScreen.main.bounds.size
     
     // Instance variables
     var user:User!
@@ -22,6 +23,11 @@ class MyRanks: UIViewController {
     var foodItems:[FoodType] = []
     var rankingReferenceForUser: DatabaseReference!
     var foodDBReference: DatabaseReference!
+    var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
+    
+    //For the myProfile swipe table
+    var transparentView = UIView()
+    var myProfileTableView = UITableView()
     
     // Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -32,14 +38,72 @@ class MyRanks: UIViewController {
             myRanksTable.dragDelegate = self
             myRanksTable.dragInteractionEnabled = true
             myRanksTable.dropDelegate = self
-            
         }
     }
     
     // Action buttons
     
-    @IBAction func myProfileAction(_ sender: UIBarButtonItem) {
-        print("show me")
+    @IBAction func myProfileAction(_ sender: UIBarButtonItem) {        
+        // Create the frame
+        let window = UIApplication.shared.keyWindow
+        transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        transparentView.frame = self.view.frame
+        window?.addSubview(transparentView)
+        
+        // Add the table
+        myProfileTableView.frame = CGRect(
+            x: MyRanks.screenSize.width,
+            y: MyRanks.screenSize.height * 0.1,
+            width: MyRanks.screenSize.width * 0.9,
+            height: MyRanks.screenSize.height * 0.9)
+        window?.addSubview(myProfileTableView)
+        
+        // Go back to "normal" if we tap
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
+        transparentView.addGestureRecognizer(tapGesture)
+        
+        // Cool "slide-up" animation when appearing
+        transparentView.alpha = 0
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
+                        self.myProfileTableView.frame = CGRect(
+                            x: MyRanks.screenSize.width * 0.1,
+                            y: MyRanks.screenSize.height * 0.1 ,
+                            width: MyRanks.screenSize.width * 0.9,
+                            height: MyRanks.screenSize.height * 0.9)
+        },
+                       completion: nil)
+    }
+    
+    //Disappear!
+    @objc func onClickTransparentView(){
+        // Animation when disapearing
+        
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.transparentView.alpha = 0 //Start at value above, go to 0
+                        self.myProfileTableView.frame = CGRect(
+                            x: MyRanks.screenSize.width,
+                            y: MyRanks.screenSize.height * 0.1,
+                            width: MyRanks.screenSize.width * 0.9,
+                            height: MyRanks.screenSize.height * 0.9)
+                        
+        },
+                       completion: nil)
+        
+        // Deselect the row to go back to normal
+        if let indexPath = myRanksTable.indexPathForSelectedRow {
+            myRanksTable.deselectRow(at: indexPath, animated: true)
+        }
     }
     
     //
@@ -67,11 +131,28 @@ class MyRanks: UIViewController {
             self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
             self.foodDBReference = basicModel.dbFoodTypeRoot
             self.updateTablewithRanking()
-            
         }
+        
+        //
+        myProfileTableView.delegate = self
+        myProfileTableView.dataSource = self
     }
     
     func updateTablewithRanking(){
+        
+        let headerView: UIView = UIView.init(frame: CGRect(
+            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+        let labelView: UILabel = UILabel.init(frame: CGRect(
+            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+        labelView.textAlignment = NSTextAlignment.center
+        labelView.textColor = basicModel.themeColor
+        labelView.font = UIFont.preferredFont(forTextStyle: .title2)
+        labelView.text = "Tell the world your favorite restorants"
+        
+        headerView.addSubview(labelView)
+        self.myRanksTable.tableHeaderView = headerView
+        
+        
         self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
@@ -94,23 +175,19 @@ class MyRanks: UIViewController {
                             self.rankings = tmpRankings
                             self.myRanksTable.reloadData()
                         }
-                        
                     })
-                    
                 }
             }
         })
     }
     
 
-    
-    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         switch segue.identifier {
         case MyRanks.showRakingDetail :
-            if let seguedMVC = segue.destination as? MyRanksEditRankingViewController{
+            if let seguedMVC = segue.destination as? EditRanking{
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     // I should send Ranking, Food Key, and current city
@@ -165,15 +242,26 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        // Verifiy if it's the myProfile table
+        if tableView == myProfileTableView{
+            return 1
+        }else{
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section){
-        case 0:
-            guard rankings.count == foodItems.count else { return 1 }
-            return rankings.count
-        default: return 0
+        // Verifiy if it's the myProfile table
+        if tableView == myProfileTableView{
+            return 5
+        }else{
+            // The normal table
+            switch(section){
+            case 0:
+                guard rankings.count == foodItems.count else { return 1 }
+                return rankings.count
+            default: return 0
+            }
         }
     }
     
@@ -181,26 +269,36 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         // Not used
     }
     
+    //cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard rankings.count > 0 && rankings.count == foodItems.count else{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Waiting for services"
-            let spinner = UIActivityIndicatorView(style: .gray)
-            spinner.startAnimating()
-            cell.accessoryView = spinner
-            
-            return cell
-        }
         
-        // Rankings table
-        let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
-        if let cell = tmpCell as? MyRanksTableViewCell {
-            cell.iconLabel.text = foodItems[indexPath.row].icon
-            let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
-            cell.titleLabel.text = tmpTitleText
-            cell.descriptionLabel.text = rankings[indexPath.row].description
+        // Verifiy if it's the myProfile table
+        if tableView == myProfileTableView{
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = profileMenu[indexPath.row]
+            return cell
+        }else{
+            // The normal table
+            guard rankings.count > 0 && rankings.count == foodItems.count else{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = "Waiting for services"
+                let spinner = UIActivityIndicatorView(style: .gray)
+                spinner.startAnimating()
+                cell.accessoryView = spinner
+                
+                return cell
+            }
+            
+            // Rankings table
+            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
+            if let cell = tmpCell as? MyRanksTableViewCell {
+                cell.iconLabel.text = foodItems[indexPath.row].icon
+                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
+                cell.titleLabel.text = tmpTitleText
+                cell.descriptionLabel.text = rankings[indexPath.row].description
+            }
+            return tmpCell
         }
-        return tmpCell
         
     }
 }

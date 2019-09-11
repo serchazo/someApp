@@ -164,11 +164,6 @@ class BasicRanking{
     }
 }
 
-enum BasicSelection:String {
-    case City
-    case Food
-}
-
 enum BasicCity: String, CaseIterable {
     case Singapore = "Singapore"
     case KualaLumpur = "Kuala Lumpur"
@@ -176,16 +171,3 @@ enum BasicCity: String, CaseIterable {
     case Manila = "Manila"
     case HongKong = "Hong Kong"
     }
-
-
-enum BasicFoodTemp:String, CaseIterable{
-    case Burger = "burger"
-    case Italian = "italian"
-    case Pizza = "pizza"
-    case Mexican = "mexican"
-    case Japanese = "japanese"
-    case Salad = "salad"
-    case Cafe = "cafe"
-    case CocktailBar = "cocktail Bar"
-    case Patisserie = "patisserie"
-}

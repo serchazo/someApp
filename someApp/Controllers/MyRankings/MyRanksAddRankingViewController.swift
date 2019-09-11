@@ -64,7 +64,7 @@ class MyRanksAddRankingViewController: UIViewController {
             switch identifier{
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue(withData: .City)
+                    seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
                 }
             default:break

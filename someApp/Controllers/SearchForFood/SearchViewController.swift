@@ -70,11 +70,7 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // The title text
-        
-        
-        
+    
         // The data
         reloadText()
         
@@ -129,9 +125,8 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
                 }
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue(withData: .City)
+                    seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
-                    
                 }
             default: break
             }
