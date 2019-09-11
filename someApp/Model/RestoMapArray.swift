@@ -30,20 +30,6 @@ struct RestoMapArray: Codable{
         restoMapItem = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(mapData) as? MKMapItem
     }
     
-    /*
-    init?(snapshot: DataSnapshot){
-        guard
-            let value = snapshot.value as? [String: AnyObject],
-            let name = value["address"] as? Decoder else {
-                return nil
-        }
-        do{
-            try init(from: name)
-        }catch{
-            print(error.localizedDescription)
-        }
-    }*/
-    
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

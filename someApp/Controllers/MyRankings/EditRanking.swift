@@ -27,6 +27,7 @@ class EditRanking: UIViewController {
     var restoPointsDatabaseReference: DatabaseReference!
     var restoAddressDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
+    var descriptionRowHeight = CGFloat(50.0)
     
     //For Edit the description swipe-up
     var transparentView = UIView()
@@ -44,6 +45,8 @@ class EditRanking: UIViewController {
             editRankingTable.dragDelegate = self
             editRankingTable.dragInteractionEnabled = true
             editRankingTable.dropDelegate = self
+            editRankingTable.estimatedRowHeight = 70
+            editRankingTable.rowHeight = UITableView.automaticDimension
         }
     }
     
@@ -96,6 +99,20 @@ class EditRanking: UIViewController {
     
     // Call this function to update the table
     func updateTableFromDatabase(){
+        //
+        let headerView: UIView = UIView.init(frame: CGRect(
+            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+        let labelView: UILabel = UILabel.init(frame: CGRect(
+            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+        labelView.textAlignment = NSTextAlignment.center
+        labelView.textColor = basicModel.themeColor
+        labelView.font = UIFont.preferredFont(forTextStyle: .title2)
+        labelView.text = "Your favorite \(thisRankingFoodKey!) places"
+        
+        headerView.addSubview(labelView)
+        self.editRankingTable.tableHeaderView = headerView
+        //
+        
         // Get the description
         self.rankingsPeruserDBRef.observeSingleEvent(of: .value, with: {snapshot in
             if let rankingItem = Ranking(snapshot: snapshot){
@@ -251,23 +268,40 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             // The normal table
             if indexPath.section == 0 {
                 // The Description cell
-                let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath)
-                cell.detailTextLabel!.text = thisRankingDescription
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                
+                let descriptionLabel = UILabel()
+                descriptionLabel.lineBreakMode = .byWordWrapping
+                descriptionLabel.numberOfLines = 0
+                descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
+                descriptionLabel.text = thisRankingDescription
+                
+                //Get the label Size with the manip
+                let maximumLabelSize = CGSize(width: EditRanking.screenSize.width, height: EditRanking.screenSize.height);
+                let transformedText = thisRankingDescription as NSString
+                let boundingBox = transformedText.boundingRect(
+                    with: maximumLabelSize,
+                    options: .usesLineFragmentOrigin,
+                    attributes: [.font : UIFont.preferredFont(forTextStyle: .body)],
+                    context: nil)
+                
+                descriptionLabel.frame = CGRect(x: 20, y: 0, width: EditRanking.screenSize.width-40, height: boundingBox.height)
+                
+                cell.addSubview(descriptionLabel)
                 
                 let clickToEditString = NSAttributedString(string: "Click to edit", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
                 
-                //let clickToEditString = NSString(string: "Tap to edit")
-                //let clickToEditFont = UIFont.preferredFont(forTextStyle: .footnote)
                 let clickToEditSize = clickToEditString.size()
-               
                 let clickToEditLabel = UILabel(frame: CGRect(
-                    x: cell.frame.width - (clickToEditSize.width + 30),
-                    y: cell.frame.height - (clickToEditSize.height + 15),
-                    width: clickToEditSize.width + 10,
+                    x: cell.frame.width - (clickToEditSize.width),
+                    y: boundingBox.height,
+                    width: clickToEditSize.width,
                     height: clickToEditSize.height+10))
                 clickToEditLabel.attributedText = clickToEditString
                 
                 cell.addSubview(clickToEditLabel)
+                
+                descriptionRowHeight = boundingBox.height + clickToEditSize.height + 20
                 
                 return cell
             }
@@ -358,17 +392,21 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Test if it's the Edit Description table
         if tableView == self.editDescriptionTableView {
             return 450
         }else{
             // The normal table
-            if indexPath.section == 2 {
+            if indexPath.section == 0{
+                return descriptionRowHeight
+            }
+            else if indexPath.section == 1 {
                 let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
                 return CGFloat(cellHeight)
             }else{
-                return 100 // TODO : UITableView.automaticDimension
+                return UITableView.automaticDimension
             }
             
         }
@@ -441,6 +479,8 @@ extension EditRanking: MyRanksMapSearchViewDelegate{
             print(error.localizedDescription)
         }
     }
+    
+
     
     // Add resto to ranking
     func addRestoToRanking(key: String, position: Int){

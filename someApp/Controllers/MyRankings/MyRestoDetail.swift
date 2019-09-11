@@ -7,36 +7,76 @@
 //
 
 import UIKit
+import SafariServices
+import MapKit
+import Firebase
 
 class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
-    private var thisView = UIView()
-    private var restoDetailTable = UITableView()
+    private static let segueToMap = "showMap"
     
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
+    var dbMapReference: DatabaseReference!
+    
+    // Variable to pass to map Segue
+    var currentRestoMapItem : MKMapItem!
+    var OKtoPerformSegue = true
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        restoDetailTable.delegate = self
-        restoDetailTable.dataSource = self
-        restoDetailTable.frame = CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width, height: MyRestoDetail.screenSize.height)
-        self.view.addSubview(restoDetailTable)
-        
+    @IBOutlet weak var restoDetailTable: UITableView!{
+        didSet{
+            restoDetailTable.delegate = self
+            restoDetailTable.dataSource = self
+        }
     }
     
-
-    /*
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        dbMapReference = basicModel.dbRestoAddress.child(currentResto.key)
+        
+        // Get the map from the database
+        self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
+            if let value = snapshot.value as? [String: String],
+                let mapString = value["address"]{
+                
+                let decoder = JSONDecoder()
+                do{
+                    let tempMapArray = try decoder.decode(RestoMapArray.self, from: mapString.data(using: String.Encoding.utf8)!)
+                    self.currentRestoMapItem = tempMapArray.restoMapItem
+                }catch{
+                    self.OKtoPerformSegue = false
+                    print(error.localizedDescription)
+                }
+                
+            }else{
+                self.OKtoPerformSegue = false
+            }
+        })
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        switch(segue.identifier){
+        case MyRestoDetail.segueToMap:
+            print("show map")
+            
+            
+        default:break
+        }
     }
-    */
-
+    
+    //
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        return OKtoPerformSegue
+    }
 }
+
+//
 
 extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -60,11 +100,12 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 cell.textLabel?.text = currentResto.name
                 return cell
             }else if indexPath.row == 1{
-                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.textColor = .black
-                cell.textLabel?.text = "Address"
-                cell.detailTextLabel?.text = currentResto.address
-                return cell
+                let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
+                //let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell!.textLabel?.textColor = .black
+                cell!.textLabel?.text = "Address"
+                cell!.detailTextLabel?.text = currentResto.address
+                return cell!
             }else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.textColor = .black
@@ -90,6 +131,23 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Test"
             return cell
+        }
+    }
+    
+    // Actions
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0{
+            if indexPath.row == 3{
+                // URL clicket, open the web page
+                if currentResto.url != nil{
+                    let config = SFSafariViewController.Configuration()
+                    config.entersReaderIfAvailable = true
+                    let vc = SFSafariViewController(url: currentResto.url, configuration: config)
+                    vc.preferredControlTintColor = UIColor.white
+                    vc.preferredBarTintColor = basicModel.themeColorOpaque
+                    present(vc, animated: true)
+                }
+            }
         }
     }
 }
