@@ -9,8 +9,13 @@
 import UIKit
 import Firebase
 
-class MyRanksViewController: UIViewController {
+class MyRanks: UIViewController {
     
+    // Class constants
+    static let addRanking = "addRankSegue"
+    static let showRakingDetail = "editRestoList"
+    
+    // Instance variables
     var user:User!
     var currentCity:BasicCity = .Singapore
     var rankings:[Ranking] = []
@@ -18,10 +23,40 @@ class MyRanksViewController: UIViewController {
     var rankingReferenceForUser: DatabaseReference!
     var foodDBReference: DatabaseReference!
     
-
+    // Outlets
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var myRanksTable: UITableView!{
+        didSet{
+            myRanksTable.dataSource = self
+            myRanksTable.delegate = self
+            myRanksTable.dragDelegate = self
+            myRanksTable.dragInteractionEnabled = true
+            myRanksTable.dropDelegate = self
+            
+        }
+    }
+    
+    // Action buttons
+    
+    @IBAction func myProfileAction(_ sender: UIBarButtonItem) {
+        print("show me")
+    }
+    
+    //
+    // MARK : Timeline funcs
+    //
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         // 1. Get the logged in user - needed for the next step
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -67,43 +102,23 @@ class MyRanksViewController: UIViewController {
         })
     }
     
-    //
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if let indexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
+
     
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var myRanksTable: UITableView!{
-        didSet{
-            myRanksTable.dataSource = self
-            myRanksTable.delegate = self
-            myRanksTable.dragDelegate = self
-            myRanksTable.dragInteractionEnabled = true
-            myRanksTable.dropDelegate = self
-            
-        }
-    }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         switch segue.identifier {
-        case "editRestoList":
+        case MyRanks.showRakingDetail :
             if let seguedMVC = segue.destination as? MyRanksEditRankingViewController{
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
-                    // HERE
-                    
                     // I should send Ranking, Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
                 }
             }
-        case "addRanking":
+        case MyRanks.addRanking :
             if let seguedMVC = segue.destination as? MyRanksAddRankingViewController{
                 seguedMVC.delegate = self
             }
@@ -115,7 +130,7 @@ class MyRanksViewController: UIViewController {
 }
 
 // MARK : update the ranking list when we receive the event from the menu choser
-extension MyRanksViewController: MyRanksAddRankingViewDelegate{
+extension MyRanks: MyRanksAddRankingViewDelegate{
     func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
         
         // Test if we already have that ranking in our list
@@ -147,10 +162,10 @@ extension MyRanksViewController: MyRanksAddRankingViewDelegate{
 }
 
 // MARK : table stuff
-extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
+extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -158,9 +173,6 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
         case 0:
             guard rankings.count == foodItems.count else { return 1 }
             return rankings.count
-        case 1:
-            guard rankings.count == foodItems.count else { return 0 }
-            return 1
         default: return 0
         }
     }
@@ -180,23 +192,21 @@ extension MyRanksViewController: UITableViewDelegate, UITableViewDataSource{
             return cell
         }
         
-        if indexPath.section == 0 {
-            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
-            if let cell = tmpCell as? MyRanksTableViewCell {
-                cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
-                cell.titleLabel.text = tmpTitleText
-                cell.descriptionLabel.text = rankings[indexPath.row].description
-            }
-            return tmpCell
-        }else{
-            return tableView.dequeueReusableCell(withIdentifier: "AddNewRankingCell", for: indexPath)
+        // Rankings table
+        let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
+        if let cell = tmpCell as? MyRanksTableViewCell {
+            cell.iconLabel.text = foodItems[indexPath.row].icon
+            let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
+            cell.titleLabel.text = tmpTitleText
+            cell.descriptionLabel.text = rankings[indexPath.row].description
         }
+        return tmpCell
+        
     }
 }
 
 // MARK: Some view stuff
-extension MyRanksViewController{
+extension MyRanks{
     private var iconFont: UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
     }
@@ -216,7 +226,7 @@ extension MyRanksViewController{
 }
 
 // MARK : drag delegate
-extension MyRanksViewController: UITableViewDragDelegate {
+extension MyRanks: UITableViewDragDelegate {
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         session.localContext = tableView
         return dragItem(at: indexPath)
@@ -236,7 +246,7 @@ extension MyRanksViewController: UITableViewDragDelegate {
 }
 
 // MARK : drop delegate
-extension MyRanksViewController: UITableViewDropDelegate{
+extension MyRanks: UITableViewDropDelegate{
     func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
         return session.canLoadObjects(ofClass: NSAttributedString.self)
     }

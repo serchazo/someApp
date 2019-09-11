@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-5723552712049473~4784782033</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>The app wants to access your location when in use. </string>
 	<key>CFBundleDevelopmentRegion</key>

@@ -18,7 +18,13 @@ class BasicModel{
     let dbResto: DatabaseReference!
     let dbRestoPoints : DatabaseReference!
     let dbRestoAddress : DatabaseReference!
-    let themeColor : UIColor!
+    let themeColor: UIColor!
+    let themeColorOpaque : UIColor!
+    
+    // the fonts
+    var titleFont: UIFont{
+        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+    }
     
     // This part will in theory disappear with the DB
     var modelRestoList = [BasicResto]()
@@ -34,7 +40,8 @@ class BasicModel{
         dbResto = dbRootRef.child("resto")
         dbRestoPoints = dbRootRef.child("resto-points")
         dbRestoAddress = dbRootRef.child("resto-address")
-        themeColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
+        themeColorOpaque = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
+        themeColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
         
     }
     // Some getters

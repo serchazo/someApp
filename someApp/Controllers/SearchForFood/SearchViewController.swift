@@ -16,6 +16,8 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     var currentCity:BasicCity = .Singapore
     var user: User!
     
+    let screenSize = UIScreen.main.bounds.size
+    
     // Extension can't have stored vars, so we define here
     private let sectionInsets = UIEdgeInsets(top: 40.0,
                                              left: 10.0,
@@ -37,29 +39,44 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     }
 
     func reloadText(){
-        foodSelectorCollection.reloadData()
-        titleCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: [.font: titleFont])
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // The title text
-        reloadText()
+        // The text for the upper Label
+        let textColor = basicModel.themeColorOpaque
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textColor!,
+            .font: titleFont,
+            .textEffect: NSAttributedString.TextEffectStyle.letterpressStyle]
+        titleCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: attributes)
         
         // Get the list from the Database (an observer)
-        basicModel.dbFoodTypeRoot.observe(.value, with: {snapshot in
+        basicModel.dbFoodTypeRoot.observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
+            var count = 0
             
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot,
                     let foodItem = FoodType(snapshot: childSnapshot){
                     tmpFoodList.append(foodItem)
                 }
+                // Use the trick
+                count += 1
+                if count == snapshot.childrenCount{
+                    self.foodList = tmpFoodList
+                    self.foodSelectorCollection.reloadData()
+                }
             }
-            self.foodList = tmpFoodList
-            self.foodSelectorCollection.reloadData()
+            
         })
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // The title text
+        
+        
+        
+        // The data
+        reloadText()
         
         // Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -129,19 +146,20 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
 extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard foodList.count > 0 else { return 1 }
         return foodList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // TODO : while loading display a spinner
         
-        guard foodList.count != 0 else {
-            print("mmmm")
+        guard foodList.count > 0 else {
             let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
             if let cell = tmpCell as? SpinnerCollectionViewCell{
-                print("here")
                 cell.spinner.style = .gray
+                cell.spinner.sizeThatFits(CGSize(width: screenSize.width-150, height: 200))
                 cell.spinner.startAnimating()
+                
                 return cell
             }else{
                 return tmpCell
@@ -171,8 +189,11 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
 // MARK: Layout stuff
 extension SearchViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        //
+        // If the food list is empty, the only cell is the spinner
+        guard foodList.count > 0 else{
+            return CGSize(width: screenSize.width-50, height: 200)
+        }
+        // Else, we calculate the size
         let paddingSpace = sectionInsets.left * 3
         let availableWidth = view.frame.width - paddingSpace
         let widthPerItem = availableWidth / 2

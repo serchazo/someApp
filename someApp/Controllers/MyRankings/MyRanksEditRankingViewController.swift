@@ -25,6 +25,7 @@ class MyRanksEditRankingViewController: UIViewController {
     //For Edit the description swipe-up
     var transparentView = UIView()
     var editDescriptionTableView = UITableView()
+    var editTextField = UITextView()
     
     //Attention, variables initialized from segue-r MyRanksViewController
     var currentCity: BasicCity!
@@ -75,6 +76,7 @@ class MyRanksEditRankingViewController: UIViewController {
         editDescriptionTableView.delegate = self
         editDescriptionTableView.dataSource = self
         editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
+        editTextField.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -165,10 +167,62 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
         }
     }
     
+    func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
+        
+        //A label for warning the user about the max chars
+        let maxCharsLabel = UILabel(frame: CGRect(
+            x: 0,
+            y: basicModel.titleFont.lineHeight + 20,
+            width: cell.frame.width,
+            height: basicModel.titleFont.lineHeight + 30 ))
+        maxCharsLabel.textColor = UIColor.lightGray
+        maxCharsLabel.textAlignment = NSTextAlignment.center
+        maxCharsLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
+        maxCharsLabel.text = "(Max 250 characters)"
+        
+        // set up the TextField.  This var is defined in the class to take the value later
+        editTextField.frame = CGRect(x: 8, y: 2*basicModel.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
+        editTextField.textColor = UIColor.gray
+        editTextField.font = UIFont.preferredFont(forTextStyle: .body)
+        if thisRankingDescription != "" {
+            editTextField.text = thisRankingDescription
+        }else{
+            editTextField.text = "Enter a description for your ranking."
+        }
+        editTextField.keyboardType = UIKeyboardType.default
+        editTextField.allowsEditingTextAttributes = true
+        
+        let doneButton = UIButton(type: .custom)
+        doneButton.frame = CGRect(x: cell.frame.width - 100, y: 250, width: 70, height: 70)
+        doneButton.backgroundColor = basicModel.themeColor
+        doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
+        doneButton.layer.masksToBounds = true
+        doneButton.setTitle("Done!", for: .normal)
+        doneButton.addTarget(self, action: #selector(doneUpdating), for: .touchUpInside)
+        
+        //editTextField.addSubview(doneButton)
+        cell.selectionStyle = .none
+        cell.backView.addSubview(maxCharsLabel)
+        cell.backView.addSubview(editTextField)
+        cell.backView.addSubview(doneButton)
+    }
+    
+    @objc
+    func doneUpdating(){
+        print("Done Updating!")
+        let descriptionDBRef = rankingsPeruserDBRef.child("description")
+        descriptionDBRef.setValue(editTextField.text)
+        
+        //Update view
+        onClickTransparentView()
+        updateTableFromDatabase()
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // test if the table is the EditDescription pop-up
         if tableView == self.editDescriptionTableView{
             if let cell = tableView.dequeueReusableCell(withIdentifier: "EditDescriptionCell", for: indexPath) as? MyRanksEditDescriptionCell{
+                setupEditDescriptionCell(cell: cell)
                 return cell
             }else{
                 fatalError("Unable to create cell")
@@ -180,6 +234,22 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                 // The Description cell
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath)
                 cell.detailTextLabel!.text = thisRankingDescription
+                
+                let clickToEditString = NSAttributedString(string: "Click to edit", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
+                
+                //let clickToEditString = NSString(string: "Tap to edit")
+                //let clickToEditFont = UIFont.preferredFont(forTextStyle: .footnote)
+                let clickToEditSize = clickToEditString.size()
+               
+                let clickToEditLabel = UILabel(frame: CGRect(
+                    x: cell.frame.width - (clickToEditSize.width + 30),
+                    y: cell.frame.height - (clickToEditSize.height + 15),
+                    width: clickToEditSize.width + 10,
+                    height: clickToEditSize.height+10))
+                clickToEditLabel.attributedText = clickToEditString
+                
+                cell.addSubview(clickToEditLabel)
+                
                 return cell
             }
             else if indexPath.section == 1 {
@@ -205,9 +275,8 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
     // If we press on a cell
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == self.editRankingTable && indexPath.section == 0{
-            print("let's Edit!")
             
-            
+            // Slide up the Edit TableView
             let window = UIApplication.shared.keyWindow
             transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             transparentView.frame = self.view.frame
@@ -215,7 +284,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
             
             // Add the table
             let screenSize = UIScreen.main.bounds.size
-            editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height * 0.8)
+            editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height, width: screenSize.width, height: screenSize.height * 0.9)
             window?.addSubview(editDescriptionTableView)
             
             // Go back to "normal" if we tap
@@ -230,8 +299,9 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                            initialSpringVelocity: 1.0,
                            options: .curveEaseInOut,
                            animations: {
-                            self.transparentView.alpha = 0.5 //Start at 0, go to 0.5
-                            self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height - screenSize.height * 0.8 , width: screenSize.width, height: screenSize.height * 0.8)
+                            self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
+                            self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height - screenSize.height * 0.9 , width: screenSize.width, height: screenSize.height * 0.9)
+                            self.editTextField.becomeFirstResponder()
                             },
                            completion: nil)
             
@@ -239,6 +309,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
         }
     }
     
+    //Disappear!
     @objc func onClickTransparentView(){
         // Animation when disapearing
         let screenSize = UIScreen.main.bounds.size
@@ -249,7 +320,9 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                        options: .curveEaseInOut,
                        animations: {
                         self.transparentView.alpha = 0 //Start at value above, go to 0
-                        self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height , width: screenSize.width, height: screenSize.height * 0.8)
+                        self.editDescriptionTableView.frame = CGRect(x: 0, y: screenSize.height , width: screenSize.width, height: screenSize.height * 0.9)
+                        self.editTextField.resignFirstResponder()
+                        
                         },
                        completion: nil)
         
@@ -269,7 +342,7 @@ extension MyRanksEditRankingViewController: UITableViewDelegate, UITableViewData
                 let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
                 return CGFloat(cellHeight)
             }else{
-                return UITableView.automaticDimension
+                return 100 // TODO : UITableView.automaticDimension
             }
             
         }
@@ -460,7 +533,14 @@ extension MyRanksEditRankingViewController : UITableViewDropDelegate {
             }
         }
     }
+}
 
-    
+extension MyRanksEditRankingViewController:UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else {return false}
+        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+        return changedText.count <= 250
+    }
     
 }

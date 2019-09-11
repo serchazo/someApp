@@ -27,7 +27,7 @@ class RestoRankTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         if selected {
-            self.contentView.backgroundColor = basicModel.themeColor
+            self.contentView.backgroundColor = basicModel.themeColorOpaque
         }
 
         // Configure the view for the selected state
@@ -39,7 +39,7 @@ class RestoRankTableViewCell: UITableViewCell {
         
         self.contentView.layer.cornerRadius = 20.0
         self.contentView.layer.borderWidth = 1.0
-        self.contentView.layer.borderColor = basicModel.themeColor.cgColor
+        self.contentView.layer.borderColor = basicModel.themeColorOpaque.cgColor
         self.contentView.layer.masksToBounds = true;
         
         

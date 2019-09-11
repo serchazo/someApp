@@ -123,7 +123,8 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
                 let config = SFSafariViewController.Configuration()
                 config.entersReaderIfAvailable = true
                 let vc = SFSafariViewController(url: currentResto.url, configuration: config)
-                vc.preferredControlTintColor = basicModel.themeColor
+                vc.preferredControlTintColor = UIColor.white
+                vc.preferredBarTintColor = basicModel.themeColorOpaque
                 present(vc, animated: true)
             }
         }
