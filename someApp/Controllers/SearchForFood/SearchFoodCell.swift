@@ -26,7 +26,7 @@ class SearchFoodCell: UICollectionViewCell {
         self.contentView.layer.masksToBounds = true;
         
         
-        self.layer.shadowColor = basicModel.themeColorOpaque.cgColor
+        self.layer.shadowColor = SomeApp.themeColorOpaque.cgColor
         self.layer.shadowOffset = CGSize(width:0.0,height: 0.0)
         self.layer.shadowRadius = 20.0
         self.layer.shadowOpacity = 1.0

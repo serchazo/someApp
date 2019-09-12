@@ -68,15 +68,15 @@ class EditRanking: UIViewController {
             self.user = user
             
             // Update the DB References
-            self.rankingDatabaseReference = basicModel.dbRanking.child(user.uid+"-"+self.thisRankingId)
-            let tmpRankingsPeruser = basicModel.dbRankingsPerUser.child(user.uid)
+            self.rankingDatabaseReference = SomeApp.dbRanking.child(user.uid+"-"+self.thisRankingId)
+            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(user.uid)
             self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
             
-            self.restoDatabaseReference = basicModel.dbResto
+            self.restoDatabaseReference = SomeApp.dbResto
             
-            let tmpRef = basicModel.dbRestoPoints.child(self.currentCity.rawValue)
+            let tmpRef = SomeApp.dbRestoPoints.child(self.currentCity.rawValue)
             self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
-            self.restoAddressDatabaseReference = basicModel.dbRestoAddress
+            self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
             
             self.updateTableFromDatabase()
         }
@@ -105,7 +105,7 @@ class EditRanking: UIViewController {
         let labelView: UILabel = UILabel.init(frame: CGRect(
             x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
         labelView.textAlignment = NSTextAlignment.center
-        labelView.textColor = basicModel.themeColor
+        labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
         labelView.text = "Your favorite \(thisRankingFoodKey!) places"
         
@@ -208,16 +208,16 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         //A label for warning the user about the max chars
         let maxCharsLabel = UILabel(frame: CGRect(
             x: 0,
-            y: basicModel.titleFont.lineHeight + 20,
+            y: SomeApp.titleFont.lineHeight + 20,
             width: cell.frame.width,
-            height: basicModel.titleFont.lineHeight + 30 ))
+            height: SomeApp.titleFont.lineHeight + 30 ))
         maxCharsLabel.textColor = UIColor.lightGray
         maxCharsLabel.textAlignment = NSTextAlignment.center
         maxCharsLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
         maxCharsLabel.text = "(Max 250 characters)"
         
         // set up the TextField.  This var is defined in the class to take the value later
-        editTextField.frame = CGRect(x: 8, y: 2*basicModel.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
+        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
         editTextField.textColor = UIColor.gray
         editTextField.font = UIFont.preferredFont(forTextStyle: .body)
         if thisRankingDescription != "" {
@@ -230,7 +230,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         
         let doneButton = UIButton(type: .custom)
         doneButton.frame = CGRect(x: cell.frame.width - 100, y: 250, width: 70, height: 70)
-        doneButton.backgroundColor = basicModel.themeColor
+        doneButton.backgroundColor = SomeApp.themeColor
         doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
         doneButton.layer.masksToBounds = true
         doneButton.setTitle("Done!", for: .normal)

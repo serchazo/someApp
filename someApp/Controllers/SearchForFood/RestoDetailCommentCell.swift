@@ -10,27 +10,12 @@ import UIKit
 
 class RestoDetailCommentCell: UITableViewCell {
     
-    var comment: Comment!
-    
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var userLable: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
     
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dislikeButton: UIButton!
-    
-    
-    @IBAction func likeButtonPressed(_ sender: UIButton) {
-        comment.likes.append("this user")
-        print("like!")
-        likeButton.setTitle("Like (\(comment.likes.count))", for: .normal)
-    }
-    
-    @IBAction func dislikeButtonPressed(_ sender: UIButton) {
-        comment.dislikes.append("this user")
-        print("dislike!")
-        dislikeButton.setTitle("Dislike (\(comment.likes.count))", for: .normal)
-    }
     
     
     override func awakeFromNib() {

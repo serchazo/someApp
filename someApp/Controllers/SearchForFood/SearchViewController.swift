@@ -40,15 +40,15 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
 
     func reloadText(){
         // The text for the upper Label
-        let textColor = basicModel.themeColorOpaque
+        let textColor = SomeApp.themeColorOpaque
         let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: textColor!,
+            .foregroundColor: textColor,
             .font: titleFont,
             .textEffect: NSAttributedString.TextEffectStyle.letterpressStyle]
         titleCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: attributes)
         
         // Get the list from the Database (an observer)
-        basicModel.dbFoodTypeRoot.observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbFoodTypeRoot.observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             var count = 0
             

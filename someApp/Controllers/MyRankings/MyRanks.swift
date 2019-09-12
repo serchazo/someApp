@@ -128,8 +128,8 @@ class MyRanks: UIViewController {
             self.user = user
             
             // 2. Once we get the user, update!
-            self.rankingReferenceForUser = basicModel.dbRankingsPerUser.child(user.uid)
-            self.foodDBReference = basicModel.dbFoodTypeRoot
+            self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(user.uid)
+            self.foodDBReference = SomeApp.dbFoodTypeRoot
             self.updateTablewithRanking()
         }
         
@@ -145,7 +145,7 @@ class MyRanks: UIViewController {
         let labelView: UILabel = UILabel.init(frame: CGRect(
             x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
         labelView.textAlignment = NSTextAlignment.center
-        labelView.textColor = basicModel.themeColor
+        labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
         labelView.text = "Tell the world your favorite restorants"
         

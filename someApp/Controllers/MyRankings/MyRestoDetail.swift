@@ -33,7 +33,7 @@ class MyRestoDetail: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dbMapReference = basicModel.dbRestoAddress.child(currentResto.key)
+        dbMapReference = SomeApp.dbRestoAddress.child(currentResto.key)
         
         // Get the map from the database
         self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
@@ -63,9 +63,9 @@ class MyRestoDetail: UIViewController {
         // Pass the selected object to the new view controller.
         switch(segue.identifier){
         case MyRestoDetail.segueToMap:
-            print("show map")
-            
-            
+            if let seguedVC = segue.destination as? MyRestoMap{
+                seguedVC.mapItems = [currentRestoMapItem]
+            }
         default:break
         }
     }
@@ -109,12 +109,14 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             }else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.textColor = .black
+                cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Phone"
                 cell.detailTextLabel?.text = currentResto.phoneNumber
                 return cell
             }else if indexPath.row == 3 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.textColor = .black
+                cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "URL"
                 if currentResto.url != nil{
                     cell.detailTextLabel?.text = currentResto.url!.absoluteString
@@ -137,14 +139,35 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     // Actions
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0{
-            if indexPath.row == 3{
+            if indexPath.row == 2{
+                let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+                if let number = URL(string: tmpModifiedPhone){
+                    UIApplication.shared.open(number)
+                }else{
+                    // Can't call
+                    let alert = UIAlertController(
+                        title: "Can't call",
+                        message: "Please try another restaurant.",
+                        preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(
+                        title: "OK",
+                        style: .default,
+                        handler: {
+                            (action: UIAlertAction)->Void in
+                            //do nothing
+                    }))
+                    present(alert, animated: false, completion: nil)
+                    
+                }
+            }else if indexPath.row == 3{
                 // URL clicket, open the web page
                 if currentResto.url != nil{
                     let config = SFSafariViewController.Configuration()
                     config.entersReaderIfAvailable = true
                     let vc = SFSafariViewController(url: currentResto.url, configuration: config)
                     vc.preferredControlTintColor = UIColor.white
-                    vc.preferredBarTintColor = basicModel.themeColorOpaque
+                    vc.preferredBarTintColor = SomeApp.themeColorOpaque
                     present(vc, animated: true)
                 }
             }

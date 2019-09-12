@@ -7,118 +7,37 @@
 //
 
 import Foundation
-import MapKit
 import Firebase
 
-class BasicModel{
-    let dbRootRef: DatabaseReference!
-    let dbFoodTypeRoot: DatabaseReference!
-    let dbRankingsPerUser: DatabaseReference!
-    let dbRanking: DatabaseReference!
-    let dbResto: DatabaseReference!
-    let dbRestoPoints : DatabaseReference!
-    let dbRestoAddress : DatabaseReference!
-    let themeColor: UIColor!
-    let themeColorOpaque : UIColor!
+class SomeApp{
+    private static let dbRootRef:DatabaseReference = Database.database().reference()
+    static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child("foodType")
+    static let dbRankingsPerUser: DatabaseReference = dbRootRef.child("rankingsPerUser")
+    static let dbRanking:DatabaseReference = dbRootRef.child("rankingDetail")
+    static let dbResto:DatabaseReference = dbRootRef.child("resto")
+    static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
+    static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
+    static let dbComments: DatabaseReference = dbRootRef.child("comments")
+    static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("comments-user")
+    static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("comments-resto")
+    static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
+    static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
     
     // the fonts
-    var titleFont: UIFont{
+    static var titleFont: UIFont{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
-    
-    // This part will in theory disappear with the DB
-    var modelRestoList = [BasicResto]()
-    var userList = [BasicUser]()
-    var foodList: [FoodType] = []
-    
-    init(){
-        // test part
-        dbRootRef = Database.database().reference()
-        dbFoodTypeRoot = dbRootRef.child("foodType")
-        dbRankingsPerUser = dbRootRef.child("rankingsPerUser")
-        dbRanking = dbRootRef.child("rankingDetail")
-        dbResto = dbRootRef.child("resto")
-        dbRestoPoints = dbRootRef.child("resto-points")
-        dbRestoAddress = dbRootRef.child("resto-address")
-        themeColorOpaque = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
-        themeColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
-        
-    }
-    // Some getters
-    func getSomeRestoList(fromCity: BasicCity) -> [BasicResto]{
-        return modelRestoList.filter {$0.restoCity == fromCity}
-    }
-    func getSomeRestoList(fromCity:BasicCity, ofFoodType: FoodType) -> [BasicResto] {
-        return modelRestoList.filter {$0.restoCity == fromCity && $0.tags.contains(ofFoodType.key)}
-    }
-    // Some setters
-    func addRestoToModel(resto: BasicResto) {
-        if (modelRestoList.filter {$0.restoCity == resto.restoCity && $0.restoName == resto.restoName}).count == 0{
-            modelRestoList.append(resto)
-        }
-    }
-    //
-    func updateScore(forResto: BasicResto, withPoints: Int){
-        (modelRestoList.filter {$0.restoCity == forResto.restoCity && $0.restoName == forResto.restoName})[0].numberOfPoints += withPoints
-    }
-    
-}
-var basicModel = BasicModel()
-
-// This part will be improved later on
-
-
-class BasicResto {
-    let restoCity:BasicCity
-    let restoName:String
-    var shortDescription = ""
-    var numberOfPoints = 0
-    var restoURL: URL?
-    var comments: [Comment] = []
-    
-    var address:String{
-        get{
-            switch(mapItems.count){
-            case 0: return "No address available."
-            case 1:
-                if mapItems[0].placemark.formattedAddress != nil {
-                    return mapItems[0].placemark.formattedAddress!
-                }else{
-                    return "No address available."
-                }
-            default: return "Multiple adresses."
-            }
-        }
-    }
-    var mapItems: [MKMapItem] = []
-    var tags: [String] = []
-    
-    init(restoCity:BasicCity, restoName:String){
-        self.restoCity = restoCity
-        self.restoName = restoName
-    }
-    // Add a new placemark
-    func addPlaceItemToResto(placeItem: MKMapItem){
-        if !(mapItems.filter({$0.placemark.hashValue == placeItem.hashValue}).count > 0){
-            mapItems.append(placeItem)
-        }
-    }
 }
 
-// Comment class
-class Comment{
-    let date: Date
-    let user: String
-    let commentText: String
-    var likes:[String] = []
-    var dislikes:[String] = []
-    init(date: Date, user: String, commentText: String){
-        self.date = date
-        self.user = user
-        self.commentText = commentText
-    }
+enum BasicCity: String, CaseIterable {
+    case Singapore = "Singapore"
+    case KualaLumpur = "Kuala Lumpur"
+    case Cebu = "Cebu"
+    case Manila = "Manila"
+    case HongKong = "Hong Kong"
 }
 
+/*
 class BasicRanking{
     let cityOfRanking:BasicCity
     var typeOfFood = ""
@@ -162,12 +81,6 @@ class BasicRanking{
         restoList.remove(at: sourceIndex)
         restoList.insert(tempResto, at: destinationIndex)
     }
-}
+}*/
 
-enum BasicCity: String, CaseIterable {
-    case Singapore = "Singapore"
-    case KualaLumpur = "Kuala Lumpur"
-    case Cebu = "Cebu"
-    case Manila = "Manila"
-    case HongKong = "Hong Kong"
-    }
+

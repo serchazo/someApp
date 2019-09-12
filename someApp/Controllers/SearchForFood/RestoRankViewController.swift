@@ -40,9 +40,9 @@ class RestoRankViewController: UIViewController {
         super.viewDidLoad()
         
         //Initialize the references
-        let tmpRef = basicModel.dbRestoPoints.child(currentCity.rawValue)
+        let tmpRef = SomeApp.dbRestoPoints.child(currentCity.rawValue)
         restoPointsDatabaseReference = tmpRef.child(currentFood.key)
-        restoDatabaseReference = basicModel.dbResto
+        restoDatabaseReference = SomeApp.dbResto
         
         updateTableFromDatabase()
         

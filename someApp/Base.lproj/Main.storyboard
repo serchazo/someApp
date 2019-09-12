@@ -670,7 +670,7 @@
             </objects>
             <point key="canvasLocation" x="3830" y="1070"/>
         </scene>
-        <!--My Resto Detail-->
+        <!--Details-->
         <scene sceneID="Ggv-ot-pYY">
             <objects>
                 <viewController id="xkY-9F-qMX" customClass="MyRestoDetail" customModule="someApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -686,11 +686,11 @@
                                 <rect key="frame" x="20" y="88" width="374" height="725"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AddressCell" textLabel="FPu-ed-nZG" detailTextLabel="BZu-pm-1Jc" style="IBUITableViewCellStyleValue2" id="Ok5-Mf-Q1Y">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AddressCell" textLabel="FPu-ed-nZG" detailTextLabel="BZu-pm-1Jc" style="IBUITableViewCellStyleValue2" id="Ok5-Mf-Q1Y">
                                         <rect key="frame" x="0.0" y="28" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ok5-Mf-Q1Y" id="h3b-3Z-fwp">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="336" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Address" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FPu-ed-nZG">
@@ -724,6 +724,7 @@
                             <constraint firstItem="gyO-Yw-2Wx" firstAttribute="leading" secondItem="osP-bN-rSD" secondAttribute="leadingMargin" id="XvW-o6-SzF"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Details" id="aGR-2p-AwM"/>
                     <connections>
                         <outlet property="restoDetailTable" destination="gyO-Yw-2Wx" id="h7l-2z-7dA"/>
                     </connections>
@@ -732,10 +733,10 @@
             </objects>
             <point key="canvasLocation" x="3830" y="1811"/>
         </scene>
-        <!--View Controller-->
+        <!--Map-->
         <scene sceneID="oYv-B2-c10">
             <objects>
-                <viewController id="p0Q-ao-VSe" sceneMemberID="viewController">
+                <viewController id="p0Q-ao-VSe" customClass="MyRestoMap" customModule="someApp" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="MOR-Qm-06v"/>
                         <viewControllerLayoutGuide type="bottom" id="Lwg-XJ-bGj"/>
@@ -756,6 +757,10 @@
                             <constraint firstItem="Lwg-XJ-bGj" firstAttribute="top" secondItem="LlZ-j6-oWd" secondAttribute="bottom" id="sh9-gd-0QM"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Map" id="UQX-Hk-J9m"/>
+                    <connections>
+                        <outlet property="coolMap" destination="LlZ-j6-oWd" id="eTM-9m-zNU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L6S-U7-qdL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

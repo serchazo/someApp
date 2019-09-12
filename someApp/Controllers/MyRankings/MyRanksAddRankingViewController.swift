@@ -27,7 +27,7 @@ class MyRanksAddRankingViewController: UIViewController {
         
         // Do any additional setup after loading the view.
         // Get the list from the Database (an observer)
-        basicModel.dbFoodTypeRoot.observe(.value, with: {snapshot in
+        SomeApp.dbFoodTypeRoot.observe(.value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             
             for child in snapshot.children{

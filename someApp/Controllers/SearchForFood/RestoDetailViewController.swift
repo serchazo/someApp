@@ -26,7 +26,7 @@ class RestoDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        dbAddressReference = basicModel.dbRestoAddress.child(currentResto.key)
+        dbAddressReference = SomeApp.dbRestoAddress.child(currentResto.key)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,7 +124,7 @@ extension RestoDetailViewController: UITableViewDelegate, UITableViewDataSource{
                 config.entersReaderIfAvailable = true
                 let vc = SFSafariViewController(url: currentResto.url, configuration: config)
                 vc.preferredControlTintColor = UIColor.white
-                vc.preferredBarTintColor = basicModel.themeColorOpaque
+                vc.preferredBarTintColor = SomeApp.themeColorOpaque
                 present(vc, animated: true)
             }
         }

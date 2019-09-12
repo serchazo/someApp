@@ -16,12 +16,12 @@ class MyRanksEditDescriptionCell: UITableViewCell {
     }()
     
     lazy var titleLabel : UILabel = {
-        let tmpLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: basicModel.titleFont.lineHeight + 20 ))
+        let tmpLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: SomeApp.titleFont.lineHeight + 20 ))
         
         //let textColor = UIColor.white
         let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: basicModel.themeColor!,
-            .font: basicModel.titleFont,
+            .foregroundColor: SomeApp.themeColor,
+            .font: SomeApp.titleFont,
             ]
         tmpLabel.attributedText = NSAttributedString(string: "Edit your Ranking description", attributes: attributes)
         tmpLabel.textAlignment = NSTextAlignment.center
