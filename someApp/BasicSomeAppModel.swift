@@ -20,8 +20,8 @@ class SomeApp{
     static let dbComments: DatabaseReference = dbRootRef.child("comments")
     static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("comments-user")
     static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("comments-resto")
-    static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
-    static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
+    static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
+    static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
     
     // the fonts
     static var titleFont: UIFont{

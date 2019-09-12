@@ -357,7 +357,11 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                            options: .curveEaseInOut,
                            animations: {
                             self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
-                            self.editDescriptionTableView.frame = CGRect(x: 0, y: EditRanking.screenSize.height - EditRanking.screenSize.height * 0.9 , width: EditRanking.screenSize.width, height: EditRanking.screenSize.height * 0.9)
+                            self.editDescriptionTableView.frame = CGRect(
+                                x: 0,
+                                y: EditRanking.screenSize.height - EditRanking.screenSize.height * 0.9 ,
+                                width: EditRanking.screenSize.width,
+                                height: EditRanking.screenSize.height * 0.9)
                             self.editTextField.becomeFirstResponder()
                             },
                            completion: nil)
