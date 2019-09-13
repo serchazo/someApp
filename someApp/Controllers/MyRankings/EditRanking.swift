@@ -93,7 +93,6 @@ class EditRanking: UIViewController {
             // I'm asking for data of someone else
             self.rankingDatabaseReference = SomeApp.dbRanking.child(calledUserId+"-"+self.thisRankingId)
             let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId)
-            print(self.thisRanking)
             self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
             self.updateTableFromDatabase()
         }

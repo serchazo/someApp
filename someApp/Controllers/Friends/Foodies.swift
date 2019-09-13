@@ -13,9 +13,12 @@ class Foodies: UIViewController {
     private static let segueToFoodie = "showFoodie"
     private static let foodieCell = "foodieCell"
     
-    var friendsSearchController: UISearchController!
-    var filteredFoodies: [String] = []
-    var recommendedFoodies: [String] = []
+    private var friendsSearchController: UISearchController!
+    private var filteredFoodies: [String] = []
+    private var recommendedFoodies: [UserDetails] = []
+    
+    // The user to be passed on
+    private var visitedUserData: UserDetails!
 
     @IBOutlet weak var someTable: UITableView!{
         didSet{
@@ -45,18 +48,21 @@ class Foodies: UIViewController {
     func getRecommendedUsers(){
         // Outer : get the top users from the app
         SomeApp.dbUserFollowers.queryOrdered(byChild: "nbfollowers").queryLimited(toFirst: 20).observeSingleEvent(of: .value, with: {snapshot in
-            var tmpKeys:[String] = []
+            var tmpUserDetails:[UserDetails] = []
             var count = 0
             
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot{
-                    tmpKeys.append(childSnapshot.key)
-                    // Use the trick
-                    count += 1
-                    if count == snapshot.childrenCount{
-                        self.recommendedFoodies = tmpKeys
-                        self.someTable.reloadData()
-                    }
+                    SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
+                        tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
+                        // Use the trick
+                        count += 1
+                        if count == snapshot.childrenCount{
+                            self.recommendedFoodies = tmpUserDetails
+                            self.someTable.reloadData()
+                        }
+                        
+                    })
                     
                 }
             }
@@ -76,7 +82,8 @@ class Foodies: UIViewController {
             var count = 0
             for child in snapshot.children{
                 if let userDataSnapshot = child as? DataSnapshot{
-                    print(userDataSnapshot.key)
+                    
+                    print(userDataSnapshot)
                     // Use the trick
                     count += 1
                     if count == snapshot.childrenCount{
@@ -98,7 +105,7 @@ class Foodies: UIViewController {
             if let seguedController = segue.destination as? MyRanks,
                 let senderCell = sender as? UITableViewCell,
                 let indexNumber = someTable.indexPath(for: senderCell){
-                seguedController.callingUserId = recommendedFoodies[indexNumber.row]
+                seguedController.calledUser = recommendedFoodies[indexNumber.row]
             }
         default: break
         }
@@ -126,7 +133,7 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
         }
         
         let cell = someTable.dequeueReusableCell(withIdentifier: Foodies.foodieCell)
-        cell?.textLabel?.text = recommendedFoodies[indexPath.row]
+        cell?.textLabel?.text = recommendedFoodies[indexPath.row].nickName
         return cell!
     }
 }

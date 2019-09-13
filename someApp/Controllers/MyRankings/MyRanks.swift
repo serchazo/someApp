@@ -11,7 +11,7 @@ import Firebase
 
 class MyRanks: UIViewController {
     //Control var
-    var callingUserId = ""
+    var calledUser:UserDetails!
     
     // Class constants
     private static let addRanking = "addRankSegue"
@@ -127,7 +127,7 @@ class MyRanks: UIViewController {
         myProfileTableView.dataSource = self
         
         // If the callingUserId String is empty, then it is the current user
-        if callingUserId == ""{
+        if calledUser == nil {
             // 1. Get the logged in user - needed for the next step
             Auth.auth().addStateDidChangeListener {auth, user in
                 guard let user = user else {return}
@@ -140,14 +140,14 @@ class MyRanks: UIViewController {
             }
         }else{
             // The user is a "visitor", go get some data
-            SomeApp.dbUserData.child(callingUserId).observeSingleEvent(of: .value, with: {snapshot in
+            SomeApp.dbUserData.child(calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
                 if let value = snapshot.value as? [String: AnyObject],
                     let userNick = value["nickname"] as? String{
                     self.navigationItem.title = userNick
                     self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 }
             })
-            rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(callingUserId)
+            rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(calledUser.key)
             foodDBReference = SomeApp.dbFoodTypeRoot
             updateTablewithRanking()
             // hide navbar buttons
@@ -166,7 +166,11 @@ class MyRanks: UIViewController {
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Tell the world your favorite restorants"
+        if calledUser == nil {
+            labelView.text = "Tell the world your favorite restorants"
+        }else{
+            labelView.text = "\(calledUser.nickName)'s favorite restorants!"
+        }
         
         headerView.addSubview(labelView)
         self.myRanksTable.tableHeaderView = headerView
@@ -212,8 +216,8 @@ class MyRanks: UIViewController {
                     // I should send Ranking, Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
-                    if callingUserId != ""{
-                        seguedMVC.calledUserId = callingUserId
+                    if calledUser != nil {
+                        seguedMVC.calledUserId = calledUser.key
                     }
                 }
             }
