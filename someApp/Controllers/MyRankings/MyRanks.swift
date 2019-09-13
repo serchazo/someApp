@@ -37,9 +37,6 @@ class MyRanks: UIViewController {
         didSet{
             myRanksTable.dataSource = self
             myRanksTable.delegate = self
-            myRanksTable.dragDelegate = self
-            myRanksTable.dragInteractionEnabled = true
-            myRanksTable.dropDelegate = self
         }
     }
     
@@ -217,7 +214,7 @@ class MyRanks: UIViewController {
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
                     if calledUser != nil {
-                        seguedMVC.calledUserId = calledUser.key
+                        seguedMVC.calledUserId = calledUser
                     }
                 }
             }
@@ -295,6 +292,30 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         // Not used
     }
     
+    // Delete ranking on swipe
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        if tableView == myRanksTable && indexPath.section == 0 && calledUser == nil {
+            return UITableViewCell.EditingStyle.delete
+        }else{
+            return UITableViewCell.EditingStyle.none
+            
+        }
+    }
+    
+    // then
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            // Delete from model
+            rankingReferenceForUser.child(rankings[indexPath.row].key).removeValue()
+            SomeApp.dbRanking.child(user.uid+"-"+rankings[indexPath.row].key).removeValue()
+            // Delete the row (only for smothness, we will download again)
+            rankings.remove(at: indexPath.row)
+            foodItems.remove(at: indexPath.row)
+            myRanksTable.deleteRows(at: [indexPath], with: .fade)
+            //updateTablewithRanking()
+        }
+    }
+    
     //cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -342,74 +363,4 @@ extension MyRanks{
     private var cellCityNameFont:UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
     }
-    
-    /*
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat(iconFont.lineHeight + 10.0)
-    }*/
-}
-
-// MARK : drag delegate
-extension MyRanks: UITableViewDragDelegate {
-    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        session.localContext = tableView
-        return dragItem(at: indexPath)
-    }
-    
-    private func dragItem(at indexPath: IndexPath) -> [UIDragItem]{
-        // We don't allow dragging of the "Add ranking" cell 
-        if indexPath.section == 0{
-            let attributedString = NSAttributedString(string: "test")
-            let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
-            dragItem.localObject = attributedString
-            return[dragItem]
-        }else{
-            return []
-        }
-    }
-}
-
-// MARK : drop delegate
-extension MyRanks: UITableViewDropDelegate{
-    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
-        return session.canLoadObjects(ofClass: NSAttributedString.self)
-    }
-    
-    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        
-        if let indexPath = destinationIndexPath, indexPath.section == 0{
-            let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
-            return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
-        }else{
-            return UITableViewDropProposal(operation: .cancel)
-        }
-        
-    }
-    
-    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
-        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
-        for item in coordinator.items{
-            //The drag is coming from myself (no need to look at the local context to know it's coming from me)
-            if let sourceIndexPath = item.sourceIndexPath{
-                //if let attributtedString = item.dragItem.localObject as? NSAttributedString{
-                // Garde-fous: we need to keep the view and model in synch
-                myRanksTable.performBatchUpdates(
-                    {
-                        // TODO : Update the model here
-                        //let tempRanking = user.myRankings[sourceIndexPath.row]
-                        //user.myRankings.remove(at: sourceIndexPath.row)
-                        //user.myRankings.insert(tempRanking, at: destinationIndexPath.row)
-                        // DO NOT RELOAD DATA HERE!!
-                        // Delete row and then insert row instead
-                        myRanksTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
-                        myRanksTable.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
-                })
-                coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
-                //}
-                myRanksTable.reloadData()
-            }
-        }
-    }
-    
-    
 }

@@ -19,7 +19,7 @@ class EditRanking: UIViewController {
     //Get from segue-r
     var currentCity: BasicCity!
     var thisRankingFoodKey: String!
-    var calledUserId = "" // Control variable
+    var calledUserId:UserDetails! // Control variable
     
     // Instance variables
     private var user: User!
@@ -71,7 +71,7 @@ class EditRanking: UIViewController {
         self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
         // Verify if I'm asking for my data
-        if calledUserId == "" {
+        if calledUserId == nil {
             // Get the logged in user
             Auth.auth().addStateDidChangeListener {auth, user in
                 guard let user = user else {return}
@@ -91,10 +91,13 @@ class EditRanking: UIViewController {
             }
         }else {
             // I'm asking for data of someone else
-            self.rankingDatabaseReference = SomeApp.dbRanking.child(calledUserId+"-"+self.thisRankingId)
-            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId)
+            self.rankingDatabaseReference = SomeApp.dbRanking.child(calledUserId.key+"-"+self.thisRankingId)
+            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId.key)
             self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
             self.updateTableFromDatabase()
+            
+            self.navigationItem.title = self.thisRankingFoodKey
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         }
     }
     
@@ -118,7 +121,11 @@ class EditRanking: UIViewController {
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Your favorite \(thisRankingFoodKey!) places"
+        if calledUserId == nil{
+            labelView.text = "My favorite \(thisRankingFoodKey!) places"
+        }else{
+            labelView.text = "\(calledUserId.nickName)'s favorite \(thisRankingFoodKey!) places"
+        }
         
         headerView.addSubview(labelView)
         self.editRankingTable.tableHeaderView = headerView
@@ -194,7 +201,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }else{
             // the normal table
             // I'm asking for my data
-            if calledUserId == ""{
+            if calledUserId == nil {
                 return 3
             }else{
                 // If I'm asking for another user's data, I don't need the last cell
@@ -316,7 +323,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                     height: clickToEditSize.height+10))
                 clickToEditLabel.attributedText = clickToEditString
                 
-                if calledUserId == ""{
+                if calledUserId == nil {
                     // It's my ranking, I can edit
                     cell.addSubview(clickToEditLabel)
                 }else{
