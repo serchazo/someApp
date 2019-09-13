@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 
 class RestoRankViewController: UIViewController {
+    private static var showRestoDetailSegue = "showRestoDetail"
     var restoDatabaseReference: DatabaseReference!
     var restoPointsDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
@@ -112,10 +113,10 @@ class RestoRankViewController: UIViewController {
         // Pass the selected object to the new view controller.
         if let identifier = segue.identifier{
             switch identifier{
-            case "showRestoDetail":
+            case RestoRankViewController.showRestoDetailSegue:
                 if let cell = sender as? RestoRankTableViewCell,
                     let indexPath = tableView.indexPath(for: cell),
-                    let seguedToResto = segue.destination as? RestoDetailViewController{
+                    let seguedToResto = segue.destination as? MyRestoDetail{
                     // Segue
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                 }

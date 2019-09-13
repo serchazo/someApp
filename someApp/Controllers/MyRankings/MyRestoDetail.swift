@@ -41,6 +41,17 @@ class MyRestoDetail: UIViewController {
         }
     }
     
+    //
+    // MARK : Timeline funcs
+    //
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let indexPath = restoDetailTable.indexPathForSelectedRow {
+            restoDetailTable.deselectRow(at: indexPath, animated: true)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -150,7 +161,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         // test if the table is the Add Comment pop-up
         if tableView == self.addCommentTableView {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            setupCommentCell(cell: cell)
+            editCommentCell(cell: cell)
             return cell
         }else{
             // The normal table
@@ -213,8 +224,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     
                     return cell
                 }
+                
+                // Comment cell
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = commentArray[indexPath.row].text
+                commentCell(cell: cell, for: commentArray[indexPath.row])
                 return cell
             }
         }
@@ -259,8 +272,36 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                        completion: nil)
     }
     
+    
     // The comment cell
-    func setupCommentCell(cell: UITableViewCell){
+    func commentCell(cell: UITableViewCell, for comment: Comment){
+        let descriptionLabel = UILabel()
+        descriptionLabel.lineBreakMode = .byWordWrapping
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        descriptionLabel.text = comment.text
+        
+        //Get the label Size with the manip
+        let maximumLabelSize = CGSize(width: MyRestoDetail.screenSize.width, height: MyRestoDetail.screenSize.height);
+        let transformedText = comment.text as NSString
+        let boundingBox = transformedText.boundingRect(
+            with: maximumLabelSize,
+            options: .usesLineFragmentOrigin,
+            attributes: [.font : UIFont.preferredFont(forTextStyle: .body)],
+            context: nil)
+        
+        descriptionLabel.frame = CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width-20, height: boundingBox.height)
+        
+        let myTimeInterval = TimeInterval(comment.timestamp)
+        let time = NSDate(timeIntervalSince1970: TimeInterval(myTimeInterval))
+        
+        print(time)
+        
+        cell.addSubview(descriptionLabel)
+    }
+    
+    // The comment cell
+    func editCommentCell(cell: UITableViewCell){
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width, height: SomeApp.titleFont.lineHeight + 20 ))
         
         //let textColor = UIColor.white

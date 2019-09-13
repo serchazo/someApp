@@ -12,32 +12,34 @@ import Firebase
 
 class EditRanking: UIViewController {
     // class variables
-    static let showRestoDetail = "ShowResto"
-    static let addResto = "addNewResto"
-    static let screenSize = UIScreen.main.bounds.size
+    private static let showRestoDetail = "ShowResto"
+    private static let addResto = "addNewResto"
+    private static let screenSize = UIScreen.main.bounds.size
     
-    //
-    var user: User!
-    var thisRankingId: String!
+    //Get from segue-r
+    var currentCity: BasicCity!
     var thisRankingFoodKey: String!
-    var thisRankingDescription: String = ""
-    var rankingDatabaseReference: DatabaseReference!
-    var rankingsPeruserDBRef: DatabaseReference!
-    var restoDatabaseReference: DatabaseReference!
-    var restoPointsDatabaseReference: DatabaseReference!
-    var restoAddressDatabaseReference: DatabaseReference!
-    var thisRanking: [Resto] = []
-    var descriptionRowHeight = CGFloat(50.0)
+    var calledUserId = "" // Control variable
+    
+    // Instance variables
+    private var user: User!
+    private var thisRankingId: String!
+    private var thisRankingDescription: String = ""
+    private var rankingDatabaseReference: DatabaseReference!
+    private var rankingsPeruserDBRef: DatabaseReference!
+    private var restoDatabaseReference: DatabaseReference!
+    private var restoPointsDatabaseReference: DatabaseReference!
+    private var restoAddressDatabaseReference: DatabaseReference!
+    private var thisRanking: [Resto] = []
+    private var descriptionRowHeight = CGFloat(50.0)
     
     //For Edit the description swipe-up
-    var transparentView = UIView()
-    var editDescriptionTableView = UITableView()
-    var editTextField = UITextView()
-    
-    //Attention, variables initialized from segue-r MyRanksViewController
-    var currentCity: BasicCity!
+    private var transparentView = UIView()
+    private var editDescriptionTableView = UITableView()
+    private var editTextField = UITextView()
     
     // Outlets
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var editRankingTable: UITableView!{
         didSet{
             editRankingTable.dataSource = self
@@ -61,49 +63,59 @@ class EditRanking: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set vars
         thisRankingId = currentCity.rawValue.lowercased() + "-" + thisRankingFoodKey
-        // Get the logged in user
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            
-            // Update the DB References
-            self.rankingDatabaseReference = SomeApp.dbRanking.child(user.uid+"-"+self.thisRankingId)
-            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(user.uid)
+        self.restoDatabaseReference = SomeApp.dbResto
+        let tmpRef = SomeApp.dbRestoPoints.child(self.currentCity.rawValue)
+        self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
+        self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
+        
+        // Verify if I'm asking for my data
+        if calledUserId == "" {
+            // Get the logged in user
+            Auth.auth().addStateDidChangeListener {auth, user in
+                guard let user = user else {return}
+                self.user = user
+                
+                // I'm asking for my data
+                self.rankingDatabaseReference = SomeApp.dbRanking.child(user.uid+"-"+self.thisRankingId)
+                let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(user.uid)
+                self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
+                self.updateTableFromDatabase()
+                
+                // The editDescriptionTableView needs to be loaded only if it's my data
+                self.editDescriptionTableView.delegate = self
+                self.editDescriptionTableView.dataSource = self
+                self.editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
+                self.editTextField.delegate = self
+            }
+        }else {
+            // I'm asking for data of someone else
+            self.rankingDatabaseReference = SomeApp.dbRanking.child(calledUserId+"-"+self.thisRankingId)
+            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId)
+            print(self.thisRanking)
             self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
-            
-            self.restoDatabaseReference = SomeApp.dbResto
-            
-            let tmpRef = SomeApp.dbRestoPoints.child(self.currentCity.rawValue)
-            self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
-            self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
-            
             self.updateTableFromDatabase()
         }
-        
-        // Define the properties for the editDescription TableView
-        editDescriptionTableView.delegate = self
-        editDescriptionTableView.dataSource = self
-        editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
-        editTextField.delegate = self
     }
     
+    // func
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Deselect the row when segued pops
-        if let indexPath = editRankingTable.indexPathForSelectedRow {
-            editRankingTable.deselectRow(at: indexPath, animated: true)
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
+
     
     // Call this function to update the table
     func updateTableFromDatabase(){
         //
         let headerView: UIView = UIView.init(frame: CGRect(
-            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+            x: 0, y: 0, width: EditRanking.screenSize.width, height: 50))
         let labelView: UILabel = UILabel.init(frame: CGRect(
-            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
+            x: 0, y: 0, width: EditRanking.screenSize.width, height: 50))
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
@@ -182,7 +194,13 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             return 1
         }else{
             // the normal table
-            return 3
+            // I'm asking for my data
+            if calledUserId == ""{
+                return 3
+            }else{
+                // If I'm asking for another user's data, I don't need the last cell
+                return 2
+            }
         }
     }
     
@@ -299,7 +317,14 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                     height: clickToEditSize.height+10))
                 clickToEditLabel.attributedText = clickToEditString
                 
-                cell.addSubview(clickToEditLabel)
+                if calledUserId == ""{
+                    // It's my ranking, I can edit
+                    cell.addSubview(clickToEditLabel)
+                }else{
+                    // If not, I can't edit
+                    cell.isUserInteractionEnabled = false
+                    cell.selectionStyle = .none
+                }
                 
                 descriptionRowHeight = boundingBox.height + clickToEditSize.height + 20
                 
@@ -318,10 +343,14 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                 }
                 return tmpCell
                 
-            }else{
+            }else if indexPath.section == 2 {
                 // The last cell : Add resto to ranking
                 return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
+            }else {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                return cell
             }
+            
         }
     }
     
@@ -365,7 +394,6 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                             self.editTextField.becomeFirstResponder()
                             },
                            completion: nil)
-            
           
         }
     }

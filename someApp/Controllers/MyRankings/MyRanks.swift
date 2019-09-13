@@ -10,24 +10,26 @@ import UIKit
 import Firebase
 
 class MyRanks: UIViewController {
+    //Control var
+    var callingUserId = ""
     
     // Class constants
-    static let addRanking = "addRankSegue"
-    static let showRakingDetail = "editRestoList"
-    static let screenSize = UIScreen.main.bounds.size
+    private static let addRanking = "addRankSegue"
+    private static let showRakingDetail = "editRestoList"
+    private static let screenSize = UIScreen.main.bounds.size
     
     // Instance variables
-    var user:User!
-    var currentCity:BasicCity = .Singapore
-    var rankings:[Ranking] = []
-    var foodItems:[FoodType] = []
-    var rankingReferenceForUser: DatabaseReference!
-    var foodDBReference: DatabaseReference!
-    var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
+    private var user:User!
+    private var currentCity:BasicCity = .Singapore
+    private var rankings:[Ranking] = []
+    private var foodItems:[FoodType] = []
+    private var rankingReferenceForUser: DatabaseReference!
+    private var foodDBReference: DatabaseReference!
+    private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
     
     //For the myProfile swipe table
-    var transparentView = UIView()
-    var myProfileTableView = UITableView()
+    private var transparentView = UIView()
+    private var myProfileTableView = UITableView()
     
     // Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -121,21 +123,38 @@ class MyRanks: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 1. Get the logged in user - needed for the next step
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            
-            // 2. Once we get the user, update!
-            self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(user.uid)
-            self.foodDBReference = SomeApp.dbFoodTypeRoot
-            self.updateTablewithRanking()
-        }
-        
-        //
         myProfileTableView.delegate = self
         myProfileTableView.dataSource = self
+        
+        // If the callingUserId String is empty, then it is the current user
+        if callingUserId == ""{
+            // 1. Get the logged in user - needed for the next step
+            Auth.auth().addStateDidChangeListener {auth, user in
+                guard let user = user else {return}
+                self.user = user
+                
+                // 2. Once we get the user, update!
+                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(user.uid)
+                self.foodDBReference = SomeApp.dbFoodTypeRoot
+                self.updateTablewithRanking()
+            }
+        }else{
+            // The user is a "visitor", go get some data
+            SomeApp.dbUserData.child(callingUserId).observeSingleEvent(of: .value, with: {snapshot in
+                if let value = snapshot.value as? [String: AnyObject],
+                    let userNick = value["nickname"] as? String{
+                    self.navigationItem.title = userNick
+                    self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+                }
+            })
+            rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(callingUserId)
+            foodDBReference = SomeApp.dbFoodTypeRoot
+            updateTablewithRanking()
+            // hide navbar buttons
+            navigationItem.leftBarButtonItem = nil
+            navigationItem.rightBarButtonItem = nil
+        }
+        
     }
     
     func updateTablewithRanking(){
@@ -193,6 +212,9 @@ class MyRanks: UIViewController {
                     // I should send Ranking, Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
+                    if callingUserId != ""{
+                        seguedMVC.calledUserId = callingUserId
+                    }
                 }
             }
         case MyRanks.addRanking :

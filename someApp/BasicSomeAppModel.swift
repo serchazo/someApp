@@ -20,6 +20,9 @@ class SomeApp{
     static let dbComments: DatabaseReference = dbRootRef.child("comments")
     static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("comments-user")
     static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("comments-resto")
+    static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
+    static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followedby")
+    
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
     
