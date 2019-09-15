@@ -20,6 +20,10 @@ class RestoRankViewController: UIViewController {
     var currentFood: FoodType!
     let refreshControl = UIRefreshControl()
 
+    /// Adds part
+    private let numAdsToLoad = 5 //The number of native ads to load (between 1 and 5 for this example).
+    private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
+    private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
     
     // MARK: outlets
     @IBOutlet var tableView: UITableView!
@@ -45,13 +49,26 @@ class RestoRankViewController: UIViewController {
         restoPointsDatabaseReference = tmpRef.child(currentFood.key)
         restoDatabaseReference = SomeApp.dbResto
         
-        updateTableFromDatabase()
+        // Initialize the adds
+        let options = GADMultipleAdsAdLoaderOptions()
+        options.numberOfAds = numAdsToLoad
+        
+        // Prepare the ad loader and start loading ads.
+        adLoader = GADAdLoader(adUnitID: SomeApp.adNativeUnitID,
+                               rootViewController: self,
+                               adTypes: [.unifiedNative],
+                               options: [options])
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
         
         //Some setup
+        restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
+                                    forCellReuseIdentifier: "UnifiedNativeAdCell")
         restoRankTableView.tableHeaderView = restoRankTableHeader
         tableHeaderFoodIcon.text = currentFood.icon
         tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.rawValue)"
         
+        updateTableFromDatabase()
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
@@ -128,24 +145,72 @@ class RestoRankViewController: UIViewController {
 
 // MARK : Table stuff
 extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return thisRanking.count
+        if section == 0{
+            return 1
+        }else{
+            return thisRanking.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
-            //Configure the cell
-            let thisResto = thisRanking[indexPath.row]
-            cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
-            cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
-            cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])
-            
-            cell.decorateCell()
-            
-            return cell
+        if indexPath.section == 0{
+            let nativeAdCell = tableView.dequeueReusableCell(
+                withIdentifier: "UnifiedNativeAdCell", for: indexPath)
+            configureAddCell(nativeAdCell: nativeAdCell)
+            return(nativeAdCell)
         }else{
-            fatalError("Marche pas.")
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
+                //Configure the cell
+                let thisResto = thisRanking[indexPath.row]
+                cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
+                cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
+                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])
+                
+                cell.decorateCell()
+                
+                return cell
+            
+            }else{
+                fatalError("Marche pas.")
+            }
         }
+    }
+    // configure the add cell
+    func configureAddCell(nativeAdCell: UITableViewCell){
+        guard nativeAds.count > 0 else {return}
+        var nativeAd = nativeAds[0] // GADUnifiedNativeAd()
+        /// Set the native ad's rootViewController to the current view controller.
+        nativeAd.rootViewController = self
+        
+        // Get the ad view from the Cell. The view hierarchy for this cell is defined in
+        // UnifiedNativeAdCell.xib.
+        let adView : GADUnifiedNativeAdView = nativeAdCell.contentView.subviews.first as! GADUnifiedNativeAdView
+        
+        // Associate the ad view with the ad object.
+        // This is required to make the ad clickable.
+        adView.nativeAd = nativeAd
+        
+        // Populate the ad view with the ad assets.
+        (adView.headlineView as! UILabel).text = nativeAd.headline
+        (adView.priceView as! UILabel).text = nativeAd.price
+        if let starRating = nativeAd.starRating {
+            (adView.starRatingView as! UILabel).text =
+                starRating.description + "\u{2605}"
+        } else {
+            (adView.starRatingView as! UILabel).text = nil
+        }
+        (adView.bodyView as! UILabel).text = nativeAd.body
+        (adView.advertiserView as! UILabel).text = nativeAd.advertiser
+        // The SDK automatically turns off user interaction for assets that are part of the ad, but
+        // it is still good to be explicit.
+        (adView.callToActionView as! UIButton).isUserInteractionEnabled = false
+        (adView.callToActionView as! UIButton).setTitle(
+            nativeAd.callToAction, for: UIControl.State.normal)
     }
 }
 
@@ -170,4 +235,26 @@ extension RestoRankViewController{
     private var restorantAddressFont:UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
     }
+}
+
+// MARK : Adds extension
+extension RestoRankViewController: GADUnifiedNativeAdLoaderDelegate{
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+        print("Received native ad: \(nativeAd)")
+        
+        // Add the native ad to the list of native ads.
+        nativeAds.append(nativeAd)
+        
+        //
+        let adIndexPath = IndexPath(row: 0, section: 0)
+        restoRankTableView.beginUpdates()
+        restoRankTableView.reloadRows(at: [adIndexPath], with: .automatic)
+        restoRankTableView.endUpdates()
+    }
+    
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
+        print("\(adLoader) failed with error: \(error.localizedDescription)")
+    }
+    
+    
 }
