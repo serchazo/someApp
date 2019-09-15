@@ -241,6 +241,18 @@ class MyRanks: UIViewController {
         }
     }
     
+    @objc
+    func logout(){
+        // 4
+        do {
+            try Auth.auth().signOut()
+            onClickTransparentView()
+            self.dismiss(animated: true, completion: nil)
+        } catch (let error) {
+            print("Auth sign out failed: \(error)")
+        }
+    }
+    
 }
 
 // MARK : update the ranking list when we receive the event from the menu choser
@@ -303,7 +315,21 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        // Not used
+        if tableView == myProfileTableView{
+            print(indexPath)
+            print("\(indexPath.row) :  \(profileMenu[indexPath.row])")
+            
+            if indexPath.row == 1{
+                print(profileMenu[indexPath.row-1])
+            }else if indexPath.row == 2{
+                print(profileMenu[indexPath.row-1])
+            }else if indexPath.row == 3{
+                print(profileMenu[indexPath.row-1])
+            }else if indexPath.row == 5{
+                print(profileMenu[indexPath.row-1])
+                
+            }
+        }
     }
     
     // Delete ranking on swipe
@@ -336,8 +362,27 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         // Verifiy if it's the myProfile table
         if tableView == myProfileTableView{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = profileMenu[indexPath.row]
-            return cell
+            if indexPath.row == 4 {
+                // The button
+                let addCommentButton = UIButton(type: .custom)
+                addCommentButton.frame = CGRect(x: 0, y: cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
+                //addCommentButton.backgroundColor = SomeApp.themeColor
+                //addCommentButton.layer.cornerRadius = 20 //0.5 * addCommentButton.bounds.size.width
+                //addCommentButton.layer.masksToBounds = true
+                addCommentButton.setTitleColor(.red, for: .normal)
+                addCommentButton.setTitle("Log out", for: .normal)
+                addCommentButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
+                
+                cell.selectionStyle = .none
+                cell.addSubview(addCommentButton)
+                
+                return cell
+                
+            }else{
+                cell.textLabel?.text = profileMenu[indexPath.row]
+                return cell
+            }
+            
         }else{
             // The normal table
             guard rankings.count > 0 && rankings.count == foodItems.count else{

@@ -39,14 +39,6 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
     }
 
     func reloadText(){
-        // The text for the upper Label
-        let textColor = SomeApp.themeColorOpaque
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: textColor,
-            .font: titleFont,
-            .textEffect: NSAttributedString.TextEffectStyle.letterpressStyle]
-        titleCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: attributes)
-        
         // Get the list from the Database (an observer)
         SomeApp.dbFoodTypeRoot.observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
@@ -96,13 +88,14 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
             foodSelectorCollection.delegate = self
         }
     }
+
+    
     @IBOutlet weak var titleCell: UILabel!
     
     // MARK: Broadcasting stuff
     func itemChooserReceiveCity(_ sender: BasicCity) {
         currentCity = sender
         cityNavBarButton.title = sender.rawValue 
-        
     }
     
     // MARK: - Navigation
@@ -178,6 +171,27 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             fatalError("No cell")
         }
     }
+    
+    // For the header
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "foodHeader", for: indexPath) as? FoodSelectorHeader{
+                let textColor = SomeApp.themeColorOpaque
+                let attributes: [NSAttributedString.Key: Any] = [
+                    .foregroundColor: textColor,
+                    .font: titleFont,
+                    .textEffect: NSAttributedString.TextEffectStyle.letterpressStyle]
+                headerView.sectionHeaderCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: attributes)
+                
+                //headerView.sectionHeaderCell.text = "This is a test"
+                return headerView
+            }
+            else{fatalError("Can't create cell")}
+        default: assert(false, "Invalid element type")
+        }
+    }
+    
 }
 
 
@@ -186,7 +200,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         // If the food list is empty, the only cell is the spinner
         guard foodList.count > 0 else{
-            return CGSize(width: screenSize.width-50, height: 200)
+            return CGSize(width: screenSize.width-50, height: 180)
         }
         // Else, we calculate the size
         let paddingSpace = sectionInsets.left * 3
@@ -214,7 +228,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     
     // MARK: Font of the cells
     private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(60.0))
     }
     
     private var cellTitleFont: UIFont{

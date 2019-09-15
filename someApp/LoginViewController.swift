@@ -10,7 +10,8 @@ import UIKit
 import Firebase
 
 class LoginViewController: UIViewController {
-    let loginOKSegueID = "loginOK"
+    private let loginOKSegueID = "loginOK"
+    private var user:User!
     
     @IBOutlet weak var textFieldLoginEmail: UITextField!
     @IBOutlet weak var textFieldLoginPassword: UITextField!
@@ -28,6 +29,7 @@ class LoginViewController: UIViewController {
         Auth.auth().addStateDidChangeListener(){ auth,user in
             // test the value of user
             if user != nil {
+                self.user = user
                 self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
                 // Some clean up
                 self.textFieldLoginEmail.text = nil
@@ -42,9 +44,15 @@ class LoginViewController: UIViewController {
             let password = textFieldLoginPassword.text,
             email.count > 0,
             password.count > 0 else {
+                let alert = UIAlertController(title: "Empty information",
+                                              message: "Your e-mail or password can't be empty.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                present(alert,animated: true, completion: nil)
                 return
         }
         
+        print ("here with user \(email)")
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {
                 let alert = UIAlertController(title: "Sign In Failed", message: error.localizedDescription, preferredStyle: .alert)
@@ -90,6 +98,18 @@ class LoginViewController: UIViewController {
     }
     
 
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        switch identifier {
+        case loginOKSegueID:
+            if user != nil {
+                return true
+            } else{
+                return false
+            }
+        default:
+            return false
+        }
+    }
     
     
     /*

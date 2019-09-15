@@ -68,6 +68,8 @@ class RestoRankViewController: UIViewController {
         tableHeaderFoodIcon.text = currentFood.icon
         tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.rawValue)"
         
+        navigationItem.title = currentFood.icon
+        
         updateTableFromDatabase()
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -159,6 +161,18 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0{
+            guard nativeAds.count > 0 else{
+                let spinnerCell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                spinnerCell.textLabel?.text = "Something good will appear here"
+                spinnerCell.backgroundColor = #colorLiteral(red: 0.9983033538, green: 0.9953654408, blue: 0.8939318061, alpha: 1)
+                
+                let spinner = UIActivityIndicatorView(style: .gray)
+                spinner.startAnimating()
+                
+                spinnerCell.accessoryView = spinner
+                
+                return spinnerCell
+            }
             let nativeAdCell = tableView.dequeueReusableCell(
                 withIdentifier: "UnifiedNativeAdCell", for: indexPath)
             configureAddCell(nativeAdCell: nativeAdCell)

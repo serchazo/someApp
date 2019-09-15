@@ -35,6 +35,7 @@ class SomeApp{
     static var titleFont: UIFont{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
+    
 }
 
 enum BasicCity: String, CaseIterable {
