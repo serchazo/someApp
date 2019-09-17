@@ -421,7 +421,7 @@
             </objects>
             <point key="canvasLocation" x="1728.985507246377" y="663.61607142857144"/>
         </scene>
-        <!--Edit Ranking-->
+        <!--My Ranking-->
         <scene sceneID="ead-kz-coi">
             <objects>
                 <viewController id="0L4-C9-dg9" customClass="EditRanking" customModule="someApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -570,9 +570,15 @@
                             <constraint firstItem="ljf-mn-kdL" firstAttribute="top" secondItem="g8T-ZW-hwj" secondAttribute="bottom" id="uiU-zu-80h"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Edit Ranking" id="gjz-Ol-EEO"/>
+                    <navigationItem key="navigationItem" title="My Ranking" id="gjz-Ol-EEO">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="O2h-r2-NPR">
+                            <connections>
+                                <action selector="editButtonPressed:" destination="0L4-C9-dg9" id="pUX-pr-SkT"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
-                        <outlet property="editRankingTable" destination="ljf-mn-kdL" id="s9I-6h-MSI"/>
+                        <outlet property="myRankingTable" destination="ljf-mn-kdL" id="s9I-6h-MSI"/>
                         <outlet property="searchDisplayController" destination="DpR-XO-fCF" id="Yut-X1-hQl"/>
                         <outlet property="tableView" destination="ljf-mn-kdL" id="W7x-96-Ryq"/>
                     </connections>
@@ -1241,7 +1247,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="YoF-pa-6fi"/>
+        <segue reference="B4g-Yk-vFu"/>
         <segue reference="ceb-H0-aSB"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

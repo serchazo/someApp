@@ -41,7 +41,7 @@ class HomeViewController: UIViewController {
     
     //
     func updateTimelinefromDB(){
-        userTimelineReference.observeSingleEvent(of: .value, with: {snapshot in
+        userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
             var tmpPosts:[(key: String, type:String, timestamp:Int, payload: String )] = []
         
@@ -56,10 +56,9 @@ class HomeViewController: UIViewController {
                     // Use the trick
                     count += 1
                     if count == snapshot.childrenCount{
-                        self.somePost = tmpPosts
+                        self.somePost = tmpPosts.reversed()
                         self.newsFeedTable.reloadData()
                     }
-                    
                 }
             }
         })

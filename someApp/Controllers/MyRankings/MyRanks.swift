@@ -254,7 +254,7 @@ class MyRanks: UIViewController {
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     // I should send Ranking, Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
-                    seguedMVC.thisRankingFoodKey = rankings[tmpIndexPath.row].foodKey
+                    seguedMVC.currentFood = foodItems[tmpIndexPath.row]
                     if calledUser != nil {
                         seguedMVC.calledUserId = calledUser
                     }
@@ -388,13 +388,12 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
             // Delete from model
-            rankingReferenceForUser.child(rankings[indexPath.row].key).removeValue()
-            SomeApp.dbRanking.child(user.uid+"-"+rankings[indexPath.row].key).removeValue()
+            SomeApp.deleteUserRanking(userId: user.uid, rankingId: rankings[indexPath.row].key)
+            
             // Delete the row (only for smothness, we will download again)
             rankings.remove(at: indexPath.row)
             foodItems.remove(at: indexPath.row)
             myRanksTable.deleteRows(at: [indexPath], with: .fade)
-            //updateTablewithRanking()
         }
     }
     

@@ -12,7 +12,7 @@ import Firebase
 class SomeApp{
     private static let dbRootRef:DatabaseReference = Database.database().reference()
     static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child("foodType")
-    static let dbRankingsPerUser: DatabaseReference = dbRootRef.child("rankingsPerUser")
+    static let dbRankingsPerUser: DatabaseReference = dbRootRef.child("user-rankings")
     static let dbRanking:DatabaseReference = dbRootRef.child("rankingDetail")
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
@@ -51,6 +51,11 @@ class SomeApp{
     static func unfollow(userId: String, unfollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         followingDBReference.child(unfollowId).removeValue()
+    }
+    
+    static func deleteUserRanking(userId: String, rankingId: String){
+        SomeApp.dbRankingsPerUser.child(rankingId).removeValue()
+        SomeApp.dbRanking.child(userId+"-"+rankingId).removeValue()
     }
 }
 

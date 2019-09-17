@@ -18,7 +18,7 @@ class EditRanking: UIViewController {
     
     //Get from segue-r
     var currentCity: BasicCity!
-    var thisRankingFoodKey: String!
+    var currentFood: FoodType!
     var calledUserId:UserDetails! // Control variable
     
     // Instance variables
@@ -38,19 +38,66 @@ class EditRanking: UIViewController {
     private var editDescriptionTableView = UITableView()
     private var editTextField = UITextView()
     
+    //For "Edit the ranking" swipe left
+    private var editRankTransparentView = UIView()
+    private var editRankTableView = UITableView()
+    
     // Outlets
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var editRankingTable: UITableView!{
+    @IBOutlet weak var myRankingTable: UITableView!{
         didSet{
-            editRankingTable.dataSource = self
-            editRankingTable.delegate = self
-            editRankingTable.dragDelegate = self
-            editRankingTable.dragInteractionEnabled = true
-            editRankingTable.dropDelegate = self
-            editRankingTable.estimatedRowHeight = 70
-            editRankingTable.rowHeight = UITableView.automaticDimension
+            myRankingTable.dataSource = self
+            myRankingTable.delegate = self
+            myRankingTable.dragDelegate = self
+            myRankingTable.dragInteractionEnabled = true
+            myRankingTable.dropDelegate = self
+            myRankingTable.estimatedRowHeight = 70
+            myRankingTable.rowHeight = UITableView.automaticDimension
         }
     }
+    
+    ///
+    // MARK : Edit table
+    @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
+        // Create the Edit TableView
+        let windowEditRank = UIApplication.shared.keyWindow
+        editRankTransparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        editRankTransparentView.frame = self.view.frame
+        windowEditRank?.addSubview(editRankTransparentView)
+        
+        // Add the table
+        editRankTableView.frame = CGRect(
+            x: 0,
+            y: EditRanking.screenSize.height,
+            width: EditRanking.screenSize.width,
+            height: EditRanking.screenSize.height * 0.9)
+        windowEditRank?.addSubview(editRankTableView)
+        
+        // Go back to "normal" if we tap
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickEditRankTransparentView))
+        editRankTransparentView.addGestureRecognizer(tapGesture)
+        
+        // Cool "slide-up" animation when appearing
+        editRankTransparentView.alpha = 0
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.editRankTransparentView.alpha = 0.7 //Start at 0, go to 0.5
+                        self.editRankTableView.frame = CGRect(
+                            x: 0,
+                            y: EditRanking.screenSize.height - EditRanking.screenSize.height * 0.9 ,
+                            width: EditRanking.screenSize.width,
+                            height: EditRanking.screenSize.height * 0.9)
+                        //self.editTextField.becomeFirstResponder()
+        },
+                       completion: nil)
+        
+        
+    }
+    
     
     func initializeArray(withElements: Int) -> [Resto] {
         var tmpRestoList: [Resto] = []
@@ -64,10 +111,10 @@ class EditRanking: UIViewController {
         super.viewDidLoad()
         
         // Set vars
-        thisRankingId = currentCity.rawValue.lowercased() + "-" + thisRankingFoodKey
+        thisRankingId = currentCity.rawValue.lowercased() + "-" + currentFood.key
         self.restoDatabaseReference = SomeApp.dbResto
         let tmpRef = SomeApp.dbRestoPoints.child(self.currentCity.rawValue)
-        self.restoPointsDatabaseReference = tmpRef.child(self.thisRankingFoodKey)
+        self.restoPointsDatabaseReference = tmpRef.child(currentFood.key)
         self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
         // Verify if I'm asking for my data
@@ -88,6 +135,10 @@ class EditRanking: UIViewController {
                 self.editDescriptionTableView.dataSource = self
                 self.editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
                 self.editTextField.delegate = self
+                
+                // The editRankingTableView needs to be loaded only if it's my data
+                self.editRankTableView.delegate = self
+                self.editRankTableView.dataSource = self 
             }
         }else {
             // I'm asking for data of someone else
@@ -95,10 +146,10 @@ class EditRanking: UIViewController {
             let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId.key)
             self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
             self.updateTableFromDatabase()
-            
-            self.navigationItem.title = self.thisRankingFoodKey
-            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         }
+        // In both cases
+        navigationItem.title = currentFood.icon
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
     }
     
     // func
@@ -122,20 +173,20 @@ class EditRanking: UIViewController {
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
         if calledUserId == nil{
-            labelView.text = "My favorite \(thisRankingFoodKey!) places"
+            labelView.text = "My favorite \(currentFood.name) places"
         }else{
-            labelView.text = "\(calledUserId.nickName)'s favorite \(thisRankingFoodKey!) places"
+            labelView.text = "\(calledUserId.nickName)'s favorite \(currentFood.name) places"
         }
         
         headerView.addSubview(labelView)
-        self.editRankingTable.tableHeaderView = headerView
+        self.myRankingTable.tableHeaderView = headerView
         //
         
         // Get the description
         self.rankingsPeruserDBRef.observeSingleEvent(of: .value, with: {snapshot in
             if let rankingItem = Ranking(snapshot: snapshot){
                 self.thisRankingDescription = rankingItem.description
-                self.editRankingTable.reloadData()
+                self.myRankingTable.reloadData()
             }
         })
         
@@ -161,7 +212,7 @@ class EditRanking: UIViewController {
                         count += 1
                         if count == snapshot.childrenCount {
                             self.thisRanking = tmpRanking
-                            self.editRankingTable.reloadData()
+                            self.myRankingTable.reloadData()
                         }
                     })
                 }
@@ -176,7 +227,7 @@ class EditRanking: UIViewController {
             switch identifier{
             case EditRanking.showRestoDetail:
                 if let cell = sender as? MyRanksEditRankingTableViewCell,
-                    let indexPath = editRankingTable.indexPath(for: cell),
+                    let indexPath = myRankingTable.indexPath(for: cell),
                     let seguedToResto = segue.destination as? MyRestoDetail{
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                 }
@@ -198,6 +249,8 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         // test if the table is the EditDescription pop-up
         if tableView == self.editDescriptionTableView{
             return 1
+        }else if tableView == self.editRankTableView{
+            return 2
         }else{
             // the normal table
             // I'm asking for my data
@@ -214,6 +267,9 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         // test if the table is the EditDescription pop-up
         if tableView == self.editDescriptionTableView{
             return 1
+        }else if tableView == self.editRankTableView{
+            if section == 0{ return 1}
+            else {return thisRanking.count}
         }else{
             // The normal table
             switch(section){
@@ -228,7 +284,6 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
     }
     
     func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
-        
         //A label for warning the user about the max chars
         let maxCharsLabel = UILabel(frame: CGRect(
             x: 0,
@@ -267,16 +322,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         cell.backView.addSubview(doneButton)
     }
     
-    // Update the model when the button is pressed
-    @objc
-    func doneUpdating(){
-        let descriptionDBRef = rankingsPeruserDBRef.child("description")
-        descriptionDBRef.setValue(editTextField.text)
 
-        //Update view
-        onClickTransparentView()
-        updateTableFromDatabase()
-    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // test if the table is the EditDescription pop-up
@@ -287,9 +333,15 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             }else{
                 fatalError("Unable to create cell")
             }
+            /// The Edit Ranking Table
+        }else if tableView == self.editRankTableView{
             
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "To be defined"
+            return cell
+            
+            /// The "normal" table
         }else{
-            // The normal table
             if indexPath.section == 0 {
                 // The Description cell
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -313,7 +365,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                 
                 cell.addSubview(descriptionLabel)
                 
-                let clickToEditString = NSAttributedString(string: "Click to edit", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
+                let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
                 
                 let clickToEditSize = clickToEditString.size()
                 let clickToEditLabel = UILabel(frame: CGRect(
@@ -360,9 +412,20 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
+    // Update the model when the button is pressed
+    @objc
+    func doneUpdating(){
+        let descriptionDBRef = rankingsPeruserDBRef.child("description")
+        descriptionDBRef.setValue(editTextField.text)
+        
+        //Update view
+        onClickTransparentView()
+        updateTableFromDatabase()
+    }
+    
     // If we press on a cell
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == self.editRankingTable && indexPath.section == 0{
+        if tableView == self.myRankingTable && indexPath.section == 0{
             
             // Slide up the Edit TableView
             let window = UIApplication.shared.keyWindow
@@ -371,7 +434,6 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             window?.addSubview(transparentView)
             
             // Add the table
-            
             editDescriptionTableView.frame = CGRect(
                 x: 0,
                 y: EditRanking.screenSize.height,
@@ -425,11 +487,29 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                        completion: nil)
         
         // Deselect the row to go back to normal
-        if let indexPath = editRankingTable.indexPathForSelectedRow {
-            editRankingTable.deselectRow(at: indexPath, animated: true)
+        if let indexPath = myRankingTable.indexPathForSelectedRow {
+            myRankingTable.deselectRow(at: indexPath, animated: true)
         }
     }
     
+    @objc func onClickEditRankTransparentView(){
+        // Animation when disapearing
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.editRankTransparentView.alpha = 0 //Start at value above, go to 0
+                        self.editRankTableView.frame = CGRect(
+                            x: 0,
+                            y: EditRanking.screenSize.height ,
+                            width: EditRanking.screenSize.width,
+                            height: EditRanking.screenSize.height * 0.9)
+                        //self.editTextField.resignFirstResponder()
+        },
+                       completion: nil)
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Test if it's the Edit Description table
@@ -589,7 +669,7 @@ extension EditRanking: UITableViewDragDelegate{
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
         // We don't allow dragging of the "Add ranking" cell
-        if indexPath.section == 0, let restoNameToDrag = (editRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
+        if indexPath.section == 0, let restoNameToDrag = (myRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
             dragItem.localObject = restoNameToDrag
             return[dragItem]
@@ -622,18 +702,18 @@ extension EditRanking : UITableViewDropDelegate {
             if let sourceIndexPath = item.sourceIndexPath{
                 //if let attributtedString = item.dragItem.localObject as? NSAttributedString{
                 // Garde-fous: we need to keep the view and model in synch
-                editRankingTable.performBatchUpdates(
+                myRankingTable.performBatchUpdates(
                     {
                         //Update the model here
                         //currentRanking!.updateList(sourceIndex: sourceIndexPath.row, destinationIndex: destinationIndexPath.row)
                         // DO NOT RELOAD DATA HERE!!
                         // Delete row and then insert row instead
-                        editRankingTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
-                        editRankingTable.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
+                        myRankingTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
+                        myRankingTable.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
                 })
                 coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
                 //}
-                editRankingTable.reloadData()
+                myRankingTable.reloadData()
             }
         }
     }

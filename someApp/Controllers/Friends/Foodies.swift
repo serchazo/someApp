@@ -59,21 +59,24 @@ class Foodies: UIViewController {
             var tmpUserDetails:[UserDetails] = []
             var count = 0
             
+            // Inner: get the user data
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot{
-                        SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
-                            
+                    SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
+                        // We don't add ourselve to the suggested
+                        if userDataSnap.exists(){
                             if(childSnapshot.key != self.user.uid){
                                 // No for current user
                                 tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
                             }
-                            // Use the trick
-                            count += 1
-                            if count == snapshot.childrenCount {
-                                self.recommendedFoodies = tmpUserDetails
-                                self.someTable.reloadData()
-                            }
-                        })
+                        }
+                        // Use the trick
+                        count += 1
+                        if count == snapshot.childrenCount {
+                            self.recommendedFoodies = tmpUserDetails
+                            self.someTable.reloadData()
+                        }
+                    })
                     
                     //
                     
@@ -145,7 +148,6 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             cell.accessoryView = spinner
             return cell
         }
-        
         let cell = someTable.dequeueReusableCell(withIdentifier: Foodies.foodieCell)
         cell?.textLabel?.text = recommendedFoodies[indexPath.row].nickName
         return cell!
