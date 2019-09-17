@@ -26,6 +26,7 @@ class MyRanks: UIViewController {
     private var foodItems:[FoodType] = []
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
+    //private var followingDBReference: DatabaseReference!
     private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
     
     //For the myProfile swipe table
@@ -127,35 +128,35 @@ class MyRanks: UIViewController {
         myProfileTableView.delegate = self
         myProfileTableView.dataSource = self
         
-        // If the callingUserId String is empty, then it is the current user
-        if calledUser == nil {
-            // 1. Get the logged in user - needed for the next step
-            Auth.auth().addStateDidChangeListener {auth, user in
-                guard let user = user else {return}
-                self.user = user
-                
+        // I. Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            // II.A. If the callingUserId String is empty, then it is the current user
+            if self.calledUser == nil {
                 // 2. Once we get the user, update!
                 self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(user.uid)
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
+                
+            }else{
+                // II. B. The user is a "visitor", go get some data
+                SomeApp.dbUserData.child(self.calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
+                    if let value = snapshot.value as? [String: AnyObject],
+                        let userNick = value["nickname"] as? String{
+                        self.navigationItem.title = userNick
+                        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+                    }
+                })
+                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(self.calledUser.key)
+                self.foodDBReference = SomeApp.dbFoodTypeRoot
+                self.updateTablewithRanking()
+                // hide navbar buttons
+                self.navigationItem.leftBarButtonItem = nil
+                self.navigationItem.rightBarButtonItem = nil
             }
-        }else{
-            // The user is a "visitor", go get some data
-            SomeApp.dbUserData.child(calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
-                if let value = snapshot.value as? [String: AnyObject],
-                    let userNick = value["nickname"] as? String{
-                    self.navigationItem.title = userNick
-                    self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-                }
-            })
-            rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(calledUser.key)
-            foodDBReference = SomeApp.dbFoodTypeRoot
-            updateTablewithRanking()
-            // hide navbar buttons
-            navigationItem.leftBarButtonItem = nil
-            navigationItem.rightBarButtonItem = nil
         }
-        
         // Ad stuff
         bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
         addBannerViewToView(bannerView)
@@ -165,7 +166,7 @@ class MyRanks: UIViewController {
         
         bannerView.load(GADRequest())
         bannerView.delegate = self
-        
+
     }
     
     func updateTablewithRanking(){
@@ -182,11 +183,38 @@ class MyRanks: UIViewController {
         }else{
             labelView.text = "\(calledUser.nickName)'s favorite restorants!"
         }
-        
         headerView.addSubview(labelView)
+
+        // Follow button
+        if calledUser != nil{
+            let followButton = UIButton(type: .custom)
+            followButton.frame = CGRect(x: MyRanks.screenSize.width/3, y: 60, width: MyRanks.screenSize.width/3, height: 40)
+            followButton.backgroundColor = SomeApp.themeColor
+            followButton.setTitleColor(.white, for: .normal)
+            
+            // We need to verify if the user is already following the target
+            let tmpRef = SomeApp.dbUserFollowing.child(user.uid)
+            tmpRef.child(calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
+                if snapshot.exists() {
+                    followButton.setTitle("Unfollow", for: .normal)
+                    followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
+                    headerView.addSubview(followButton)
+                }else{
+                    followButton.setTitle("Follow", for: .normal)
+                    followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+                    headerView.addSubview(followButton)
+                }
+                
+            })
+            headerView.frame = CGRect(x: 0, y: 0, width: MyRanks.screenSize.width, height: 100)
+            
+        }else{
+            
+        }
         self.myRanksTable.tableHeaderView = headerView
         
         
+        //
         self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
@@ -239,6 +267,20 @@ class MyRanks: UIViewController {
         default: 
             break
         }
+    }
+    
+    /// MARK : objc functions
+    
+    @objc
+    func follow(){
+        SomeApp.follow(userId: user.uid, toFollowId: calledUser.key)
+        updateTablewithRanking()
+    }
+    
+    @objc
+    func unfollow(){
+        SomeApp.unfollow(userId: user.uid, unfollowId: calledUser.key)
+        updateTablewithRanking()
     }
     
     @objc
@@ -394,7 +436,6 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
                 
                 return cell
             }
-            
             // Rankings table
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {

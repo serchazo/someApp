@@ -24,6 +24,7 @@ class SomeApp{
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
+    static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
 
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
@@ -39,6 +40,18 @@ class SomeApp{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
     
+    
+    // Write to the DB
+    static func follow(userId: String, toFollowId: String){
+        let followingDBReference = SomeApp.dbUserFollowing.child(userId)
+        let newfollowerRef = followingDBReference.child(toFollowId)
+        newfollowerRef.setValue("true")
+    }
+    
+    static func unfollow(userId: String, unfollowId: String){
+        let followingDBReference = SomeApp.dbUserFollowing.child(userId)
+        followingDBReference.child(unfollowId).removeValue()
+    }
 }
 
 enum BasicCity: String, CaseIterable {

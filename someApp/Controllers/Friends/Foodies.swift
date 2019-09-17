@@ -13,6 +13,7 @@ class Foodies: UIViewController {
     private static let segueToFoodie = "showFoodie"
     private static let foodieCell = "foodieCell"
     
+    private var user:User!
     private var friendsSearchController: UISearchController!
     private var filteredFoodies: [String] = []
     private var recommendedFoodies: [UserDetails] = []
@@ -31,7 +32,14 @@ class Foodies: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getRecommendedUsers()
+        
+        // I. Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            self.getRecommendedUsers()
+        }
         
         // Setup the search controller
         friendsSearchController = UISearchController(searchResultsController: nil) //to be modified for final
@@ -47,22 +55,28 @@ class Foodies: UIViewController {
     // MARK : the recommended list
     func getRecommendedUsers(){
         // Outer : get the top users from the app
-        SomeApp.dbUserFollowers.queryOrdered(byChild: "nbfollowers").queryLimited(toFirst: 20).observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbUserNbFollowers.queryOrderedByValue().queryLimited(toFirst: 20).observeSingleEvent(of: .value, with: {snapshot in
             var tmpUserDetails:[UserDetails] = []
             var count = 0
             
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot{
-                    SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
-                        tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
-                        // Use the trick
-                        count += 1
-                        if count == snapshot.childrenCount{
-                            self.recommendedFoodies = tmpUserDetails
-                            self.someTable.reloadData()
-                        }
-                        
-                    })
+                        SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
+                            
+                            if(childSnapshot.key != self.user.uid){
+                                // No for current user
+                                tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
+                            }
+                            // Use the trick
+                            count += 1
+                            if count == snapshot.childrenCount {
+                                self.recommendedFoodies = tmpUserDetails
+                                self.someTable.reloadData()
+                            }
+                        })
+                    
+                    //
+                    
                     
                 }
             }
