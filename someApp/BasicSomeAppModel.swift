@@ -27,6 +27,8 @@ class SomeApp{
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
     static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
+    //geography
+    static let dbGeography:DatabaseReference = dbRootRef.child("geography")
 
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
@@ -54,6 +56,7 @@ class SomeApp{
         followingDBReference.child(unfollowId).removeValue()
     }
     
+    // TODO : this doesn't work anymore
     static func deleteUserRanking(userId: String, rankingId: String){
         SomeApp.dbRankingsPerUser.child(rankingId).removeValue()
         SomeApp.dbRanking.child(userId+"-"+rankingId).removeValue()

@@ -18,7 +18,7 @@ class EditRanking: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     
     //Get from segue-r
-    var currentCity: BasicCity!
+    var currentCity: City!
     var currentFood: FoodType!
     var calledUserId:UserDetails! // Control variable
     
@@ -26,8 +26,8 @@ class EditRanking: UIViewController {
     private var user: User!
     private var thisRankingId: String!
     private var thisRankingDescription: String = ""
-    private var rankingDatabaseReference: DatabaseReference!
-    private var rankingsPeruserDBRef: DatabaseReference!
+    private var userRankingDetailRef: DatabaseReference!
+    private var userRankingsRef: DatabaseReference!
     private var restoDatabaseReference: DatabaseReference!
     private var restoPointsDatabaseReference: DatabaseReference!
     private var restoAddressDatabaseReference: DatabaseReference!
@@ -135,11 +135,10 @@ class EditRanking: UIViewController {
         super.viewDidLoad()
         
         // Set vars
-        thisRankingId = currentCity.rawValue.lowercased() + "-" + currentFood.key
-        self.restoDatabaseReference = SomeApp.dbResto
-        let tmpRef = SomeApp.dbRestoPoints.child(self.currentCity.rawValue)
-        self.restoPointsDatabaseReference = tmpRef.child(currentFood.key)
-        self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
+        thisRankingId = currentCity.country + "/" + currentCity.state + "/" + currentCity.key+"/" + currentFood.key
+        restoDatabaseReference = SomeApp.dbResto
+        restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
+        restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
         editRankTableView.register(UINib(nibName: "EditableRestoCell", bundle: nil), forCellReuseIdentifier: EditRanking.delRestoCell)
         
@@ -151,9 +150,9 @@ class EditRanking: UIViewController {
                 self.user = user
                 
                 // I'm asking for my data
-                let dbPath = user.uid+"/"+self.currentCity.rawValue.lowercased()+"/"+self.currentFood.key
-                self.rankingDatabaseReference = SomeApp.dbRanking.child(dbPath)
-                self.rankingsPeruserDBRef = SomeApp.dbRankingsPerUser.child(dbPath)
+                let dbPath = user.uid+"/"+self.thisRankingId
+                self.userRankingDetailRef = SomeApp.dbRanking.child(dbPath)
+                self.userRankingsRef = SomeApp.dbRankingsPerUser.child(dbPath)
                 self.updateTableFromDatabase()
                 
                 // The editDescriptionTableView needs to be loaded only if it's my data
@@ -168,9 +167,9 @@ class EditRanking: UIViewController {
             }
         }else {
             // I'm asking for data of someone else
-            let dbPath = calledUserId.key+"/"+self.currentCity.rawValue.lowercased()+"/"+self.currentFood.key
-            self.rankingDatabaseReference = SomeApp.dbRanking.child(dbPath)
-            self.rankingsPeruserDBRef = SomeApp.dbRankingsPerUser.child(dbPath)
+            let dbPath = calledUserId.key+"/"+self.thisRankingId
+            self.userRankingDetailRef = SomeApp.dbRanking.child(dbPath)
+            self.userRankingsRef = SomeApp.dbRankingsPerUser.child(dbPath)
             self.updateTableFromDatabase()
         }
         // In both cases
@@ -190,6 +189,8 @@ class EditRanking: UIViewController {
     
     // Table : MyRankingTable
     func updateTableFromDatabase(){
+        
+        // 1. Header
         let headerView: UIView = UIView.init(frame: CGRect(
             x: 0, y: 0, width: EditRanking.screenSize.width, height: 50))
         let labelView: UILabel = UILabel.init(frame: CGRect(
@@ -198,25 +199,24 @@ class EditRanking: UIViewController {
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
         if calledUserId == nil{
-            labelView.text = "My favorite \(currentFood.name) places in \(currentCity.rawValue)"
+            labelView.text = "My favorite \(currentFood.name) places in \(currentCity.name)"
         }else{
             labelView.text = "\(calledUserId.nickName)'s favorite \(currentFood.name) places"
         }
-        
         headerView.addSubview(labelView)
         self.myRankingTable.tableHeaderView = headerView
-        //
         
-        // Get the description
-        self.rankingsPeruserDBRef.observeSingleEvent(of: .value, with: {snapshot in
+        
+        // Get the description from my rankings
+        self.userRankingsRef.observeSingleEvent(of: .value, with: {snapshot in
             if let rankingItem = Ranking(snapshot: snapshot){
                 self.thisRankingDescription = rankingItem.description
                 self.myRankingTable.reloadData()
             }
         })
         
-        // Big update
-        self.rankingDatabaseReference.observeSingleEvent(of: .value, with: {snapshot in
+        // Get the details
+        self.userRankingDetailRef.observeSingleEvent(of: .value, with: {snapshot in
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
             var count = 0
             // 1. Get the resto keys
@@ -569,7 +569,7 @@ extension EditRanking{
     // Update the description when the button is pressed
     @objc
     func doneUpdating(){
-        let descriptionDBRef = rankingsPeruserDBRef.child("description")
+        let descriptionDBRef = userRankingsRef.child("description")
         descriptionDBRef.setValue(editTextField.text)
         
         //Update view
@@ -653,7 +653,7 @@ extension EditRanking{
 extension EditRanking: MyRanksMapSearchViewDelegate{
     //
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
-        let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.rawValue)
+        let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.key)
         // Verify if the resto exists in the ranking
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()

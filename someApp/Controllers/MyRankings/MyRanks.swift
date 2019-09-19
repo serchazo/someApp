@@ -13,6 +13,7 @@ import GoogleMobileAds
 class MyRanks: UIViewController {
     //Control var
     var calledUser:UserDetails!
+    var currentCity = City(name: "singapore", state: "singapore", country: "singapore")
     
     // Class constants
     private static let addRanking = "addRankSegue"
@@ -21,12 +22,10 @@ class MyRanks: UIViewController {
     
     // Instance variables
     private var user:User!
-    private var currentCity:BasicCity = .Singapore
     private var rankings:[Ranking] = []
     private var foodItems:[FoodType] = []
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
-    //private var followingDBReference: DatabaseReference!
     private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
     
     //For the myProfile swipe table
@@ -135,14 +134,15 @@ class MyRanks: UIViewController {
             
             // II.A. If the callingUserId String is empty, then it is the current user
             if self.calledUser == nil {
+                let pathId = user.uid+"/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
                 // 2. Once we get the user, update!
-                let tempRef = SomeApp.dbRankingsPerUser.child(user.uid)
-                self.rankingReferenceForUser = tempRef.child(self.currentCity.rawValue.lowercased())
+                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(pathId)
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 
             }else{
                 // II. B. The user is a "visitor", go get some data
+                let pathId = self.calledUser.key+"/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
                 SomeApp.dbUserData.child(self.calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
                     if let value = snapshot.value as? [String: AnyObject],
                         let userNick = value["nickname"] as? String{
@@ -150,8 +150,7 @@ class MyRanks: UIViewController {
                         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                     }
                 })
-                let tempRef = SomeApp.dbRankingsPerUser.child(self.calledUser.key)
-                self.rankingReferenceForUser = tempRef.child(self.currentCity.rawValue.lowercased())
+                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(pathId)
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 // hide navbar buttons
@@ -226,10 +225,18 @@ class MyRanks: UIViewController {
                     let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
                     tmpRankings.append(rankingItem)
                     
-                    //Get food type
-                    self.foodDBReference.child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
-                        let foodItem = FoodType(snapshot: foodSnapshot)
-                        tmpFoodType.append(foodItem!)
+                    //Get food type, first look in the "world"
+                    self.foodDBReference.child("world").child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
+                        if foodSnapshot.exists(){
+                            let foodItem = FoodType(snapshot: foodSnapshot)
+                            tmpFoodType.append(foodItem!)
+                        }else{
+                            // if not, look in the country
+                            self.foodDBReference.child(self.currentCity.country).child(rankingItem.key)
+                            
+                        }
+                        
+                        
                         // Apply the trick when using Joins
                         count += 1
                         if count == snapshot.childrenCount {
@@ -304,7 +311,7 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
         // Test if we already have that ranking in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let newRanking = Ranking(foodKey: withFood.key)
+            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name)
             // Create a child reference and update the value
             let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
@@ -439,7 +446,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.rawValue
+                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
                 cell.titleLabel.text = tmpTitleText
                 cell.descriptionLabel.text = rankings[indexPath.row].description
             }

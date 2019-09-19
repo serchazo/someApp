@@ -7,17 +7,58 @@
 //
 
 import UIKit
+import Firebase
 
 protocol ItemChooserViewDelegate: class{
-    func itemChooserReceiveCity(_ sender: BasicCity)
+    func itemChooserReceiveCity(_ sender: City)
 }
 
 class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
-
+    //var pickerData = ["",""]
+    var selectedRow = 0
+    var pickerData: [City] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
+        updatePickerDataFromDB()
+        
+        
+    }
+    
+    private func updatePickerDataFromDB(){
+        var count = 0
+        var tmpCities:[City] = []
+        //I. top level is countries
+        SomeApp.dbGeography.observeSingleEvent(of: .value, with: { snapshot in
+            for child in snapshot.children {
+                if let countrySnap = child as? DataSnapshot{
+                    let country = countrySnap.key
+                    // II. Now look for States
+                    for countryChild in countrySnap.children{
+                        if let stateSnap = countryChild as? DataSnapshot{
+                            let state = stateSnap.key
+                            // Finally, look for cities
+                            for stateChild in stateSnap.children{
+                                if let citySnap = stateChild as? DataSnapshot{
+                                    let cityKey = citySnap.key
+                                    if let cityDetails = citySnap.value as? [String:AnyObject],
+                                        let cityName = cityDetails["name"] as? String {
+                                        tmpCities.append(City(name: cityName, state: state, country: country, key: cityKey))
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+                count += 1
+                if count == snapshot.childrenCount{
+                    self.pickerData = tmpCities
+                    self.picker.reloadAllComponents()
+                }
+            }
+        })
     }
     
     // Broadcast messages
@@ -31,15 +72,8 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
         }
     }
     
-    var pickerData = ["",""]
-    var selectedRow = 0
-    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
-    }
-    
-    func setPickerValue(){
-        pickerData = BasicCity.allCases.map {$0.rawValue}
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -48,14 +82,12 @@ class ItemChooserViewController: UIViewController,UIPickerViewDelegate, UIPicker
     
     // Set picker values
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return pickerData[row]
+        return pickerData[row].name
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedRow = row
-        if let possibleCity = BasicCity(rawValue: pickerData[row]){
-            self.delegate?.itemChooserReceiveCity(possibleCity)
-        }
-        
+        let possibleCity = pickerData[row]
+        self.delegate?.itemChooserReceiveCity(possibleCity)
     }
 }

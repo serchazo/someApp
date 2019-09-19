@@ -9,15 +9,16 @@
 import UIKit
 import Firebase
 
-class SearchViewController: UIViewController,ItemChooserViewDelegate {
+class SearchViewController: UIViewController {
+    private static let screenSize = UIScreen.main.bounds.size
     
-    //To probably change later
+    //Instance vars
     var foodList:[FoodType] = []
-    var currentCity:BasicCity = .Singapore
     var user: User!
     
-    let screenSize = UIScreen.main.bounds.size
-    
+    // TODO : to change later on.  Current city should be read from properties
+    var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
+
     // Extension can't have stored vars, so we define here
     private let sectionInsets = UIEdgeInsets(top: 40.0,
                                              left: 10.0,
@@ -34,13 +35,13 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
             object: nil,
             queue: OperationQueue.main,
             using: { notification in
-                self.reloadText()
+                self.loadFoodTypesFromDB()
         })
     }
 
-    func reloadText(){
+    func loadFoodTypesFromDB(){
         // Get the list from the Database (an observer)
-        SomeApp.dbFoodTypeRoot.observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbFoodTypeRoot.child("world").observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             var count = 0
             
@@ -53,10 +54,30 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
                 count += 1
                 if count == snapshot.childrenCount{
                     self.foodList = tmpFoodList
-                    self.foodSelectorCollection.reloadData()
+                    self.loadLocalFoodFromDB()
                 }
             }
             
+        })
+    }
+    
+    func loadLocalFoodFromDB(){
+        // Get the local food from DB
+        SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
+            var tmpLocalFoodList: [FoodType] = []
+            var count = 0
+            for child in snapshot.children{
+                if let childSnapshot = child as? DataSnapshot,
+                    let foodItem = FoodType(snapshot: childSnapshot){
+                    tmpLocalFoodList.append(foodItem)
+                }
+                // Use the trick
+                count += 1
+                if count == snapshot.childrenCount{
+                    self.foodList.append(contentsOf: tmpLocalFoodList)
+                    self.foodSelectorCollection.reloadData()
+                }
+            }
         })
     }
     
@@ -64,7 +85,7 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
         super.viewDidLoad()
     
         // The data
-        reloadText()
+        loadFoodTypesFromDB()
         
         // Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -88,15 +109,6 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
             foodSelectorCollection.delegate = self
         }
     }
-
-    
-    @IBOutlet weak var titleCell: UILabel!
-    
-    // MARK: Broadcasting stuff
-    func itemChooserReceiveCity(_ sender: BasicCity) {
-        currentCity = sender
-        cityNavBarButton.title = sender.rawValue 
-    }
     
     // MARK: - Navigation
 
@@ -118,18 +130,31 @@ class SearchViewController: UIViewController,ItemChooserViewDelegate {
                 }
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue()
+                    //seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
                 }
             default: break
             }
         }
     }
- 
-
 }
 
+/////////
+// MARK : Extension for the property observer
+/////////
+
+extension SearchViewController: ItemChooserViewDelegate{
+    // MARK: Broadcasting stuff
+    func itemChooserReceiveCity(_ sender: City) {
+        currentCity = sender
+        cityNavBarButton.title = sender.name
+        loadFoodTypesFromDB()
+    }
+}
+
+////////////////
 // MARK : Extension for Collection stuff
+///////////////
 
 extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSource{
     
@@ -145,7 +170,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
             if let cell = tmpCell as? SpinnerCollectionViewCell{
                 cell.spinner.style = .gray
-                cell.spinner.sizeThatFits(CGSize(width: screenSize.width-150, height: 200))
+                cell.spinner.sizeThatFits(CGSize(width: SearchViewController.screenSize.width-150, height: 200))
                 cell.spinner.startAnimating()
                 
                 return cell
@@ -194,13 +219,15 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
     
 }
 
-
+////////////
 // MARK: Layout stuff
+///////////
+
 extension SearchViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         // If the food list is empty, the only cell is the spinner
         guard foodList.count > 0 else{
-            return CGSize(width: screenSize.width-50, height: 180)
+            return CGSize(width: SearchViewController.screenSize.width-50, height: 180)
         }
         // Else, we calculate the size
         let paddingSpace = sectionInsets.left * 3

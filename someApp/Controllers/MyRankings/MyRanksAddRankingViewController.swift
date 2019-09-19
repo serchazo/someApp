@@ -17,7 +17,7 @@ class MyRanksAddRankingViewController: UIViewController {
 
     //To probably change later
     var foodList:[FoodType] = []
-    var currentCity = "Singapore"
+    var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
     
     // Action when a cell is pressed
     weak var delegate: MyRanksAddRankingViewDelegate!
@@ -25,8 +25,8 @@ class MyRanksAddRankingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-        // Get the list from the Database (an observer)
+        
+        // Get the list from the Database
         SomeApp.dbFoodTypeRoot.observe(.value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             
@@ -64,7 +64,7 @@ class MyRanksAddRankingViewController: UIViewController {
             switch identifier{
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    seguedToCityChooser.setPickerValue()
+                    //seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
                 }
             default:break
@@ -82,7 +82,7 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // send info to the delegate
-        self.delegate?.addRankingReceiveInfoToCreate(inCity: currentCity, withFood: foodList[indexPath.row])
+        self.delegate?.addRankingReceiveInfoToCreate(inCity: currentCity.key, withFood: foodList[indexPath.row])
         
         self.navigationController?.popViewController(animated: true)
     }
@@ -123,9 +123,9 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
 
 // MARK : Get the city from the City Chooser
 extension MyRanksAddRankingViewController: ItemChooserViewDelegate {
-    func itemChooserReceiveCity(_ sender: BasicCity) {
-        currentCity = sender.rawValue
-        cityNavBarButton.title = currentCity
+    func itemChooserReceiveCity(_ sender: City) {
+        currentCity = sender
+        cityNavBarButton.title = sender.name
         
     }
 }

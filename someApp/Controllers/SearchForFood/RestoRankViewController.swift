@@ -16,7 +16,7 @@ class RestoRankViewController: UIViewController {
     var thisRanking: [Resto] = []
     
     // Class Variables
-    var currentCity: BasicCity!
+    var currentCity: City!
     var currentFood: FoodType!
     let refreshControl = UIRefreshControl()
 
@@ -45,8 +45,7 @@ class RestoRankViewController: UIViewController {
         super.viewDidLoad()
         
         //Initialize the references
-        let tmpRef = SomeApp.dbRestoPoints.child(currentCity.rawValue)
-        restoPointsDatabaseReference = tmpRef.child(currentFood.key)
+        restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(currentCity.country).child(currentCity.state).child(currentCity.key).child(currentFood.key)
         restoDatabaseReference = SomeApp.dbResto
         
         // Initialize the adds
@@ -66,7 +65,7 @@ class RestoRankViewController: UIViewController {
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
         restoRankTableView.tableHeaderView = restoRankTableHeader
         tableHeaderFoodIcon.text = currentFood.icon
-        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.rawValue)"
+        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
         
         navigationItem.title = currentFood.icon
         
@@ -77,6 +76,7 @@ class RestoRankViewController: UIViewController {
     
     ///
     func updateTableFromDatabase(){
+        print(restoPointsDatabaseReference)
         restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
             var count = 0
             var tmpRestoList:[Resto] = []
