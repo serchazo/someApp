@@ -136,7 +136,7 @@ class MyRanks: UIViewController {
             if self.calledUser == nil {
                 let pathId = user.uid+"/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
                 // 2. Once we get the user, update!
-                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(pathId)
+                self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 
@@ -150,7 +150,7 @@ class MyRanks: UIViewController {
                         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                     }
                 })
-                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(pathId)
+                self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 // hide navbar buttons
@@ -260,6 +260,7 @@ class MyRanks: UIViewController {
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     // I should send Ranking, Food Key, and current city
+                    seguedMVC.currentRanking = rankings[tmpIndexPath.row]
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.currentFood = foodItems[tmpIndexPath.row]
                     if calledUser != nil {

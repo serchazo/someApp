@@ -15,24 +15,25 @@ class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private static let segueToMap = "showMap"
     
-    var user:User!
-    var dbCommentReference:DatabaseReference = SomeApp.dbComments
-    var dbCommentsPerUser:DatabaseReference!
-    var dbCommentsPerResto:DatabaseReference!
-    var commentArray:[Comment] = []
+    private var user:User!
+    private var dbCommentReference:DatabaseReference = SomeApp.dbComments
+    private var dbCommentsPerUser:DatabaseReference!
+    private var dbCommentsPerResto:DatabaseReference!
+    private var commentArray:[Comment] = []
     
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
+    var currentCity: City!
     var dbMapReference: DatabaseReference!
     
     // Variable to pass to map Segue
-    var currentRestoMapItem : MKMapItem!
-    var OKtoPerformSegue = true
+    private var currentRestoMapItem : MKMapItem!
+    private var OKtoPerformSegue = true
 
     //For Edit the description swipe-up
-    var transparentView = UIView()
-    var addCommentTableView = UITableView()
-    var addCommentTextView = UITextView()
+    private var transparentView = UIView()
+    private var addCommentTableView = UITableView()
+    private var addCommentTextView = UITextView()
     
     @IBOutlet weak var restoDetailTable: UITableView!{
         didSet{
@@ -55,7 +56,8 @@ class MyRestoDetail: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dbMapReference = SomeApp.dbRestoAddress.child(currentResto.key)
+        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key + "/"+currentResto.key
+        dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
         dbCommentsPerResto = SomeApp.dbCommentsPerResto.child(currentResto.key)
         
         // 1. Get the logged in user

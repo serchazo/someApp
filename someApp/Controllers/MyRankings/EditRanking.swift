@@ -20,6 +20,7 @@ class EditRanking: UIViewController {
     //Get from segue-r
     var currentCity: City!
     var currentFood: FoodType!
+    var currentRanking: Ranking!
     var calledUserId:UserDetails! // Control variable
     
     // Instance variables
@@ -135,8 +136,9 @@ class EditRanking: UIViewController {
         super.viewDidLoad()
         
         // Set vars
+        let thisRankingIdwithoutFood = currentCity.country + "/" + currentCity.state + "/" + currentCity.key
         thisRankingId = currentCity.country + "/" + currentCity.state + "/" + currentCity.key+"/" + currentFood.key
-        restoDatabaseReference = SomeApp.dbResto
+        restoDatabaseReference = SomeApp.dbResto.child(thisRankingIdwithoutFood)
         restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
         restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
@@ -151,8 +153,8 @@ class EditRanking: UIViewController {
                 
                 // I'm asking for my data
                 let dbPath = user.uid+"/"+self.thisRankingId
-                self.userRankingDetailRef = SomeApp.dbRanking.child(dbPath)
-                self.userRankingsRef = SomeApp.dbRankingsPerUser.child(dbPath)
+                self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
+                self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
                 self.updateTableFromDatabase()
                 
                 // The editDescriptionTableView needs to be loaded only if it's my data
@@ -168,8 +170,8 @@ class EditRanking: UIViewController {
         }else {
             // I'm asking for data of someone else
             let dbPath = calledUserId.key+"/"+self.thisRankingId
-            self.userRankingDetailRef = SomeApp.dbRanking.child(dbPath)
-            self.userRankingsRef = SomeApp.dbRankingsPerUser.child(dbPath)
+            self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
+            self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
             self.updateTableFromDatabase()
         }
         // In both cases
@@ -184,6 +186,12 @@ class EditRanking: UIViewController {
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.userRankingDetailRef.removeAllObservers()
     }
 
     
@@ -216,7 +224,7 @@ class EditRanking: UIViewController {
         })
         
         // Get the details
-        self.userRankingDetailRef.observeSingleEvent(of: .value, with: {snapshot in
+        self.userRankingDetailRef.observe(.value, with: {snapshot in
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
             var count = 0
             // 1. Get the resto keys
@@ -227,6 +235,7 @@ class EditRanking: UIViewController {
                     let position = value["position"] as? Int
                 {
                     let restoId = testChild.key
+                    
                     // For each Key go and find the values
                     self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
@@ -264,6 +273,7 @@ class EditRanking: UIViewController {
                     let indexPath = myRankingTable.indexPath(for: cell),
                     let seguedToResto = segue.destination as? MyRestoDetail{
                     seguedToResto.currentResto = thisRanking[indexPath.row]
+                    seguedToResto.currentCity = currentCity
                 }
             case EditRanking.addResto:
                 if let seguedMVC = segue.destination as? MyRanksMapSearchViewController{
@@ -658,7 +668,7 @@ extension EditRanking: MyRanksMapSearchViewDelegate{
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()
         }else{
-            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, position: thisRanking.count)
+            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, ranking: currentRanking, city: currentCity)
         }
     }
     

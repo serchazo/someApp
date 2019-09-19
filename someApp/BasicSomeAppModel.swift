@@ -13,8 +13,6 @@ import MapKit
 class SomeApp{
     private static let dbRootRef:DatabaseReference = Database.database().reference()
     static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child("foodType")
-    static let dbRankingsPerUser: DatabaseReference = dbRootRef.child("user-rankings")
-    static let dbRanking:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
@@ -27,6 +25,9 @@ class SomeApp{
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
     static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
+    static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
+    static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
+    
     //geography
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
 
@@ -58,54 +59,49 @@ class SomeApp{
     
     // TODO : this doesn't work anymore
     static func deleteUserRanking(userId: String, rankingId: String){
-        SomeApp.dbRankingsPerUser.child(rankingId).removeValue()
-        SomeApp.dbRanking.child(userId+"-"+rankingId).removeValue()
+        SomeApp.dbUserRankings.child(rankingId).removeValue()
+        SomeApp.dbUserRankingDetails.child(userId+"-"+rankingId).removeValue()
     }
     
     // Add resto to Ranking : we need to check the model first
-    static func addRestoToRanking(userId: String, resto: Resto, mapItem: MKMapItem, forFood:FoodType, position: Int){
+    static func addRestoToRanking(userId: String, resto: Resto, mapItem: MKMapItem, forFood:FoodType, ranking: Ranking,city: City){
+        let dbPath = city.country + "/" + city.state + "/" + city.key
+        
         // A. Check if the resto exists in the resto list
-        dbResto.child(resto.key).observeSingleEvent(of: .value, with: {snapshot in
+        dbResto.child(dbPath).child(resto.key).observeSingleEvent(of: .value, with: {snapshot in
             // If the restorant doesn't exist, we need to create it and add it
+
             if (!snapshot.exists()){
                 // Add resto details
                 if mapItem.url != nil{ resto.url = mapItem.url! }
                 if mapItem.phoneNumber != nil {resto.phoneNumber = mapItem.phoneNumber!}
                 if mapItem.placemark.formattedAddress != nil { resto.address = mapItem.placemark.formattedAddress!}
                 // Write to Resto DB
-                let newRestoRef = self.dbResto.child(resto.key)
+                let newRestoRef = self.dbResto.child(dbPath).child(resto.key)
                 newRestoRef.setValue(resto.toAnyObject())
                 // Add the resto to the Address DB
-                SomeApp.addrestoAddressToModel(mapItem: mapItem, toRestoKey: resto.key)
+                SomeApp.addrestoAddressToModel(mapItem: mapItem, resto: resto, city:city)
             }
             // Still need to add to ranking
-            //addRestoUserRanking(userid: userId, restoKey: resto.key, position: position)
+            addRestoUserRanking(userid: userId, resto: resto, city: city, ranking: ranking)
         })
     }
     
-    /*
+    
     // Add resto to ranking
-    private static func addRestoUserRanking(userid: String, restoKey: String, position: Int){
-        // I. Add to the ranking DB
-        let newRestoRef = rankingDatabaseReference.childByAutoId()
-        newRestoRef.setValue(positionToAny(position: position+1, restoKey: key))
-        
-        // II. Update the number of points
-        // II.1. First get the number of points
-        restoPointsDatabaseReference.child(key).observeSingleEvent(of: .value, with: {snapshot in
-            var currentPoints:Int
-            if let value = snapshot.value as? [String: AnyObject],
-                let points = value["points"] as? Int
-            {
-                currentPoints = points
-                // II.2. Then update
-                self.restoPointsDatabaseReference.child(key).updateChildValues(["points":(currentPoints + (15-position-1))])
-            }
+    private static func addRestoUserRanking(userid: String, resto: Resto, city: City, ranking: Ranking){
+        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key
+        // Get current number of items in the ranking
+        dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
+            let position = snapshot.childrenCount + 1
+            // Then, add to the ranking
+            dbUserRankingDetails.child(dbPath).child(resto.key).child("position").setValue(position)
         })
-    }*/
+    }
     
     // Add restoAddressToModel
-    private static func addrestoAddressToModel(mapItem: MKMapItem, toRestoKey: String){
+    private static func addrestoAddressToModel(mapItem: MKMapItem, resto: Resto, city: City){
+        let dbPath = city.country + "/" + city.state + "/" + city.key
         let restoAddress = RestoMapArray(fromMapItem: mapItem)
         let encoder = JSONEncoder()
         
@@ -113,8 +109,7 @@ class SomeApp{
             let encodedMapItem = try encoder.encode(restoAddress)
             let encodedMapItemForFirebase = NSString(data: encodedMapItem, encoding: String.Encoding.utf8.rawValue)
             
-            let newRestoAddressRef = dbRestoAddress.child(toRestoKey)
-            let again = newRestoAddressRef.child("address")
+            let again = dbRestoAddress.child(dbPath).child(resto.key).child("address")
             again.setValue(encodedMapItemForFirebase)
             
         } catch {
@@ -136,38 +131,7 @@ struct RankingOperation{
     let finalPlace:Int = 0
 }
 
-enum BasicCity: String, CaseIterable {
-    case Singapore = "Singapore"
-    case KualaLumpur = "Kuala Lumpur"
-    case Cebu = "Cebu"
-    case Manila = "Manila"
-    case HongKong = "Hong Kong"
-}
-
 /*
-class BasicRanking{
-    let cityOfRanking:BasicCity
-    var typeOfFood = ""
-    var restoList = [BasicResto]()
-    
-    init(cityOfRanking:BasicCity, typeOfFood:String){
-        self.cityOfRanking = cityOfRanking
-        self.typeOfFood = typeOfFood
-    }
-    
-    //Add ranking to resto
-    func addToRanking(resto: BasicResto) -> Bool {
-        print("Add new resto \(resto.restoName), \(resto.restoCity), \(resto.tags)")
-        if (restoList.filter {$0.restoCity == resto.restoCity && $0.restoName == resto.restoName}).count > 0{
-            return false
-        }else{
-            restoList.append(resto)
-            basicModel.addRestoToModel(resto: resto)
-            basicModel.updateScore(forResto: resto, withPoints: 10-restoList.count)
-            return true
-        }
-    }
-    
     //Update ranking
     func updateList(sourceIndex: Int, destinationIndex: Int){
         //Update the number of points
@@ -189,7 +153,3 @@ class BasicRanking{
         restoList.insert(tempResto, at: destinationIndex)
     }
 }*/
-
-
-
-
