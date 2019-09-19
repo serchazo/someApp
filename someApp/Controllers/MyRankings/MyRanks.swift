@@ -136,7 +136,8 @@ class MyRanks: UIViewController {
             // II.A. If the callingUserId String is empty, then it is the current user
             if self.calledUser == nil {
                 // 2. Once we get the user, update!
-                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(user.uid)
+                let tempRef = SomeApp.dbRankingsPerUser.child(user.uid)
+                self.rankingReferenceForUser = tempRef.child(self.currentCity.rawValue.lowercased())
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 
@@ -149,7 +150,8 @@ class MyRanks: UIViewController {
                         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                     }
                 })
-                self.rankingReferenceForUser = SomeApp.dbRankingsPerUser.child(self.calledUser.key)
+                let tempRef = SomeApp.dbRankingsPerUser.child(self.calledUser.key)
+                self.rankingReferenceForUser = tempRef.child(self.currentCity.rawValue.lowercased())
                 self.foodDBReference = SomeApp.dbFoodTypeRoot
                 self.updateTablewithRanking()
                 // hide navbar buttons
@@ -184,7 +186,6 @@ class MyRanks: UIViewController {
             labelView.text = "\(calledUser.nickName)'s favorite restorants!"
         }
         headerView.addSubview(labelView)
-
         // Follow button
         if calledUser != nil{
             let followButton = UIButton(type: .custom)
@@ -213,7 +214,6 @@ class MyRanks: UIViewController {
         }
         self.myRanksTable.tableHeaderView = headerView
         
-        
         //
         self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
             //
@@ -227,7 +227,7 @@ class MyRanks: UIViewController {
                     tmpRankings.append(rankingItem)
                     
                     //Get food type
-                    self.foodDBReference.child(rankingItem.foodKey).observeSingleEvent(of: .value, with: { foodSnapshot in
+                    self.foodDBReference.child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
                         let foodItem = FoodType(snapshot: foodSnapshot)
                         tmpFoodType.append(foodItem!)
                         // Apply the trick when using Joins
@@ -302,9 +302,9 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
     func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
         
         // Test if we already have that ranking in our list
-        if (rankings.filter {$0.city == inCity && $0.foodKey == withFood.key}).count == 0{
+        if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let newRanking = Ranking(city: inCity, foodKey: withFood.key)
+            let newRanking = Ranking(foodKey: withFood.key)
             // Create a child reference and update the value
             let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
@@ -439,7 +439,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + rankings[indexPath.row].city
+                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.rawValue
                 cell.titleLabel.text = tmpTitleText
                 cell.descriptionLabel.text = rankings[indexPath.row].description
             }

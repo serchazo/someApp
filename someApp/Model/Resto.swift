@@ -23,7 +23,7 @@ class Resto{
     
     init(name: String, city: String, url: String = "", phoneNumber:String = "", address: String = "") {
         self.ref = nil
-        let tmpModifiedName = String(name.filter { !" \n\t\r".contains($0) })
+        let tmpModifiedName = String(name.filter { !" \n\t\r!".contains($0) })
         self.key = city.lowercased() + "-" + tmpModifiedName.lowercased()
         self.name = name
         self.url = URL(fileURLWithPath: url)

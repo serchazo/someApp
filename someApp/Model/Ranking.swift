@@ -12,40 +12,30 @@ import Firebase
 class Ranking{
     let ref: DatabaseReference?
     let key: String
-    let city: String
-    let foodKey: String
     let description: String
     
-    init(city: String, foodKey: String, description: String = ""){
+    init(foodKey: String, description: String = ""){
         self.ref = nil
-        self.city = city
-        self.foodKey = foodKey
-        self.key = city.lowercased() + "-" + foodKey
+        self.key = foodKey.lowercased()
         self.description = description
     }
     
     init?(snapshot: DataSnapshot){
         guard
-            let value = snapshot.value as? [String: AnyObject],
-            let city = value["city"] as? String,
-            let foodKey = value["foodKey"] as? String else {
+            let value = snapshot.value as? [String: AnyObject] else{
                 return nil
         }
-        if let description = value["description"] as? String{
-            self.description = description
-        } else { self.description = ""}
         
         self.ref = snapshot.ref
         self.key = snapshot.key
-        self.city = city
-        self.foodKey = foodKey
+        
+        if let description = value["description"] as? String {self.description = description } else {self.description = ""}
+        
     }
     
     // Turn Ranking to a Dictionary
     func toAnyObject() -> Any {
         return[
-            "city" : city,
-            "foodKey" : foodKey,
             "description" : description]
     }
 }

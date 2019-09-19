@@ -14,6 +14,7 @@ class EditRanking: UIViewController {
     // class variables
     private static let showRestoDetail = "ShowResto"
     private static let addResto = "addNewResto"
+    private static let delRestoCell = "delRestoCell"
     private static let screenSize = UIScreen.main.bounds.size
     
     //Get from segue-r
@@ -31,7 +32,9 @@ class EditRanking: UIViewController {
     private var restoPointsDatabaseReference: DatabaseReference!
     private var restoAddressDatabaseReference: DatabaseReference!
     private var thisRanking: [Resto] = []
+    private var thisEditableRanking: [Resto] = []
     private var descriptionRowHeight = CGFloat(50.0)
+    private var descriptionEditRankingRowHeight = CGFloat(70.0)
     
     //For Edit the description swipe-up
     private var transparentView = UIView()
@@ -41,6 +44,8 @@ class EditRanking: UIViewController {
     //For "Edit the ranking" swipe left
     private var editRankTransparentView = UIView()
     private var editRankTableView = UITableView()
+    private var navBar = UINavigationBar()
+    private var operations:[RankingOperation] = []
     
     // Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -65,12 +70,34 @@ class EditRanking: UIViewController {
         editRankTransparentView.frame = self.view.frame
         windowEditRank?.addSubview(editRankTransparentView)
         
+        // Add a navigation bar - hidden first
+        let navBarHeight =  self.navigationController!.navigationBar.frame.size.height
+        navBar.frame = CGRect(
+            x: EditRanking.screenSize.width,
+            y: EditRanking.screenSize.height * 0.1,
+            width: EditRanking.screenSize.width,
+            height: navBarHeight)
+        navBar.barTintColor = UIColor.white
+        navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+        
+        
+        let navItem = UINavigationItem(title: "Edit ranking")
+        let doneItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(performUpdate))
+        navItem.rightBarButtonItem = doneItem
+        let cancelItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.cancel, target: self, action: #selector(onClickEditRankTransparentView))
+        cancelItem.tintColor = SomeApp.themeColor
+        doneItem.tintColor = SomeApp.themeColor
+        
+        navItem.leftBarButtonItem = cancelItem
+        navBar.setItems([navItem], animated: false)
+        windowEditRank?.addSubview(navBar)
+        
         // Add the table
         editRankTableView.frame = CGRect(
-            x: 0,
-            y: EditRanking.screenSize.height,
+            x: EditRanking.screenSize.width,
+            y: EditRanking.screenSize.height * 0.1 + navBarHeight,
             width: EditRanking.screenSize.width,
-            height: EditRanking.screenSize.height * 0.9)
+            height: EditRanking.screenSize.height * 0.9 - navBarHeight)
         windowEditRank?.addSubview(editRankTableView)
         
         // Go back to "normal" if we tap
@@ -86,9 +113,14 @@ class EditRanking: UIViewController {
                        options: .curveEaseInOut,
                        animations: {
                         self.editRankTransparentView.alpha = 0.7 //Start at 0, go to 0.5
+                        self.navBar.frame = CGRect(
+                            x: 0,
+                            y: EditRanking.screenSize.height * 0.1,
+                            width: EditRanking.screenSize.width,
+                            height: navBarHeight)
                         self.editRankTableView.frame = CGRect(
                             x: 0,
-                            y: EditRanking.screenSize.height - EditRanking.screenSize.height * 0.9 ,
+                            y: EditRanking.screenSize.height * 0.1 + navBarHeight,
                             width: EditRanking.screenSize.width,
                             height: EditRanking.screenSize.height * 0.9)
                         //self.editTextField.becomeFirstResponder()
@@ -98,15 +130,7 @@ class EditRanking: UIViewController {
         
     }
     
-    
-    func initializeArray(withElements: Int) -> [Resto] {
-        var tmpRestoList: [Resto] = []
-        for _ in 0..<withElements {
-            tmpRestoList.append(Resto(name: "placeHolder", city: "placeholder"))
-        }
-        return tmpRestoList
-    }
-    
+    // MARK : timeline funcs
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -117,6 +141,8 @@ class EditRanking: UIViewController {
         self.restoPointsDatabaseReference = tmpRef.child(currentFood.key)
         self.restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
+        editRankTableView.register(UINib(nibName: "EditableRestoCell", bundle: nil), forCellReuseIdentifier: EditRanking.delRestoCell)
+        
         // Verify if I'm asking for my data
         if calledUserId == nil {
             // Get the logged in user
@@ -125,9 +151,9 @@ class EditRanking: UIViewController {
                 self.user = user
                 
                 // I'm asking for my data
-                self.rankingDatabaseReference = SomeApp.dbRanking.child(user.uid+"-"+self.thisRankingId)
-                let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(user.uid)
-                self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
+                let dbPath = user.uid+"/"+self.currentCity.rawValue.lowercased()+"/"+self.currentFood.key
+                self.rankingDatabaseReference = SomeApp.dbRanking.child(dbPath)
+                self.rankingsPeruserDBRef = SomeApp.dbRankingsPerUser.child(dbPath)
                 self.updateTableFromDatabase()
                 
                 // The editDescriptionTableView needs to be loaded only if it's my data
@@ -142,9 +168,9 @@ class EditRanking: UIViewController {
             }
         }else {
             // I'm asking for data of someone else
-            self.rankingDatabaseReference = SomeApp.dbRanking.child(calledUserId.key+"-"+self.thisRankingId)
-            let tmpRankingsPeruser = SomeApp.dbRankingsPerUser.child(calledUserId.key)
-            self.rankingsPeruserDBRef = tmpRankingsPeruser.child(self.thisRankingId)
+            let dbPath = calledUserId.key+"/"+self.currentCity.rawValue.lowercased()+"/"+self.currentFood.key
+            self.rankingDatabaseReference = SomeApp.dbRanking.child(dbPath)
+            self.rankingsPeruserDBRef = SomeApp.dbRankingsPerUser.child(dbPath)
             self.updateTableFromDatabase()
         }
         // In both cases
@@ -162,9 +188,8 @@ class EditRanking: UIViewController {
     }
 
     
-    // Call this function to update the table
+    // Table : MyRankingTable
     func updateTableFromDatabase(){
-        //
         let headerView: UIView = UIView.init(frame: CGRect(
             x: 0, y: 0, width: EditRanking.screenSize.width, height: 50))
         let labelView: UILabel = UILabel.init(frame: CGRect(
@@ -173,7 +198,7 @@ class EditRanking: UIViewController {
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
         if calledUserId == nil{
-            labelView.text = "My favorite \(currentFood.name) places"
+            labelView.text = "My favorite \(currentFood.name) places in \(currentCity.rawValue)"
         }else{
             labelView.text = "\(calledUserId.nickName)'s favorite \(currentFood.name) places"
         }
@@ -198,10 +223,10 @@ class EditRanking: UIViewController {
             for child in snapshot.children{
                 // Get the children
                 if let testChild = child as? DataSnapshot,
-                    let value = testChild.value as? [String: AnyObject],
-                    let position = value["position"] as? Int,
-                    let restoId = value["restoId"] as? String
+                    let value = testChild.value as? [String:AnyObject],
+                    let position = value["position"] as? Int
                 {
+                    let restoId = testChild.key
                     // For each Key go and find the values
                     self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
@@ -212,6 +237,7 @@ class EditRanking: UIViewController {
                         count += 1
                         if count == snapshot.childrenCount {
                             self.thisRanking = tmpRanking
+                            self.thisEditableRanking = tmpRanking
                             self.myRankingTable.reloadData()
                         }
                     })
@@ -220,7 +246,15 @@ class EditRanking: UIViewController {
         })
     }
     
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    func initializeArray(withElements: Int) -> [Resto] {
+        var tmpRestoList: [Resto] = []
+        for _ in 0..<withElements {
+            tmpRestoList.append(Resto(name: "placeHolder", city: "placeholder"))
+        }
+        return tmpRestoList
+    }
+    
+    // MARK : Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Pass the selected object to the new view controller.
         if let identifier = segue.identifier{
@@ -242,7 +276,10 @@ class EditRanking: UIViewController {
     }
 }
 
+//////////////////////////
 // MARK: Extension for the Table stuff
+//////////////////////////
+
 extension EditRanking: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -269,7 +306,7 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             return 1
         }else if tableView == self.editRankTableView{
             if section == 0{ return 1}
-            else {return thisRanking.count}
+            else {return thisEditableRanking.count}
         }else{
             // The normal table
             switch(section){
@@ -283,49 +320,10 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
-    func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
-        //A label for warning the user about the max chars
-        let maxCharsLabel = UILabel(frame: CGRect(
-            x: 0,
-            y: SomeApp.titleFont.lineHeight + 20,
-            width: cell.frame.width,
-            height: SomeApp.titleFont.lineHeight + 30 ))
-        maxCharsLabel.textColor = UIColor.lightGray
-        maxCharsLabel.textAlignment = NSTextAlignment.center
-        maxCharsLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
-        maxCharsLabel.text = "(Max 250 characters)"
-        
-        // set up the TextField.  This var is defined in the class to take the value later
-        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
-        editTextField.textColor = UIColor.gray
-        editTextField.font = UIFont.preferredFont(forTextStyle: .body)
-        if thisRankingDescription != "" {
-            editTextField.text = thisRankingDescription
-        }else{
-            editTextField.text = "Enter a description for your ranking."
-        }
-        editTextField.keyboardType = UIKeyboardType.default
-        editTextField.allowsEditingTextAttributes = true
-        
-        let doneButton = UIButton(type: .custom)
-        doneButton.frame = CGRect(x: cell.frame.width - 100, y: 250, width: 70, height: 70)
-        doneButton.backgroundColor = SomeApp.themeColor
-        doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
-        doneButton.layer.masksToBounds = true
-        doneButton.setTitle("Done!", for: .normal)
-        doneButton.addTarget(self, action: #selector(doneUpdating), for: .touchUpInside)
-        
-        //editTextField.addSubview(doneButton)
-        cell.selectionStyle = .none
-        cell.backView.addSubview(maxCharsLabel)
-        cell.backView.addSubview(editTextField)
-        cell.backView.addSubview(doneButton)
-    }
-    
-
+    // Cell for Row at
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // test if the table is the EditDescription pop-up
+        // EditDescription pop-up
         if tableView == self.editDescriptionTableView{
             if let cell = tableView.dequeueReusableCell(withIdentifier: "EditDescriptionCell", for: indexPath) as? MyRanksEditDescriptionCell{
                 setupEditDescriptionCell(cell: cell)
@@ -333,60 +331,49 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
             }else{
                 fatalError("Unable to create cell")
             }
-            /// The Edit Ranking Table
+        // The Editable Ranking Table
         }else if tableView == self.editRankTableView{
-            
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "To be defined"
-            return cell
-            
+            // Description cell
+            if indexPath.section == 0 {
+                let descriptionCell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                setupDescriptionEditRankingCell(descriptionEditRankingCell: descriptionCell)
+                return descriptionCell
+            }else{
+                if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: EditRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
+                    editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
+                    editRestoCell.tapAction = { (cell) in
+                        // If the delete button is pressed, we show an alert asking for confirmation
+                        let alert = UIAlertController(title: "Delete Restaurant?",
+                                                      message: "",
+                                                      preferredStyle: .alert)
+                        let cancelAction = UIAlertAction(title: "Cancel",
+                                                         style: .cancel)
+                        
+                        let delAction = UIAlertAction(title: "Delete", style: .destructive){ _ in
+                            //Get the indexPath
+                            let delIndexPath = self.editRankTableView.indexPath(for: cell)
+                            // Add to the list of operations
+                            self.operations.append(RankingOperation(operationType: .Delete, restoIdentifier: self.thisEditableRanking[delIndexPath!.row].key))
+                            //Do the animation
+                            self.thisEditableRanking.remove(at: delIndexPath!.row)
+                            self.editRankTableView.deleteRows(at: [delIndexPath!], with: .fade)
+                            
+                        }
+                        alert.addAction(cancelAction)
+                        alert.addAction(delAction)
+                        self.present(alert, animated: true, completion: nil)
+                        // End of the Action
+                    }
+                    return editRestoCell
+                }else{fatalError() }
+            }
             /// The "normal" table
         }else{
             if indexPath.section == 0 {
                 // The Description cell
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                
-                let descriptionLabel = UILabel()
-                descriptionLabel.lineBreakMode = .byWordWrapping
-                descriptionLabel.numberOfLines = 0
-                descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
-                descriptionLabel.text = thisRankingDescription
-                
-                //Get the label Size with the manip
-                let maximumLabelSize = CGSize(width: EditRanking.screenSize.width, height: EditRanking.screenSize.height);
-                let transformedText = thisRankingDescription as NSString
-                let boundingBox = transformedText.boundingRect(
-                    with: maximumLabelSize,
-                    options: .usesLineFragmentOrigin,
-                    attributes: [.font : UIFont.preferredFont(forTextStyle: .body)],
-                    context: nil)
-                
-                descriptionLabel.frame = CGRect(x: 20, y: 0, width: EditRanking.screenSize.width-40, height: boundingBox.height)
-                
-                cell.addSubview(descriptionLabel)
-                
-                let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
-                
-                let clickToEditSize = clickToEditString.size()
-                let clickToEditLabel = UILabel(frame: CGRect(
-                    x: cell.frame.width - (clickToEditSize.width),
-                    y: boundingBox.height,
-                    width: clickToEditSize.width,
-                    height: clickToEditSize.height+10))
-                clickToEditLabel.attributedText = clickToEditString
-                
-                if calledUserId == nil {
-                    // It's my ranking, I can edit
-                    cell.addSubview(clickToEditLabel)
-                }else{
-                    // If not, I can't edit
-                    cell.isUserInteractionEnabled = false
-                    cell.selectionStyle = .none
-                }
-                
-                descriptionRowHeight = boundingBox.height + clickToEditSize.height + 20
-                
-                return cell
+                let descriptionCell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                setupDescriptionCell(descriptionCell: descriptionCell)
+                return descriptionCell
             }
             else if indexPath.section == 1 {
                 // Restaurants cells
@@ -412,20 +399,9 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
-    // Update the model when the button is pressed
-    @objc
-    func doneUpdating(){
-        let descriptionDBRef = rankingsPeruserDBRef.child("description")
-        descriptionDBRef.setValue(editTextField.text)
-        
-        //Update view
-        onClickTransparentView()
-        updateTableFromDatabase()
-    }
-    
     // If we press on a cell
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == self.myRankingTable && indexPath.section == 0{
+        if tableView == self.editRankTableView && indexPath.section == 0{
             
             // Slide up the Edit TableView
             let window = UIApplication.shared.keyWindow
@@ -466,6 +442,152 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Test if it's the Edit Description table
+        if tableView == self.editDescriptionTableView {
+            return 450
+        // "Editable" Table
+        }else if tableView == editRankTableView{
+            if indexPath.section == 0{ return descriptionEditRankingRowHeight+20}
+            else{ return UITableView.automaticDimension}
+        // "Normal" Table
+        }else{
+            if indexPath.section == 0{return descriptionRowHeight}
+            else if indexPath.section == 1 {
+                let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
+                return CGFloat(cellHeight)
+            }else{ return UITableView.automaticDimension }
+        }
+    }
+}
+
+/////////////////////
+// MARK : setup cells
+/////////////////////
+extension EditRanking{
+    // Setup the Description cell for the Editable table
+    func setupDescriptionEditRankingCell(descriptionEditRankingCell: UITableViewCell){
+        setupDescriptionCell(descriptionCell: descriptionEditRankingCell)
+        // Label "Click to edit description"
+        let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
+        let clickToEditSize = clickToEditString.size()
+        let clickToEditLabel = UILabel(frame: CGRect(
+            x: descriptionEditRankingCell.frame.width - (clickToEditSize.width),
+            y: descriptionRowHeight+5,
+            width: clickToEditSize.width,
+            height: clickToEditSize.height+5))
+        clickToEditLabel.attributedText = clickToEditString
+        descriptionEditRankingCell.addSubview(clickToEditLabel)
+        
+        // Override from the original setup
+        descriptionEditRankingCell.isUserInteractionEnabled = true
+        descriptionEditRankingCell.selectionStyle = .default
+        
+        descriptionEditRankingRowHeight = descriptionRowHeight + clickToEditSize.height
+    }
+    
+    // Setup the "normal" Description cell
+    func setupDescriptionCell(descriptionCell :UITableViewCell){
+        let descriptionLabel = UILabel()
+        descriptionLabel.lineBreakMode = .byWordWrapping
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        descriptionLabel.text = thisRankingDescription
+        
+        //Get the label Size with the manip
+        let maximumLabelSize = CGSize(width: EditRanking.screenSize.width, height: EditRanking.screenSize.height);
+        let transformedText = thisRankingDescription as NSString
+        let boundingBox = transformedText.boundingRect(
+            with: maximumLabelSize,
+            options: .usesLineFragmentOrigin,
+            attributes: [.font : UIFont.preferredFont(forTextStyle: .body)],
+            context: nil)
+        
+        descriptionLabel.frame = CGRect(x: 20, y: 15, width: EditRanking.screenSize.width-40, height: boundingBox.height)
+        
+        descriptionCell.addSubview(descriptionLabel)
+        
+        descriptionCell.isUserInteractionEnabled = false
+        descriptionCell.selectionStyle = .none
+        
+        descriptionRowHeight = boundingBox.height + 35
+    }
+    
+    // Setup the Edit Description Cell
+    func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
+        //A label for warning the user about the max chars
+        let maxCharsLabel = UILabel(frame: CGRect(
+            x: 0,
+            y: SomeApp.titleFont.lineHeight + 20,
+            width: cell.frame.width,
+            height: SomeApp.titleFont.lineHeight + 30 ))
+        maxCharsLabel.textColor = UIColor.lightGray
+        maxCharsLabel.textAlignment = NSTextAlignment.center
+        maxCharsLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
+        maxCharsLabel.text = "(Max 250 characters)"
+        
+        // set up the TextField.  This var is defined in the class to take the value later
+        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
+        editTextField.textColor = UIColor.gray
+        editTextField.font = UIFont.preferredFont(forTextStyle: .body)
+        if thisRankingDescription != "" {
+            editTextField.text = thisRankingDescription
+        }else{
+            editTextField.text = "Enter a description for your ranking."
+        }
+        editTextField.keyboardType = UIKeyboardType.default
+        editTextField.allowsEditingTextAttributes = true
+        
+        let doneButton = UIButton(type: .custom)
+        doneButton.frame = CGRect(x: cell.frame.width - 100, y: 250, width: 70, height: 70)
+        doneButton.backgroundColor = SomeApp.themeColor
+        doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
+        doneButton.layer.masksToBounds = true
+        doneButton.setTitle("Done!", for: .normal)
+        doneButton.addTarget(self, action: #selector(doneUpdating), for: .touchUpInside)
+        
+        //editTextField.addSubview(doneButton)
+        cell.selectionStyle = .none
+        cell.backView.addSubview(maxCharsLabel)
+        cell.backView.addSubview(editTextField)
+        cell.backView.addSubview(doneButton)
+    }
+    
+    // Setup the editRestorantcell
+    func setupEditableRestoCell(){
+        
+    }
+    
+}
+
+
+////////////////////
+// MARK : objc funcs
+///////////////////
+
+extension EditRanking{
+    // Update the description when the button is pressed
+    @objc
+    func doneUpdating(){
+        let descriptionDBRef = rankingsPeruserDBRef.child("description")
+        descriptionDBRef.setValue(editTextField.text)
+        
+        //Update view
+        onClickTransparentView()
+        updateTableFromDatabase()
+    }
+    
+    // Perform the update
+    @objc func performUpdate(){
+        print("Update here")
+        if operations.count > 0{
+            for oper in operations{
+                print(oper.restoIdentifier)
+            }
+        }
+        
+    }
+    
     //Disappear!
     @objc func onClickTransparentView(){
         // Animation when disapearing
@@ -483,16 +605,23 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                             height: EditRanking.screenSize.height * 0.9)
                         self.editTextField.resignFirstResponder()
                         
-                        },
+        },
                        completion: nil)
         
         // Deselect the row to go back to normal
-        if let indexPath = myRankingTable.indexPathForSelectedRow {
-            myRankingTable.deselectRow(at: indexPath, animated: true)
+        if let indexPath = editRankTableView.indexPathForSelectedRow {
+            editRankTableView.deselectRow(at: indexPath, animated: true)
         }
     }
     
     @objc func onClickEditRankTransparentView(){
+        //Set the variables back to normal
+        thisEditableRanking = thisRanking
+        editRankTableView.reloadData()
+        operations.removeAll()
+        
+        //
+        let navBarHeight =  self.navigationController!.navigationBar.frame.size.height
         // Animation when disapearing
         UIView.animate(withDuration: 0.5,
                        delay: 0,
@@ -501,6 +630,11 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
                        options: .curveEaseInOut,
                        animations: {
                         self.editRankTransparentView.alpha = 0 //Start at value above, go to 0
+                        self.navBar.frame = CGRect(
+                            x: EditRanking.screenSize.width,
+                            y: EditRanking.screenSize.height * 0.1,
+                            width: EditRanking.screenSize.width,
+                            height: navBarHeight)
                         self.editRankTableView.frame = CGRect(
                             x: 0,
                             y: EditRanking.screenSize.height ,
@@ -510,115 +644,22 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
         },
                        completion: nil)
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // Test if it's the Edit Description table
-        if tableView == self.editDescriptionTableView {
-            return 450
-        }else{
-            // The normal table
-            if indexPath.section == 0{
-                return descriptionRowHeight
-            }
-            else if indexPath.section == 1 {
-                let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + 45.0
-                return CGFloat(cellHeight)
-            }else{
-                return UITableView.automaticDimension
-            }
-            
-        }
-    }
 }
 
+///////////////////
 // MARK : get stuff from the segued view and process the info
+//////////////////
+
 extension EditRanking: MyRanksMapSearchViewDelegate{
     //
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
-        // Build a tmpResto with the data from the delegation
         let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.rawValue)
-        // Add details
-        if someMapItem.url != nil{ tmpResto.url = someMapItem.url! }
-        if someMapItem.phoneNumber != nil {tmpResto.phoneNumber = someMapItem.phoneNumber!}
-        if someMapItem.placemark.formattedAddress != nil {
-            tmpResto.address = someMapItem.placemark.formattedAddress!
-        }
-        
-        // 1. Verify if the resto exists in the ranking
+        // Verify if the resto exists in the ranking
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()
         }else{
-            addRestoToModel(resto: tmpResto, withMapItem: someMapItem)
+            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, position: thisRanking.count)
         }
-    }
-    
-    // Add resto to model
-    func addRestoToModel(resto: Resto, withMapItem: MKMapItem){
-        // A. Check if the resto exists in the resto list
-        restoDatabaseReference.child(resto.key).observeSingleEvent(of: .value, with: { (snapshot) in
-            if snapshot.exists() {
-                //I. if it exists, then do nothing
-                //print("No need to Add")
-            }else{
-                // II. We need to add the resto many places
-                
-                // Add the resto to the Resto table
-                let newRankingRef = self.restoDatabaseReference.child(resto.key)
-                newRankingRef.setValue(resto.toAnyObject())
-                
-                // Add the resto to the Points table
-                let newRankingCityPointsRef = self.restoPointsDatabaseReference.child(resto.key)
-                let newRankingNbPointsRef = newRankingCityPointsRef.child("points")
-                newRankingNbPointsRef.setValue(0)
-                
-                // Add the resto to the Address table
-                self.addrestoAddressToModel(mapItem: withMapItem, toRestoKey: resto.key)
-            }
-            // B. even if it exists, we add to our ranking
-            self.addRestoToRanking(key: resto.key, position: self.thisRanking.count)
-            self.updateTableFromDatabase()
-        })
-    }
-    
-    // Add restoAddressToModel
-    func addrestoAddressToModel(mapItem: MKMapItem, toRestoKey: String){
-        
-        let restoAddress = RestoMapArray(fromMapItem: mapItem)
-        let encoder = JSONEncoder()
-        
-        do {
-            let encodedMapItem = try encoder.encode(restoAddress)
-            let encodedMapItemForFirebase = NSString(data: encodedMapItem, encoding: String.Encoding.utf8.rawValue)
-            let newRestoAddressRef = restoAddressDatabaseReference.child(toRestoKey)
-            let again = newRestoAddressRef.child("address")
-            again.setValue(encodedMapItemForFirebase)
-            
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-
-    
-    // Add resto to ranking
-    func addRestoToRanking(key: String, position: Int){
-        // I. Add to the ranking DB
-        let newRestoRef = rankingDatabaseReference.childByAutoId()
-        newRestoRef.setValue(positionToAny(position: position+1, restoKey: key))
-        
-        // II. Update the number of points
-        // II.1. First get the number of points
-        restoPointsDatabaseReference.child(key).observeSingleEvent(of: .value, with: {snapshot in
-            var currentPoints:Int
-            if let value = snapshot.value as? [String: AnyObject],
-                let points = value["points"] as? Int
-            {
-                currentPoints = points
-                // II.2. Then update
-                self.restoPointsDatabaseReference.child(key).updateChildValues(["points":(currentPoints + (15-position-1))])
-            }
-        })
-        
     }
     
     // Helper functions

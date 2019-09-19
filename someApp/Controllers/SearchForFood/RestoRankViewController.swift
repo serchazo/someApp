@@ -83,8 +83,7 @@ class RestoRankViewController: UIViewController {
             // I. Get the values
             for child in snapshot.children{
                 if let snapChild = child as? DataSnapshot,
-                    let value = snapChild.value as? [String: AnyObject],
-                    let points = value["points"] as? Int{
+                    let points = snapChild.value as? Int{
                     // II. Get the restaurants
                     self.restoDatabaseReference.child(snapChild.key).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
