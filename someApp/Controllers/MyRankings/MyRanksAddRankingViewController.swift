@@ -17,6 +17,7 @@ class MyRanksAddRankingViewController: UIViewController {
 
     //To probably change later
     var foodList:[FoodType] = []
+    var user: User!
     var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
     
     // Action when a cell is pressed
@@ -25,24 +26,61 @@ class MyRanksAddRankingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // The data
+        loadFoodTypesFromDB()
         
-        // Get the list from the Database
-        SomeApp.dbFoodTypeRoot.observe(.value, with: {snapshot in
+        // Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+        }
+    }
+    
+    // Get the stuff from the DB
+    func loadFoodTypesFromDB(){
+        // Get the list from the Database (an observer)
+        SomeApp.dbFoodTypeRoot.child("world").observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
+            var count = 0
             
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot,
                     let foodItem = FoodType(snapshot: childSnapshot){
                     tmpFoodList.append(foodItem)
                 }
+                // Use the trick
+                count += 1
+                if count == snapshot.childrenCount{
+                    self.foodList = tmpFoodList
+                    self.loadLocalFoodFromDB()
+                }
             }
-            self.foodList = tmpFoodList
-            self.foodSelectorCollection.reloadData()
+            
         })
-        
-        
-        
     }
+    
+    func loadLocalFoodFromDB(){
+        // Get the local food from DB
+        SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
+            var tmpLocalFoodList: [FoodType] = []
+            var count = 0
+            for child in snapshot.children{
+                if let childSnapshot = child as? DataSnapshot,
+                    let foodItem = FoodType(snapshot: childSnapshot){
+                    tmpLocalFoodList.append(foodItem)
+                }
+                // Use the trick
+                count += 1
+                if count == snapshot.childrenCount{
+                    self.foodList.append(contentsOf: tmpLocalFoodList)
+                    self.foodSelectorCollection.reloadData()
+                }
+            }
+        })
+    }
+    
+    
+    
     
     //Do this to avoid the "ambiguous reference" in the prepare to Segue
     @IBOutlet var collectionView: UICollectionView!

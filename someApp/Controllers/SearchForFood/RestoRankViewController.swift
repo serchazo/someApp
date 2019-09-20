@@ -76,7 +76,6 @@ class RestoRankViewController: UIViewController {
     
     ///
     func updateTableFromDatabase(){
-        print(restoPointsDatabaseReference)
         restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
             var count = 0
             var tmpRestoList:[Resto] = []
@@ -85,7 +84,8 @@ class RestoRankViewController: UIViewController {
                 if let snapChild = child as? DataSnapshot,
                     let points = snapChild.value as? Int{
                     // II. Get the restaurants
-                    self.restoDatabaseReference.child(snapChild.key).observeSingleEvent(of: .value, with: {shot in
+                    let dbPathForResto = self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + snapChild.key
+                    self.restoDatabaseReference.child(dbPathForResto).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
                         if tmpResto != nil {
                             tmpResto!.nbPoints = points
@@ -137,6 +137,7 @@ class RestoRankViewController: UIViewController {
                     let seguedToResto = segue.destination as? MyRestoDetail{
                     // Segue
                     seguedToResto.currentResto = thisRanking[indexPath.row]
+                    seguedToResto.currentCity = currentCity
                 }
             default: break
             }

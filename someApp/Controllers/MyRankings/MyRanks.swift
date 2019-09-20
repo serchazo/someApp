@@ -232,10 +232,12 @@ class MyRanks: UIViewController {
                             tmpFoodType.append(foodItem!)
                         }else{
                             // if not, look in the country
-                            self.foodDBReference.child(self.currentCity.country).child(rankingItem.key)
-                            
+                            self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: {localSnap in
+                                if localSnap.exists(){
+                                    tmpFoodType.append(FoodType(snapshot: localSnap)!)
+                                }
+                            })
                         }
-                        
                         
                         // Apply the trick when using Joins
                         count += 1
@@ -312,7 +314,7 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
         // Test if we already have that ranking in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name)
+            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon)
             // Create a child reference and update the value
             let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
@@ -396,7 +398,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
             // Delete from model
-            SomeApp.deleteUserRanking(userId: user.uid, rankingId: rankings[indexPath.row].key)
+            SomeApp.deleteUserRanking(userId: user.uid, city: currentCity, ranking: rankings[indexPath.row])
             
             // Delete the row (only for smothness, we will download again)
             rankings.remove(at: indexPath.row)

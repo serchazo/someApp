@@ -42,6 +42,8 @@ class Ranking{
     // Turn Ranking to a Dictionary
     func toAnyObject() -> Any {
         return[
-            "description" : description]
+            "description" : description,
+            "icon" : icon,
+            "name" : name ]
     }
 }

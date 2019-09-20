@@ -57,10 +57,23 @@ class SomeApp{
         followingDBReference.child(unfollowId).removeValue()
     }
     
-    // TODO : this doesn't work anymore
-    static func deleteUserRanking(userId: String, rankingId: String){
-        SomeApp.dbUserRankings.child(rankingId).removeValue()
-        SomeApp.dbUserRankingDetails.child(userId+"-"+rankingId).removeValue()
+    // Update the position of a resto
+    static func updateRestoPositionInRanking(userId: String, city: City, ranking: Ranking, restoId: String, position: Int){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key + "/" + restoId + "/position"
+        SomeApp.dbUserRankingDetails.child(dbPath).setValue(position)
+    }
+    
+    // Delete resto
+    static func deleteRestoFromRanking(userId: String, city: City, ranking: Ranking, restoId: String){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key + "/" + restoId
+        SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
+    }
+    
+    // Delete ranking
+    static func deleteUserRanking(userId: String, city: City, ranking: Ranking){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key
+        SomeApp.dbUserRankings.child(dbPath).removeValue()
+        SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
     }
     
     // Add resto to Ranking : we need to check the model first
@@ -130,26 +143,3 @@ struct RankingOperation{
     let initialPlace:Int = 0
     let finalPlace:Int = 0
 }
-
-/*
-    //Update ranking
-    func updateList(sourceIndex: Int, destinationIndex: Int){
-        //Update the number of points
-        if sourceIndex<destinationIndex{
-            for index in (sourceIndex+1)...destinationIndex{
-                restoList[index].numberOfPoints += 1
-            }
-            restoList[sourceIndex].numberOfPoints -= (destinationIndex - sourceIndex)
-        }else{
-            for index in destinationIndex...(sourceIndex-1){
-                restoList[index].numberOfPoints -= 1
-            }
-            restoList[sourceIndex].numberOfPoints += (sourceIndex - destinationIndex)
-        }
-        
-        //Update the list
-        let tempResto = restoList[sourceIndex]
-        restoList.remove(at: sourceIndex)
-        restoList.insert(tempResto, at: destinationIndex)
-    }
-}*/

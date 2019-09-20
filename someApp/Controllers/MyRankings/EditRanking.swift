@@ -54,9 +54,6 @@ class EditRanking: UIViewController {
         didSet{
             myRankingTable.dataSource = self
             myRankingTable.delegate = self
-            myRankingTable.dragDelegate = self
-            myRankingTable.dragInteractionEnabled = true
-            myRankingTable.dropDelegate = self
             myRankingTable.estimatedRowHeight = 70
             myRankingTable.rowHeight = UITableView.automaticDimension
         }
@@ -165,7 +162,10 @@ class EditRanking: UIViewController {
                 
                 // The editRankingTableView needs to be loaded only if it's my data
                 self.editRankTableView.delegate = self
-                self.editRankTableView.dataSource = self 
+                self.editRankTableView.dataSource = self
+                self.editRankTableView.dragDelegate = self
+                self.editRankTableView.dragInteractionEnabled = true
+                self.editRankTableView.dropDelegate = self
             }
         }else {
             // I'm asking for data of someone else
@@ -191,11 +191,13 @@ class EditRanking: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        self.userRankingDetailRef.removeAllObservers()
+        //self.userRankingDetailRef.removeAllObservers()
     }
 
-    
+    ////////////////////////
     // Table : MyRankingTable
+    ////////////////////////
+    
     func updateTableFromDatabase(){
         
         // 1. Header
@@ -591,11 +593,17 @@ extension EditRanking{
     @objc func performUpdate(){
         print("Update here")
         if operations.count > 0{
-            for oper in operations{
-                print(oper.restoIdentifier)
+            let delOperations = operations.filter({$0.operationType == .Delete})
+            delOperations.map({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, ranking: currentRanking, restoId: $0.restoIdentifier) })
+            
+            // Then update the positions in the ranking
+            for index in 0..<thisEditableRanking.count{
+                let tmpResto = thisEditableRanking[index]
+                SomeApp.updateRestoPositionInRanking(userId: user.uid, city: currentCity, ranking: currentRanking, restoId: tmpResto.key, position:index+1 )
             }
         }
-        
+        //Update view
+        onClickEditRankTransparentView()
     }
     
     //Disappear!
@@ -626,7 +634,7 @@ extension EditRanking{
     
     @objc func onClickEditRankTransparentView(){
         //Set the variables back to normal
-        thisEditableRanking = thisRanking
+        updateTableFromDatabase()
         editRankTableView.reloadData()
         operations.removeAll()
         
@@ -711,16 +719,25 @@ extension EditRanking{
     }
 }
 
+
+///////////////////////
+// Drag & Drop stuff
+//////////////////////
+
 // MARK : Extension for Drag
 extension EditRanking: UITableViewDragDelegate{
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        session.localContext = tableView
-        return dragItems(at: indexPath)
+        if tableView == editRankTableView{
+            session.localContext = editRankTableView
+            return dragItems(at: indexPath)
+        }else{
+            return []
+        }
     }
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
-        // We don't allow dragging of the "Add ranking" cell
-        if indexPath.section == 0, let restoNameToDrag = (myRankingTable.cellForRow(at: indexPath) as? MyRanksEditRankingTableViewCell)?.restoName.attributedText{
+        // Only allow dragging of the section with the names
+        if indexPath.section == 1, let restoNameToDrag = (editRankTableView.cellForRow(at: indexPath) as? EditableRestoCell)?.restoLabel.attributedText{
             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
             dragItem.localObject = restoNameToDrag
             return[dragItem]
@@ -737,8 +754,9 @@ extension EditRanking : UITableViewDropDelegate {
     }
     
      func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        if let indexPath = destinationIndexPath, indexPath.section == 0{
-            let isSelf = (session.localDragSession?.localContext as? UITableView) == tableView
+        // Only for the editable Table view, and for section 1
+        if tableView == editRankTableView, let indexPath = destinationIndexPath, indexPath.section == 1{
+            let isSelf = (session.localDragSession?.localContext as? UITableView) == editRankTableView
             return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
         }else{
             return UITableViewDropProposal(operation: .cancel)
@@ -753,18 +771,23 @@ extension EditRanking : UITableViewDropDelegate {
             if let sourceIndexPath = item.sourceIndexPath{
                 //if let attributtedString = item.dragItem.localObject as? NSAttributedString{
                 // Garde-fous: we need to keep the view and model in synch
-                myRankingTable.performBatchUpdates(
+                editRankTableView.performBatchUpdates(
                     {
-                        //Update the model here
-                        //currentRanking!.updateList(sourceIndex: sourceIndexPath.row, destinationIndex: destinationIndexPath.row)
+                        //Add to the operations list
+                        self.operations.append(RankingOperation(operationType: .Update, restoIdentifier: self.thisEditableRanking[sourceIndexPath.row].key))
+                        // Update the "model"
+                        let tmpResto = thisEditableRanking[sourceIndexPath.row]
+                        thisEditableRanking.remove(at: sourceIndexPath.row)
+                        thisEditableRanking.insert(tmpResto, at: destinationIndexPath.row)
+                        
                         // DO NOT RELOAD DATA HERE!!
                         // Delete row and then insert row instead
-                        myRankingTable.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
-                        myRankingTable.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
+                        editRankTableView.deleteRows(at: [sourceIndexPath], with: UITableView.RowAnimation.left)
+                        editRankTableView.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
                 })
                 coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
-                //}
-                myRankingTable.reloadData()
+                // Now reload
+                editRankTableView.reloadData()
             }
         }
     }
