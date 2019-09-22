@@ -143,3 +143,8 @@ struct RankingOperation{
     let initialPlace:Int = 0
     let finalPlace:Int = 0
 }
+
+enum TimelineEvents:String{
+    case NewFollower = "newUserFollowing"
+    case NewUserRanking = "newRanking"
+}

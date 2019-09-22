@@ -11,9 +11,13 @@ import Firebase
 
 class HomeViewController: UIViewController {
     
+    // Class variables
+    private static let timelineCellIdentifier = "TimelineCell"
+    private static let timelineCellNibIdentifier = "TimelineCell"
+    
     // Instance variables
     private var user:User!
-    private var somePost: [(key: String, type:String, timestamp:Int, payload: String )] = []
+    private var somePost: [(key: String, type:String, timestamp:Double, payload: String )] = []
     private var userTimelineReference: DatabaseReference!
     
     
@@ -21,13 +25,22 @@ class HomeViewController: UIViewController {
         didSet{
             newsFeedTable.delegate = self
             newsFeedTable.dataSource = self
+            newsFeedTable.register(TimelineCell.self, forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
+            
+            newsFeedTable.register(UINib(nibName: HomeViewController.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
+            
+            newsFeedTable.rowHeight = UITableView.automaticDimension
+            newsFeedTable.estimatedRowHeight = 150
         }
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        self.navigationItem.title = "Home"
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        
         // 1. Get the logged in user - needed for the next step
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -43,13 +56,13 @@ class HomeViewController: UIViewController {
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            var tmpPosts:[(key: String, type:String, timestamp:Int, payload: String )] = []
+            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String )] = []
         
             for child in snapshot.children{
                 if let timeLineSnap = child as? DataSnapshot,
                     let value = timeLineSnap.value as? [String:AnyObject],
                     let type = value["type"] as? String,
-                    let timestamp = value["timestamp"] as? Int,
+                    let timestamp = value["timestamp"] as? Double,
                     let payload = value["payload"] as? String{
                     tmpPosts.append((key: timeLineSnap.key, type: type, timestamp: timestamp, payload: payload))
                     
@@ -95,10 +108,37 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             
             return cell
         }
-        let postCell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        postCell.textLabel?.text = somePost[indexPath.row].payload
-        return postCell
+        if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
+            setupPostCell(cell: postCell, type: somePost[indexPath.row].type, timestamp: somePost[indexPath.row].timestamp, payload: somePost[indexPath.row].payload)
+            
+            return postCell
+        }else{
+            fatalError("Unable to create cell")
+        }
     }
-    
-    
+}
+
+////////////
+// MARK : Home cells
+////////////
+
+extension HomeViewController{
+    func setupPostCell(cell: TimelineCell, type:String, timestamp:Double, payload: String ){
+        // Date stuff
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.medium //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        cell.dateLabel.text = localDate
+        
+        if (type == TimelineEvents.NewFollower.rawValue){
+            cell.titleLabel.text = "Following"
+            cell.bodyLabel.text = payload
+        }else if (type == TimelineEvents.NewUserRanking.rawValue){
+            cell.titleLabel.text = "New Ranking"
+            cell.bodyLabel.text  = payload
+        }
+
+    }
 }
