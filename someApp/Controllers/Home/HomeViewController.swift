@@ -17,7 +17,7 @@ class HomeViewController: UIViewController {
     
     // Instance variables
     private var user:User!
-    private var somePost: [(key: String, type:String, timestamp:Double, payload: String )] = []
+    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String )] = []
     private var userTimelineReference: DatabaseReference!
     
     
@@ -56,7 +56,7 @@ class HomeViewController: UIViewController {
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String )] = []
+            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, icon:String )] = []
         
             for child in snapshot.children{
                 if let timeLineSnap = child as? DataSnapshot,
@@ -64,7 +64,11 @@ class HomeViewController: UIViewController {
                     let type = value["type"] as? String,
                     let timestamp = value["timestamp"] as? Double,
                     let payload = value["payload"] as? String{
-                    tmpPosts.append((key: timeLineSnap.key, type: type, timestamp: timestamp, payload: payload))
+                    // Icon could be empty
+                    var tmpIcon = ""
+                    if let icon = value["icon"] as? String{tmpIcon = icon}
+                    
+                    tmpPosts.append((key: timeLineSnap.key, type: type, timestamp: timestamp, payload: payload, icon: tmpIcon))
                     
                     // Use the trick
                     count += 1
@@ -109,7 +113,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             return cell
         }
         if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
-            setupPostCell(cell: postCell, type: somePost[indexPath.row].type, timestamp: somePost[indexPath.row].timestamp, payload: somePost[indexPath.row].payload)
+            setupPostCell(cell: postCell, type: somePost[indexPath.row].type, timestamp: somePost[indexPath.row].timestamp, payload: somePost[indexPath.row].payload, icon: somePost[indexPath.row].icon)
             
             return postCell
         }else{
@@ -123,7 +127,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
 ////////////
 
 extension HomeViewController{
-    func setupPostCell(cell: TimelineCell, type:String, timestamp:Double, payload: String ){
+    func setupPostCell(cell: TimelineCell, type:String, timestamp:Double, payload: String, icon:String ){
+        // Reseting the angle before reuse
+        //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(0.0))
+        
         // Date stuff
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
         let dateFormatter = DateFormatter()
@@ -135,9 +142,17 @@ extension HomeViewController{
         if (type == TimelineEvents.NewFollower.rawValue){
             cell.titleLabel.text = "Following"
             cell.bodyLabel.text = payload
+            cell.iconLabel.text = "👤"
         }else if (type == TimelineEvents.NewUserRanking.rawValue){
             cell.titleLabel.text = "New Ranking"
             cell.bodyLabel.text  = payload
+            cell.iconLabel.text = icon
+            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
+        }else if (type == TimelineEvents.NewUserFavorite.rawValue){
+            cell.titleLabel.text = "New Favorite"
+            cell.bodyLabel.text = payload
+            cell.iconLabel.text = icon
+            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
         }
 
     }

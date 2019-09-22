@@ -147,4 +147,5 @@ struct RankingOperation{
 enum TimelineEvents:String{
     case NewFollower = "newUserFollowing"
     case NewUserRanking = "newRanking"
+    case NewUserFavorite = "newUserFavorite"
 }

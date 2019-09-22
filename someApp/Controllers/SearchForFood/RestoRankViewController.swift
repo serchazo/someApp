@@ -11,6 +11,8 @@ import Firebase
 
 class RestoRankViewController: UIViewController {
     private static var showRestoDetailSegue = "showRestoDetail"
+    private static let screenSize = UIScreen.main.bounds.size
+    
     var restoDatabaseReference: DatabaseReference!
     var restoPointsDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
@@ -38,7 +40,7 @@ class RestoRankViewController: UIViewController {
     @IBOutlet weak var restoRankTableHeader: UIView!
     @IBOutlet weak var tableHeaderFoodIcon: UILabel!
     @IBOutlet weak var tableHeaderFoodName: UILabel!
-    
+    @IBOutlet weak var followButton: UIButton!
     
     // MARK: Selection stuff
     override func viewDidLoad() {
@@ -66,7 +68,12 @@ class RestoRankViewController: UIViewController {
         restoRankTableView.tableHeaderView = restoRankTableHeader
         tableHeaderFoodIcon.text = currentFood.icon
         tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
-        
+        followButton.backgroundColor = SomeApp.themeColor
+        followButton.setTitleColor(.white, for: .normal)
+        followButton.setTitle("Follow", for: .normal)
+        //followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+    
+        //
         navigationItem.title = currentFood.icon
         
         updateTableFromDatabase()

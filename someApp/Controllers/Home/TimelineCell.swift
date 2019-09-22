@@ -22,6 +22,15 @@ class TimelineCell: UITableViewCell {
             bodyLabel.numberOfLines = 0
         }
     }
+    @IBOutlet weak var iconLabel: UILabel!{
+        didSet{
+            iconLabel.layer.cornerRadius = 0.5 * iconLabel.bounds.size.height
+            iconLabel.layer.masksToBounds = true
+            iconLabel.layer.borderColor = SomeApp.themeColor.cgColor;
+            iconLabel.layer.borderWidth = 1.5;
+        }
+    }
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
