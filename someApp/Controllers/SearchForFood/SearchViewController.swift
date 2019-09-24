@@ -65,7 +65,7 @@ class SearchViewController: UIViewController {
     func loadFoodTypesFromDB(){
         
         // Get the list from the Database (an observer)
-        SomeApp.dbFoodTypeRoot.child("world").observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             var count = 0
             
@@ -78,7 +78,8 @@ class SearchViewController: UIViewController {
                 count += 1
                 if count == snapshot.childrenCount{
                     self.foodList = tmpFoodList
-                    self.loadLocalFoodFromDB()
+                    self.foodSelectorCollection.reloadData()
+                    //self.loadLocalFoodFromDB()
                 }
             }
             

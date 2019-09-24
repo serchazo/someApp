@@ -4,27 +4,34 @@
 //
 //  Created by Sergio Ortiz on 05.09.19.
 //  Copyright © 2019 sergioortiz.com. All rights reserved.
+// For Facebook login :
 //
 
 import UIKit
 import Firebase
+import FacebookCore
+import FacebookLogin
 
 class LoginViewController: UIViewController {
     private let loginOKSegueID = "loginOK"
     private var user:User!
     
+    // Facebook login permissions
+    private let readPermissions: [Permission] =  [ .publicProfile, .email ]
+    
     @IBOutlet weak var textFieldLoginEmail: UITextField!
     @IBOutlet weak var textFieldLoginPassword: UITextField!
+    
+    @IBOutlet weak var facebookLoginButton: UIButton!
+    
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Authentication observer
         Auth.auth().addStateDidChangeListener(){ auth,user in
             // test the value of user
@@ -37,6 +44,15 @@ class LoginViewController: UIViewController {
             }
         }
         
+        // Configure the Login with Facebook button
+        facebookLoginButton.setTitle("Facebook Login", for: .normal)
+        facebookLoginButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
+        facebookLoginButton.setTitleColor(.white, for: .normal)
+        //facebookLoginButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        //facebookLoginButton.layer.cornerRadius = 55/2
+        facebookLoginButton.backgroundColor = #colorLiteral(red: 0.2585989833, green: 0.4022747874, blue: 0.6941830516, alpha: 1)
+
+        //self.hideKeyboardWhenTappedAround()
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
@@ -52,7 +68,6 @@ class LoginViewController: UIViewController {
                 return
         }
         
-        print ("here with user \(email)")
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {
                 let alert = UIAlertController(title: "Sign In Failed", message: error.localizedDescription, preferredStyle: .alert)
@@ -108,6 +123,61 @@ class LoginViewController: UIViewController {
             }
         default:
             return false
+        }
+    }
+    
+    // MARK: objc funcs
+    @objc func didTapFacebookButton() {
+        print("facebook!")
+        let loginManager = LoginManager()
+        loginManager.logIn(permissions: readPermissions, viewController: self, completion: loginManagerDidComplete)
+    }
+    
+    // func when receiving the answer from FB Login Manger
+    private func loginManagerDidComplete(_ result: LoginResult) {
+        let alertController: UIAlertController
+        switch result {
+        case .cancelled:
+            
+            alertController = UIAlertController(
+                title: "Login Cancelled",
+                message: "User cancelled login.",
+                preferredStyle: .alert
+            )
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alertController.addAction(okAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+
+        case .failed(let error):
+            alertController = UIAlertController(
+                title: "Login Fail",
+                message: "Login failed with error \(error)",
+                preferredStyle: .alert
+            )
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alertController.addAction(okAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+
+        case .success:
+            // Login succesful
+            loginSuccesful()
+        }
+    }
+    
+    // Facebook login successful
+    private func loginSuccesful(){
+        
+        // login to Firebase
+        let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+        Auth.auth().signIn(with: credential) { (authResult, error) in
+          if let error = error {
+            print("Some error: \(error.localizedDescription)")
+            return
+          }
+          // User is signed in
+          // ...
         }
     }
     

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import Firebase 
 
 class HomeViewController: UIViewController {
     
@@ -16,7 +16,7 @@ class HomeViewController: UIViewController {
     private static let timelineCellNibIdentifier = "TimelineCell"
     
     // Instance variables
-    private var user:User!
+    private var user: User!
     private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String )] = []
     private var userTimelineReference: DatabaseReference!
     
@@ -134,7 +134,7 @@ extension HomeViewController{
         // Date stuff
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
         let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.medium //Set time style
+        dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
         dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
         let localDate = dateFormatter.string(from: date)
         cell.dateLabel.text = localDate
@@ -153,6 +153,14 @@ extension HomeViewController{
             cell.bodyLabel.text = payload
             cell.iconLabel.text = icon
             //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
+        }else if (type == TimelineEvents.NewBestRestoInRanking.rawValue){
+            cell.titleLabel.text = "New Best!"
+            cell.bodyLabel.text = payload
+            cell.iconLabel.text = icon
+        }else if (type == TimelineEvents.NewArrivalInRanking.rawValue){
+            cell.titleLabel.text = "Among the best"
+            cell.bodyLabel.text = payload
+            cell.iconLabel.text = icon
         }
 
     }

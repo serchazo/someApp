@@ -39,7 +39,7 @@ class MyRanksAddRankingViewController: UIViewController {
     // Get the stuff from the DB
     func loadFoodTypesFromDB(){
         // Get the list from the Database (an observer)
-        SomeApp.dbFoodTypeRoot.child("world").observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
             var tmpFoodList: [FoodType] = []
             var count = 0
             
@@ -52,35 +52,13 @@ class MyRanksAddRankingViewController: UIViewController {
                 count += 1
                 if count == snapshot.childrenCount{
                     self.foodList = tmpFoodList
-                    self.loadLocalFoodFromDB()
+                    self.foodSelectorCollection.reloadData()
+                    
                 }
             }
             
         })
     }
-    
-    func loadLocalFoodFromDB(){
-        // Get the local food from DB
-        SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
-            var tmpLocalFoodList: [FoodType] = []
-            var count = 0
-            for child in snapshot.children{
-                if let childSnapshot = child as? DataSnapshot,
-                    let foodItem = FoodType(snapshot: childSnapshot){
-                    tmpLocalFoodList.append(foodItem)
-                }
-                // Use the trick
-                count += 1
-                if count == snapshot.childrenCount{
-                    self.foodList.append(contentsOf: tmpLocalFoodList)
-                    self.foodSelectorCollection.reloadData()
-                }
-            }
-        })
-    }
-    
-    
-    
     
     //Do this to avoid the "ambiguous reference" in the prepare to Segue
     @IBOutlet var collectionView: UICollectionView!

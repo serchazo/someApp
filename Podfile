@@ -3,7 +3,7 @@ platform :ios, '11.0'
 
 target 'someApp' do
     # Comment the next line if you don't want to use dynamic frameworks
-    # use_frameworks!
+    use_frameworks!
 
     # Pods for someApp
     # add the Firebase pod for Google Analytics
@@ -15,5 +15,9 @@ target 'someApp' do
 
     # add the Firebase pod for AdMob
     pod 'Firebase/AdMob'
+    
+    # Pods for Facebook
+    pod 'FacebookCore'
+    pod 'FacebookLogin'
     
 end

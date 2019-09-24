@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FacebookCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,13 +17,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Firebase config
         FirebaseApp.configure()
+        
+        // Facebook login config
+        ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         
         // Initialize the Google Mobile Ads SDK.
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         
         return true
+    }
+    
+    // For Facebook login
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        //guard let urlScheme = url.scheme else { return false }
+        //if urlScheme.hasPrefix("fb") {
+            return ApplicationDelegate.shared.application(app, open: url, options: options)
+        //}
+        //return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

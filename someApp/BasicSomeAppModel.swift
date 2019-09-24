@@ -148,4 +148,7 @@ enum TimelineEvents:String{
     case NewFollower = "newUserFollowing"
     case NewUserRanking = "newRanking"
     case NewUserFavorite = "newUserFavorite"
+    case NewBestRestoInRanking = "newBestRestoInRanking"
+    case NewArrivalInRanking = "newArrivalInRanking"
+    
 }

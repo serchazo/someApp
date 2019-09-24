@@ -1103,6 +1103,28 @@
                                     <segue destination="en7-xf-5FP" kind="show" identifier="loginOK" id="j96-5r-UVn"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Or" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4vL-ux-LET">
+                                <rect key="frame" x="197.5" y="506" width="19" height="21"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cqz-Bx-i9O">
+                                <rect key="frame" x="74" y="582" width="275" height="38"/>
+                                <color key="backgroundColor" red="0.25859898328781128" green="0.40227478742599487" blue="0.69418305158615112" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="38" id="UTI-zo-qSX"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="16"/>
+                                <state key="normal" title="Login with Facebook">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="6"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -1111,9 +1133,14 @@
                             <constraint firstItem="hFc-8l-ewP" firstAttribute="leading" secondItem="qoY-Fm-vrU" secondAttribute="leadingMargin" constant="54" id="Cgb-qe-eb9"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Bhh-7q-iSy" secondAttribute="trailing" constant="54" id="EOh-Lz-S3J"/>
                             <constraint firstAttribute="trailingMargin" secondItem="hFc-8l-ewP" secondAttribute="trailing" constant="54" id="GU1-TT-5Mb"/>
+                            <constraint firstItem="4vL-ux-LET" firstAttribute="top" secondItem="hFc-8l-ewP" secondAttribute="bottom" constant="55" id="Nws-7J-tgu"/>
                             <constraint firstItem="zuL-pu-Ihp" firstAttribute="top" secondItem="qoY-Fm-vrU" secondAttribute="top" constant="96" id="PaZ-9n-Ckg"/>
                             <constraint firstItem="CXF-z6-4H9" firstAttribute="top" secondItem="Bhh-7q-iSy" secondAttribute="bottom" constant="20" id="QmI-sa-nv5"/>
+                            <constraint firstItem="Cqz-Bx-i9O" firstAttribute="top" secondItem="4vL-ux-LET" secondAttribute="bottom" constant="55" id="S6C-oL-mzQ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Cqz-Bx-i9O" secondAttribute="trailing" constant="45" id="TJM-io-lSx"/>
+                            <constraint firstItem="Cqz-Bx-i9O" firstAttribute="leading" secondItem="qoY-Fm-vrU" secondAttribute="leadingMargin" constant="54" id="ZJO-3g-izM"/>
                             <constraint firstItem="U8Z-9X-Pn6" firstAttribute="top" secondItem="zuL-pu-Ihp" secondAttribute="bottom" constant="116" id="aJm-AK-ao1"/>
+                            <constraint firstItem="4vL-ux-LET" firstAttribute="centerX" secondItem="qoY-Fm-vrU" secondAttribute="centerX" id="fnL-UX-H9F"/>
                             <constraint firstAttribute="centerX" secondItem="zuL-pu-Ihp" secondAttribute="centerX" id="mv0-SY-aw9"/>
                             <constraint firstItem="U8Z-9X-Pn6" firstAttribute="leading" secondItem="qoY-Fm-vrU" secondAttribute="leadingMargin" constant="54" id="p4P-M8-MFG"/>
                             <constraint firstItem="CXF-z6-4H9" firstAttribute="leading" secondItem="qoY-Fm-vrU" secondAttribute="leadingMargin" constant="54" id="qi3-Bq-s96"/>
@@ -1123,6 +1150,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="facebookLoginButton" destination="Cqz-Bx-i9O" id="Lp4-Vx-09F"/>
                         <outlet property="textFieldLoginEmail" destination="U8Z-9X-Pn6" id="jVI-Ab-iOQ"/>
                         <outlet property="textFieldLoginPassword" destination="Bhh-7q-iSy" id="1Zv-4a-IcI"/>
                     </connections>

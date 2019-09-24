@@ -60,7 +60,7 @@ class EditRanking: UIViewController {
     }
     
     ///
-    // MARK : Edit table
+    // MARK: Edit table
     @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
         // Create the Edit TableView
         let windowEditRank = UIApplication.shared.keyWindow
@@ -128,7 +128,7 @@ class EditRanking: UIViewController {
         
     }
     
-    // MARK : timeline funcs
+    // MARK: timeline funcs
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -195,7 +195,7 @@ class EditRanking: UIViewController {
     }
 
     ////////////////////////
-    // Table : MyRankingTable
+    // MARK: update from database
     ////////////////////////
     
     func updateTableFromDatabase(){
@@ -218,7 +218,7 @@ class EditRanking: UIViewController {
         
         
         // Get the description from my rankings
-        self.userRankingsRef.observeSingleEvent(of: .value, with: {snapshot in
+        self.userRankingsRef.observe(.value, with: {snapshot in
             if let rankingItem = Ranking(snapshot: snapshot){
                 self.thisRankingDescription = rankingItem.description
                 self.myRankingTable.reloadData()
@@ -474,31 +474,10 @@ extension EditRanking: UITableViewDelegate, UITableViewDataSource{
 }
 
 /////////////////////
-// MARK : setup cells
+// MARK: setup cells
 /////////////////////
 extension EditRanking{
-    // Setup the Description cell for the Editable table
-    func setupDescriptionEditRankingCell(descriptionEditRankingCell: UITableViewCell){
-        setupDescriptionCell(descriptionCell: descriptionEditRankingCell)
-        // Label "Click to edit description"
-        let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
-        let clickToEditSize = clickToEditString.size()
-        let clickToEditLabel = UILabel(frame: CGRect(
-            x: descriptionEditRankingCell.frame.width - (clickToEditSize.width),
-            y: descriptionRowHeight+5,
-            width: clickToEditSize.width,
-            height: clickToEditSize.height+5))
-        clickToEditLabel.attributedText = clickToEditString
-        descriptionEditRankingCell.addSubview(clickToEditLabel)
-        
-        // Override from the original setup
-        descriptionEditRankingCell.isUserInteractionEnabled = true
-        descriptionEditRankingCell.selectionStyle = .default
-        
-        descriptionEditRankingRowHeight = descriptionRowHeight + clickToEditSize.height
-    }
-    
-    // Setup the "normal" Description cell
+    // MARK: "normal" Description cell
     func setupDescriptionCell(descriptionCell :UITableViewCell){
         let descriptionLabel = UILabel()
         descriptionLabel.lineBreakMode = .byWordWrapping
@@ -525,8 +504,39 @@ extension EditRanking{
         descriptionRowHeight = boundingBox.height + 35
     }
     
-    // Setup the Edit Description Cell
+    //MARK: Description cell for the Editable table
+    func setupDescriptionEditRankingCell(descriptionEditRankingCell: UITableViewCell){
+        setupDescriptionCell(descriptionCell: descriptionEditRankingCell)
+        // Label "Click to edit description"
+        let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
+        let clickToEditSize = clickToEditString.size()
+        let clickToEditLabel = UILabel(frame: CGRect(
+            x: descriptionEditRankingCell.frame.width - (clickToEditSize.width),
+            y: descriptionRowHeight+5,
+            width: clickToEditSize.width,
+            height: clickToEditSize.height+5))
+        clickToEditLabel.attributedText = clickToEditString
+        descriptionEditRankingCell.addSubview(clickToEditLabel)
+        
+        // Override from the original setup
+        descriptionEditRankingCell.isUserInteractionEnabled = true
+        descriptionEditRankingCell.selectionStyle = .default
+        
+        descriptionEditRankingRowHeight = descriptionRowHeight + clickToEditSize.height
+    }
+    
+    // MARK: Edit Description Cell
     func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
+        let backView = UIView(frame: CGRect(x: 0, y: 0, width: EditRanking.screenSize.width, height: EditRanking.screenSize.height))
+        
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: EditRanking.screenSize.width, height: SomeApp.titleFont.lineHeight + 20 ))
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SomeApp.themeColor,
+            .font: SomeApp.titleFont,
+            ]
+        titleLabel.attributedText = NSAttributedString(string: "Edit your Ranking description", attributes: attributes)
+        titleLabel.textAlignment = NSTextAlignment.center
+        
         //A label for warning the user about the max chars
         let maxCharsLabel = UILabel(frame: CGRect(
             x: 0,
@@ -539,7 +549,7 @@ extension EditRanking{
         maxCharsLabel.text = "(Max 250 characters)"
         
         // set up the TextField.  This var is defined in the class to take the value later
-        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 200)
+        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 250)
         editTextField.textColor = UIColor.gray
         editTextField.font = UIFont.preferredFont(forTextStyle: .body)
         if thisRankingDescription != "" {
@@ -556,37 +566,33 @@ extension EditRanking{
         doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
         doneButton.layer.masksToBounds = true
         doneButton.setTitle("Done!", for: .normal)
-        doneButton.addTarget(self, action: #selector(doneUpdating), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(doneUpdatingDescription), for: .touchUpInside)
         
-        //editTextField.addSubview(doneButton)
         cell.selectionStyle = .none
-        cell.backView.addSubview(maxCharsLabel)
-        cell.backView.addSubview(editTextField)
-        cell.backView.addSubview(doneButton)
-    }
-    
-    // Setup the editRestorantcell
-    func setupEditableRestoCell(){
         
+        backView.addSubview(titleLabel)
+        backView.addSubview(maxCharsLabel)
+        backView.addSubview(editTextField)
+        backView.addSubview(doneButton)
+        cell.addSubview(backView)
     }
     
 }
 
 
 ////////////////////
-// MARK : objc funcs
+// MARK: objc funcs
 ///////////////////
 
 extension EditRanking{
     // Update the description when the button is pressed
-    @objc
-    func doneUpdating(){
+    @objc func doneUpdatingDescription(){
         let descriptionDBRef = userRankingsRef.child("description")
         descriptionDBRef.setValue(editTextField.text)
         
         //Update view
         onClickTransparentView()
-        updateTableFromDatabase()
+        onClickEditRankTransparentView()
     }
     
     // Perform the update

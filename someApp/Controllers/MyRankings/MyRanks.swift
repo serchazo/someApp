@@ -13,7 +13,7 @@ import GoogleMobileAds
 class MyRanks: UIViewController {
     //Control var
     var calledUser:UserDetails!
-    var currentCity = City(name: "singapore", state: "singapore", country: "singapore")
+    var currentCity = City(name: "Singapore", state: "singapore", country: "singapore")
     
     // Class constants
     private static let addRanking = "addRankSegue"
@@ -109,10 +109,7 @@ class MyRanks: UIViewController {
         }
     }
     
-    //
-    // MARK : Timeline funcs
-    //
-    
+    // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -169,9 +166,10 @@ class MyRanks: UIViewController {
         bannerView.delegate = self
 
     }
-    
+
+    // MARK: Update from DB
+
     func updateTablewithRanking(){
-        
         let headerView: UIView = UIView.init(frame: CGRect(
             x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
         let labelView: UILabel = UILabel.init(frame: CGRect(
@@ -204,7 +202,6 @@ class MyRanks: UIViewController {
                     followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
                     headerView.addSubview(followButton)
                 }
-                
             })
             headerView.frame = CGRect(x: 0, y: 0, width: MyRanks.screenSize.width, height: 100)
             
@@ -214,7 +211,7 @@ class MyRanks: UIViewController {
         self.myRanksTable.tableHeaderView = headerView
         
         //
-        self.rankingReferenceForUser.observeSingleEvent(of: .value, with: {snapshot in
+        self.rankingReferenceForUser.observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
             var tmpFoodType: [FoodType] = []
@@ -225,19 +222,10 @@ class MyRanks: UIViewController {
                     let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
                     tmpRankings.append(rankingItem)
                     
-                    //Get food type, first look in the "world"
-                    self.foodDBReference.child("world").child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
-                        if foodSnapshot.exists(){
-                            let foodItem = FoodType(snapshot: foodSnapshot)
-                            tmpFoodType.append(foodItem!)
-                        }else{
-                            // if not, look in the country
-                            self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: {localSnap in
-                                if localSnap.exists(){
-                                    tmpFoodType.append(FoodType(snapshot: localSnap)!)
-                                }
-                            })
-                        }
+                    //Get food type per country
+                    self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
+                        let foodItem = FoodType(snapshot: foodSnapshot)
+                        tmpFoodType.append(foodItem!)
                         
                         // Apply the trick when using Joins
                         count += 1
@@ -279,7 +267,7 @@ class MyRanks: UIViewController {
         }
     }
     
-    /// MARK : objc functions
+    // MARK: objc functions
     
     @objc
     func follow(){
@@ -307,18 +295,20 @@ class MyRanks: UIViewController {
     
 }
 
-// MARK : update the ranking list when we receive the event from the menu choser
+// MARK: update the ranking list when we receive the event from the menu choser
 extension MyRanks: MyRanksAddRankingViewDelegate{
     func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
         
         // Test if we already have that ranking in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon)
+            let defaultDescription = "Spent all my life looking for the best " + withFood.name + " places in " + currentCity.name + ". This is the definitive list."
+            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon, description: defaultDescription)
             // Create a child reference and update the value
             let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
             newRankingRef.setValue(newRanking.toAnyObject())
-            updateTablewithRanking()
+            // Only need to reload.  The firebase observer will update the content
+            myRanksTable.reloadData()
             
         }else{
             // Ranking already in list
@@ -339,7 +329,7 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
     }
 }
 
-// MARK : table stuff
+// MARK: table stuff
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
