@@ -269,28 +269,25 @@ class MyRanks: UIViewController {
     
     // MARK: objc functions
     
-    @objc
-    func follow(){
+    @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser.key)
         updateTablewithRanking()
     }
     
-    @objc
-    func unfollow(){
+    @objc func unfollow(){
         SomeApp.unfollow(userId: user.uid, unfollowId: calledUser.key)
         updateTablewithRanking()
     }
     
-    @objc
-    func logout(){
+    @objc func logout(){
         // 4
         do {
             try Auth.auth().signOut()
-            onClickTransparentView()
-            self.dismiss(animated: true, completion: nil)
-        } catch (let error) {
-            print("Auth sign out failed: \(error)")
+        } catch let error as NSError {
+            print("Auth sign out failed: \(error.localizedDescription)")
         }
+        onClickTransparentView()
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
@@ -405,17 +402,17 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             if indexPath.row == 4 {
                 // The button
-                let addCommentButton = UIButton(type: .custom)
-                addCommentButton.frame = CGRect(x: 0, y: cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
+                let logoutButton = UIButton(type: .custom)
+                logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
                 //addCommentButton.backgroundColor = SomeApp.themeColor
                 //addCommentButton.layer.cornerRadius = 20 //0.5 * addCommentButton.bounds.size.width
                 //addCommentButton.layer.masksToBounds = true
-                addCommentButton.setTitleColor(.red, for: .normal)
-                addCommentButton.setTitle("Log out", for: .normal)
-                addCommentButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
+                logoutButton.setTitleColor(.red, for: .normal)
+                logoutButton.setTitle("Log out", for: .normal)
+                logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
                 
                 cell.selectionStyle = .none
-                cell.addSubview(addCommentButton)
+                cell.addSubview(logoutButton)
                 
                 return cell
                 

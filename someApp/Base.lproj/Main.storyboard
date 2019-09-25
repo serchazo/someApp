@@ -1080,6 +1080,7 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="signUpPressed:" destination="hac-Z3-rKb" eventType="touchUpInside" id="kBA-NN-N74"/>
+                                    <segue destination="RhB-dK-8Bx" kind="show" identifier="firstTime" id="Cf7-l7-k7K"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CXF-z6-4H9">
@@ -1157,7 +1158,37 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xLt-ax-d5R" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-736" y="-867"/>
+            <point key="canvasLocation" x="-1709" y="-867"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="O2D-fV-Apw">
+            <objects>
+                <viewController id="RhB-dK-8Bx" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jma-aD-d8Y"/>
+                        <viewControllerLayoutGuide type="bottom" id="PPG-Ku-sny"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="h4g-9d-RZE">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AND-ae-ptr">
+                                <rect key="frame" x="20" y="648" width="374" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemIndigoColor" red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Go"/>
+                                <connections>
+                                    <segue destination="en7-xf-5FP" kind="show" identifier="profileOK" id="vg4-Rq-wP5"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="5UP-VR-FbQ"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3vg-VG-rjY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-600" y="-1286.3839285714284"/>
         </scene>
         <!--My-->
         <scene sceneID="ETV-a1-ONN">
@@ -1289,6 +1320,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="YoF-pa-6fi"/>
         <segue reference="ceb-H0-aSB"/>
+        <segue reference="vg4-Rq-wP5"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>

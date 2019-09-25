@@ -14,16 +14,16 @@ import FacebookLogin
 
 class LoginViewController: UIViewController {
     private let loginOKSegueID = "loginOK"
+    private let firstTimeSegueID = "firstTime"
     private var user:User!
+    private var firstTimeFlag = false
     
     // Facebook login permissions
     private let readPermissions: [Permission] =  [ .publicProfile, .email ]
     
     @IBOutlet weak var textFieldLoginEmail: UITextField!
     @IBOutlet weak var textFieldLoginPassword: UITextField!
-    
     @IBOutlet weak var facebookLoginButton: UIButton!
-    
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -32,15 +32,31 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Authentication observer
         Auth.auth().addStateDidChangeListener(){ auth,user in
             // test the value of user
             if user != nil {
-                self.user = user
-                self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
-                // Some clean up
-                self.textFieldLoginEmail.text = nil
-                self.textFieldLoginPassword.text = nil
+                user?.reload(completion: {(error) in
+                    guard error == nil else{
+                        print("account disabled")
+                        return
+                    }
+                    //
+                    self.user = user
+                    // Some cleanup before the Segue
+                    self.textFieldLoginEmail.text = nil
+                    self.textFieldLoginPassword.text = nil
+                    
+                    if !self.firstTimeFlag{
+                        print("authorized")
+                        self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
+                    }else{
+                        self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
+                    }
+                })
+                
+                
             }
         }
         
@@ -48,11 +64,9 @@ class LoginViewController: UIViewController {
         facebookLoginButton.setTitle("Facebook Login", for: .normal)
         facebookLoginButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
         facebookLoginButton.setTitleColor(.white, for: .normal)
-        //facebookLoginButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        //facebookLoginButton.layer.cornerRadius = 55/2
         facebookLoginButton.backgroundColor = #colorLiteral(red: 0.2585989833, green: 0.4022747874, blue: 0.6941830516, alpha: 1)
 
-        //self.hideKeyboardWhenTappedAround()
+        self.hideKeyboardWhenTappedAround()
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
@@ -68,6 +82,7 @@ class LoginViewController: UIViewController {
                 return
         }
         
+        // Perform the authorization
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {
                 let alert = UIAlertController(title: "Sign In Failed", message: error.localizedDescription, preferredStyle: .alert)
@@ -77,7 +92,7 @@ class LoginViewController: UIViewController {
         }
     }
     
-    
+    // MARK: Sign up
     @IBAction func signUpPressed(_ sender: UIButton) {
         let alert = UIAlertController(title: "Register",
                                       message: "Register",
@@ -90,16 +105,15 @@ class LoginViewController: UIViewController {
             
             // Call create user
             Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!){ user, error in
+
                 Auth.auth().signIn(withEmail: self.textFieldLoginEmail.text!, password: self.textFieldLoginPassword.text!)
+                self.firstTimeFlag = true
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel",
-                                         style: .cancel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
-        alert.addTextField { textEmail in
-            textEmail.placeholder = "Enter your email"
-        }
+        alert.addTextField { textEmail in textEmail.placeholder = "Enter your email"}
         
         alert.addTextField { textPassword in
             textPassword.isSecureTextEntry = true
@@ -113,22 +127,13 @@ class LoginViewController: UIViewController {
     }
     
 
+    // Don't segue from the button, only when the authorization is correct
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        switch identifier {
-        case loginOKSegueID:
-            if user != nil {
-                return true
-            } else{
-                return false
-            }
-        default:
-            return false
-        }
+        return false
     }
     
-    // MARK: objc funcs
+    // MARK: Login with FB stuff
     @objc func didTapFacebookButton() {
-        print("facebook!")
         let loginManager = LoginManager()
         loginManager.logIn(permissions: readPermissions, viewController: self, completion: loginManagerDidComplete)
     }
@@ -148,7 +153,7 @@ class LoginViewController: UIViewController {
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
-
+            
         case .failed(let error):
             alertController = UIAlertController(
                 title: "Login Fail",
@@ -159,7 +164,7 @@ class LoginViewController: UIViewController {
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
-
+            
         case .success:
             // Login succesful
             loginSuccesful()
@@ -172,12 +177,14 @@ class LoginViewController: UIViewController {
         // login to Firebase
         let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
         Auth.auth().signIn(with: credential) { (authResult, error) in
-          if let error = error {
-            print("Some error: \(error.localizedDescription)")
-            return
-          }
-          // User is signed in
-          // ...
+            if let error = error {
+                print("Some error: \(error.localizedDescription)")
+                return
+            }
+            // User is signed in, verify if it's his first login
+            if authResult?.additionalUserInfo != nil {
+                self.firstTimeFlag = (authResult?.additionalUserInfo!.isNewUser)!
+            }
         }
     }
     
@@ -204,5 +211,18 @@ extension LoginViewController: UITextFieldDelegate {
             textField.resignFirstResponder()
         }
         return true
+    }
+}
+
+// MARK: helper funcs
+extension LoginViewController{
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
