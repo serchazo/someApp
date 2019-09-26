@@ -161,6 +161,10 @@ extension HomeViewController{
             cell.titleLabel.text = "Among the best"
             cell.bodyLabel.text = payload
             cell.iconLabel.text = icon
+        }else if (type == TimelineEvents.FoodzGuruPost.rawValue){
+            cell.titleLabel.text = "foodz.guru"
+            cell.bodyLabel.text = payload
+            cell.iconLabel.text = "💬"
         }
 
     }

@@ -47,9 +47,10 @@ class LoginViewController: UIViewController {
                     // Some cleanup before the Segue
                     self.textFieldLoginEmail.text = nil
                     self.textFieldLoginPassword.text = nil
+                    // To change
+                    self.firstTimeFlag = true
                     
                     if !self.firstTimeFlag{
-                        print("authorized")
                         self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
                     }else{
                         self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
@@ -175,7 +176,9 @@ class LoginViewController: UIViewController {
     private func loginSuccesful(){
         
         // login to Firebase
-        let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+        let accessToken = AccessToken.current!.tokenString
+        let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+        
         Auth.auth().signIn(with: credential) { (authResult, error) in
             if let error = error {
                 print("Some error: \(error.localizedDescription)")
@@ -225,4 +228,7 @@ extension LoginViewController{
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    // Coming back from segue when logoff
+    @IBAction func unwindToLoginScreen(segue: UIStoryboardSegue){}
 }

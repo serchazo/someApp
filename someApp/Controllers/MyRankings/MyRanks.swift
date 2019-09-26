@@ -19,6 +19,7 @@ class MyRanks: UIViewController {
     private static let addRanking = "addRankSegue"
     private static let showRakingDetail = "editRestoList"
     private static let screenSize = UIScreen.main.bounds.size
+    private static let logoffSegue = "logoffSegue"
     
     // Instance variables
     private var user:User!
@@ -280,14 +281,14 @@ class MyRanks: UIViewController {
     }
     
     @objc func logout(){
-        // 4
         do {
             try Auth.auth().signOut()
         } catch let error as NSError {
             print("Auth sign out failed: \(error.localizedDescription)")
         }
         onClickTransparentView()
-        self.dismiss(animated: true, completion: nil)
+        performSegue(withIdentifier: MyRanks.logoffSegue, sender: nil)
+        //self.dismiss(animated: true, completion: nil)
     }
     
 }

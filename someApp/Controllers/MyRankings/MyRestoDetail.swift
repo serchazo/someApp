@@ -235,6 +235,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         }
     }
     
+    // MARK: objc funcs
     @objc
     func addComment(){
         // Create the frame

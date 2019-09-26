@@ -137,7 +137,7 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
     
 }
 
-// MARK : Get the city from the City Chooser
+// MARK: Get the city from the City Chooser
 extension MyRanksAddRankingViewController: ItemChooserViewDelegate {
     func itemChooserReceiveCity(_ sender: City) {
         currentCity = sender

@@ -45,7 +45,26 @@ class SomeApp{
     }
     
     
-    // Write to the DB
+    // MARK: user functions
+    static func createUserFirstLogin(userId: String, username: String, bio: String, pictureURL: String = ""){
+        let userDataDBRef = dbUserData.child(userId)
+        // Transform the data to AnyObject
+        let dataToWrite = [ "nickname" : username, "bio" : bio, "pictureurl" : pictureURL]
+        userDataDBRef.setValue(dataToWrite)
+        
+        // Create the first timeline post
+        let timestamp = NSDate().timeIntervalSince1970 * 1000
+        let payLoad = "Hello " + username + "! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates."
+        let userTimelineDBRef = dbUserTimeline.child(userId).child("systemNotification:"+userId+":welcometofoodzguru")
+        let firstTimelinePost:[String:Any] = ["timestamp": timestamp,
+                                 "type" : "systemNotification",
+                                 "icon" : "💬",
+                                 "target" : "",
+                                 "payload" : payLoad
+                                    ]
+        userTimelineDBRef.setValue(firstTimelinePost)
+    }
+    
     static func follow(userId: String, toFollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         let newfollowerRef = followingDBReference.child(toFollowId)
@@ -57,6 +76,7 @@ class SomeApp{
         followingDBReference.child(unfollowId).removeValue()
     }
     
+    // MARK: ranking functions
     // Update the position of a resto
     static func updateRestoPositionInRanking(userId: String, city: City, ranking: Ranking, restoId: String, position: Int){
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key + "/" + restoId + "/position"
@@ -150,5 +170,5 @@ enum TimelineEvents:String{
     case NewUserFavorite = "newUserFavorite"
     case NewBestRestoInRanking = "newBestRestoInRanking"
     case NewArrivalInRanking = "newArrivalInRanking"
-    
+    case FoodzGuruPost = "systemNotification"
 }
