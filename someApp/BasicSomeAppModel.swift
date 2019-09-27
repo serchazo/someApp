@@ -32,6 +32,10 @@ class SomeApp{
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
     static let dbGeographyCountry:DatabaseReference = dbRootRef.child("geography-countries")
 
+    // MARK: storage
+    static let storageRef = Storage.storage().reference()
+    static let storageUsersRef = storageRef.child("users")
+    
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
 
@@ -44,7 +48,6 @@ class SomeApp{
     static var titleFont: UIFont{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
-    
     
     // MARK: user functions
     static func createUserFirstLogin(userId: String, username: String, bio: String, pictureURL: String = ""){

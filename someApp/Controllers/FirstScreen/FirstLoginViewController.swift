@@ -18,6 +18,8 @@ class FirstLoginViewController: UIViewController {
     private var userName:String!
     private var userNameOKFlag = false
     private var city:City!
+    private let photoPickerController = UIImagePickerController()
+    
     private var photoURL: URL!{
         didSet{
             fetchImage()
@@ -86,12 +88,22 @@ class FirstLoginViewController: UIViewController {
             }else if self.user.photoURL != nil {
                 // if it's the firebase provider, we get the normal profile
                 self.photoURL = user.photoURL
-                self.uploadImageButton.isEnabled = false
-                self.uploadImageButton.isHidden = true
+                self.uploadImageButton.isEnabled = true
+                self.uploadImageButton.isHidden = false
             }else{
-                // TODO: If the photoURL is empty, assign the default profile pic
-                self.uploadImageButton.isEnabled = false
-                self.uploadImageButton.isHidden = true
+                // If the photoURL is empty, assign the default profile pic
+                let defaultPicRef = SomeApp.storageUsersRef
+                defaultPicRef.child("default.png").downloadURL(completion: {url, error in
+                    if let error = error {
+                       // Handle any errors
+                        print("Error downloading the default picture \(error.localizedDescription).")
+                     } else {
+                       self.photoURL = url
+                     }
+                })
+                
+                self.uploadImageButton.isEnabled = true
+                self.uploadImageButton.isHidden = false
             }
             
             print("I'm probably complicating myself")
@@ -106,6 +118,7 @@ class FirstLoginViewController: UIViewController {
         verifyUserNameButton.addTarget(self, action: #selector(verifyUserName), for: .touchUpInside)
         userNameField.addTarget(self, action: #selector(editingText), for: .editingDidBegin)
         goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
+        uploadImageButton.addTarget(self, action: #selector(uploadPhoto), for: .touchUpInside)
         
         hideKeyboardWhenTappedAround()
     }
@@ -215,6 +228,13 @@ class FirstLoginViewController: UIViewController {
         configureGoButton()
         userNameTakenLabel.isHidden = true
     }
+    
+    // Upload profile picture
+    @objc func uploadPhoto(){
+        photoPickerController.delegate = self
+        photoPickerController.sourceType =  UIImagePickerController.SourceType.photoLibrary
+        self.present(photoPickerController, animated: true, completion: nil)
+    }
 }
 
 // MARK: helper funcs
@@ -237,5 +257,45 @@ extension FirstLoginViewController: ItemChooserViewDelegate {
         selectCityField.placeholder = city.name
         selectCityButton.setTitle("Change", for: .normal)
         configureGoButton()
+    }
+}
+
+// MARK: photo picker extension
+extension FirstLoginViewController: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        spinner.startAnimating()
+        DispatchQueue.main.async {
+            if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                // Transform the data
+                let imageData:Data = pickedImage.pngData()!
+                
+                // Upload the file
+                let storagePath = self.user.uid + "/upload.png"
+                let imageRef = SomeApp.storageUsersRef.child(storagePath)
+                imageRef.putData(imageData, metadata: nil) { (metadata, error) in
+                    if let error = error {
+                        print("Error uploading the image! \(error.localizedDescription)")
+                    }else{
+                        
+                        
+                        
+                        // You can also access to download URL after upload.
+                        imageRef.downloadURL { (url, error) in
+                            guard let downloadURL = url else {
+                                // Uh-oh, an error occurred!
+                                print("Error getting the download URL")
+                                return
+                            }
+                            self.photoURL = downloadURL
+                        }
+                        self.spinner.stopAnimating()
+                    }
+                }
+            }
+        }
+        photoPickerController.dismiss(animated: true, completion: nil)
+        
+        
     }
 }

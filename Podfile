@@ -13,6 +13,9 @@ target 'someApp' do
     pod 'Firebase/Database', :inhibit_warnings => true
     pod 'Firebase/Auth', :inhibit_warnings => true
 
+    #Storage pod
+    pod 'Firebase/Storage'
+    
     # add the Firebase pod for AdMob
     pod 'Firebase/AdMob'
     
