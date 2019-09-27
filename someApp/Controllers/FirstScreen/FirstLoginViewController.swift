@@ -16,6 +16,7 @@ class FirstLoginViewController: UIViewController {
     private static let cityChooserSegueID = "chooseCity"
     private var user:User!
     private var userName:String!
+    private var userNameOKFlag = false
     private var city:City!
     private var photoURL: URL!{
         didSet{
@@ -24,8 +25,6 @@ class FirstLoginViewController: UIViewController {
     }
     
     // MARK: outlets
-    
-    
     @IBOutlet weak var titleLabel: UILabel!{
         didSet{
             titleLabel.font = SomeApp.titleFont
@@ -34,15 +33,24 @@ class FirstLoginViewController: UIViewController {
         }
     }
     @IBOutlet weak var profilePic: UIImageView!
-    @IBOutlet weak var uploadImageButton: UIButton!
+    @IBOutlet weak var uploadImageButton: UIButton!{
+        didSet{
+            self.uploadImageButton.isEnabled = false
+            self.uploadImageButton.isHidden = true
+        }
+    }
     // Username outlets
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var userNameField: UITextField!
     @IBOutlet weak var userNameTakenLabel: UILabel!
-    // Current city outlets
-    @IBOutlet weak var selectCityLabel: UITextField!
-    @IBOutlet weak var selectCityButton: UIButton!
     
+    @IBOutlet weak var verifyNameSpinner: UIActivityIndicatorView!
+    
+    
+    // Current city outlets
+    @IBOutlet weak var selectCityField: UITextField!
+    @IBOutlet weak var selectCityButton: UIButton!
+
     @IBOutlet weak var verifyUserNameButton: UIButton!
     // Bio stuff
     @IBOutlet weak var bioLabel: UILabel!
@@ -74,17 +82,17 @@ class FirstLoginViewController: UIViewController {
                 // If the provider is facebook, we get the large picture
                 let modifiedURL = self.user.photoURL!.absoluteString + "?type=large"
                 self.photoURL = URL(string: modifiedURL)
-                self.uploadImageButton.isEnabled = false
-                self.uploadImageButton.isHidden = true
-                
                 
             }else if self.user.photoURL != nil {
                 // if it's the firebase provider, we get the normal profile
                 self.photoURL = user.photoURL
+                self.uploadImageButton.isEnabled = false
+                self.uploadImageButton.isHidden = true
             }else{
                 // TODO: If the photoURL is empty, assign the default profile pic
+                self.uploadImageButton.isEnabled = false
+                self.uploadImageButton.isHidden = true
             }
-            
             
             print("I'm probably complicating myself")
             print(self.user.providerData[0].providerID)
@@ -122,17 +130,16 @@ class FirstLoginViewController: UIViewController {
             }
         }
     }
-    
 
-    /*
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == FirstLoginViewController.cityChooserSegueID,
+        let destinationSegueVC = segue.destination as? ItemChooserViewController {
+            destinationSegueVC.firstLoginFlag = true
+            destinationSegueVC.delegate = self
+        }
     }
-    */
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == FirstLoginViewController.cityChooserSegueID{
             return true
@@ -152,7 +159,8 @@ class FirstLoginViewController: UIViewController {
             self.present(alert,animated: true)
             return
         }
-        
+        verifyNameSpinner.isHidden = false
+        verifyNameSpinner.startAnimating()
         let pattern = "[^A-Za-z0-9]+"
         self.userName = nickname.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
         
@@ -160,13 +168,20 @@ class FirstLoginViewController: UIViewController {
             if snapshot.exists(){
                 // The username exists
                 self.userNameField.text = self.userName
+                self.userNameTakenLabel.textColor = .systemRed
+                self.userNameTakenLabel.text = "This username is already taken."
                 self.userNameTakenLabel.isHidden = false
+                
             }else  {
                 // The username doesn't exist
                 self.userNameField.text = self.userName
-                self.goButton.isEnabled = true
-                self.goButton.backgroundColor = SomeApp.themeColor
+                self.userNameOKFlag = true
+                self.configureGoButton()
+                self.userNameTakenLabel.textColor = .darkText
+                self.userNameTakenLabel.text = "Good! This username is available."
+                self.userNameTakenLabel.isHidden = false
             }
+            self.verifyNameSpinner.stopAnimating()
         })
     }
     // Setting up the user
@@ -184,11 +199,20 @@ class FirstLoginViewController: UIViewController {
         //user.displayName = userName
         self.performSegue(withIdentifier: FirstLoginViewController.continueToAppSegueID, sender: nil)
     }
+    private func configureGoButton(){
+        if city != nil && userNameOKFlag {
+            goButton.isEnabled = true
+            goButton.backgroundColor = SomeApp.themeColor
+        }else{
+            goButton.isEnabled = false
+            goButton.backgroundColor = .gray
+        }
+    }
     
     // Editing the text field
     @objc func editingText(){
-        goButton.isEnabled = false
-        goButton.backgroundColor = .gray
+        userNameOKFlag = false
+        configureGoButton()
         userNameTakenLabel.isHidden = true
     }
 }
@@ -210,7 +234,8 @@ extension FirstLoginViewController{
 extension FirstLoginViewController: ItemChooserViewDelegate {
     func itemChooserReceiveCity(_ sender: City) {
         city = sender
-        print(city.name)
-        
+        selectCityField.placeholder = city.name
+        selectCityButton.setTitle("Change", for: .normal)
+        configureGoButton()
     }
 }

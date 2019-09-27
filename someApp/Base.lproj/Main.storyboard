@@ -283,7 +283,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pv-qh-6SB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3589.8550724637685" y="-703.125"/>
+            <point key="canvasLocation" x="4500" y="-703.125"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="AT2-Sn-a71">
@@ -955,11 +955,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="cn8-iY-54c">
-                        <barButtonItem key="rightBarButtonItem" title="Singapore" id="hpF-GC-T2H">
-                            <connections>
-                                <segue destination="ktD-De-Nbc" kind="show" identifier="cityChoser" id="jXe-wo-hvR"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Singapore" id="hpF-GC-T2H"/>
                     </navigationItem>
                     <connections>
                         <outlet property="cityNavBarButton" destination="hpF-GC-T2H" id="JfF-6h-60D"/>
@@ -978,9 +974,9 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="2916" y="283"/>
+            <point key="canvasLocation" x="3826.0869565217395" y="282.58928571428572"/>
         </scene>
-        <!--Item Chooser View Controller-->
+        <!--Select your Country-->
         <scene sceneID="Uw5-fh-CLg">
             <objects>
                 <viewController id="ktD-De-Nbc" customClass="ItemChooserViewController" customModule="someApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -992,32 +988,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0F8-EI-azw">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="DLC-AK-NhF"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="300" id="gKx-oB-ewe"/>
-                                </constraints>
-                            </pickerView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TfY-8W-Fz0">
+                                <rect key="frame" x="20" y="0.0" width="374" height="808"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="trailing" secondItem="Eq6-zf-ExX" secondAttribute="trailing" id="2fj-dy-jCS"/>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="top" secondItem="01C-Ha-PK2" secondAttribute="bottom" id="7TU-41-bWW"/>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="trailing" secondItem="Eq6-zf-ExX" secondAttribute="trailing" id="Hw2-1K-lME"/>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="leading" secondItem="Eq6-zf-ExX" secondAttribute="leading" id="VEL-y8-PAk"/>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="leading" secondItem="Eq6-zf-ExX" secondAttribute="leading" id="aNn-bZ-fpl"/>
-                            <constraint firstItem="0F8-EI-azw" firstAttribute="top" secondItem="01C-Ha-PK2" secondAttribute="bottom" id="kwN-0X-Zps"/>
+                            <constraint firstItem="TfY-8W-Fz0" firstAttribute="top" secondItem="01C-Ha-PK2" secondAttribute="bottom" id="CdW-gc-yCE"/>
+                            <constraint firstItem="fHu-CT-kcO" firstAttribute="top" secondItem="TfY-8W-Fz0" secondAttribute="bottom" id="Lwl-Wf-Wb6"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="TfY-8W-Fz0" secondAttribute="trailing" id="nRn-hH-6Hc"/>
+                            <constraint firstItem="TfY-8W-Fz0" firstAttribute="leading" secondItem="Eq6-zf-ExX" secondAttribute="leadingMargin" id="nut-rd-nxA"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="U5e-f4-CFj"/>
+                    <navigationItem key="navigationItem" title="Select your Country" id="U5e-f4-CFj"/>
                     <connections>
-                        <outlet property="picker" destination="0F8-EI-azw" id="J8J-39-eo9"/>
+                        <outlet property="countryTable" destination="TfY-8W-Fz0" id="gGl-YQ-pIH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jw7-ad-v82" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1261" y="-130"/>
+            <point key="canvasLocation" x="1346" y="-159"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="gV8-pq-xA4">
@@ -1174,6 +1165,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AND-ae-ptr">
+                                <rect key="frame" x="20" y="526" width="374" height="30"/>
+                                <color key="backgroundColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Go"/>
+                                <connections>
+                                    <segue destination="en7-xf-5FP" kind="show" identifier="profileOK" id="vg4-Rq-wP5"/>
+                                </connections>
+                            </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YDR-fP-2gf">
                                 <rect key="frame" x="95" y="60" width="224" height="224"/>
                                 <constraints>
@@ -1200,16 +1199,16 @@
                                     <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="zek-yy-9R3">
+                                <rect key="frame" x="95" y="60" width="224" height="224"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bio:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2gD-nK-3UM">
                                 <rect key="frame" x="28" y="466.5" width="95" height="21"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="zek-yy-9R3">
-                                <rect key="frame" x="95" y="60" width="224" height="224"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Configure your profile" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PE2-fT-VHp">
                                 <rect key="frame" x="20" y="8" width="374" height="44"/>
                                 <constraints>
@@ -1231,7 +1230,7 @@
                                     <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="ktD-De-Nbc" kind="show" identifier="chooseCity" id="3JZ-bs-ENm"/>
+                                    <segue destination="ktD-De-Nbc" kind="show" identifier="chooseCity" id="Bbc-Xj-mMh"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="inW-p2-2au">
@@ -1271,20 +1270,16 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AND-ae-ptr">
-                                <rect key="frame" x="20" y="526" width="374" height="30"/>
-                                <color key="backgroundColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Go"/>
-                                <connections>
-                                    <segue destination="en7-xf-5FP" kind="show" identifier="profileOK" id="vg4-Rq-wP5"/>
-                                </connections>
-                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-qk-Zry">
+                                <rect key="frame" x="367" y="335" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="2wv-vA-4IG" firstAttribute="trailing" secondItem="cQd-uz-WBx" secondAttribute="trailing" id="08v-ya-zPE"/>
                             <constraint firstItem="2wv-vA-4IG" firstAttribute="leading" secondItem="khD-86-aIV" secondAttribute="trailing" constant="8" symbolic="YES" id="4xI-Ol-6HS"/>
                             <constraint firstItem="2gD-nK-3UM" firstAttribute="trailing" secondItem="tBX-Kl-PhX" secondAttribute="trailing" id="63g-cY-9ae"/>
+                            <constraint firstItem="Wx7-qk-Zry" firstAttribute="leading" secondItem="axA-hh-ePo" secondAttribute="trailing" constant="8" symbolic="YES" id="9wo-5D-77h"/>
                             <constraint firstAttribute="trailingMargin" secondItem="PE2-fT-VHp" secondAttribute="trailing" id="B9j-Rb-qao"/>
                             <constraint firstItem="tBX-Kl-PhX" firstAttribute="leading" secondItem="h4g-9d-RZE" secondAttribute="leadingMargin" constant="8" id="Cyx-1Z-8hp"/>
                             <constraint firstAttribute="trailingMargin" secondItem="YDR-fP-2gf" secondAttribute="trailing" constant="75" id="DHM-oD-NOV"/>
@@ -1295,6 +1290,7 @@
                             <constraint firstItem="inW-p2-2au" firstAttribute="top" secondItem="4NX-8H-FPH" secondAttribute="bottom" constant="8" symbolic="YES" id="PWO-SJ-fR5"/>
                             <constraint firstItem="4NX-8H-FPH" firstAttribute="top" secondItem="2wv-vA-4IG" secondAttribute="bottom" constant="8" symbolic="YES" id="REj-d6-DDh"/>
                             <constraint firstItem="axA-hh-ePo" firstAttribute="leading" secondItem="cQd-uz-WBx" secondAttribute="trailing" constant="8" symbolic="YES" id="Thq-Gs-4qV"/>
+                            <constraint firstItem="Wx7-qk-Zry" firstAttribute="centerY" secondItem="axA-hh-ePo" secondAttribute="centerY" id="UDx-Uh-n9D"/>
                             <constraint firstItem="4NX-8H-FPH" firstAttribute="leading" secondItem="cQd-uz-WBx" secondAttribute="leading" id="Ufh-w8-w7N"/>
                             <constraint firstItem="tBX-Kl-PhX" firstAttribute="leading" secondItem="h4g-9d-RZE" secondAttribute="leadingMargin" constant="8" id="WC1-9e-30f"/>
                             <constraint firstItem="fc4-2q-Thy" firstAttribute="leading" secondItem="axA-hh-ePo" secondAttribute="leading" id="XGw-Gb-WVM"/>
@@ -1332,13 +1328,14 @@
                         <outlet property="goButton" destination="AND-ae-ptr" id="eHp-lV-789"/>
                         <outlet property="profilePic" destination="YDR-fP-2gf" id="A78-zN-kNJ"/>
                         <outlet property="selectCityButton" destination="fc4-2q-Thy" id="NGd-fq-4Xa"/>
-                        <outlet property="selectCityLabel" destination="2wv-vA-4IG" id="x5k-bC-3oA"/>
+                        <outlet property="selectCityField" destination="2wv-vA-4IG" id="x5k-bC-3oA"/>
                         <outlet property="spinner" destination="zek-yy-9R3" id="A8j-5U-zQ2"/>
                         <outlet property="titleLabel" destination="PE2-fT-VHp" id="pVz-62-HhB"/>
                         <outlet property="uploadImageButton" destination="T5g-m6-iw2" id="AP4-hx-18b"/>
                         <outlet property="userNameField" destination="cQd-uz-WBx" id="glk-OL-tQv"/>
                         <outlet property="userNameLabel" destination="tBX-Kl-PhX" id="knq-UX-FJI"/>
                         <outlet property="userNameTakenLabel" destination="6wy-B0-o9s" id="N20-88-rZQ"/>
+                        <outlet property="verifyNameSpinner" destination="Wx7-qk-Zry" id="u7w-cQ-h9O"/>
                         <outlet property="verifyUserNameButton" destination="axA-hh-ePo" id="0dE-Di-fQ5"/>
                     </connections>
                 </viewController>
@@ -1474,8 +1471,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="3JZ-bs-ENm"/>
-        <segue reference="YoF-pa-6fi"/>
+        <segue reference="B4g-Yk-vFu"/>
         <segue reference="ceb-H0-aSB"/>
         <segue reference="vg4-Rq-wP5"/>
     </inferredMetricsTieBreakers>
