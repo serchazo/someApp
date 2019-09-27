@@ -10,8 +10,6 @@ import UIKit
 import Firebase
 
 class FirstLoginViewController: UIViewController {
-    
-    
     private static let continueToAppSegueID = "profileOK"
     private static let cityChooserSegueID = "chooseCity"
     private var user:User!
@@ -50,7 +48,12 @@ class FirstLoginViewController: UIViewController {
     
     
     // Current city outlets
-    @IBOutlet weak var selectCityField: UITextField!
+    @IBOutlet weak var selectCityField: UITextField!{
+        didSet{
+            selectCityField.isEnabled = true
+            selectCityField.delegate = self
+        }
+    }
     @IBOutlet weak var selectCityButton: UIButton!
 
     @IBOutlet weak var verifyUserNameButton: UIButton!
@@ -74,19 +77,19 @@ class FirstLoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Get username
-        // I. Get the logged in user
+        spinner.startAnimating()
+        // I. Get username
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
             self.user = user
-            
+            //A. If the provider is facebook, get the info
             if self.user.photoURL != nil && self.user.providerData[0].providerID == "facebook.com"{
                 // If the provider is facebook, we get the large picture
                 let modifiedURL = self.user.photoURL!.absoluteString + "?type=large"
                 self.photoURL = URL(string: modifiedURL)
-                
+            
+            // B. if it's the firebase provider, we get the normal profile
             }else if self.user.photoURL != nil {
-                // if it's the firebase provider, we get the normal profile
                 self.photoURL = user.photoURL
                 self.uploadImageButton.isEnabled = true
                 self.uploadImageButton.isHidden = false
@@ -105,12 +108,6 @@ class FirstLoginViewController: UIViewController {
                 self.uploadImageButton.isEnabled = true
                 self.uploadImageButton.isHidden = false
             }
-            
-            print("I'm probably complicating myself")
-            print(self.user.providerData[0].providerID)
-            print(self.user.displayName)
-            print(self.user.photoURL?.absoluteString)
-            print(self.user.email)
         }
         
         // Do any additional setup after loading the view.
@@ -123,10 +120,9 @@ class FirstLoginViewController: UIViewController {
         hideKeyboardWhenTappedAround()
     }
     
-    // MARK: Get profile picture
+    // MARK: Fetch image from URL
     private func fetchImage(){
         if let url = photoURL{
-            spinner.startAnimating()
             let urlContents = try? Data(contentsOf: url)
             DispatchQueue.main.async {
                 if let imageData = urlContents, url == self.photoURL {
@@ -207,6 +203,11 @@ class FirstLoginViewController: UIViewController {
             let changeRequest = user.createProfileChangeRequest()
             changeRequest.displayName = userName
             changeRequest.photoURL = photoURL
+            changeRequest.commitChanges(completion: {error in
+                if let error = error{
+                    print("There was an error updating the user profile: \(error.localizedDescription)")
+                }
+            })
         }
         
         //user.displayName = userName
@@ -265,37 +266,66 @@ extension FirstLoginViewController: UIImagePickerControllerDelegate,UINavigation
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         spinner.startAnimating()
+        profilePic.image = nil
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                // Transform the data
-                let imageData:Data = pickedImage.pngData()!
-                
-                // Upload the file
-                let storagePath = self.user.uid + "/upload.png"
-                let imageRef = SomeApp.storageUsersRef.child(storagePath)
-                imageRef.putData(imageData, metadata: nil) { (metadata, error) in
-                    if let error = error {
-                        print("Error uploading the image! \(error.localizedDescription)")
-                    }else{
-                        
-                        
-                        
-                        // You can also access to download URL after upload.
-                        imageRef.downloadURL { (url, error) in
-                            guard let downloadURL = url else {
-                                // Uh-oh, an error occurred!
-                                print("Error getting the download URL")
-                                return
+                // Resize the image before uploading (less MBs on the user)
+                let transformedImage = self.resizeImage(image: pickedImage, newWidth: 200)
+                // Transform to data
+                if transformedImage != nil {
+                    let imageData:Data = transformedImage!.pngData()!
+                    // Prepare the file first
+                    let storagePath = self.user.uid + "/profilepicture.png"
+                    let imageRef = SomeApp.storageUsersRef.child(storagePath)
+                    let metadata = StorageMetadata()
+                    metadata.contentType = "image/png"
+
+                    // Upload data and metadata
+                    imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
+                        if let error = error {
+                            print("Error uploading the image! \(error.localizedDescription)")
+                        }else{
+                            // Then get the download URL
+                            imageRef.downloadURL { (url, error) in
+                                guard let downloadURL = url else {
+                                    // Uh-oh, an error occurred!
+                                    print("Error getting the download URL")
+                                    return
+                                }
+                                // Update the current photo
+                                self.photoURL = downloadURL
                             }
-                            self.photoURL = downloadURL
                         }
-                        self.spinner.stopAnimating()
                     }
                 }
             }
         }
         photoPickerController.dismiss(animated: true, completion: nil)
-        
-        
+    }
+    
+    // Resize the image
+    // Snipet from StackOverFlow
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+}
+
+// MARK: Edit text field delegate
+extension FirstLoginViewController: UITextFieldDelegate{
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if textField == selectCityField{
+            self.performSegue(withIdentifier: FirstLoginViewController.cityChooserSegueID, sender: nil)
+            
+            return false
+        }else{
+            return true
+        }
     }
 }

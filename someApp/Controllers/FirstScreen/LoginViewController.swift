@@ -47,8 +47,8 @@ class LoginViewController: UIViewController {
                     // Some cleanup before the Segue
                     self.textFieldLoginEmail.text = nil
                     self.textFieldLoginPassword.text = nil
-                    // To change
-                    self.firstTimeFlag = true
+                    // For testing the first screen
+                    //self.firstTimeFlag = true
                     
                     if !self.firstTimeFlag{
                         self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
