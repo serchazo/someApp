@@ -73,7 +73,7 @@ class FirstLoginViewController: UIViewController {
         }
     }
     
-    
+    // MARK: Timeline funcs
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -131,7 +131,6 @@ class FirstLoginViewController: UIViewController {
                     self.profilePic.layer.borderColor = SomeApp.themeColorOpaque.cgColor
                     self.profilePic.layer.borderWidth = 2.0
                     self.profilePic.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-                        //self.profilePic.frame.insetBy(dx: 2.0, dy: 2.0)
                     self.profilePic.clipsToBounds = true
                     self.spinner.stopAnimating()
                     
@@ -196,7 +195,7 @@ class FirstLoginViewController: UIViewController {
     // Setting up the user
     @objc func goButtonPressed(){
         // Then create
-        SomeApp.createUserFirstLogin(userId: user.uid, username: userName, bio: bioField?.text ?? "")
+        SomeApp.createUserFirstLogin(userId: user.uid, username: userName, bio: bioField?.text ?? "", photoURL: photoURL.absoluteString)
         
         // If the user is not signed in with facebook, we update display name and photo url on firebase
         if user.providerID != "facebook.com" {
@@ -210,7 +209,6 @@ class FirstLoginViewController: UIViewController {
             })
         }
         
-        //user.displayName = userName
         self.performSegue(withIdentifier: FirstLoginViewController.continueToAppSegueID, sender: nil)
     }
     private func configureGoButton(){
@@ -254,6 +252,7 @@ extension FirstLoginViewController{
 // MARK: Get the city from the City Chooser
 extension FirstLoginViewController: ItemChooserViewDelegate {
     func itemChooserReceiveCity(_ sender: City) {
+        print("here!")
         city = sender
         selectCityField.placeholder = city.name
         selectCityButton.setTitle("Change", for: .normal)

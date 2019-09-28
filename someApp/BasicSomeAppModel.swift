@@ -24,6 +24,7 @@ class SomeApp{
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
     static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
+    static let dbUserNbFollowing:DatabaseReference = dbRootRef.child("user-nbfollowing")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
     static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
@@ -50,10 +51,10 @@ class SomeApp{
     }
     
     // MARK: user functions
-    static func createUserFirstLogin(userId: String, username: String, bio: String){
+    static func createUserFirstLogin(userId: String, username: String, bio: String, photoURL: String = ""){
         let userDataDBRef = dbUserData.child(userId)
         // Transform the data to AnyObject
-        let dataToWrite = [ "nickname" : username, "bio" : bio]
+        let dataToWrite = [ "nickname" : username, "bio" : bio, "photourl": photoURL]
         userDataDBRef.setValue(dataToWrite)
         
         // Create the first timeline post

@@ -15,6 +15,8 @@ class SearchViewController: UIViewController {
     
     private static let screenSize = UIScreen.main.bounds.size
     
+    private let cityChooserSegueID = "cityChooser"
+    
     //Instance vars
     private var foodList:[FoodType] = []
     private var user: User!
@@ -30,7 +32,6 @@ class SearchViewController: UIViewController {
 
     ///
     // MARK : Timeline funcs
-    ///
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -135,10 +136,10 @@ class SearchViewController: UIViewController {
                     seguedDestinationVC.currentFood = foodList[indexPath.row]
                     seguedDestinationVC.currentCity = currentCity
                 }
-            case "cityChoser":
+            case cityChooserSegueID :
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    //seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
+                    seguedToCityChooser.firstLoginFlag = false
                 }
             default: break
             }

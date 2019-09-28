@@ -12,7 +12,7 @@ import GoogleMobileAds
 
 class MyRanks: UIViewController {
     //Control var
-    var calledUser:UserDetails!
+    var calledUser:UserDetails?
     var currentCity = City(name: "Singapore", state: "singapore", country: "singapore")
     
     // Class constants
@@ -28,6 +28,11 @@ class MyRanks: UIViewController {
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
     private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
+    private var photoURL: URL!{
+        didSet{
+            fetchImage()
+        }
+    }
     
     //For the myProfile swipe table
     private var transparentView = UIView()
@@ -36,7 +41,7 @@ class MyRanks: UIViewController {
     // Ad stuff
     private var bannerView: GADBannerView!
     
-    // Outlets
+    // MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var myRanksTable: UITableView!{
         didSet{
@@ -45,8 +50,32 @@ class MyRanks: UIViewController {
         }
     }
     
-    // Action buttons
+    @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var profilePictureImage: UIImageView!
+    @IBOutlet weak var imageSpinner: UIActivityIndicatorView!
     
+    @IBOutlet weak var bioLabel: UILabel!
+    @IBOutlet weak var followersLabel: UILabel!{
+        didSet{
+            followersLabel.text = "Followers: - "
+        }
+    }
+    @IBOutlet weak var followingLabel: UILabel!{
+        didSet{
+            followingLabel.text = "Following: - "
+        }
+    }
+    @IBOutlet weak var followButton: UIButton!{
+        didSet{
+            followButton.isHidden = true
+            followButton.isEnabled = false
+        }
+    }
+    
+    @IBOutlet weak var adView: UIView!
+    
+    
+    // MARK: Show myProfile table
     @IBAction func myProfileAction(_ sender: UIBarButtonItem) {        
         // Create the frame
         let window = UIApplication.shared.keyWindow
@@ -130,88 +159,132 @@ class MyRanks: UIViewController {
             guard let user = user else {return}
             self.user = user
             
-            // II.A. If the callingUserId String is empty, then it is the current user
-            if self.calledUser == nil {
-                let pathId = user.uid+"/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
-                // 2. Once we get the user, update!
-                self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
-                self.foodDBReference = SomeApp.dbFoodTypeRoot
-                self.updateTablewithRanking()
-                
+            var thisUserId:String
+            if self.calledUser == nil{
+                thisUserId = user.uid
             }else{
-                // II. B. The user is a "visitor", go get some data
-                let pathId = self.calledUser.key+"/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
-                SomeApp.dbUserData.child(self.calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
-                    if let value = snapshot.value as? [String: AnyObject],
-                        let userNick = value["nickname"] as? String{
-                        self.navigationItem.title = userNick
-                        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-                    }
-                })
-                self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
-                self.foodDBReference = SomeApp.dbFoodTypeRoot
-                self.updateTablewithRanking()
+                thisUserId = self.calledUser!.key
                 // hide navbar buttons
                 self.navigationItem.leftBarButtonItem = nil
                 self.navigationItem.rightBarButtonItem = nil
             }
+            self.configureHeader(userId: thisUserId)
+            
+            let pathId = thisUserId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
+            self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
+            self.foodDBReference = SomeApp.dbFoodTypeRoot
+            self.updateTablewithRanking()
         }
-        // Ad stuff
-        bannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
+        // MARK: Ad stuff
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
         addBannerViewToView(bannerView)
         bannerView.adUnitID = SomeApp.adBAnnerUnitID
         bannerView.rootViewController = self
-        
-        
         bannerView.load(GADRequest())
         bannerView.delegate = self
 
     }
-
-    // MARK: Update from DB
-
-    func updateTablewithRanking(){
-        let headerView: UIView = UIView.init(frame: CGRect(
-            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
-        let labelView: UILabel = UILabel.init(frame: CGRect(
-            x: 0, y: 0, width: MyRanks.screenSize.width, height: 50))
-        labelView.textAlignment = NSTextAlignment.center
-        labelView.textColor = SomeApp.themeColor
-        labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        if calledUser == nil {
-            labelView.text = "Tell the world your favorite restorants"
-        }else{
-            labelView.text = "\(calledUser.nickName)'s favorite restorants!"
+    
+    // MARK: Fetch image from URL
+    private func fetchImage(){
+        profilePictureImage.layer.cornerRadius = 0.5 * self.profilePictureImage.bounds.size.width
+        profilePictureImage.layer.borderColor = SomeApp.themeColorOpaque.cgColor
+        profilePictureImage.layer.borderWidth = 2.0
+        profilePictureImage.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
+        profilePictureImage.clipsToBounds = true
+        
+        if let url = photoURL{
+            let urlContents = try? Data(contentsOf: url)
+            DispatchQueue.main.async {
+                if let imageData = urlContents, url == self.photoURL {
+                    self.profilePictureImage.image = UIImage(data: imageData)
+                    self.imageSpinner.stopAnimating()
+                }
+            }
         }
-        headerView.addSubview(labelView)
+    }
+    
+    // MARK: Configure header
+    func configureHeader(userId: String){
+        // First, go get some data from the DB
+        SomeApp.dbUserData.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+            var username:String = "User Profile"
+            if let value = snapshot.value as? [String: AnyObject]{
+                // 1. Username
+                if let userNick = value["nickname"] as? String { username = userNick }
+                self.navigationItem.title = username
+                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+                // 2. User photo
+                if let photoURL = value["photourl"] as? String { self.photoURL = URL(string: photoURL) }
+                else{ // assign default photo URL
+                    // If the photoURL is empty, assign the default profile pic
+                    let defaultPicRef = SomeApp.storageUsersRef
+                    defaultPicRef.child("default.png").downloadURL(completion: {url, error in
+                        if let error = error {
+                            // Handle any errors
+                            print("Error downloading the default picture \(error.localizedDescription).")
+                        } else {
+                            self.photoURL = url
+                        }
+                    })
+                }
+                // 3. User bio
+                if let userBio = value["bio"] as? String,
+                    userBio != ""{
+                    self.bioLabel.text = userBio
+                }else{
+                    if self.calledUser == nil{
+                        self.bioLabel.textColor = .lightGray
+                        self.bioLabel.text = "Click on Profile to add a bio."}
+                }
+            }
+        })
+        
         // Follow button
-        if calledUser != nil{
-            let followButton = UIButton(type: .custom)
-            followButton.frame = CGRect(x: MyRanks.screenSize.width/3, y: 60, width: MyRanks.screenSize.width/3, height: 40)
+        if calledUser != nil {
             followButton.backgroundColor = SomeApp.themeColor
             followButton.setTitleColor(.white, for: .normal)
-            
             // We need to verify if the user is already following the target
             let tmpRef = SomeApp.dbUserFollowing.child(user.uid)
-            tmpRef.child(calledUser.key).observeSingleEvent(of: .value, with: {snapshot in
+            tmpRef.child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
                 if snapshot.exists() {
-                    followButton.setTitle("Unfollow", for: .normal)
-                    followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
-                    headerView.addSubview(followButton)
+                    self.followButton.setTitle("Unfollow", for: .normal)
+                    self.followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
                 }else{
-                    followButton.setTitle("Follow", for: .normal)
-                    followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
-                    headerView.addSubview(followButton)
+                    self.followButton.setTitle("Follow", for: .normal)
+                    self.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
                 }
+                self.followButton.isHidden = false
+                self.followButton.isEnabled = true
             })
-            headerView.frame = CGRect(x: 0, y: 0, width: MyRanks.screenSize.width, height: 100)
-            
-        }else{
-            
         }
-        self.myRanksTable.tableHeaderView = headerView
         
-        //
+        // Followers button
+        let followersRef = SomeApp.dbUserNbFollowers
+        followersRef.child(userId).observe(.value, with: {snapshot in
+            if snapshot.exists(),
+                let followers = snapshot.value as? Int {
+                self.followersLabel.text = "Followers: \(followers)"
+            }else{
+                self.followersLabel.text = "Followers: 0"
+            }
+        })
+        // Following button
+        let followingRef = SomeApp.dbUserNbFollowing
+        followingRef.child(userId).observe(.value, with: {snapshot in
+            if snapshot.exists(),
+                let following = snapshot.value as? Int {
+                self.followingLabel.text = "Following: \(following)"
+            }else{
+                self.followingLabel.text = "Following: 0"
+            }
+        })
+        
+    }
+
+    
+    // MARK: Update from DB
+    func updateTablewithRanking(){
         self.rankingReferenceForUser.observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
@@ -271,12 +344,12 @@ class MyRanks: UIViewController {
     // MARK: objc functions
     
     @objc func follow(){
-        SomeApp.follow(userId: user.uid, toFollowId: calledUser.key)
+        SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
         updateTablewithRanking()
     }
     
     @objc func unfollow(){
-        SomeApp.unfollow(userId: user.uid, unfollowId: calledUser.key)
+        SomeApp.unfollow(userId: user.uid, unfollowId: calledUser!.key)
         updateTablewithRanking()
     }
     
@@ -329,7 +402,6 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
 
 // MARK: table stuff
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         // Verifiy if it's the myProfile table
         if tableView == myProfileTableView{
@@ -462,10 +534,13 @@ extension MyRanks{
     }
 }
 
-// MARK : Ad suftt
+// MARK: Ad Delegate
 extension MyRanks: GADBannerViewDelegate{
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(bannerView)
+        
+        /*
         view.addSubview(bannerView)
         view.addConstraints(
             [NSLayoutConstraint(item: bannerView,
@@ -482,7 +557,7 @@ extension MyRanks: GADBannerViewDelegate{
                                 attribute: .centerX,
                                 multiplier: 1,
                                 constant: 0)
-            ])
+            ])*/
     }
     
     /// Tells the delegate an ad request loaded an ad.

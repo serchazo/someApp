@@ -70,6 +70,7 @@ class LoginViewController: UIViewController {
         self.hideKeyboardWhenTappedAround()
     }
     
+    // MARK: Login
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         guard let email = textFieldLoginEmail.text,
             let password = textFieldLoginPassword.text,
