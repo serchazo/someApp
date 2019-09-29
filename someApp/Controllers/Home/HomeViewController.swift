@@ -15,6 +15,7 @@ class HomeViewController: UIViewController {
     private static let timelineCellIdentifier = "TimelineCell"
     private static let timelineCellNibIdentifier = "TimelineCell"
     
+    
     // Instance variables
     private var user: User!
     private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String )] = []
@@ -34,7 +35,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    
+    // MARK: Timeline funcs
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -134,7 +135,7 @@ extension HomeViewController{
         // Date stuff
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
         let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
         dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
         let localDate = dateFormatter.string(from: date)
         cell.dateLabel.text = localDate

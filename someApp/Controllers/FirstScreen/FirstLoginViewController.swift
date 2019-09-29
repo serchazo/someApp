@@ -269,7 +269,9 @@ extension FirstLoginViewController: UIImagePickerControllerDelegate,UINavigation
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
                 // Resize the image before uploading (less MBs on the user)
-                let transformedImage = self.resizeImage(image: pickedImage, newWidth: 200)
+                let squareImage = self.squareImage(image: pickedImage)
+                let transformedImage = self.resizeImage(image: squareImage, newDimension: 200)
+                
                 // Transform to data
                 if transformedImage != nil {
                     let imageData:Data = transformedImage!.pngData()!
@@ -302,17 +304,48 @@ extension FirstLoginViewController: UIImagePickerControllerDelegate,UINavigation
         photoPickerController.dismiss(animated: true, completion: nil)
     }
     
-    // Resize the image
+    // MARK: Resize the image
     // Snipet from StackOverFlow
-    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
-        let scale = newWidth / image.size.width
+    func resizeImage(image: UIImage, newDimension: CGFloat) -> UIImage? {
+        let scale = newDimension / image.size.width
         let newHeight = image.size.height * scale
-        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
-        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        UIGraphicsBeginImageContext(CGSize(width: newDimension, height: newHeight))
+        
+        image.draw(in: CGRect(x: 0, y: 0, width: newDimension, height: newHeight))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
         return newImage
+    }
+    
+    //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
+    func squareImage(image: UIImage) -> UIImage{
+        let originalWidth  = image.size.width
+        let originalHeight = image.size.height
+        var x: CGFloat = 0.0
+        var y: CGFloat = 0.0
+        var edge: CGFloat = 0.0
+        
+        if (originalWidth > originalHeight) {
+            // landscape
+            edge = originalHeight
+            x = (originalWidth - edge) / 2.0
+            y = 0.0
+            
+        } else if (originalHeight > originalWidth) {
+            // portrait
+            edge = originalWidth
+            x = 0.0
+            y = (originalHeight - originalWidth) / 2.0
+        } else {
+            // square
+            edge = originalWidth
+        }
+        
+        let cropSquare = CGRect(x: x, y: y, width: edge, height: edge)
+        let imageRef = image.cgImage!.cropping(to: cropSquare)!;
+        
+        return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
     }
 }
 

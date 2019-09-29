@@ -152,7 +152,7 @@ class RestoRankViewController: UIViewController {
     }
 }
 
-// MARK : Table stuff
+// MARK: Table stuff
 extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -201,7 +201,8 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
             }
         }
     }
-    // configure the add cell
+    
+    // MARK: Ad Cell
     func configureAddCell(nativeAdCell: UITableViewCell){
         guard nativeAds.count > 0 else {return}
         var nativeAd = nativeAds[0] // GADUnifiedNativeAd()

@@ -70,6 +70,12 @@ class SomeApp{
         userTimelineDBRef.setValue(firstTimelinePost)
     }
     
+    // Update profile picture
+    static func updateProfilePic(userId: String, photoURL: String){
+        let userDataDBRef = dbUserData.child(userId)
+        userDataDBRef.updateChildValues(["photourl":photoURL])
+    }
+    
     static func follow(userId: String, toFollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         let newfollowerRef = followingDBReference.child(toFollowId)

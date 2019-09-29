@@ -27,7 +27,7 @@ class TimelineCell: UITableViewCell {
             iconLabel.layer.cornerRadius = 0.5 * iconLabel.bounds.size.height
             iconLabel.layer.masksToBounds = true
             iconLabel.layer.borderColor = SomeApp.themeColor.cgColor;
-            iconLabel.layer.borderWidth = 1.5;
+            iconLabel.layer.borderWidth = 1.0;
         }
     }
     

@@ -33,6 +33,7 @@ class MyRanks: UIViewController {
             fetchImage()
         }
     }
+    private let photoPickerController = UIImagePickerController()
     
     //For the myProfile swipe table
     private var transparentView = UIView()
@@ -153,6 +154,8 @@ class MyRanks: UIViewController {
         super.viewDidLoad()
         myProfileTableView.delegate = self
         myProfileTableView.dataSource = self
+        myProfileTableView.rowHeight = UITableView.automaticDimension
+        myProfileTableView.estimatedRowHeight = 100
         
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -361,7 +364,28 @@ class MyRanks: UIViewController {
         }
         onClickTransparentView()
         performSegue(withIdentifier: MyRanks.logoffSegue, sender: nil)
-        //self.dismiss(animated: true, completion: nil)
+    }
+    
+    // Change profile pic
+    @objc func changeProfilePicture(){
+        print("change pic")
+        photoPickerController.delegate = self
+        photoPickerController.sourceType =  UIImagePickerController.SourceType.photoLibrary
+        self.present(photoPickerController, animated: true, completion: nil)
+    }
+    
+    // update user profile
+    @objc func updateUserProfile(){
+        let changeRequest = user.createProfileChangeRequest()
+        changeRequest.photoURL = photoURL
+        changeRequest.commitChanges(completion: {error in
+            if let error = error{
+                print("There was an error updating the user profile: \(error.localizedDescription)")
+            }
+            else{
+                SomeApp.updateProfilePic(userId: self.user.uid, photoURL: self.photoURL.absoluteString)
+            }
+        })
     }
     
 }
@@ -473,17 +497,19 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         // Verifiy if it's the myProfile table
         if tableView == myProfileTableView{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            if indexPath.row == 0 {
+                // Change picture row
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                configureChangePictureCell(cell: cell)
+                return cell
+            }
             if indexPath.row == 4 {
-                // The button
+                // Logout row
                 let logoutButton = UIButton(type: .custom)
-                logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
-                //addCommentButton.backgroundColor = SomeApp.themeColor
-                //addCommentButton.layer.cornerRadius = 20 //0.5 * addCommentButton.bounds.size.width
-                //addCommentButton.layer.masksToBounds = true
+                logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTableView.frame.width, height: cell.frame.height)
                 logoutButton.setTitleColor(.red, for: .normal)
                 logoutButton.setTitle("Log out", for: .normal)
                 logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
-                
                 cell.selectionStyle = .none
                 cell.addSubview(logoutButton)
                 
@@ -517,6 +543,49 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         }
         
     }
+    
+    // Sizing
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView == myProfileTableView && indexPath.row == 0 {
+            return 120
+        }else{
+            return UITableView.automaticDimension
+        }
+    }
+    
+}
+
+// MARK: configure cells
+extension MyRanks{
+    
+    private func configureChangePictureCell(cell: UITableViewCell){
+        
+        let backView = UIView(frame: CGRect(x: 0, y: 0, width: cell.frame.width, height: 110))
+        
+        let profilePicThumbnail = UIImageView()
+        profilePicThumbnail.frame = CGRect(x: myProfileTableView.frame.width/2 - 35, y: 10, width: 70, height: 70)
+        profilePicThumbnail.layer.cornerRadius = 0.5 * profilePicThumbnail.bounds.size.width
+        profilePicThumbnail.layer.borderColor = SomeApp.themeColorOpaque.cgColor
+        profilePicThumbnail.layer.borderWidth = 1.0
+        profilePicThumbnail.clipsToBounds = true
+        profilePicThumbnail.image = profilePictureImage.image
+        
+        backView.addSubview(profilePicThumbnail)
+        
+        let changeProfilePicButton = UIButton(type: .custom)
+        changeProfilePicButton.frame = CGRect(x: myProfileTableView.frame.width * 3/8, y: 90, width: myProfileTableView.frame.width/4, height: 20)
+        changeProfilePicButton.layer.cornerRadius = 10
+        changeProfilePicButton.layer.masksToBounds = true
+        changeProfilePicButton.setTitle("Change", for: .normal)
+        changeProfilePicButton.tintColor = .white
+        changeProfilePicButton.backgroundColor = SomeApp.themeColor
+        changeProfilePicButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
+
+        backView.addSubview(changeProfilePicButton)
+        
+        cell.addSubview(backView)
+        
+    }
 }
 
 // MARK: Some view stuff
@@ -539,25 +608,6 @@ extension MyRanks: GADBannerViewDelegate{
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         adView.addSubview(bannerView)
-        
-        /*
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView,
-                                attribute: .bottom,
-                                relatedBy: .equal,
-                                toItem: bottomLayoutGuide,
-                                attribute: .top,
-                                multiplier: 1,
-                                constant: 0),
-             NSLayoutConstraint(item: bannerView,
-                                attribute: .centerX,
-                                relatedBy: .equal,
-                                toItem: view,
-                                attribute: .centerX,
-                                multiplier: 1,
-                                constant: 0)
-            ])*/
     }
     
     /// Tells the delegate an ad request loaded an ad.
@@ -598,4 +648,98 @@ extension MyRanks: GADBannerViewDelegate{
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         print("adViewWillLeaveApplication")
     }
+}
+
+// MARK: photo picker extension
+extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        imageSpinner.startAnimating()
+        profilePictureImage.image = nil
+        DispatchQueue.main.async {
+            if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                // Resize the image before uploading (less MBs on the user)
+                let squareImage = self.squareImage(image: pickedImage)
+                let transformedImage = self.resizeImage(image: squareImage, newDimension: 200)
+                // Transform to data
+                if transformedImage != nil {
+                    let imageData:Data = transformedImage!.pngData()!
+                    // Prepare the file first
+                    let storagePath = self.user.uid + "/profilepicture.png"
+                    let imageRef = SomeApp.storageUsersRef.child(storagePath)
+                    let metadata = StorageMetadata()
+                    metadata.contentType = "image/png"
+
+                    // Upload data and metadata
+                    imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
+                        if let error = error {
+                            print("Error uploading the image! \(error.localizedDescription)")
+                        }else{
+                            // Then get the download URL
+                            imageRef.downloadURL { (url, error) in
+                                guard let downloadURL = url else {
+                                    // Uh-oh, an error occurred!
+                                    print("Error getting the download URL")
+                                    return
+                                }
+                                // Update the current photo
+                                self.photoURL = downloadURL
+                                // Update the user
+                                self.updateUserProfile()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        photoPickerController.dismiss(animated: true, completion: nil)
+        onClickTransparentView()
+    }
+    
+    // MARK: Resize the image
+    // Snipet from StackOverFlow
+    func resizeImage(image: UIImage, newDimension: CGFloat) -> UIImage? {
+        let scale = newDimension / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newDimension, height: newHeight))
+        
+        image.draw(in: CGRect(x: 0, y: 0, width: newDimension, height: newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+    
+    //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
+    func squareImage(image: UIImage) -> UIImage{
+        let originalWidth  = image.size.width
+        let originalHeight = image.size.height
+        var x: CGFloat = 0.0
+        var y: CGFloat = 0.0
+        var edge: CGFloat = 0.0
+        
+        if (originalWidth > originalHeight) {
+            // landscape
+            edge = originalHeight
+            x = (originalWidth - edge) / 2.0
+            y = 0.0
+            
+        } else if (originalHeight > originalWidth) {
+            // portrait
+            edge = originalWidth
+            x = 0.0
+            y = (originalHeight - originalWidth) / 2.0
+        } else {
+            // square
+            edge = originalWidth
+        }
+        
+        let cropSquare = CGRect(x: x, y: y, width: edge, height: edge)
+        let imageRef = image.cgImage!.cropping(to: cropSquare)!;
+        
+        return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
+    }
+    
+    
+    
 }
