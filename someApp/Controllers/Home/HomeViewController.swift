@@ -14,11 +14,12 @@ class HomeViewController: UIViewController {
     // Class variables
     private static let timelineCellIdentifier = "TimelineCell"
     private static let timelineCellNibIdentifier = "TimelineCell"
-    
+    private let timelineCellWithImage = "TimelineCellWithImage"
+    private let timelineCellWithImageNibId = "TimelineCellWithImage"
     
     // Instance variables
     private var user: User!
-    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String )] = []
+    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String )] = []
     private var userTimelineReference: DatabaseReference!
     
     
@@ -27,8 +28,10 @@ class HomeViewController: UIViewController {
             newsFeedTable.delegate = self
             newsFeedTable.dataSource = self
             newsFeedTable.register(TimelineCell.self, forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
-            
+            // register cells
             newsFeedTable.register(UINib(nibName: HomeViewController.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
+            newsFeedTable.register(UINib(nibName: timelineCellWithImageNibId, bundle: nil), forCellReuseIdentifier: timelineCellWithImage)
+            
             
             newsFeedTable.rowHeight = UITableView.automaticDimension
             newsFeedTable.estimatedRowHeight = 150
@@ -57,7 +60,7 @@ class HomeViewController: UIViewController {
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, icon:String )] = []
+            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String )] = []
         
             for child in snapshot.children{
                 if let timeLineSnap = child as? DataSnapshot,
@@ -68,8 +71,12 @@ class HomeViewController: UIViewController {
                     // Icon could be empty
                     var tmpIcon = ""
                     if let icon = value["icon"] as? String{tmpIcon = icon}
+                    var tmpTarget = ""
+                    if let target = value["target"] as? String {tmpTarget = target}
+                    var tmpInitiator = ""
+                    if let initiator = value["initiator"] as? String {tmpInitiator = initiator}
                     
-                    tmpPosts.append((key: timeLineSnap.key, type: type, timestamp: timestamp, payload: payload, icon: tmpIcon))
+                    tmpPosts.append((key: timeLineSnap.key, type: type, timestamp: timestamp, payload: payload, icon: tmpIcon, initiator: tmpInitiator, target: tmpTarget))
                     
                     // Use the trick
                     count += 1
@@ -113,8 +120,28 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             
             return cell
         }
-        if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
-            setupPostCell(cell: postCell, type: somePost[indexPath.row].type, timestamp: somePost[indexPath.row].timestamp, payload: somePost[indexPath.row].payload, icon: somePost[indexPath.row].icon)
+        
+        // User initiated events in timeline
+        if [TimelineEvents.NewFollower.rawValue,
+            TimelineEvents.NewUserRanking.rawValue,
+            TimelineEvents.NewUserFavorite.rawValue].contains(somePost[indexPath.row].type),
+            let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineCellWithImage, for: indexPath) as? TimelineCellWithImage{
+            
+            setupPostCellWithImage(cell: postCell,
+                                   type: somePost[indexPath.row].type,
+                                   timestamp: somePost[indexPath.row].timestamp,
+                                   payload: somePost[indexPath.row].payload,
+                                   icon: somePost[indexPath.row].icon,
+                                   initiator: somePost[indexPath.row].initiator,
+                                   target: somePost[indexPath.row].target)
+            
+            return postCell
+        }else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
+            setupPostCell(cell: postCell,
+                          type: somePost[indexPath.row].type,
+                          timestamp: somePost[indexPath.row].timestamp,
+                          payload: somePost[indexPath.row].payload,
+                          icon: somePost[indexPath.row].icon)
             
             return postCell
         }else{
@@ -129,8 +156,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
 
 extension HomeViewController{
     func setupPostCell(cell: TimelineCell, type:String, timestamp:Double, payload: String, icon:String ){
-        // Reseting the angle before reuse
-        //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(0.0))
         
         // Date stuff
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
@@ -168,5 +193,33 @@ extension HomeViewController{
             cell.iconLabel.text = "💬"
         }
 
+    }
+    
+    // Same but with Image
+    func setupPostCellWithImage(cell: TimelineCellWithImage, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String){
+        
+        // Date stuff
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        cell.dateLabel.text = localDate
+        
+        if (type == TimelineEvents.NewFollower.rawValue){
+            cell.titleLabel.text = "Following"
+            cell.bodyLabel.text = payload
+            cell.userId = initiator
+            //cell.iconLabel.text = "👤"
+        }else if (type == TimelineEvents.NewUserRanking.rawValue){
+            cell.titleLabel.text = "New Ranking"
+            cell.bodyLabel.text  = payload
+            cell.userId = initiator
+            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
+        }else if (type == TimelineEvents.NewUserFavorite.rawValue){
+            cell.titleLabel.text = "New Favorite"
+            cell.bodyLabel.text = payload
+            cell.userId = initiator
+        }
     }
 }
