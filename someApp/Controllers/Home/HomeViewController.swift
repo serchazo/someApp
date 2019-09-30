@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Firebase 
+import Firebase
+import SDWebImage
 
 class HomeViewController: UIViewController {
     
@@ -42,7 +43,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.title = "Home"
+        self.navigationItem.title = "Foodz.guru"
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         // 1. Get the logged in user - needed for the next step
@@ -198,7 +199,7 @@ extension HomeViewController{
     // Same but with Image
     func setupPostCellWithImage(cell: TimelineCellWithImage, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String){
         
-        // Date stuff
+        // Date
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
@@ -206,20 +207,37 @@ extension HomeViewController{
         let localDate = dateFormatter.string(from: date)
         cell.dateLabel.text = localDate
         
+        // Body
+        cell.bodyLabel.text = payload
+        
+        // Title
         if (type == TimelineEvents.NewFollower.rawValue){
             cell.titleLabel.text = "Following"
-            cell.bodyLabel.text = payload
-            cell.userId = initiator
-            //cell.iconLabel.text = "👤"
         }else if (type == TimelineEvents.NewUserRanking.rawValue){
             cell.titleLabel.text = "New Ranking"
-            cell.bodyLabel.text  = payload
-            cell.userId = initiator
             //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
         }else if (type == TimelineEvents.NewUserFavorite.rawValue){
             cell.titleLabel.text = "New Favorite"
-            cell.bodyLabel.text = payload
-            cell.userId = initiator
         }
+        
+        // Picture
+        let userRef = SomeApp.dbUserData
+        userRef.child(initiator).observeSingleEvent(of: .value, with: {snapshot in
+            if let value = snapshot.value as? [String:Any],
+                let photoURL = value["photourl"] as? String{                
+                cell.cellImage.sd_setImage(
+                    with: URL(string: photoURL),
+                    placeholderImage: UIImage(named: "userdefault"),
+                    options: [],
+                    completed: nil)
+            }else{
+                cell.cellImage.image = UIImage(named: "userdefault")
+            }
+            
+        })
+        
+        
+        
+        
     }
 }

@@ -23,4 +23,7 @@ target 'someApp' do
     pod 'FacebookCore'
     pod 'FacebookLogin'
     
+    # SDWebImage
+    pod 'SDWebImage'
+    
 end

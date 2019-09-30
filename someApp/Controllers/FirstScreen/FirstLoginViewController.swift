@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 class FirstLoginViewController: UIViewController {
     private static let continueToAppSegueID = "profileOK"
@@ -122,21 +123,11 @@ class FirstLoginViewController: UIViewController {
     
     // MARK: Fetch image from URL
     private func fetchImage(){
-        if let url = photoURL{
-            let urlContents = try? Data(contentsOf: url)
-            DispatchQueue.main.async {
-                if let imageData = urlContents, url == self.photoURL {
-                    self.profilePic.image = UIImage(data: imageData)
-                    self.profilePic.layer.cornerRadius = 0.5 * self.profilePic.bounds.size.width
-                    self.profilePic.layer.borderColor = SomeApp.themeColorOpaque.cgColor
-                    self.profilePic.layer.borderWidth = 2.0
-                    self.profilePic.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-                    self.profilePic.clipsToBounds = true
-                    self.spinner.stopAnimating()
-                    
-                }
-            }
-        }
+        profilePic.sd_setImage(
+        with: photoURL,
+        placeholderImage: UIImage(named: "userdefault"),
+        options: [],
+        completed: nil)
     }
 
     // MARK: - Navigation

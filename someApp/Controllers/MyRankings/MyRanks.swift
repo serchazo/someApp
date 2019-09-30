@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import GoogleMobileAds
+import SDWebImage
 
 class MyRanks: UIViewController {
     //Control var
@@ -53,7 +54,6 @@ class MyRanks: UIViewController {
     
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var profilePictureImage: UIImageView!
-    @IBOutlet weak var imageSpinner: UIActivityIndicatorView!
     
     @IBOutlet weak var bioLabel: UILabel!
     @IBOutlet weak var followersLabel: UILabel!{
@@ -196,15 +196,11 @@ class MyRanks: UIViewController {
         profilePictureImage.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
         profilePictureImage.clipsToBounds = true
         
-        if let url = photoURL{
-            let urlContents = try? Data(contentsOf: url)
-            DispatchQueue.main.async {
-                if let imageData = urlContents, url == self.photoURL {
-                    self.profilePictureImage.image = UIImage(data: imageData)
-                    self.imageSpinner.stopAnimating()
-                }
-            }
-        }
+        profilePictureImage.sd_setImage(
+        with: photoURL,
+        placeholderImage: UIImage(named: "userdefault"),
+        options: [],
+        completed: nil)
     }
     
     // MARK: Configure header
@@ -218,19 +214,10 @@ class MyRanks: UIViewController {
                 self.navigationItem.title = username
                 self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 // 2. User photo
-                if let photoURL = value["photourl"] as? String { self.photoURL = URL(string: photoURL) }
-                else{ // assign default photo URL
-                    // If the photoURL is empty, assign the default profile pic
-                    let defaultPicRef = SomeApp.storageUsersRef
-                    defaultPicRef.child("default.png").downloadURL(completion: {url, error in
-                        if let error = error {
-                            // Handle any errors
-                            print("Error downloading the default picture \(error.localizedDescription).")
-                        } else {
-                            self.photoURL = url
-                        }
-                    })
+                if let photoURL = value["photourl"] as? String {
+                    self.photoURL = URL(string: photoURL)
                 }
+        
                 // 3. User bio
                 if let userBio = value["bio"] as? String,
                     userBio != ""{
@@ -654,7 +641,6 @@ extension MyRanks: GADBannerViewDelegate{
 extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        imageSpinner.startAnimating()
         profilePictureImage.image = nil
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {

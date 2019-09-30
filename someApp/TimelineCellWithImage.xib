@@ -44,22 +44,15 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="OlX-Go-enC">
-                        <rect key="frame" x="0.0" y="23.5" width="60" height="60"/>
-                    </activityIndicatorView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="OlX-Go-enC" firstAttribute="centerY" secondItem="ruq-WN-qAi" secondAttribute="centerY" id="Rwv-0b-1xt"/>
                     <constraint firstAttribute="bottom" secondItem="0xr-fE-Epb" secondAttribute="bottom" constant="20" symbolic="YES" id="VyW-WB-Eo8"/>
-                    <constraint firstItem="OlX-Go-enC" firstAttribute="centerX" secondItem="ruq-WN-qAi" secondAttribute="centerX" id="XZj-ps-tr3"/>
                     <constraint firstItem="ruq-WN-qAi" firstAttribute="leading" secondItem="4a1-ng-mIX" secondAttribute="leading" id="XoW-8Q-iLw"/>
                     <constraint firstItem="0xr-fE-Epb" firstAttribute="top" secondItem="N0s-BP-4zJ" secondAttribute="bottom" constant="8" symbolic="YES" id="cqt-Qt-mgs"/>
                     <constraint firstAttribute="trailing" secondItem="0xr-fE-Epb" secondAttribute="trailing" constant="20" symbolic="YES" id="dN6-fd-03z"/>
                     <constraint firstItem="ruq-WN-qAi" firstAttribute="centerY" secondItem="4a1-ng-mIX" secondAttribute="centerY" id="g0H-zZ-min"/>
-                    <constraint firstItem="OlX-Go-enC" firstAttribute="width" secondItem="ruq-WN-qAi" secondAttribute="width" id="gvd-96-VFy"/>
                     <constraint firstItem="N0s-BP-4zJ" firstAttribute="top" secondItem="4a1-ng-mIX" secondAttribute="top" constant="10" id="jWQ-On-2B4"/>
                     <constraint firstAttribute="trailing" secondItem="Jkk-c4-o1L" secondAttribute="trailing" constant="20" symbolic="YES" id="mMO-df-rK8"/>
-                    <constraint firstItem="OlX-Go-enC" firstAttribute="height" secondItem="ruq-WN-qAi" secondAttribute="height" id="pnC-qi-7F4"/>
                     <constraint firstItem="0xr-fE-Epb" firstAttribute="leading" secondItem="ruq-WN-qAi" secondAttribute="trailing" multiplier="1.2" constant="8" symbolic="YES" id="qvc-FA-jsi"/>
                     <constraint firstItem="0xr-fE-Epb" firstAttribute="leading" secondItem="N0s-BP-4zJ" secondAttribute="leading" id="rGv-KZ-hwu"/>
                     <constraint firstItem="Jkk-c4-o1L" firstAttribute="bottom" secondItem="N0s-BP-4zJ" secondAttribute="bottom" id="t5u-ME-pts"/>
@@ -69,7 +62,6 @@
                 <outlet property="bodyLabel" destination="0xr-fE-Epb" id="rkd-09-M9t"/>
                 <outlet property="cellImage" destination="ruq-WN-qAi" id="XIH-hw-zIM"/>
                 <outlet property="dateLabel" destination="Jkk-c4-o1L" id="KTy-s8-UJu"/>
-                <outlet property="spinner" destination="OlX-Go-enC" id="vve-Ts-cqB"/>
                 <outlet property="titleLabel" destination="N0s-BP-4zJ" id="FcA-h1-Im6"/>
             </connections>
             <point key="canvasLocation" x="97.101449275362327" y="92.075892857142847"/>
