@@ -13,34 +13,37 @@ import Firebase
 class Comment{
     let ref: DatabaseReference?
     let key: String
-    let userid: String
-    var restoid: String
+    let username: String
+    var restoname: String
     var timestamp:Double
     var text: String
+    var title: String
     
-    init(userid: String, restoid: String, text:String, timestamp:Double, key:String = "") {
+    init(username: String, restoname: String, text:String, timestamp:Double, title: String, key:String = "") {
         self.ref = nil
         self.key = key
-        self.userid = userid
-        self.restoid = restoid
+        self.username = username
+        self.restoname = restoname
+        self.title = title
         self.text = text
         self.timestamp = timestamp
     }
     
-    
     init?(snapshot: DataSnapshot){
         guard
             let value = snapshot.value as? [String: AnyObject],
-            let userid = value["userid"] as? String,
-            let restoid = value["restoid"] as? String,
+            let restoname = value["restoname"] as? String,
+            let username = value["username"] as? String,
             let text = value["text"] as? String,
+            let title = value["title"] as? String,
             let timestamp = value["timestamp"] as? Double else {
                 return nil
         }
         self.ref = snapshot.ref
         self.key = snapshot.key
-        self.userid = userid
-        self.restoid = restoid
+        self.username = username
+        self.restoname = restoname
+        self.title = title
         self.text = text
         self.timestamp = timestamp
         }
@@ -48,8 +51,9 @@ class Comment{
     // Turn Ranking to a Dictionary
     func toAnyObject() -> Any {
         return[
-            "userid" : userid,
-            "restoid" : restoid,
+            "restoname" : restoname,
+            "username" : username,
+            "title" : title,
             "text" : text,
             "timestamp" : timestamp,
         ]

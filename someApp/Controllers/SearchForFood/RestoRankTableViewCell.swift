@@ -15,7 +15,7 @@ class RestoRankTableViewCell: UITableViewCell {
     @IBOutlet weak var restoPointsLabel: UILabel!
     @IBOutlet weak var restoOtherInfoLabel: UILabel!
     
-    @IBOutlet weak var restoImageView: UIImageView!
+    @IBOutlet weak var restoPositionLabel: UILabel!
     
     
     override func awakeFromNib() {
@@ -42,15 +42,6 @@ class RestoRankTableViewCell: UITableViewCell {
         self.contentView.layer.borderColor = SomeApp.themeColorOpaque.cgColor
         self.contentView.layer.masksToBounds = true;
         
-        
-        /*
-        self.layer.shadowColor = #colorLiteral(red: 0.5818830132, green: 0.2156915367, blue: 1, alpha: 1).cgColor
-        self.layer.shadowOffset = CGSize(width:4.0,height: 4.0)
-        self.layer.shadowRadius = 20.0
-        self.layer.shadowOpacity = 1.0
-        self.layer.masksToBounds = false;
-        self.layer.shadowPath = UIBezierPath(roundedRect:self.bounds, cornerRadius:self.contentView.layer.cornerRadius).cgPath
-         */
     }
 
 }

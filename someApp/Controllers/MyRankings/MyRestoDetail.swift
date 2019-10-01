@@ -15,11 +15,15 @@ class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private static let segueToMap = "showMap"
     
+    private let commentCell = "CommentCell"
+    private let commentCellNibId = "CommentCell"
+    
     private var user:User!
     private var dbCommentReference:DatabaseReference = SomeApp.dbComments
     private var dbCommentsPerUser:DatabaseReference!
     private var dbCommentsPerResto:DatabaseReference!
     private var commentArray:[Comment] = []
+    private var firstCommentFlag:Bool = false
     
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
@@ -39,12 +43,14 @@ class MyRestoDetail: UIViewController {
         didSet{
             restoDetailTable.delegate = self
             restoDetailTable.dataSource = self
+            restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
+            restoDetailTable.rowHeight = UITableView.automaticDimension
+            restoDetailTable.estimatedRowHeight = 150
+            
         }
     }
     
-    //
-    // MARK : Timeline funcs
-    //
+    // MARK: Timeline funcs
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -56,9 +62,9 @@ class MyRestoDetail: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key + "/"+currentResto.key
+        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
         dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
-        dbCommentsPerResto = SomeApp.dbCommentsPerResto.child(currentResto.key)
+        dbCommentsPerResto = SomeApp.dbCommentsPerResto.child(dbPath)
         
         // 1. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -66,7 +72,7 @@ class MyRestoDetail: UIViewController {
             self.user = user
             
             // 2. Update the dbReference
-            self.dbCommentsPerUser = SomeApp.dbCommentsPerUser.child(user.uid)
+            //self.dbCommentsPerUser = SomeApp.dbCommentsPerUser.child(user.uid)
         }
         
         // Get the comments from the DB
@@ -95,14 +101,11 @@ class MyRestoDetail: UIViewController {
         addCommentTableView.delegate = self
         addCommentTableView.dataSource = self
         addCommentTableView.allowsSelection = false
-        //editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
         addCommentTextView.delegate = self
         
     }
     
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
@@ -121,7 +124,7 @@ class MyRestoDetail: UIViewController {
     }
 }
 
-//
+// MARK: Table stuff
 
 extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -143,7 +146,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             switch(section){
             case 0: return 5
             case 1:
-                guard commentArray.count > 0 else{ return 1}
+                guard commentArray.count > 0 else {return 1}
                 return commentArray.count
             default: return 0
             }
@@ -177,7 +180,6 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     return cell
                 }else if indexPath.row == 1{
                     let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
-                    //let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                     cell!.textLabel?.textColor = .black
                     cell!.textLabel?.text = "Address"
                     cell!.detailTextLabel?.text = currentResto.address
@@ -228,14 +230,87 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 }
                 
                 // Comment cell
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                commentCell(cell: cell, for: commentArray[indexPath.row])
-                return cell
+                if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
+                    
+                    // Date stuff
+                    let date = Date(timeIntervalSince1970: TimeInterval(commentArray[indexPath.row].timestamp/1000)) // in milliseconds
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+                    dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+                    let localDate = dateFormatter.string(from: date)
+                    
+                    // Then
+                    postCell.dateLabel.text = localDate
+                    postCell.titleLabel.text = commentArray[indexPath.row].title
+                    postCell.bodyLabel.text = commentArray[indexPath.row].text
+                    
+                    // Buttons
+                    postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                    postCell.likeButton.setTitle("Like", for: .normal)
+                    postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                    postCell.dislikeButton.setTitle("Dislike", for: .normal)
+                    
+                    // If it's not the first comment, then we can add some actions
+                    if !firstCommentFlag{
+                        postCell.likeAction = {(cell) in
+                            print("Like!")
+                        }
+                        // Dislike
+                        postCell.dislikeAction = {(cell) in
+                            print("Dislike!")
+                        }
+                    }
+                    
+                    return postCell
+                }else{
+                    fatalError("Couln't create cell")
+                }
+
             }
         }
     }
     
+    // Actions
+     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+         if indexPath.section == 0{
+             if indexPath.row == 2{
+                 let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+                 if let number = URL(string: tmpModifiedPhone){
+                     UIApplication.shared.open(number)
+                 }else{
+                     // Can't call
+                     let alert = UIAlertController(
+                         title: "Can't call",
+                         message: "Please try another restaurant.",
+                         preferredStyle: .alert)
+                     
+                     alert.addAction(UIAlertAction(
+                         title: "OK",
+                         style: .default,
+                         handler: {
+                             (action: UIAlertAction)->Void in
+                             //do nothing
+                     }))
+                     present(alert, animated: false, completion: nil)
+                     
+                 }
+             }else if indexPath.row == 3{
+                 // URL clicket, open the web page
+                 if currentResto.url != nil{
+                     let config = SFSafariViewController.Configuration()
+                     config.entersReaderIfAvailable = true
+                     let vc = SFSafariViewController(url: currentResto.url, configuration: config)
+                     vc.preferredControlTintColor = UIColor.white
+                     vc.preferredBarTintColor = SomeApp.themeColorOpaque
+                     present(vc, animated: true)
+                 }
+             }
+         }
+     }
+}
+
     // MARK: objc funcs
+extension MyRestoDetail{
     @objc
     func addComment(){
         // Create the frame
@@ -275,33 +350,50 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                        completion: nil)
     }
     
-    
-    // The comment cell
-    func commentCell(cell: UITableViewCell, for comment: Comment){
-        let descriptionLabel = UILabel()
-        descriptionLabel.lineBreakMode = .byWordWrapping
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        descriptionLabel.text = comment.text
+    // Update the model when the button is pressed
+    @objc
+    func doneUpdating(){
+        print("todo")
+        /*
+        let timestamp = NSDate().timeIntervalSince1970
+        let comment = Comment(userid: user.uid, restoid: currentResto.key, text: addCommentTextView.text, timestamp: timestamp)
         
-        //Get the label Size with the manip
-        let maximumLabelSize = CGSize(width: MyRestoDetail.screenSize.width, height: MyRestoDetail.screenSize.height);
-        let transformedText = comment.text as NSString
-        let boundingBox = transformedText.boundingRect(
-            with: maximumLabelSize,
-            options: .usesLineFragmentOrigin,
-            attributes: [.font : UIFont.preferredFont(forTextStyle: .body)],
-            context: nil)
+        let tempCommentRef = dbCommentReference.childByAutoId()
+        tempCommentRef.setValue(comment.toAnyObject())
+        let tempRestoCommentRef = dbCommentsPerResto.child(tempCommentRef.key!)
+        tempRestoCommentRef.setValue(timestamp)
+        let tempUserCommentRef = dbCommentsPerUser.child(tempCommentRef.key!)
+        tempUserCommentRef.setValue(timestamp)
+        */
         
-        descriptionLabel.frame = CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width-20, height: boundingBox.height)
-        
-        let myTimeInterval = TimeInterval(comment.timestamp)
-        let time = NSDate(timeIntervalSince1970: TimeInterval(myTimeInterval))
-        
-        print(time)
-        
-        cell.addSubview(descriptionLabel)
+        //Close the view
+        onClickTransparentView()
+        getCommentsFromDB()
     }
+    
+    //Disappear!
+    @objc func onClickTransparentView(){
+        // Animation when disapearing
+        
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.transparentView.alpha = 0 //Start at value above, go to 0
+                        self.addCommentTableView.frame = CGRect(
+                            x: 0,
+                            y: MyRestoDetail.screenSize.height ,
+                            width: MyRestoDetail.screenSize.width,
+                            height: MyRestoDetail.screenSize.height * 0.9)
+                        self.addCommentTextView.resignFirstResponder()
+        },
+                       completion: nil)
+    }
+    
+    // MARK: Setup cells
+   
     
     // The comment cell
     func editCommentCell(cell: UITableViewCell){
@@ -336,112 +428,57 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         cell.addSubview(doneButton)
     }
     
-    // Update the model when the button is pressed
-    @objc
-    func doneUpdating(){
-        let timestamp = NSDate().timeIntervalSince1970
-        let comment = Comment(userid: user.uid, restoid: currentResto.key, text: addCommentTextView.text, timestamp: timestamp)
-        
-        let tempCommentRef = dbCommentReference.childByAutoId()
-        tempCommentRef.setValue(comment.toAnyObject())
-        let tempRestoCommentRef = dbCommentsPerResto.child(tempCommentRef.key!)
-        tempRestoCommentRef.setValue(timestamp)
-        let tempUserCommentRef = dbCommentsPerUser.child(tempCommentRef.key!)
-        tempUserCommentRef.setValue(timestamp)
-        
-        //Close the view
-        onClickTransparentView()
-        getCommentsFromDB()
-    }
-    
-    //Disappear!
-    @objc func onClickTransparentView(){
-        // Animation when disapearing
-        
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0 //Start at value above, go to 0
-                        self.addCommentTableView.frame = CGRect(
-                            x: 0,
-                            y: MyRestoDetail.screenSize.height ,
-                            width: MyRestoDetail.screenSize.width,
-                            height: MyRestoDetail.screenSize.height * 0.9)
-                        self.addCommentTextView.resignFirstResponder()
-        },
-                       completion: nil)
-    }
-    
-    // Actions
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0{
-            if indexPath.row == 2{
-                let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-                if let number = URL(string: tmpModifiedPhone){
-                    UIApplication.shared.open(number)
-                }else{
-                    // Can't call
-                    let alert = UIAlertController(
-                        title: "Can't call",
-                        message: "Please try another restaurant.",
-                        preferredStyle: .alert)
-                    
-                    alert.addAction(UIAlertAction(
-                        title: "OK",
-                        style: .default,
-                        handler: {
-                            (action: UIAlertAction)->Void in
-                            //do nothing
-                    }))
-                    present(alert, animated: false, completion: nil)
-                    
-                }
-            }else if indexPath.row == 3{
-                // URL clicket, open the web page
-                if currentResto.url != nil{
-                    let config = SFSafariViewController.Configuration()
-                    config.entersReaderIfAvailable = true
-                    let vc = SFSafariViewController(url: currentResto.url, configuration: config)
-                    vc.preferredControlTintColor = UIColor.white
-                    vc.preferredBarTintColor = SomeApp.themeColorOpaque
-                    present(vc, animated: true)
-                }
-            }
-        }
-    }
-    
+    // MARK: Get comments from DB
     func getCommentsFromDB(){
+        var tmpCommentArray:[Comment] = []
+        var count = 0
         
-        // Outer : we get the comment keys for the resto
-        dbCommentsPerResto.queryOrderedByValue().observeSingleEvent(of: .value, with: {snapshot in
-            var tmpCommentArray:[Comment] = []
-            var count = 0
+        print(dbCommentsPerResto)
+        
+        // Get from database
+        dbCommentsPerResto.observeSingleEvent(of: .value, with: {snapshot in
+            print(snapshot)
+            // If there are no comments for the restaurant, create a dummy comment
+            guard snapshot.exists() else{
+                let tmpTimestamp = NSDate().timeIntervalSince1970 * 1000
+                self.firstCommentFlag = true
+                let tmpText = "Be the first to add a comment of \(self.currentResto.name)!"
+                tmpCommentArray.append(Comment(username: "This could be you!", restoname: self.currentResto.name, text: tmpText, timestamp:  tmpTimestamp, title: "No comments yet"))
+                self.commentArray = tmpCommentArray
+                self.restoDetailTable.reloadData()
+                return
+            }
+            
+            print(snapshot)
             for child in snapshot.children{
-                if let commentRestoSnapshot = child as? DataSnapshot{
-                    let commentKey = commentRestoSnapshot.key
+                if let commentRestoSnapshot = child as? DataSnapshot,
+                    let value = commentRestoSnapshot.value as? [String:Any],
+                    let body = value["text"] as? String,
+                    let timestamp = value["timestamp"] as? Double,
+                    let username = value["username"] as? String {
                     
-                    // Inner : then for all the keys, get the actual comments
-                    self.dbCommentReference.child(commentKey).observeSingleEvent(of: .value, with: {commentSnapshot in
-                        if let comment = Comment(snapshot: commentSnapshot) {
-                            tmpCommentArray.append(comment)
-                            //Use the trick
-                            count += 1
-                            if count == snapshot.childrenCount{
-                                self.commentArray = tmpCommentArray
-                                self.restoDetailTable.reloadData()
-                            }
-                            
-                        }
-                    })
+                    var tmpTitle = "Comment"
+                    if let title = value["title"] as? String,
+                        title != ""{
+                        tmpTitle = title
+                    }
+                    
+                    tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle))
+                    //Use the trick
+                    count += 1
+                    if count == snapshot.childrenCount{
+                        self.commentArray = tmpCommentArray
+                        self.restoDetailTable.reloadData()
+                    }
+                    
                     
                 }
             }
         })
     }
 }
+
+// MARK: UITextViewDelegate
 
 extension MyRestoDetail: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

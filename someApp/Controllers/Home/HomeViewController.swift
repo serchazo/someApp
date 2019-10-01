@@ -103,7 +103,7 @@ class HomeViewController: UIViewController {
 
 }
 
-// MARK : Table stuff
+// MARK: Table stuff
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard somePost.count > 0 else {return 1}
@@ -224,7 +224,7 @@ extension HomeViewController{
         let userRef = SomeApp.dbUserData
         userRef.child(initiator).observeSingleEvent(of: .value, with: {snapshot in
             if let value = snapshot.value as? [String:Any],
-                let photoURL = value["photourl"] as? String{                
+                let photoURL = value["photourl"] as? String{
                 cell.cellImage.sd_setImage(
                     with: URL(string: photoURL),
                     placeholderImage: UIImage(named: "userdefault"),

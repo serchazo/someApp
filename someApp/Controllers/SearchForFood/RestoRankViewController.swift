@@ -188,6 +188,8 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
             if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
                 //Configure the cell
                 let thisResto = thisRanking[indexPath.row]
+                let tmpPosition = indexPath.row + 1
+                cell.restoPositionLabel.text = String(tmpPosition)
                 cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
                 cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
                 cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])

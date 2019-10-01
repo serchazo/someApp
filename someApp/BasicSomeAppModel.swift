@@ -17,8 +17,8 @@ class SomeApp{
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
     static let dbComments: DatabaseReference = dbRootRef.child("comments")
-    static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("comments-user")
-    static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("comments-resto")
+    static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("user-comments")
+    static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("resto-comments")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
@@ -159,6 +159,11 @@ class SomeApp{
         } catch {
             print(error.localizedDescription)
         }
+    }
+    
+    // Add comment
+    private static func addComment(resto: Resto, city: City, userId: String, title: String, text: String){
+        
     }
 }
 
