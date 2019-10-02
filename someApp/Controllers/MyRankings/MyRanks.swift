@@ -149,7 +149,6 @@ class MyRanks: UIViewController {
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         myProfileTableView.delegate = self
@@ -167,9 +166,6 @@ class MyRanks: UIViewController {
                 thisUserId = user.uid
             }else{
                 thisUserId = self.calledUser!.key
-                // hide navbar buttons
-                self.navigationItem.leftBarButtonItem = nil
-                self.navigationItem.rightBarButtonItem = nil
             }
             self.configureHeader(userId: thisUserId)
             
@@ -178,15 +174,21 @@ class MyRanks: UIViewController {
             self.foodDBReference = SomeApp.dbFoodTypeRoot
             self.updateTablewithRanking()
         }
-        // MARK: Ad stuff
+        
+        // Configure the banner ad
+        configureBannerAd()
+
+    }
+    // MARK: Ad stuff
+    private func configureBannerAd(){
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
         addBannerViewToView(bannerView)
         bannerView.adUnitID = SomeApp.adBAnnerUnitID
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
         bannerView.delegate = self
-
     }
+    
     
     // MARK: Fetch image from URL
     private func fetchImage(){
@@ -205,6 +207,11 @@ class MyRanks: UIViewController {
     
     // MARK: Configure header
     func configureHeader(userId: String){
+        // Navbar
+        if calledUser != nil{
+            navigationItem.rightBarButtonItem = nil
+        }
+        
         // First, go get some data from the DB
         SomeApp.dbUserData.child(userId).observeSingleEvent(of: .value, with: {snapshot in
             var username:String = "User Profile"
@@ -232,8 +239,13 @@ class MyRanks: UIViewController {
         
         // Follow button
         if calledUser != nil {
-            followButton.backgroundColor = SomeApp.themeColor
-            followButton.setTitleColor(.white, for: .normal)
+            followButton.backgroundColor = .white
+            followButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            followButton.layer.cornerRadius = 15
+            followButton.layer.borderColor = SomeApp.themeColor.cgColor
+            followButton.layer.borderWidth = 1.0
+            followButton.layer.masksToBounds = true
+            
             // We need to verify if the user is already following the target
             let tmpRef = SomeApp.dbUserFollowing.child(user.uid)
             tmpRef.child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
@@ -310,15 +322,16 @@ class MyRanks: UIViewController {
         
         switch segue.identifier {
         case MyRanks.showRakingDetail :
-            if let seguedMVC = segue.destination as? EditRanking{
+            if let seguedMVC = segue.destination as? ThisRanking{
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
                     // I should send Ranking, Food Key, and current city
                     seguedMVC.currentRanking = rankings[tmpIndexPath.row]
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.currentFood = foodItems[tmpIndexPath.row]
+                    seguedMVC.profileImage = profilePictureImage.image
                     if calledUser != nil {
-                        seguedMVC.calledUserId = calledUser
+                        seguedMVC.calledUser = calledUser
                     }
                 }
             }
@@ -544,7 +557,6 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
 
 // MARK: configure cells
 extension MyRanks{
-    
     private func configureChangePictureCell(cell: UITableViewCell){
         
         let backView = UIView(frame: CGRect(x: 0, y: 0, width: cell.frame.width, height: 110))
@@ -590,7 +602,7 @@ extension MyRanks{
     }
 }
 
-// MARK: Ad Delegate
+// MARK: Banner Ad Delegate
 extension MyRanks: GADBannerViewDelegate{
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false

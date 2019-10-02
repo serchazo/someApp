@@ -106,11 +106,9 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         // TODO : while loading display a spinner
-        guard foodList.count != 0 else {
-            print("mmmm")
+        guard foodList.count > 0 else {
             let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
             if let cell = tmpCell as? SpinnerCollectionViewCell{
-                print("here")
                 cell.spinner.style = .gray
                 cell.spinner.startAnimating()
                 return cell
@@ -121,7 +119,6 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
         
         // then go
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodList[indexPath.row].key
             
             let foodIconText = NSAttributedString(string: foodList[indexPath.row].icon, attributes: [.font: iconFont])
             cell.cellIcon.attributedText = foodIconText

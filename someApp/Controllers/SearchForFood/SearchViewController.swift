@@ -31,7 +31,7 @@ class SearchViewController: UIViewController {
     private var accessibilityPropertyObserver: NSObjectProtocol?
 
     ///
-    // MARK : Timeline funcs
+    // MARK: Timeline funcs
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -187,12 +187,17 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
         }
         // then go
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
-            cell.cellBasicFood = foodList[indexPath.row].key
+            
+            // The position label
+            cell.cellIcon.layer.cornerRadius = 0.5 * cell.cellIcon.bounds.width
+            cell.cellIcon.layer.borderColor = SomeApp.themeColor.cgColor
+            cell.cellIcon.layer.borderWidth = 1.0
+            cell.cellIcon.layer.masksToBounds = true
             
             let foodIconText = NSAttributedString(string: foodList[indexPath.row].icon, attributes: [.font: iconFont])
             cell.cellIcon.attributedText = foodIconText
             
-            let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.font: cellTitleFont])
+            let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.strokeColor: SomeApp.themeColor, .font: cellTitleFont])
             cell.cellLabel.attributedText = foodTitleText
             
             cell.decorateCell()
@@ -226,9 +231,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
     
 }
 
-////////////
 // MARK: Layout stuff
-///////////
 
 extension SearchViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -243,7 +246,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
         let widthPerItem = availableWidth / 2
         
         // Height is calculated in the font section
-        return CGSize(width: widthPerItem, height: cellHeight)
+        return CGSize(width: widthPerItem, height: CGFloat(iconFont.lineHeight + 40.0))
     }
     
     
@@ -263,7 +266,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     
     // MARK: Font of the cells
     private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(60.0))
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(55.0))
     }
     
     private var cellTitleFont: UIFont{
@@ -271,14 +274,9 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     }
     
     private var titleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
+        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(23.0))
     }
     
-    private var cellHeight:CGFloat{
-        get{
-            return CGFloat(iconFont.lineHeight + cellTitleFont.lineHeight + 20.0)
-        }
-    }
 }
 
 

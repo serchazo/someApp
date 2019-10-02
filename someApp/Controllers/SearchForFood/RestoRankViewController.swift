@@ -22,7 +22,8 @@ class RestoRankViewController: UIViewController {
     var currentFood: FoodType!
     let refreshControl = UIRefreshControl()
 
-    /// Adds part
+    /// Adds part// Ad stuff
+    private var bannerView: GADBannerView!
     private let numAdsToLoad = 5 //The number of native ads to load (between 1 and 5 for this example).
     private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
     private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
@@ -41,6 +42,9 @@ class RestoRankViewController: UIViewController {
     @IBOutlet weak var tableHeaderFoodIcon: UILabel!
     @IBOutlet weak var tableHeaderFoodName: UILabel!
     @IBOutlet weak var followButton: UIButton!
+    
+    @IBOutlet weak var adView: UIView!
+    
     
     // MARK: Selection stuff
     override func viewDidLoad() {
@@ -65,23 +69,52 @@ class RestoRankViewController: UIViewController {
         //Some setup
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
-        restoRankTableView.tableHeaderView = restoRankTableHeader
-        tableHeaderFoodIcon.text = currentFood.icon
-        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
-        followButton.backgroundColor = SomeApp.themeColor
-        followButton.setTitleColor(.white, for: .normal)
-        followButton.setTitle("Follow", for: .normal)
-        //followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
-    
-        //
-        navigationItem.title = currentFood.icon
         
+        configureHeader()
         updateTableFromDatabase()
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
-    ///
+    // MARK: configure header
+    func configureHeader(){
+        // Navigation title
+        self.navigationItem.title = "foodz.guru"
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        
+        // Food Icon
+        tableHeaderFoodIcon.text = currentFood.icon
+        tableHeaderFoodIcon.layer.cornerRadius = 0.5 * tableHeaderFoodIcon.bounds.size.width
+        tableHeaderFoodIcon.layer.borderColor = SomeApp.themeColor.cgColor
+        tableHeaderFoodIcon.layer.borderWidth = 2.0
+        
+        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
+        
+        // Configure follow button
+        followButton.backgroundColor = .white
+        followButton.setTitleColor(SomeApp.themeColor, for: .normal)
+        followButton.layer.cornerRadius = 15
+        followButton.layer.borderColor = SomeApp.themeColor.cgColor
+        followButton.layer.borderWidth = 1.0
+        followButton.layer.masksToBounds = true
+        
+        // TODO: verify if we're already following
+        followButton.setTitle("Follow", for: .normal)
+        //followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+        
+    }
+    
+    // MARK: Ad stuff
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
+    
+    // MARK: update from database
     func updateTableFromDatabase(){
         restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
             var count = 0
@@ -115,7 +148,7 @@ class RestoRankViewController: UIViewController {
     }
     
     
-    ///
+    // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -130,8 +163,6 @@ class RestoRankViewController: UIViewController {
         updateTableFromDatabase()
         self.refreshControl.endRefreshing()
     }
-    
-
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -160,49 +191,57 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0{
-            return 1
-        }else{
             return thisRanking.count
+        }else{
+            return 1
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0{
-            guard nativeAds.count > 0 else{
-                let spinnerCell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                spinnerCell.textLabel?.text = "Something good will appear here"
-                spinnerCell.backgroundColor = #colorLiteral(red: 0.9983033538, green: 0.9953654408, blue: 0.8939318061, alpha: 1)
-                
-                let spinner = UIActivityIndicatorView(style: .gray)
-                spinner.startAnimating()
-                
-                spinnerCell.accessoryView = spinner
-                
-                return spinnerCell
-            }
-            let nativeAdCell = tableView.dequeueReusableCell(
-                withIdentifier: "UnifiedNativeAdCell", for: indexPath)
-            configureAddCell(nativeAdCell: nativeAdCell)
-            return(nativeAdCell)
-        }else{
             if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
                 //Configure the cell
                 let thisResto = thisRanking[indexPath.row]
                 let tmpPosition = indexPath.row + 1
+                
+                
+                // The position label
+                cell.restoPositionLabel.textColor = .black
+                cell.restoPositionLabel.layer.cornerRadius = 0.5 * cell.restoPositionLabel.bounds.width
+                cell.restoPositionLabel.layer.borderColor = SomeApp.themeColor.cgColor
+                cell.restoPositionLabel.layer.borderWidth = 1.0
+                cell.restoPositionLabel.layer.masksToBounds = true
                 cell.restoPositionLabel.text = String(tmpPosition)
+                
                 cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
                 cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
-                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: thisResto.city, attributes: [.font : restorantAddressFont])
-                
-                cell.decorateCell()
-                
+                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: "Reviews: 10", attributes: [.font : restorantAddressFont])
+
                 return cell
-            
+            }else{
+                fatalError("no cell")
+            }
+        }else if indexPath.section == 1{
+                guard nativeAds.count > 0 else{
+                    let spinnerCell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                    spinnerCell.textLabel?.text = "Something good will appear here"
+                    spinnerCell.backgroundColor = #colorLiteral(red: 0.9983033538, green: 0.9953654408, blue: 0.8939318061, alpha: 1)
+                    
+                    let spinner = UIActivityIndicatorView(style: .gray)
+                    spinner.startAnimating()
+                    
+                    spinnerCell.accessoryView = spinner
+                    
+                    return spinnerCell
+                }
+                let nativeAdCell = tableView.dequeueReusableCell(
+                    withIdentifier: "UnifiedNativeAdCell", for: indexPath)
+                configureAddCell(nativeAdCell: nativeAdCell)
+                return(nativeAdCell)
             }else{
                 fatalError("Marche pas.")
             }
         }
-    }
     
     // MARK: Ad Cell
     func configureAddCell(nativeAdCell: UITableViewCell){
@@ -237,6 +276,7 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
             nativeAd.callToAction, for: UIControl.State.normal)
     }
 }
+
 
 
 // MARK: Some view stuff
@@ -279,6 +319,51 @@ extension RestoRankViewController: GADUnifiedNativeAdLoaderDelegate{
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
         print("\(adLoader) failed with error: \(error.localizedDescription)")
     }
+}
+
+// MARK: Banner Ad Delegate
+extension RestoRankViewController: GADBannerViewDelegate{
+    func addBannerViewToView(_ bannerView: GADBannerView) {
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(bannerView)
+    }
     
+    /// Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd")
+        
+        //small animation
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1, animations: {
+            bannerView.alpha = 1
+        })
+    }
     
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that a full-screen view will be presented in response
+    /// to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        print("adViewWillPresentScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewWillDismissScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app (such as
+    /// the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("adViewWillLeaveApplication")
+    }
 }

@@ -432,9 +432,7 @@ extension MyRestoDetail{
     func getCommentsFromDB(){
         var tmpCommentArray:[Comment] = []
         var count = 0
-        
-        print(dbCommentsPerResto)
-        
+       
         // Get from database
         dbCommentsPerResto.observeSingleEvent(of: .value, with: {snapshot in
             print(snapshot)

@@ -11,7 +11,6 @@ import UIKit
 class RestoRankTableViewCell: UITableViewCell {
 
     @IBOutlet weak var restoNameLabel: UILabel!
-    @IBOutlet weak var restoShortDescLabel: UILabel!
     @IBOutlet weak var restoPointsLabel: UILabel!
     @IBOutlet weak var restoOtherInfoLabel: UILabel!
     
@@ -29,19 +28,7 @@ class RestoRankTableViewCell: UITableViewCell {
         if selected {
             self.contentView.backgroundColor = SomeApp.themeColorOpaque
         }
-
-        // Configure the view for the selected state
     }
     
-    func decorateCell(){
-        //
-        self.contentView.backgroundColor = UIColor.white
-        
-        self.contentView.layer.cornerRadius = 20.0
-        self.contentView.layer.borderWidth = 1.0
-        self.contentView.layer.borderColor = SomeApp.themeColorOpaque.cgColor
-        self.contentView.layer.masksToBounds = true;
-        
-    }
 
 }
