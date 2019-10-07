@@ -16,6 +16,7 @@ class ThisRanking: UIViewController {
     private static let addResto = "addNewResto"
     private static let delRestoCell = "delRestoCell"
     private static let screenSize = UIScreen.main.bounds.size
+    private let editReviewCell = "EditReviewCell"
     
     //Get from segue-r
     var currentCity: City!
@@ -28,20 +29,23 @@ class ThisRanking: UIViewController {
     private var user: User!
     private var thisRankingId: String!
     private var thisRankingDescription: String = ""
+    
     private var userRankingDetailRef: DatabaseReference!
     private var userRankingsRef: DatabaseReference!
+    private var userReviewsRef : DatabaseReference!
     private var restoDatabaseReference: DatabaseReference!
     private var restoPointsDatabaseReference: DatabaseReference!
     private var restoAddressDatabaseReference: DatabaseReference!
     private var thisRanking: [Resto] = []
     private var thisEditableRanking: [Resto] = []
+    private var thisRankingReviews: [(text: String, timestamp: Double)] = []
     private var descriptionRowHeight = CGFloat(50.0)
     private var descriptionEditRankingRowHeight = CGFloat(70.0)
     
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
     private var editReviewTableView = UITableView()
-    private var editReviewTextView = UITextView()
+    private var indexPlaceholder:Int = 0
     
     //For Edit the description swipe-up
     private var transparentView = UIView()
@@ -55,7 +59,6 @@ class ThisRanking: UIViewController {
     private var operations:[RankingOperation] = []
     
     // Header outlets
-    
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var rankingTitleLabel: UILabel!
@@ -69,6 +72,8 @@ class ThisRanking: UIViewController {
     @IBOutlet weak var adView: UIView!
     @IBOutlet weak var editRankingBarButton: UIBarButtonItem!
     
+    // Ad stuff
+    private var bannerView: GADBannerView!
     
     // Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -159,7 +164,6 @@ class ThisRanking: UIViewController {
         restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
         restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
-        var thisUserId:String = ""
         // Verify if I'm asking for my data
         if calledUser == nil {
             // Get the logged in user
@@ -168,34 +172,23 @@ class ThisRanking: UIViewController {
                 self.user = user
                 
                 // I'm asking for my data
-                thisUserId = user.uid
                 let dbPath = user.uid+"/"+self.thisRankingId
                 self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
                 self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
+                self.userReviewsRef = SomeApp.dbUserReviews.child(dbPath)
+                
                 self.updateTableFromDatabase()
-                
-                // The editDescriptionTableView needs to be loaded only if it's my data
-                self.editDescriptionTableView.delegate = self
-                self.editDescriptionTableView.dataSource = self
-                self.editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
-                self.editTextField.delegate = self
-                
-                // The editRankingTableView needs to be loaded only if it's my data
-                self.editRankTableView.delegate = self
-                self.editRankTableView.dataSource = self
-                self.editRankTableView.dragDelegate = self
-                self.editRankTableView.dragInteractionEnabled = true
-                self.editRankTableView.dropDelegate = self
+                self.setupMyTables()
                 
                 // Configure the header: Attention, need to do it after setting the DB vars
                 self.configureHeader(userId: user.uid)
             }
         }else {
             // I'm asking for data of someone else
-            thisUserId = calledUser.key
             let dbPath = calledUser.key+"/"+self.thisRankingId
             self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
             self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
+            self.userReviewsRef = SomeApp.dbUserReviews.child(dbPath)
             self.updateTableFromDatabase()
             
             // Configure the header: Attention, need to do it after setting the DB vars
@@ -206,7 +199,9 @@ class ThisRanking: UIViewController {
         // Some setup
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
-        editRankTableView.register(UINib(nibName: "EditableRestoCell", bundle: nil), forCellReuseIdentifier: ThisRanking.delRestoCell)
+        
+        // Configure the banner ad
+        configureBannerAd()
     }
     
     // func
@@ -222,6 +217,39 @@ class ThisRanking: UIViewController {
         super.viewWillDisappear(animated)
         
         //self.userRankingDetailRef.removeAllObservers()
+    }
+    
+    // MARK: Ad stuff
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
+    
+    // MARK: setup My tables
+    private func setupMyTables(){
+        // The editDescriptionTableView needs to be loaded only if it's my data
+        editDescriptionTableView.delegate = self
+        editDescriptionTableView.dataSource = self
+        editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
+        editTextField.delegate = self
+        
+        // The editRankingTableView needs to be loaded only if it's my data
+        editRankTableView.delegate = self
+        editRankTableView.dataSource = self
+        editRankTableView.dragDelegate = self
+        editRankTableView.dragInteractionEnabled = true
+        editRankTableView.dropDelegate = self
+        editRankTableView.register(UINib(nibName: "EditableRestoCell", bundle: nil), forCellReuseIdentifier: ThisRanking.delRestoCell)
+        
+        // The editReviewTableView needs to be loaded only if it's my data
+        editReviewTableView.delegate = self
+        editReviewTableView.dataSource = self
+        editReviewTableView.register(UINib(nibName: editReviewCell, bundle: nil), forCellReuseIdentifier: editReviewCell)
+        
     }
 
     // MARK: myRanking Header
@@ -281,38 +309,56 @@ class ThisRanking: UIViewController {
     // MARK: update from database
     private func updateTableFromDatabase(){
         
-        // Get the details
+        // I. Outer: get the Resto keys and Positions
         self.userRankingDetailRef.observe(.value, with: {snapshot in
+            var tmpPositions = self.initializeStringArray(withElements: Int(snapshot.childrenCount))
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
+            self.thisRankingReviews = self.initializeReviewArray(withElements: Int(snapshot.childrenCount))
             var count = 0
+            
             // 1. Get the resto keys
             for child in snapshot.children{
-                // Get the children
                 if let testChild = child as? DataSnapshot,
                     let value = testChild.value as? [String:AnyObject],
-                    let position = value["position"] as? Int
-                {
+                    let position = value["position"] as? Int {
                     let restoId = testChild.key
-                    
-                    // For each Key go and find the values
-                    self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {shot in
-                        let tmpResto = Resto(snapshot: shot)
-                        if tmpResto != nil {
+                    tmpPositions[position-1] = restoId
+                    // Get the Resto data
+                    self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
+                        let tmpResto = Resto(snapshot: restoDetailSnap)
+                        if tmpResto != nil{
                             tmpRanking[position-1] = tmpResto!
                         }
-                        // Trick! If we have processed all children then we reload the Data
+                        // Then
                         count += 1
-                        if count == snapshot.childrenCount {
+                        if count == snapshot.childrenCount{
                             self.thisRanking = tmpRanking
                             self.thisEditableRanking = tmpRanking
                             self.myRankingTable.reloadData()
+                            // then get the Reviews.  Update by row
+                            for tmpRestoId in tmpPositions{
+                                self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
+                                    if let reviewValue = reviewSnap.value as? [String: AnyObject],
+                                        let reviewText = reviewValue["text"] as? String,
+                                        let timestamp = reviewValue["timestamp"] as? Double{
+                                        let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
+                                        self.thisRankingReviews[thisReviewPosition!] = (text: reviewText, timestamp: timestamp)
+                                        self.myRankingTable.reloadRows(
+                                            at: [IndexPath(row: thisReviewPosition!, section: 0)],
+                                            with: .none)
+                                    }
+                                })
+                            }
+                            //
                         }
                     })
+                    
                 }
             }
         })
     }
     
+    // MARK: Initialize Arrays
     func initializeArray(withElements: Int) -> [Resto] {
         var tmpRestoList: [Resto] = []
         for _ in 0..<withElements {
@@ -321,9 +367,30 @@ class ThisRanking: UIViewController {
         return tmpRestoList
     }
     
+    func initializeStringArray(withElements: Int) -> [String]{
+        var tmpArray: [String] = []
+        for _ in 0..<withElements {
+            tmpArray.append("")
+        }
+        return tmpArray
+    }
+    
+    func initializeReviewArray(withElements: Int) -> [(text: String, timestamp: Double)]{
+        var tmpReviewList: [(text: String, timestamp: Double)] = []
+        
+        for _ in 0..<withElements {
+            tmpReviewList.append((text:"",timestamp: 0.0))
+        }
+        return tmpReviewList
+    }
+    
     // MARK: Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return false
+        if identifier == ThisRanking.addResto{
+            return true
+        }else{
+            return false
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -349,12 +416,14 @@ class ThisRanking: UIViewController {
 }
 
 // MARK: Table stuff
-
 extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        // test if the table is the EditDescription pop-up
-        if tableView == self.editDescriptionTableView{
+        // if it's the editReview pop-up
+        if tableView == self.editReviewTableView{
+            return 1
+        }else if tableView == self.editDescriptionTableView{
+            // test if the table is the EditDescription pop-up
             return 1
         }else if tableView == self.editRankTableView{
             return 2
@@ -371,8 +440,11 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tableView == editReviewTableView{
+            return 1
+        }
         // test if the table is the EditDescription pop-up
-        if tableView == self.editDescriptionTableView{
+        else if tableView == self.editDescriptionTableView{
             return 1
         }else if tableView == self.editRankTableView{
             if section == 0{ return 1}
@@ -389,10 +461,16 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     }
     
     // Cell for Row at
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Edit Review pop-up
+        if tableView == editReviewTableView,
+            let editReviewCell = editReviewTableView.dequeueReusableCell(withIdentifier: editReviewCell) as? EditReviewCell{
+            configureEditReviewCell(cell: editReviewCell, forIndex: indexPlaceholder)
+            
+            return editReviewCell
+        }
         // EditDescription pop-up
-        if tableView == self.editDescriptionTableView{
+        else if tableView == self.editDescriptionTableView{
             if let cell = tableView.dequeueReusableCell(withIdentifier: "EditDescriptionCell", for: indexPath) as? MyRanksEditDescriptionCell{
                 setupEditDescriptionCell(cell: cell)
                 return cell
@@ -448,8 +526,17 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     cell.restoName.text = thisRanking[indexPath.row].name
                     // Points
                     cell.pointsGivenLabel.text = "Points: ToDo"
+                    
                     // Review
-                    cell.reviewLabel.text = "Some review here. paka paka. This is some review, we should be testing because test."
+                    if !(thisRankingReviews.count > 0) {
+                        cell.reviewLabel.text = " " // the space is important
+                        let spinner = UIActivityIndicatorView(style: .gray)
+                        spinner.startAnimating()
+                        cell.reviewLabel.addSubview(spinner)
+                    }else{ // We already downloaded the reviews
+                        cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
+                    }
+                    
                     // Edit review button
                     if calledUser == nil{
                         cell.editReviewButton.backgroundColor = .white
@@ -461,18 +548,18 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         
                         // Review button
-                        cell.editReviewAction = {(cell) in
-                            print("Review")
-                        }
-                        
                         cell.editReviewButton.setTitle("Edit Review", for: .normal)
-                        cell.editReviewButton.addTarget(self, action: #selector(editReview), for: .touchUpInside)
                         cell.editReviewButton.isHidden = false
                         cell.editReviewButton.isEnabled = true
+                        cell.editReviewAction = {(cell) in
+                            
+                            self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
+                            self.editReview()
+                        }
+                        
                     }
-                    // Detaila button
+                    // Details button
                     cell.showRestoDetailAction = {(cell) in
-                        print("show detail")
                         self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
                     }
                     
@@ -529,13 +616,15 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                             self.editTextField.becomeFirstResponder()
                             },
                            completion: nil)
-          
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView == editReviewTableView{
+            return 450
+        }
         // Test if it's the Edit Description table
-        if tableView == self.editDescriptionTableView {
+        else if tableView == self.editDescriptionTableView {
             return 450
         // "Editable" Table
         }else if tableView == editRankTableView{
@@ -650,12 +739,44 @@ extension ThisRanking{
         cell.addSubview(backView)
     }
     
+    // MARK: Edit review cell
+    func configureEditReviewCell(cell: EditReviewCell, forIndex: Int){
+        cell.titleLabel.textColor = SomeApp.themeColor
+        cell.titleLabel.font = SomeApp.titleFont
+        cell.titleLabel.textAlignment = .center
+        cell.titleLabel.text = "My review for \(thisRanking[forIndex].name)"
+        
+        
+        // set up the TextField.  This var is defined in the class to take the value later
+        if thisRankingReviews[forIndex].text.count < 5{
+            cell.editReviewTextView.text = "Write your Review here."
+        }else{
+            cell.editReviewTextView.text = thisRankingReviews[forIndex].text
+        }
+        cell.editReviewTextView.textColor = UIColor.gray
+        cell.editReviewTextView.font = UIFont.preferredFont(forTextStyle: .body)
+        cell.editReviewTextView.isScrollEnabled = true
+        cell.editReviewTextView.keyboardType = UIKeyboardType.default
+        cell.editReviewTextView.allowsEditingTextAttributes = true
+        
+        cell.editReviewTextView.becomeFirstResponder()
+        
+        cell.doneButton.backgroundColor = SomeApp.themeColor
+        cell.doneButton.layer.cornerRadius = 0.5 * cell.doneButton.bounds.size.width
+        cell.doneButton.layer.masksToBounds = true
+        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.updateReviewAction = { (cell) in
+            self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
+                              commentText: cell.editReviewTextView.text)
+        }
+        
+        cell.selectionStyle = .none
+    }
+    
 }
 
 
-////////////////////
 // MARK: objc funcs
-///////////////////
 
 extension ThisRanking{
     // Update the description when the button is pressed
@@ -711,6 +832,16 @@ extension ThisRanking{
         }
     }
     
+    // MARK: Write the review
+    func doneUpdating(resto: Resto, commentText: String){
+        if ![""," ","Write your Review here","Write your Review here."].contains(commentText){
+            SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, currentRankingId: currentRanking.key ,text: commentText)
+        }
+
+        //Close the view
+        onClickEditReviewTransparentView()
+    }
+    
     //Disappear!
     @objc func onClickEditReviewTransparentView(){
         // Animation when disapearing
@@ -727,7 +858,7 @@ extension ThisRanking{
                             y: ThisRanking.screenSize.height ,
                             width: ThisRanking.screenSize.width,
                             height: ThisRanking.screenSize.height * 0.9)
-                        self.editReviewTextView.resignFirstResponder()
+                        self.editReviewTableView.endEditing(true)
         },
                        completion: nil)
     }
@@ -802,6 +933,7 @@ extension ThisRanking{
                        completion: nil)
     }
     
+    // MARK: update Review pop-up
     @objc func editReview(){
         // Create the frame
         let window = UIApplication.shared.keyWindow
@@ -810,6 +942,7 @@ extension ThisRanking{
         window?.addSubview(editReviewTransparentView)
         
         // Add the table
+        editReviewTableView.reloadData()
         editReviewTableView.frame = CGRect(
             x: 0,
             y: ThisRanking.screenSize.height,
@@ -835,7 +968,7 @@ extension ThisRanking{
                             y: ThisRanking.screenSize.height - ThisRanking.screenSize.height * 0.9 ,
                             width: ThisRanking.screenSize.width,
                             height: ThisRanking.screenSize.height * 0.9)
-                        self.editReviewTextView.becomeFirstResponder()
+                        //self.editReviewTextView.becomeFirstResponder()
                     },
                        completion: nil)
     }
@@ -979,4 +1112,51 @@ extension ThisRanking:UITextViewDelegate {
         return changedText.count <= 250
     }
     
+}
+
+// MARK: Banner Ad Delegate
+extension ThisRanking: GADBannerViewDelegate{
+    func addBannerViewToView(_ bannerView: GADBannerView) {
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(bannerView)
+    }
+    
+    /// Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd")
+        
+        //small animation
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1, animations: {
+            bannerView.alpha = 1
+        })
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that a full-screen view will be presented in response
+    /// to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        print("adViewWillPresentScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewWillDismissScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app (such as
+    /// the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("adViewWillLeaveApplication")
+    }
 }

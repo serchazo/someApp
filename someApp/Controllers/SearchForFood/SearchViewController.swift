@@ -14,7 +14,6 @@ class SearchViewController: UIViewController {
     private var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
     
     private static let screenSize = UIScreen.main.bounds.size
-    
     private let cityChooserSegueID = "cityChooser"
     
     //Instance vars
@@ -30,9 +29,7 @@ class SearchViewController: UIViewController {
     //Listen for changes in the Accessibility font
     private var accessibilityPropertyObserver: NSObjectProtocol?
 
-    ///
-    // MARK: Timeline funcs
-    
+    // MARK: Timeline funcs    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         accessibilityPropertyObserver = NotificationCenter.default.addObserver(
@@ -160,9 +157,7 @@ extension SearchViewController: ItemChooserViewDelegate{
     }
 }
 
-////////////////
-// MARK : Extension for Collection stuff
-///////////////
+// MARK: Collection stuff
 
 extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSource{
     
@@ -172,7 +167,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // TODO : while loading display a spinner
+        // TODO: while loading display a spinner
         guard foodList.count > 0 else {
             let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
             if let cell = tmpCell as? SpinnerCollectionViewCell{
@@ -189,45 +184,25 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
             
             // The position label
-            cell.cellIcon.layer.cornerRadius = 0.5 * cell.cellIcon.bounds.width
+            let foodIconText = NSAttributedString(string: foodList[indexPath.row].icon, attributes: [.font: iconFont])
+            //cell.cellIcon.attributedText = foodIconText
+            cell.cellIcon.text = foodList[indexPath.row].icon
+            cell.cellIcon.layer.cornerRadius = 0.5 * cell.cellIcon.frame.width
             cell.cellIcon.layer.borderColor = SomeApp.themeColor.cgColor
             cell.cellIcon.layer.borderWidth = 1.0
             cell.cellIcon.layer.masksToBounds = true
-            
-            let foodIconText = NSAttributedString(string: foodList[indexPath.row].icon, attributes: [.font: iconFont])
-            cell.cellIcon.attributedText = foodIconText
+            print(cell.frame.width)
             
             let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.strokeColor: SomeApp.themeColor, .font: cellTitleFont])
             cell.cellLabel.attributedText = foodTitleText
             
-            cell.decorateCell()
+            //cell.decorateCell()
             
             return cell
         }else{
             fatalError("No cell")
         }
     }
-    
-    // For the header
-    /*
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "foodHeader", for: indexPath) as? FoodSelectorHeader{
-                let textColor = SomeApp.themeColorOpaque
-                let attributes: [NSAttributedString.Key: Any] = [
-                    .foregroundColor: textColor,
-                    .font: titleFont,
-                    .textEffect: NSAttributedString.TextEffectStyle.letterpressStyle]
-                headerView.sectionHeaderCell.attributedText = NSAttributedString(string: "Craving any food today?", attributes: attributes)
-                
-                //headerView.sectionHeaderCell.text = "This is a test"
-                return headerView
-            }
-            else{fatalError("Can't create cell")}
-        default: assert(false, "Invalid element type")
-        }
-    }*/
     
 }
 
@@ -245,8 +220,11 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
         let availableWidth = view.frame.width - paddingSpace
         let widthPerItem = availableWidth / 2
         
+        let tmpHeight = CGFloat(iconFont.lineHeight + 40.0)
+        print("here: \(widthPerItem)")
+        
         // Height is calculated in the font section
-        return CGSize(width: widthPerItem, height: CGFloat(iconFont.lineHeight + 40.0))
+        return CGSize(width: widthPerItem, height: tmpHeight)
     }
     
     
@@ -266,7 +244,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout{
     
     // MARK: Font of the cells
     private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(55.0))
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(40.0))
     }
     
     private var cellTitleFont: UIFont{

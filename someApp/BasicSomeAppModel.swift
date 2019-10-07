@@ -16,9 +16,7 @@ class SomeApp{
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
-    static let dbComments: DatabaseReference = dbRootRef.child("comments")
-    static let dbCommentsPerUser:DatabaseReference = dbRootRef.child("user-comments")
-    static let dbCommentsPerResto:DatabaseReference = dbRootRef.child("resto-comments")
+    static let dbRestoReviews:DatabaseReference = dbRootRef.child("resto-reviews")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
@@ -28,6 +26,7 @@ class SomeApp{
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
     static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
+    static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     
     //geography
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
@@ -161,8 +160,18 @@ class SomeApp{
         }
     }
     
-    // Add comment
-    private static func addComment(resto: Resto, city: City, userId: String, title: String, text: String){
+    // MARK: Add/update Review
+    static func updateUserReview(userid: String, resto: Resto, city: City, currentRankingId: String, text: String){
+        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + currentRankingId + "/" + resto.key
+        let dbRef = dbUserReviews.child(dbPath)
+        
+        let timestamp = NSDate().timeIntervalSince1970 * 1000
+        let reviewPost:[String:Any] = ["timestamp": timestamp,
+                                       "text": text,
+                                       "restoname": resto.name]
+        
+        dbRef.setValue(reviewPost)
+        
         
     }
 }
@@ -186,5 +195,6 @@ enum TimelineEvents:String{
     case NewUserFavorite = "newUserFavorite"
     case NewBestRestoInRanking = "newBestRestoInRanking"
     case NewArrivalInRanking = "newArrivalInRanking"
+    case NewUserReview = "newUserReview"
     case FoodzGuruPost = "systemNotification"
 }

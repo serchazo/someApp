@@ -17,10 +17,13 @@ class RestoRankViewController: UIViewController {
     var restoPointsDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
     
-    // Class Variables
+    // To get from Segue-r
     var currentCity: City!
     var currentFood: FoodType!
-    let refreshControl = UIRefreshControl()
+    
+    // Class Variables
+    private let refreshControl = UIRefreshControl()
+    private var emptyListFlag: Bool = false
 
     /// Adds part// Ad stuff
     private var bannerView: GADBannerView!
@@ -42,11 +45,20 @@ class RestoRankViewController: UIViewController {
     @IBOutlet weak var tableHeaderFoodIcon: UILabel!
     @IBOutlet weak var tableHeaderFoodName: UILabel!
     @IBOutlet weak var followButton: UIButton!
-    
     @IBOutlet weak var adView: UIView!
     
     
-    // MARK: Selection stuff
+    // MARK: Timeline stuff
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Deselect the row when segued pops
+        if let indexPath = restoRankTableView.indexPathForSelectedRow {
+            restoRankTableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    //
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -66,6 +78,9 @@ class RestoRankViewController: UIViewController {
         adLoader.delegate = self
         adLoader.load(GADRequest())
         
+        // Configure the banner ad
+        configureBannerAd()
+        
         //Some setup
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
@@ -83,11 +98,11 @@ class RestoRankViewController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         // Food Icon
-        tableHeaderFoodIcon.text = currentFood.icon
-        tableHeaderFoodIcon.layer.cornerRadius = 0.5 * tableHeaderFoodIcon.bounds.size.width
+        tableHeaderFoodIcon.layer.cornerRadius = 0.5 * tableHeaderFoodIcon.frame.width
         tableHeaderFoodIcon.layer.borderColor = SomeApp.themeColor.cgColor
         tableHeaderFoodIcon.layer.borderWidth = 2.0
-        
+        tableHeaderFoodIcon.layer.masksToBounds = true
+        tableHeaderFoodIcon.text = currentFood.icon
         tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
         
         // Configure follow button
@@ -117,6 +132,13 @@ class RestoRankViewController: UIViewController {
     // MARK: update from database
     func updateTableFromDatabase(){
         restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
+            // What to do if the list is empty
+            guard snapshot.exists() else {
+                self.thisRanking.append(Resto(name: "placeholder", city: "placeholder"))
+                self.restoRankTableView.reloadData()
+                self.emptyListFlag = true
+                return
+            }
             var count = 0
             var tmpRestoList:[Resto] = []
             // I. Get the values
@@ -144,20 +166,12 @@ class RestoRankViewController: UIViewController {
                 }
                 
             }
+            //
         })
     }
     
     
-    // MARK: Timeline funcs
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Deselect the row when segued pops
-        if let indexPath = restoRankTableView.indexPathForSelectedRow {
-            restoRankTableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
+    // MARK: Navigation
     @objc private func refreshData(_ sender: Any) {
         // If pull down the table, then refresh data
         updateTableFromDatabase()
@@ -191,6 +205,7 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0{
+            guard thisRanking.count > 0 else {return 1}
             return thisRanking.count
         }else{
             return 1
@@ -199,7 +214,25 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0{
+            guard thisRanking.count > 0 else {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = "Loading restaurants"
+                let spinner = UIActivityIndicatorView(style: .gray)
+                spinner.startAnimating()
+                cell.accessoryView = spinner
+                
+                return cell
+            }
+            guard !emptyListFlag else {
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                cell.textLabel?.text = "Empty ranking"
+                cell.detailTextLabel?.text = "Add your favorite restaurants for the world to see!"
+                return cell
+            }
+            
+            // Then go
             if let cell = tableView.dequeueReusableCell(withIdentifier: "RestoRankCell", for: indexPath) as? RestoRankTableViewCell {
+ 
                 //Configure the cell
                 let thisResto = thisRanking[indexPath.row]
                 let tmpPosition = indexPath.row + 1

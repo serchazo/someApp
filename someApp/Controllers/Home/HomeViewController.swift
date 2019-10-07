@@ -125,7 +125,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         // User initiated events in timeline
         if [TimelineEvents.NewFollower.rawValue,
             TimelineEvents.NewUserRanking.rawValue,
-            TimelineEvents.NewUserFavorite.rawValue].contains(somePost[indexPath.row].type),
+            TimelineEvents.NewUserFavorite.rawValue,
+            TimelineEvents.NewUserReview.rawValue].contains(somePost[indexPath.row].type),
             let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineCellWithImage, for: indexPath) as? TimelineCellWithImage{
             
             setupPostCellWithImage(cell: postCell,
@@ -218,6 +219,8 @@ extension HomeViewController{
             //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
         }else if (type == TimelineEvents.NewUserFavorite.rawValue){
             cell.titleLabel.text = "New Favorite"
+        }else if type == TimelineEvents.NewUserReview.rawValue{
+            cell.titleLabel.text = "New Review"
         }
         
         // Picture

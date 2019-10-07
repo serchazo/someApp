@@ -19,9 +19,7 @@ class MyRestoDetail: UIViewController {
     private let commentCellNibId = "CommentCell"
     
     private var user:User!
-    private var dbCommentReference:DatabaseReference = SomeApp.dbComments
-    private var dbCommentsPerUser:DatabaseReference!
-    private var dbCommentsPerResto:DatabaseReference!
+    private var dbRestoReviews:DatabaseReference!
     private var commentArray:[Comment] = []
     private var firstCommentFlag:Bool = false
     
@@ -64,7 +62,7 @@ class MyRestoDetail: UIViewController {
         super.viewDidLoad()
         let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
         dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
-        dbCommentsPerResto = SomeApp.dbCommentsPerResto.child(dbPath)
+        dbRestoReviews = SomeApp.dbRestoReviews.child(dbPath)
         
         // 1. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -76,7 +74,7 @@ class MyRestoDetail: UIViewController {
         }
         
         // Get the comments from the DB
-        getCommentsFromDB()
+        getReviewsFromDB()
         
         // Get the map from the database
         self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
@@ -241,7 +239,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     
                     // Then
                     postCell.dateLabel.text = localDate
-                    postCell.titleLabel.text = commentArray[indexPath.row].title
+                    postCell.titleLabel.text = commentArray[indexPath.row].username
                     postCell.bodyLabel.text = commentArray[indexPath.row].text
                     
                     // Buttons
@@ -368,7 +366,7 @@ extension MyRestoDetail{
         
         //Close the view
         onClickTransparentView()
-        getCommentsFromDB()
+        getReviewsFromDB()
     }
     
     //Disappear!
@@ -393,8 +391,6 @@ extension MyRestoDetail{
     }
     
     // MARK: Setup cells
-   
-    
     // The comment cell
     func editCommentCell(cell: UITableViewCell){
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width, height: SomeApp.titleFont.lineHeight + 20 ))
@@ -429,13 +425,12 @@ extension MyRestoDetail{
     }
     
     // MARK: Get comments from DB
-    func getCommentsFromDB(){
+    func getReviewsFromDB(){
         var tmpCommentArray:[Comment] = []
         var count = 0
        
         // Get from database
-        dbCommentsPerResto.observeSingleEvent(of: .value, with: {snapshot in
-            print(snapshot)
+        dbRestoReviews.observeSingleEvent(of: .value, with: {snapshot in
             // If there are no comments for the restaurant, create a dummy comment
             guard snapshot.exists() else{
                 let tmpTimestamp = NSDate().timeIntervalSince1970 * 1000
@@ -447,7 +442,6 @@ extension MyRestoDetail{
                 return
             }
             
-            print(snapshot)
             for child in snapshot.children{
                 if let commentRestoSnapshot = child as? DataSnapshot,
                     let value = commentRestoSnapshot.value as? [String:Any],
