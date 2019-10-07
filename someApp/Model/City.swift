@@ -24,6 +24,14 @@ class City{
         self.key = String(name.filter { !" \n\t\r!".contains($0) }).lowercased()
     }
     
+    init(country: String, state: String, key: String, name:String = "") {
+        self.ref = nil
+        self.name = name
+        self.state = state
+        self.country = country
+        self.key = key
+    }
+    
     init?(snapshot: DataSnapshot){
         guard
             let value = snapshot.value as? [String: AnyObject],

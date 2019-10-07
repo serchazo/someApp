@@ -21,11 +21,13 @@ class MyRanks: UIViewController {
     private static let showRakingDetail = "editRestoList"
     private static let screenSize = UIScreen.main.bounds.size
     private static let logoffSegue = "logoffSegue"
+    private let segueChangeCoty = "changeCity"
     
     // Instance variables
     private var user:User!
     private var rankings:[Ranking] = []
     private var foodItems:[FoodType] = []
+    private var emptyListFlag = false
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
     private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
@@ -72,6 +74,10 @@ class MyRanks: UIViewController {
             followButton.isEnabled = false
         }
     }
+    
+    
+    @IBOutlet weak var changeCityButton: UIButton!
+    
     
     @IBOutlet weak var adView: UIView!
     
@@ -168,11 +174,8 @@ class MyRanks: UIViewController {
                 thisUserId = self.calledUser!.key
             }
             self.configureHeader(userId: thisUserId)
-            
-            let pathId = thisUserId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
-            self.rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
+            self.updateTablewithRanking(userId: thisUserId)
             self.foodDBReference = SomeApp.dbFoodTypeRoot
-            self.updateTablewithRanking()
         }
         
         // Configure the banner ad
@@ -210,6 +213,7 @@ class MyRanks: UIViewController {
         // Navbar
         if calledUser != nil{
             navigationItem.rightBarButtonItem = nil
+            navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
         
         // First, go get some data from the DB
@@ -236,6 +240,14 @@ class MyRanks: UIViewController {
                 }
             }
         })
+        
+        // Change city button
+        changeCityButton.backgroundColor = .white
+        changeCityButton.setTitleColor(SomeApp.themeColor, for: .normal)
+        changeCityButton.layer.cornerRadius = 15
+        changeCityButton.layer.borderColor = SomeApp.themeColor.cgColor
+        changeCityButton.layer.borderWidth = 1.0
+        changeCityButton.setTitle(currentCity.name, for: .normal)
         
         // Follow button
         if calledUser != nil {
@@ -286,37 +298,47 @@ class MyRanks: UIViewController {
 
     
     // MARK: Update from DB
-    func updateTablewithRanking(){
-        self.rankingReferenceForUser.observe(.value, with: {snapshot in
+    func updateTablewithRanking(userId: String){
+        let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
+        rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
+        
+        rankingReferenceForUser.observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
             var tmpFoodType: [FoodType] = []
             var count = 0
             
-            for ranksPerUserAny in snapshot.children {
-                if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
-                    let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
-                    tmpRankings.append(rankingItem)
-                    
-                    //Get food type per country
-                    self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
-                        let foodItem = FoodType(snapshot: foodSnapshot)
-                        tmpFoodType.append(foodItem!)
+            if !snapshot.exists(){
+                // If we don't have a ranking, mark the empty list flag
+                self.emptyListFlag = true
+                self.myRanksTable.reloadData()
+            }else{
+                self.emptyListFlag = false
+                for ranksPerUserAny in snapshot.children {
+                    if let ranksPerUserSnapshot = ranksPerUserAny as? DataSnapshot,
+                        let rankingItem = Ranking(snapshot: ranksPerUserSnapshot){
+                        tmpRankings.append(rankingItem)
                         
-                        // Apply the trick when using Joins
-                        count += 1
-                        if count == snapshot.childrenCount {
-                            self.foodItems = tmpFoodType
-                            self.rankings = tmpRankings
-                            self.myRanksTable.reloadData()
-                        }
-                    })
+                        //Get food type per country
+                        self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
+                            let foodItem = FoodType(snapshot: foodSnapshot)
+                            tmpFoodType.append(foodItem!)
+                            
+                            // Apply the trick when using Joins
+                            count += 1
+                            if count == snapshot.childrenCount {
+                                self.foodItems = tmpFoodType
+                                self.rankings = tmpRankings
+                                self.myRanksTable.reloadData()
+                            }
+                        })
+                    }
                 }
             }
         })
     }
     
-
+    // MARK: Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -336,8 +358,14 @@ class MyRanks: UIViewController {
                 }
             }
         case MyRanks.addRanking :
-            if let seguedMVC = segue.destination as? MyRanksAddRankingViewController{
+            if let seguedMVC = segue.destination as? AddRanking{
+                print("here \(currentCity.name)")
                 seguedMVC.delegate = self
+                seguedMVC.currentCity = currentCity
+            }
+        case self.segueChangeCoty:
+            if let cityChoserVC = segue.destination as? ItemChooserViewController{
+                cityChoserVC.delegate = self
             }
         default: 
             break
@@ -348,12 +376,12 @@ class MyRanks: UIViewController {
     
     @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
-        updateTablewithRanking()
+        configureHeader(userId: user.uid)
     }
     
     @objc func unfollow(){
         SomeApp.unfollow(userId: user.uid, unfollowId: calledUser!.key)
-        updateTablewithRanking()
+        configureHeader(userId: user.uid)
     }
     
     @objc func logout(){
@@ -390,7 +418,39 @@ class MyRanks: UIViewController {
     
 }
 
-// MARK: update the ranking list when we receive the event from the menu choser
+// MARK: Add ranking delegate
+extension MyRanks: AddRankingDelegate{
+    func addRankingReceiveInfoToCreate(city: City, withFood: FoodType) {
+        // Test if we already have that ranking in our list
+        if (rankings.filter {$0.key == withFood.key}).count == 0{
+            // If we don't have the ranking, we add it to Firebase
+            let defaultDescription = "Spent all my life looking for the best " + withFood.name + " places in " + currentCity.name + ". This is the definitive list."
+            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon, description: defaultDescription)
+            // Create a child reference and update the value
+            let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
+            newRankingRef.setValue(newRanking.toAnyObject())
+            // Only need to reload.  The firebase observer will update the content
+            myRanksTable.reloadData()
+            
+        }else{
+            // Ranking already in list
+            let alert = UIAlertController(
+                title: "Duplicate ranking",
+                message: "You already have a \(withFood.name) ranking in \(city.name).",
+                preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: {
+                    (action: UIAlertAction)->Void in
+                    //do nothing
+            }))
+            present(alert, animated: false, completion: nil)
+        }
+    }
+}
+
 extension MyRanks: MyRanksAddRankingViewDelegate{
     func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
         
@@ -444,7 +504,11 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             switch(section){
             case 0:
                 guard rankings.count == foodItems.count else { return 1 }
-                return rankings.count
+                if emptyListFlag == true{
+                    return 1
+                }else{
+                    return rankings.count
+                }
             default: return 0
             }
         }
@@ -522,7 +586,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             
         }else{
             // The normal table
-            guard rankings.count > 0 && rankings.count == foodItems.count else{
+            guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Waiting for services"
                 let spinner = UIActivityIndicatorView(style: .gray)
@@ -531,15 +595,24 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
                 
                 return cell
             }
-            // Rankings table
-            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
-            if let cell = tmpCell as? MyRanksTableViewCell {
-                cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
-                cell.titleLabel.text = tmpTitleText
-                cell.descriptionLabel.text = rankings[indexPath.row].description
+            
+            if emptyListFlag{
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                cell.textLabel?.text = "No rankings in \(currentCity.name) yet!"
+                cell.detailTextLabel?.text = "Click on + and tell the world your favorite places!"
+                return cell
+            }else{
+                // Rankings table
+                let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
+                if let cell = tmpCell as? MyRanksTableViewCell {
+                    cell.iconLabel.text = foodItems[indexPath.row].icon
+                    let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
+                    cell.titleLabel.text = tmpTitleText
+                    cell.descriptionLabel.text = rankings[indexPath.row].description
+                }
+                return tmpCell
             }
-            return tmpCell
+            
         }
         
     }
@@ -737,7 +810,23 @@ extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegat
         
         return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
     }
-    
-    
-    
+}
+
+// MARK: city choser extension
+extension MyRanks: ItemChooserViewDelegate{
+    func itemChooserReceiveCity(_ sender: City) {
+        
+        if sender.key != currentCity.key{
+            rankings.removeAll()
+            foodItems.removeAll()
+            currentCity = sender
+            changeCityButton.setTitle(currentCity.name, for: .normal)
+            
+            if calledUser == nil{
+                updateTablewithRanking(userId: user.uid)
+            }else{
+                updateTablewithRanking(userId: calledUser!.key)
+            }
+        }
+    }
 }

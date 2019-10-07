@@ -18,9 +18,15 @@ class HomeViewController: UIViewController {
     private let timelineCellWithImage = "TimelineCellWithImage"
     private let timelineCellWithImageNibId = "TimelineCellWithImage"
     
+    // Cell identifiers
+    private let timelineNewUserRanking = "timelineUserRanking"
+    
+    // Segue identifiers
+    private let segueIDShowUserFromNewRanking = "showUserFromNewRanking"
+    
     // Instance variables
     private var user: User!
-    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String )] = []
+    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String)] = []
     private var userTimelineReference: DatabaseReference!
     
     
@@ -40,6 +46,16 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: Timeline funcs
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        if let indexPath = newsFeedTable.indexPathForSelectedRow {
+            newsFeedTable.deselectRow(at: indexPath, animated: true)
+        }
+
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,7 +73,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    //
+    // MARK: update from DB
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
@@ -91,15 +107,21 @@ class HomeViewController: UIViewController {
     }
     
 
-    /*
+    
     // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        if segue.identifier == self.segueIDShowUserFromNewRanking,
+            let cell = sender as? HomeCellWithImage,
+            let indexPath = newsFeedTable.indexPath(for: cell),
+            let myRanksVC = segue.destination as? MyRanks{
+            
+            myRanksVC.currentCity = getCityFromTarget(target: somePost[indexPath.row].target)
+            myRanksVC.calledUser = getUserObjectFromPost(post: somePost[indexPath.row])
+        }
     }
-    */
 
 }
 
@@ -122,9 +144,16 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             return cell
         }
         
-        // User initiated events in timeline
-        if [TimelineEvents.NewFollower.rawValue,
-            TimelineEvents.NewUserRanking.rawValue,
+        if somePost[indexPath.row].type == TimelineEvents.NewUserRanking.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserRanking, for: indexPath) as? HomeCellWithImage {
+            cell.titleLabel.text = "New Ranking"
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+        
+        
+        // OLD CELLS: User initiated events in timeline
+        else if [TimelineEvents.NewFollower.rawValue,
             TimelineEvents.NewUserFavorite.rawValue,
             TimelineEvents.NewUserReview.rawValue].contains(somePost[indexPath.row].type),
             let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineCellWithImage, for: indexPath) as? TimelineCellWithImage{
@@ -197,7 +226,7 @@ extension HomeViewController{
 
     }
     
-    // Same but with Image
+    // MARK: Old cells: Same but with Image
     func setupPostCellWithImage(cell: TimelineCellWithImage, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String){
         
         // Date
@@ -238,9 +267,48 @@ extension HomeViewController{
             }
             
         })
+    }
+    
+    // MARK: new cells
+    func setImageDateBodyInCell(cell: HomeCellWithImage, forPost: (key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String)){
+        // Set Image
+        let userRef = SomeApp.dbUserData
+        userRef.child(forPost.initiator).observeSingleEvent(of: .value, with: {snapshot in
+            if let value = snapshot.value as? [String:Any],
+                let photoURL = value["photourl"] as? String{
+                cell.cellImage.sd_setImage(
+                    with: URL(string: photoURL),
+                    placeholderImage: UIImage(named: "userdefault"),
+                    options: [],
+                    completed: nil)
+            }else{
+                cell.cellImage.image = UIImage(named: "userdefault")
+            }
+        })
         
+        // Set Date
+        let date = Date(timeIntervalSince1970: TimeInterval(forPost.timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        cell.dateLabel.text = localDate
         
+        // Body
+        cell.bodyLabel.text = forPost.payload
         
-        
+    }
+}
+
+// MARK: parsing funcs
+extension HomeViewController{
+    private func getCityFromTarget(target: String) -> City{
+        let cityArray = target.components(separatedBy: "/")
+        return City(country: cityArray[0] , state: cityArray[1], key: cityArray[2])
+    }
+    
+    private func getUserObjectFromPost(post: (key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String)) -> UserDetails{
+        let payLoadArray = post.payload.components(separatedBy: " ")
+        return UserDetails(nickName: payLoadArray[0], key: post.initiator)
     }
 }
