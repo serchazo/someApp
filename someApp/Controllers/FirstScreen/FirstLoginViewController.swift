@@ -186,7 +186,8 @@ class FirstLoginViewController: UIViewController {
     // Setting up the user
     @objc func goButtonPressed(){
         // Then create
-        SomeApp.createUserFirstLogin(userId: user.uid, username: userName, bio: bioField?.text ?? "", photoURL: photoURL.absoluteString)
+        let cityString = city.country + "/" + city.state + "/" + city.key + "/" + city.name
+        SomeApp.createUserFirstLogin(userId: user.uid, username: userName, bio: bioField?.text ?? "", defaultCity: cityString, photoURL: photoURL.absoluteString)
         
         // If the user is not signed in with facebook, we update display name and photo url on firebase
         if user.providerID != "facebook.com" {

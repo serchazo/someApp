@@ -52,10 +52,10 @@ class SomeApp{
     }
     
     // MARK: user functions
-    static func createUserFirstLogin(userId: String, username: String, bio: String, photoURL: String = ""){
+    static func createUserFirstLogin(userId: String, username: String, bio: String, defaultCity:String, photoURL: String = ""){
         let userDataDBRef = dbUserData.child(userId)
         // Transform the data to AnyObject
-        let dataToWrite = [ "nickname" : username, "bio" : bio, "photourl": photoURL]
+        let dataToWrite = [ "nickname" : username, "bio" : bio, "default" : defaultCity, "photourl": photoURL]
         userDataDBRef.setValue(dataToWrite)
         
         // Create the first timeline post

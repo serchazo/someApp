@@ -1637,6 +1637,63 @@
                                             <segue destination="bUE-hb-C5b" kind="show" identifier="showUserFromNewRanking" id="EGh-pU-zKk"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFollowing" rowHeight="113" id="Kct-ND-SrU" customClass="HomeCellWithImage" customModule="someApp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="141" width="374" height="113"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Kct-ND-SrU" id="9K3-Nz-yFl">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j0Q-3B-4Sm">
+                                                    <rect key="frame" x="0.0" y="26.5" width="60" height="60"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="60" id="NnB-9i-eqZ"/>
+                                                        <constraint firstAttribute="width" secondItem="j0Q-3B-4Sm" secondAttribute="height" multiplier="1:1" id="kVj-S7-lSx"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DPO-78-3CA">
+                                                    <rect key="frame" x="80" y="21" width="100" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="fdj-CF-lzO"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ei5-AL-Qf2">
+                                                    <rect key="frame" x="268" y="21" width="86" height="21"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ldU-eq-yTu">
+                                                    <rect key="frame" x="80" y="50" width="274" height="55"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ei5-AL-Qf2" firstAttribute="bottom" secondItem="DPO-78-3CA" secondAttribute="bottom" id="3T2-GQ-9gK"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="ei5-AL-Qf2" secondAttribute="trailing" id="4VX-1e-ebf"/>
+                                                <constraint firstItem="j0Q-3B-4Sm" firstAttribute="centerY" secondItem="9K3-Nz-yFl" secondAttribute="centerY" id="4lb-Ec-sz3"/>
+                                                <constraint firstItem="DPO-78-3CA" firstAttribute="top" secondItem="9K3-Nz-yFl" secondAttribute="topMargin" constant="10" id="7q1-rW-I5U"/>
+                                                <constraint firstItem="ldU-eq-yTu" firstAttribute="leading" secondItem="DPO-78-3CA" secondAttribute="leading" id="HZ1-eg-RMB"/>
+                                                <constraint firstItem="ldU-eq-yTu" firstAttribute="top" secondItem="DPO-78-3CA" secondAttribute="bottom" constant="8" symbolic="YES" id="PL5-6n-1Lg"/>
+                                                <constraint firstAttribute="trailing" secondItem="ldU-eq-yTu" secondAttribute="trailing" constant="20" symbolic="YES" id="VUa-cv-w62"/>
+                                                <constraint firstItem="ldU-eq-yTu" firstAttribute="leading" secondItem="j0Q-3B-4Sm" secondAttribute="trailing" multiplier="1.2" constant="8" symbolic="YES" id="j9c-Jn-SHy"/>
+                                                <constraint firstItem="j0Q-3B-4Sm" firstAttribute="leading" secondItem="9K3-Nz-yFl" secondAttribute="leading" id="qvW-QC-wRo"/>
+                                                <constraint firstAttribute="bottom" secondItem="ldU-eq-yTu" secondAttribute="bottom" constant="8" id="xKa-jH-PxI"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="bodyLabel" destination="ldU-eq-yTu" id="WZy-yY-yOH"/>
+                                            <outlet property="cellImage" destination="j0Q-3B-4Sm" id="eZ7-3K-IFL"/>
+                                            <outlet property="dateLabel" destination="ei5-AL-Qf2" id="Kj5-XE-sK6"/>
+                                            <outlet property="titleLabel" destination="DPO-78-3CA" id="XyE-mH-KsP"/>
+                                            <segue destination="bUE-hb-C5b" kind="show" identifier="showUserFollowing" id="sfx-Yu-7uu"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                             </tableView>
                         </subviews>
@@ -1704,7 +1761,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="sT7-BS-49X"/>
         <segue reference="B4g-Yk-vFu"/>
-        <segue reference="EGh-pU-zKk"/>
+        <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

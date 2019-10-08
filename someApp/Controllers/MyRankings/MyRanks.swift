@@ -14,7 +14,7 @@ import SDWebImage
 class MyRanks: UIViewController {
     //Control var
     var calledUser:UserDetails?
-    var currentCity = City(name: "Singapore", state: "singapore", country: "singapore")
+    var currentCity: City!
     
     // Class constants
     private static let addRanking = "addRankSegue"
@@ -75,10 +75,7 @@ class MyRanks: UIViewController {
         }
     }
     
-    
     @IBOutlet weak var changeCityButton: UIButton!
-    
-    
     @IBOutlet weak var adView: UIView!
     
     
@@ -174,7 +171,9 @@ class MyRanks: UIViewController {
                 thisUserId = self.calledUser!.key
             }
             self.configureHeader(userId: thisUserId)
-            self.updateTablewithRanking(userId: thisUserId)
+            if self.currentCity != nil{
+                self.updateTablewithRanking(userId: thisUserId)
+            }
             self.foodDBReference = SomeApp.dbFoodTypeRoot
         }
         
@@ -227,6 +226,8 @@ class MyRanks: UIViewController {
                 // 2. User photo
                 if let photoURL = value["photourl"] as? String {
                     self.photoURL = URL(string: photoURL)
+                }else{
+                    self.photoURL = URL(string: "")
                 }
         
                 // 3. User bio
@@ -247,7 +248,12 @@ class MyRanks: UIViewController {
         changeCityButton.layer.cornerRadius = 15
         changeCityButton.layer.borderColor = SomeApp.themeColor.cgColor
         changeCityButton.layer.borderWidth = 1.0
-        changeCityButton.setTitle(currentCity.name, for: .normal)
+        if currentCity != nil{
+            changeCityButton.setTitle(currentCity.name, for: .normal)
+        }else{
+            changeCityButton.setTitle("Select city", for: .normal)
+        }
+        
         
         // Follow button
         if calledUser != nil {
@@ -819,7 +825,7 @@ extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegat
 // MARK: city choser extension
 extension MyRanks: MyCitiesDelegate{
     func myCitiesChangeCity(_ sender: City) {
-        if sender.key != currentCity.key{
+        if currentCity == nil || sender.key != currentCity.key{
             rankings.removeAll()
             foodItems.removeAll()
             currentCity = sender
