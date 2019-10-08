@@ -150,9 +150,9 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: ItemChooserViewDelegate{
     // MARK: Broadcasting stuff
-    func itemChooserReceiveCity(_ sender: City) {
-        currentCity = sender
-        cityNavBarButton.title = sender.name
+    func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
+        currentCity = city
+        cityNavBarButton.title = city.name
         loadFoodTypesFromDB()
     }
 }

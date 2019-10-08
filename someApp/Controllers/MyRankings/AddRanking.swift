@@ -70,13 +70,6 @@ class AddRanking: UIViewController {
 
 }
 
-// MARK: objc funcs
-extension AddRanking{
-    @objc func chooseCityAction(){
-        print("Here")
-    }
-}
-
 // MARK: configure header
 extension AddRanking{
     private func configureHeader(){

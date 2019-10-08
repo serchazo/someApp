@@ -359,13 +359,15 @@ class MyRanks: UIViewController {
             }
         case MyRanks.addRanking :
             if let seguedMVC = segue.destination as? AddRanking{
-                print("here \(currentCity.name)")
                 seguedMVC.delegate = self
                 seguedMVC.currentCity = currentCity
             }
         case self.segueChangeCoty:
-            if let cityChoserVC = segue.destination as? ItemChooserViewController{
-                cityChoserVC.delegate = self
+            if let cityChoserVC = segue.destination as? MyCities{
+                if calledUser != nil{
+                    cityChoserVC.calledUser = calledUser
+                }
+                cityChoserVC.myCitiesDelegate = self
             }
         default: 
             break
@@ -445,12 +447,14 @@ extension MyRanks: AddRankingDelegate{
                 handler: {
                     (action: UIAlertAction)->Void in
                     //do nothing
+                    
+                    
             }))
             present(alert, animated: false, completion: nil)
         }
     }
 }
-
+/*
 extension MyRanks: MyRanksAddRankingViewDelegate{
     func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
         
@@ -482,7 +486,7 @@ extension MyRanks: MyRanksAddRankingViewDelegate{
             present(alert, animated: false, completion: nil)
         }
     }
-}
+}*/
 
 // MARK: table stuff
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{
@@ -813,9 +817,8 @@ extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegat
 }
 
 // MARK: city choser extension
-extension MyRanks: ItemChooserViewDelegate{
-    func itemChooserReceiveCity(_ sender: City) {
-        
+extension MyRanks: MyCitiesDelegate{
+    func myCitiesChangeCity(_ sender: City) {
         if sender.key != currentCity.key{
             rankings.removeAll()
             foodItems.removeAll()
@@ -830,3 +833,4 @@ extension MyRanks: ItemChooserViewDelegate{
         }
     }
 }
+

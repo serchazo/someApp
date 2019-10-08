@@ -136,9 +136,9 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
 
 // MARK: Get the city from the City Chooser
 extension MyRanksAddRankingViewController: ItemChooserViewDelegate {
-    func itemChooserReceiveCity(_ sender: City) {
-        currentCity = sender
-        cityNavBarButton.title = sender.name
+    func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
+        currentCity = city
+        cityNavBarButton.title = city.name
         
     }
 }

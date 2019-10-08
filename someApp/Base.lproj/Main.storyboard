@@ -398,7 +398,7 @@
                                                 <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             </state>
                                             <connections>
-                                                <segue destination="ktD-De-Nbc" kind="show" identifier="changeCity" id="ICu-O2-knk"/>
+                                                <segue destination="pOh-wS-b3s" kind="show" identifier="changeCity" id="U7G-ou-Tgm"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1048,7 +1048,73 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jw7-ad-v82" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2283" y="-154"/>
+            <point key="canvasLocation" x="3829" y="-308"/>
+        </scene>
+        <!--My Cities-->
+        <scene sceneID="fAg-Wt-hD3">
+            <objects>
+                <viewController id="pOh-wS-b3s" customClass="MyCities" customModule="someApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6Gf-xt-RWd"/>
+                        <viewControllerLayoutGuide type="bottom" id="ydJ-HH-MhO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="cGt-UC-TWy">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3nK-1O-CfU">
+                                <rect key="frame" x="20" y="56" width="374" height="703"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="addCityCell" id="iS7-KX-J4h">
+                                        <rect key="frame" x="0.0" y="28" width="374" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iS7-KX-J4h" id="1B7-Y7-SVG">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add new city" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRT-Aq-3MK">
+                                                    <rect key="frame" x="0.0" y="11" width="278" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="+" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2b-QB-M5U">
+                                                    <rect key="frame" x="337" y="6" width="17" height="32"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <color key="textColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="X2b-QB-M5U" firstAttribute="centerY" secondItem="1B7-Y7-SVG" secondAttribute="centerY" id="Fld-J7-5id"/>
+                                                <constraint firstAttribute="trailing" secondItem="X2b-QB-M5U" secondAttribute="trailing" constant="20" symbolic="YES" id="YbM-Rl-mQh"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="ktD-De-Nbc" kind="show" identifier="addCity" id="sT7-BS-49X"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="3nK-1O-CfU" secondAttribute="trailing" id="Kyo-8o-uaM"/>
+                            <constraint firstItem="3nK-1O-CfU" firstAttribute="top" secondItem="6Gf-xt-RWd" secondAttribute="bottom" id="ajm-bp-48a"/>
+                            <constraint firstItem="ydJ-HH-MhO" firstAttribute="top" secondItem="3nK-1O-CfU" secondAttribute="bottom" id="lnb-Rk-brZ"/>
+                            <constraint firstItem="3nK-1O-CfU" firstAttribute="leading" secondItem="cGt-UC-TWy" secondAttribute="leadingMargin" id="xAz-Mv-IFn"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="fZN-ZW-rEn"/>
+                    <connections>
+                        <outlet property="myCitiesTableView" destination="3nK-1O-CfU" id="82S-lH-DCa"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FeD-cd-8hZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2818.840579710145" y="57.589285714285708"/>
         </scene>
         <!--Add a ranking-->
         <scene sceneID="hfL-YC-xFF">
@@ -1140,7 +1206,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uht-j4-RSU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3040.579710144928" y="371.65178571428572"/>
+            <point key="canvasLocation" x="3829" y="368"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="gV8-pq-xA4">
@@ -1636,7 +1702,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ICu-O2-knk"/>
+        <segue reference="sT7-BS-49X"/>
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="EGh-pU-zKk"/>
         <segue reference="j96-5r-UVn"/>

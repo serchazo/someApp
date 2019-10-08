@@ -242,9 +242,7 @@ extension FirstLoginViewController{
 
 // MARK: Get the city from the City Chooser
 extension FirstLoginViewController: ItemChooserViewDelegate {
-    func itemChooserReceiveCity(_ sender: City) {
-        print("here!")
-        city = sender
+    func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         selectCityField.placeholder = city.name
         selectCityButton.setTitle("Change", for: .normal)
         configureGoButton()

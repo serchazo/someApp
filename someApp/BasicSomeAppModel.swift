@@ -25,12 +25,14 @@ class SomeApp{
     static let dbUserNbFollowing:DatabaseReference = dbRootRef.child("user-nbfollowing")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
     static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
+    static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     
     //geography
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
     static let dbGeographyCountry:DatabaseReference = dbRootRef.child("geography-countries")
+    static let dbGeographyStates:DatabaseReference = dbRootRef.child("geography-state")
 
     // MARK: storage
     static let storageRef = Storage.storage().reference()
@@ -84,6 +86,16 @@ class SomeApp{
     static func unfollow(userId: String, unfollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         followingDBReference.child(unfollowId).removeValue()
+    }
+    
+    // Add a new city to user (country name and state name will be added with functions)
+    static func addUserCity(userId: String, city: City, countryName: String, stateName: String){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key
+        let objectToWrite: [String:Any] = ["country": countryName,
+                                                 "state": stateName,
+                                                 "name": city.name]
+        let dbRef = SomeApp.dbUserRankingGeography.child(dbPath)
+        dbRef.setValue(objectToWrite)
     }
     
     // MARK: ranking functions
