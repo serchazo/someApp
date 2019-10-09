@@ -1,11 +1,11 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '11.0'
+platform :ios, '12.0'
 
-target 'someApp' do
+target 'foodzGuru' do
     # Comment the next line if you don't want to use dynamic frameworks
     use_frameworks!
 
-    # Pods for someApp
+    # Pods for foodzGuru
     # add the Firebase pod for Google Analytics
     pod 'Firebase/Analytics'
 
