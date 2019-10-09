@@ -29,6 +29,9 @@ class SomeApp{
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     
+    //rankings
+    static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
+    
     //geography
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
     static let dbGeographyCountry:DatabaseReference = dbRootRef.child("geography-countries")
@@ -86,6 +89,18 @@ class SomeApp{
     static func unfollow(userId: String, unfollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         followingDBReference.child(unfollowId).removeValue()
+    }
+    
+    // Follow and unfollow rankings
+    static func followRanking(userId: String, city: City, foodId: String){
+        let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
+        let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
+        followingRankingDBReference.setValue("true")
+    }
+    static func unfollowRanking(userId: String, city: City, foodId: String){
+        let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
+        let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
+        followingRankingDBReference.removeValue()
     }
     
     // Add a new city to user (country name and state name will be added with functions)

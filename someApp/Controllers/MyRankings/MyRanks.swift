@@ -384,11 +384,34 @@ class MyRanks: UIViewController {
     @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
         configureHeader(userId: user.uid)
+        followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
     }
     
     @objc func unfollow(){
-        SomeApp.unfollow(userId: user.uid, unfollowId: calledUser!.key)
-        configureHeader(userId: user.uid)
+        let alert = UIAlertController(
+        title: "Unfollow ?",
+        message: "You will no longer receive updates and notifications from this user.",
+        preferredStyle: .alert)
+        // OK
+        alert.addAction(UIAlertAction(
+            title: "Cancel",
+            style: .default,
+            handler: {
+                (action: UIAlertAction)->Void in
+                //do nothing
+        }))
+        // Unfollow
+        alert.addAction(UIAlertAction(
+            title: "Unfollow",
+            style: .destructive,
+            handler: {
+                (action: UIAlertAction)->Void in
+                // Unfollow
+                SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
+                self.configureHeader(userId: self.user.uid)
+                self.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
+        }))
+        present(alert, animated: false, completion: nil)
     }
     
     @objc func logout(){
@@ -459,39 +482,6 @@ extension MyRanks: AddRankingDelegate{
         }
     }
 }
-/*
-extension MyRanks: MyRanksAddRankingViewDelegate{
-    func addRankingReceiveInfoToCreate(inCity: String, withFood: FoodType) {
-        
-        // Test if we already have that ranking in our list
-        if (rankings.filter {$0.key == withFood.key}).count == 0{
-            // If we don't have the ranking, we add it to Firebase
-            let defaultDescription = "Spent all my life looking for the best " + withFood.name + " places in " + currentCity.name + ". This is the definitive list."
-            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon, description: defaultDescription)
-            // Create a child reference and update the value
-            let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
-            newRankingRef.setValue(newRanking.toAnyObject())
-            // Only need to reload.  The firebase observer will update the content
-            myRanksTable.reloadData()
-            
-        }else{
-            // Ranking already in list
-            let alert = UIAlertController(
-                title: "Duplicate ranking",
-                message: "You already have a \(withFood.name) ranking in \(inCity).",
-                preferredStyle: .alert)
-            
-            alert.addAction(UIAlertAction(
-                title: "OK",
-                style: .default,
-                handler: {
-                    (action: UIAlertAction)->Void in
-                    //do nothing
-            }))
-            present(alert, animated: false, completion: nil)
-        }
-    }
-}*/
 
 // MARK: table stuff
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{

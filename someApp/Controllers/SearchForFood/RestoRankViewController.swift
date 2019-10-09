@@ -24,6 +24,7 @@ class RestoRankViewController: UIViewController {
     // Class Variables
     private let refreshControl = UIRefreshControl()
     private var emptyListFlag: Bool = false
+    private var user:User!
 
     /// Adds part// Ad stuff
     private var bannerView: GADBannerView!
@@ -66,6 +67,14 @@ class RestoRankViewController: UIViewController {
         restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(currentCity.country).child(currentCity.state).child(currentCity.key).child(currentFood.key)
         restoDatabaseReference = SomeApp.dbResto
         
+        // I. Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            // the user is needed in the header
+            self.configureHeader()
+        }
+        
         // Initialize the adds
         let options = GADMultipleAdsAdLoaderOptions()
         options.numberOfAds = numAdsToLoad
@@ -85,7 +94,7 @@ class RestoRankViewController: UIViewController {
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
         
-        configureHeader()
+        
         updateTableFromDatabase()
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -113,10 +122,21 @@ class RestoRankViewController: UIViewController {
         followButton.layer.borderWidth = 1.0
         followButton.layer.masksToBounds = true
         
-        // TODO: verify if we're already following
-        followButton.setTitle("Follow", for: .normal)
-        //followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
-        
+        // We need to verify if the user is already following the ranking
+        let dbPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
+        let tmpRef = SomeApp.dbRankingFollowers.child(dbPath)
+        tmpRef.child(user.uid).observe(.value, with: {snapshot in
+            
+            if snapshot.exists() {
+                self.followButton.setTitle("Unfollow", for: .normal)
+                self.followButton.addTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
+            }else{
+                self.followButton.setTitle("Follow", for: .normal)
+                self.followButton.addTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+            }
+            self.followButton.isHidden = false
+            self.followButton.isEnabled = true
+        })
     }
     
     // MARK: Ad stuff
@@ -194,6 +214,43 @@ class RestoRankViewController: UIViewController {
             default: break
             }
         }
+    }
+}
+
+// MARK: objc funcs
+extension RestoRankViewController{
+    
+    @objc func followRanking(){
+        SomeApp.followRanking(userId: user.uid, city: currentCity, foodId: currentFood.key)
+        configureHeader()
+        self.followButton.removeTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+    }
+    
+    @objc func unfollowRanking(){
+        let alert = UIAlertController(
+        title: "Unfollow ?",
+        message: "You will no longer receive updates and notifications from this ranking.",
+        preferredStyle: .alert)
+        // OK
+        alert.addAction(UIAlertAction(
+            title: "Cancel",
+            style: .default,
+            handler: {
+                (action: UIAlertAction)->Void in
+                //do nothing
+        }))
+        // Unfollow
+        alert.addAction(UIAlertAction(
+            title: "Unfollow",
+            style: .destructive,
+            handler: {
+                (action: UIAlertAction)->Void in
+                //Unfollow
+                SomeApp.unfollowRanking(userId: self.user.uid, city: self.currentCity, foodId: self.currentFood.key)
+                self.configureHeader()
+                self.followButton.removeTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
+        }))
+        present(alert, animated: false, completion: nil)
     }
 }
 
