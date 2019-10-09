@@ -21,10 +21,14 @@ class HomeViewController: UIViewController {
     // Cell identifiers
     private let timelineNewUserRanking = "timelineUserRanking"
     private let timelineUserFollowing = "timelineUserFollowing"
+    private let timelineNewUserReview = "timelineUserNewReview"
+    private let timelineNewFavorite = "timelineUserFavorite"
     
     // Segue identifiers
     private let segueIDShowUserFromNewRanking = "showUserFromNewRanking"
     private let segueIDShowUserFromFollowing = "showUserFollowing"
+    private let segueIDShowUserReview = "showUserReview"
+    private let segueIDShowUserFavorite = "showUserFavorite"
     
     // Instance variables
     private var user: User!
@@ -140,11 +144,35 @@ class HomeViewController: UIViewController {
             let myRanksVC = segue.destination as? MyRanks{
             
             myRanksVC.calledUser = getUserObjectFromNewFollowing(post: somePost[indexPath.row])
-            
             myRanksVC.currentCity = getCityFromFollowing(target: somePost[indexPath.row].target)
-            
         }
-        // if
+        // Show ThisRanking for new review
+        else if segue.identifier == self.segueIDShowUserReview,
+            let cell = sender as? HomeCellWithImage,
+            let indexPath = newsFeedTable.indexPath(for: cell),
+            let thisRankingVC = segue.destination as? ThisRanking{
+            // Setup the stuff
+            let parseResult = parseNewReview(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            
+            thisRankingVC.calledUser = parseResult.user
+            thisRankingVC.currentCity = parseResult.city
+            thisRankingVC.currentFood = parseResult.food
+        }
+        // Show ThisRanking for new favorite
+        else if segue.identifier == self.segueIDShowUserFavorite,
+            let cell = sender as? HomeCellWithImage,
+            let indexPath = newsFeedTable.indexPath(for: cell),
+            let thisRankingVC = segue.destination as? ThisRanking{
+            // Setup the stuff
+            let parseResult = parseNewReview(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            
+            thisRankingVC.calledUser = parseResult.user
+            thisRankingVC.currentCity = parseResult.city
+            thisRankingVC.currentFood = parseResult.food
+        }
+        
+        //
+        
     }
 
 }
@@ -182,22 +210,23 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
+        // New review
+        else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = "New Review"
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+        // New favorite
+        else if somePost[indexPath.row].type == TimelineEvents.NewUserFavorite.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = "New Favorite!"
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
         
         // OLD CELLS: User initiated events in timeline
-        else if [TimelineEvents.NewUserFavorite.rawValue,
-            TimelineEvents.NewUserReview.rawValue].contains(somePost[indexPath.row].type),
-            let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineCellWithImage, for: indexPath) as? TimelineCellWithImage{
-            
-            setupPostCellWithImage(cell: postCell,
-                                   type: somePost[indexPath.row].type,
-                                   timestamp: somePost[indexPath.row].timestamp,
-                                   payload: somePost[indexPath.row].payload,
-                                   icon: somePost[indexPath.row].icon,
-                                   initiator: somePost[indexPath.row].initiator,
-                                   target: somePost[indexPath.row].target)
-            
-            return postCell
-        }else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
+        else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
             setupPostCell(cell: postCell,
                           type: somePost[indexPath.row].type,
                           timestamp: somePost[indexPath.row].timestamp,
@@ -211,9 +240,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
     }
 }
 
-////////////
-// MARK : Home cells
-////////////
+// MARK: Home cells
 
 extension HomeViewController{
     func setupPostCell(cell: TimelineCell, type:String, timestamp:Double, payload: String, icon:String ){
@@ -226,17 +253,7 @@ extension HomeViewController{
         let localDate = dateFormatter.string(from: date)
         cell.dateLabel.text = localDate
         
-        if (type == TimelineEvents.NewUserRanking.rawValue){
-            cell.titleLabel.text = "New Ranking"
-            cell.bodyLabel.text  = payload
-            cell.iconLabel.text = icon
-            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
-        }else if (type == TimelineEvents.NewUserFavorite.rawValue){
-            cell.titleLabel.text = "New Favorite"
-            cell.bodyLabel.text = payload
-            cell.iconLabel.text = icon
-            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
-        }else if (type == TimelineEvents.NewBestRestoInRanking.rawValue){
+        if (type == TimelineEvents.NewBestRestoInRanking.rawValue){
             cell.titleLabel.text = "New Best!"
             cell.bodyLabel.text = payload
             cell.iconLabel.text = icon
@@ -250,47 +267,6 @@ extension HomeViewController{
             cell.iconLabel.text = "💬"
         }
 
-    }
-    
-    // MARK: Old cells: Same but with Image
-    func setupPostCellWithImage(cell: TimelineCellWithImage, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String){
-        
-        // Date
-        let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
-        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-        let localDate = dateFormatter.string(from: date)
-        cell.dateLabel.text = localDate
-        
-        // Body
-        cell.bodyLabel.text = payload
-        
-        // Title
-        if (type == TimelineEvents.NewUserRanking.rawValue){
-            cell.titleLabel.text = "New Ranking"
-            //cell.iconLabel.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 4))
-        }else if (type == TimelineEvents.NewUserFavorite.rawValue){
-            cell.titleLabel.text = "New Favorite"
-        }else if type == TimelineEvents.NewUserReview.rawValue{
-            cell.titleLabel.text = "New Review"
-        }
-        
-        // Picture
-        let userRef = SomeApp.dbUserData
-        userRef.child(initiator).observeSingleEvent(of: .value, with: {snapshot in
-            if let value = snapshot.value as? [String:Any],
-                let photoURL = value["photourl"] as? String{
-                cell.cellImage.sd_setImage(
-                    with: URL(string: photoURL),
-                    placeholderImage: UIImage(named: "userdefault"),
-                    options: [],
-                    completed: nil)
-            }else{
-                cell.cellImage.image = UIImage(named: "userdefault")
-            }
-            
-        })
     }
     
     // MARK: new cells
@@ -348,6 +324,16 @@ extension HomeViewController{
     private func getCityFromFollowing(target: String) -> City{
         let cityArray = target.components(separatedBy: "/")
         return City(country: cityArray[0] , state: cityArray[1], key: cityArray[2], name: cityArray[3])
+    }
+    
+    // Parse new review post
+    private func parseNewReview(target:String, targetName:String, initiator:String) -> (food:FoodType, user: UserDetails, city: City){
+        let targetArray = target.components(separatedBy: "/")
+        let targetNameArray = targetName.components(separatedBy: "/")
+        let tmpUser = UserDetails(nickName: targetNameArray[0], key: initiator)
+        let tmpCity = City(country: targetArray[0] , state: targetArray[1], key: targetArray[2], name: targetNameArray[1])
+        let tmpFood = FoodType(icon: targetNameArray[3], name: targetNameArray[2], key: targetArray[3])
+        return (food: tmpFood, user: tmpUser, city: tmpCity)
     }
     
 }

@@ -100,26 +100,26 @@ class SomeApp{
     
     // MARK: ranking functions
     // Update the position of a resto
-    static func updateRestoPositionInRanking(userId: String, city: City, ranking: Ranking, restoId: String, position: Int){
-        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key + "/" + restoId + "/position"
+    static func updateRestoPositionInRanking(userId: String, city: City, foodId: String, restoId: String, position: Int){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + restoId + "/position"
         SomeApp.dbUserRankingDetails.child(dbPath).setValue(position)
     }
     
     // Delete resto
-    static func deleteRestoFromRanking(userId: String, city: City, ranking: Ranking, restoId: String){
-        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key + "/" + restoId
+    static func deleteRestoFromRanking(userId: String, city: City, foodId: String, restoId: String){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + restoId
         SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
     }
     
     // Delete ranking
-    static func deleteUserRanking(userId: String, city: City, ranking: Ranking){
-        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key
+    static func deleteUserRanking(userId: String, city: City, foodId: String){
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
         SomeApp.dbUserRankings.child(dbPath).removeValue()
         SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
     }
     
     // Add resto to Ranking : we need to check the model first
-    static func addRestoToRanking(userId: String, resto: Resto, mapItem: MKMapItem, forFood:FoodType, ranking: Ranking,city: City){
+    static func addRestoToRanking(userId: String, resto: Resto, mapItem: MKMapItem, forFood:FoodType, foodId: String,city: City){
         let dbPath = city.country + "/" + city.state + "/" + city.key
         
         // A. Check if the resto exists in the resto list
@@ -138,14 +138,14 @@ class SomeApp{
                 SomeApp.addrestoAddressToModel(mapItem: mapItem, resto: resto, city:city)
             }
             // Still need to add to ranking
-            addRestoUserRanking(userid: userId, resto: resto, city: city, ranking: ranking)
+            addRestoUserRanking(userid: userId, resto: resto, city: city, foodId: foodId)
         })
     }
     
     
     // Add resto to ranking
-    private static func addRestoUserRanking(userid: String, resto: Resto, city: City, ranking: Ranking){
-        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + ranking.key
+    private static func addRestoUserRanking(userid: String, resto: Resto, city: City, foodId: String){
+        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
         // Get current number of items in the ranking
         dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             let position = snapshot.childrenCount + 1
@@ -173,8 +173,8 @@ class SomeApp{
     }
     
     // MARK: Add/update Review
-    static func updateUserReview(userid: String, resto: Resto, city: City, currentRankingId: String, text: String){
-        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + currentRankingId + "/" + resto.key
+    static func updateUserReview(userid: String, resto: Resto, city: City, foodId: String, text: String){
+        let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key
         let dbRef = dbUserReviews.child(dbPath)
         
         let timestamp = NSDate().timeIntervalSince1970 * 1000

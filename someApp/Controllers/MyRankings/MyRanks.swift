@@ -353,8 +353,7 @@ class MyRanks: UIViewController {
             if let seguedMVC = segue.destination as? ThisRanking{
                 if let tmpCell = sender as? MyRanksTableViewCell,
                     let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
-                    // I should send Ranking, Food Key, and current city
-                    seguedMVC.currentRanking = rankings[tmpIndexPath.row]
+                    // I should send Food Key, and current city
                     seguedMVC.currentCity = self.currentCity
                     seguedMVC.currentFood = foodItems[tmpIndexPath.row]
                     seguedMVC.profileImage = profilePictureImage.image
@@ -556,7 +555,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
             // Delete from model
-            SomeApp.deleteUserRanking(userId: user.uid, city: currentCity, ranking: rankings[indexPath.row])
+            SomeApp.deleteUserRanking(userId: user.uid, city: currentCity, foodId: rankings[indexPath.row].key)
             
             // Delete the row (only for smothness, we will download again)
             rankings.remove(at: indexPath.row)

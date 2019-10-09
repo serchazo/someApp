@@ -21,9 +21,8 @@ class ThisRanking: UIViewController {
     //Get from segue-r
     var currentCity: City!
     var currentFood: FoodType!
-    var currentRanking: Ranking!
-    var calledUser:UserDetails! // Control variable
-    var profileImage: UIImage!
+    var calledUser: UserDetails! // Control variable
+    var profileImage: UIImage! // If we don't get it from segue-r, it's OK
     
     // Instance variables
     private var user: User!
@@ -255,7 +254,7 @@ class ThisRanking: UIViewController {
     // MARK: myRanking Header
     private func configureHeader(userId: String){
         // Configure navbar
-        navigationItem.title = currentFood.icon
+        navigationItem.title = "foodz.guru"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         if calledUser != nil{
@@ -270,8 +269,24 @@ class ThisRanking: UIViewController {
         imageView.clipsToBounds = true
         if profileImage != nil{
             imageView.image = profileImage!
+        }else{
+            // If the segue-r doesn't send us an image, we go look for it :)
+            SomeApp.dbUserData.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+                if let value = snapshot.value as? [String: AnyObject]{
+                    var photoURL: URL!
+                    if let tmpPhotoURL = value["photourl"] as? String {
+                        photoURL = URL(string: tmpPhotoURL)
+                    }else{
+                        photoURL = URL(string: "")
+                    }
+                    self.imageView.sd_setImage(
+                    with: photoURL,
+                    placeholderImage: UIImage(named: "userdefault"),
+                    options: [],
+                    completed: nil)
+                }
+            })
         }
-        
         
         // Title
         if calledUser == nil{
@@ -794,12 +809,12 @@ extension ThisRanking{
         print("Update here")
         if operations.count > 0{
             let delOperations = operations.filter({$0.operationType == .Delete})
-            delOperations.map({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, ranking: currentRanking, restoId: $0.restoIdentifier) })
+            delOperations.map({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: $0.restoIdentifier) })
             
             // Then update the positions in the ranking
             for index in 0..<thisEditableRanking.count{
                 let tmpResto = thisEditableRanking[index]
-                SomeApp.updateRestoPositionInRanking(userId: user.uid, city: currentCity, ranking: currentRanking, restoId: tmpResto.key, position:index+1 )
+                SomeApp.updateRestoPositionInRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: tmpResto.key, position:index+1 )
             }
         }
         //Update view
@@ -835,7 +850,7 @@ extension ThisRanking{
     // MARK: Write the review
     func doneUpdating(resto: Resto, commentText: String){
         if ![""," ","Write your Review here","Write your Review here."].contains(commentText){
-            SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, currentRankingId: currentRanking.key ,text: commentText)
+            SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, foodId: currentFood.key ,text: commentText)
         }
 
         //Close the view
@@ -987,7 +1002,7 @@ extension ThisRanking: MyRanksMapSearchViewDelegate{
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()
         }else{
-            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, ranking: currentRanking, city: currentCity)
+            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, foodId: currentFood.key, city: currentCity)
         }
     }
     
