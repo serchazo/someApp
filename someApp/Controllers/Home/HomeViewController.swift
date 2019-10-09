@@ -23,16 +23,18 @@ class HomeViewController: UIViewController {
     private let timelineUserFollowing = "timelineUserFollowing"
     private let timelineNewUserReview = "timelineUserNewReview"
     private let timelineNewFavorite = "timelineUserFavorite"
+    private let timelineRankingInfo = "timelineRankingInfoCell"
     
     // Segue identifiers
     private let segueIDShowUserFromNewRanking = "showUserFromNewRanking"
     private let segueIDShowUserFromFollowing = "showUserFollowing"
     private let segueIDShowUserReview = "showUserReview"
     private let segueIDShowUserFavorite = "showUserFavorite"
+    private let segueIDShowTopRestos = "showTopRestos"
     
     // Instance variables
     private var user: User!
-    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String, targetName: String)] = []
+    private var somePost: [(key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)] = []
     private var userTimelineReference: DatabaseReference!
     
     
@@ -83,7 +85,7 @@ class HomeViewController: UIViewController {
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, icon:String, initiator:String, target: String, targetName: String)] = []
+            var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, initiator:String, target: String, targetName: String)] = []
         
             for child in snapshot.children{
                 if let timeLineSnap = child as? DataSnapshot,
@@ -91,9 +93,7 @@ class HomeViewController: UIViewController {
                     let type = value["type"] as? String,
                     let timestamp = value["timestamp"] as? Double,
                     let payload = value["payload"] as? String{
-                    // Icon could be empty
-                    var tmpIcon = ""
-                    if let icon = value["icon"] as? String{tmpIcon = icon}
+                    // Following could be empty
                     var tmpTarget = ""
                     if let target = value["target"] as? String {tmpTarget = target}
                     var tmpTargetName = ""
@@ -106,7 +106,6 @@ class HomeViewController: UIViewController {
                         type: type,
                         timestamp: timestamp,
                         payload: payload,
-                        icon: tmpIcon,
                         initiator: tmpInitiator,
                         target: tmpTarget,
                         targetName: tmpTargetName))
@@ -170,9 +169,17 @@ class HomeViewController: UIViewController {
             thisRankingVC.currentCity = parseResult.city
             thisRankingVC.currentFood = parseResult.food
         }
-        
+        // Show resto rank for ranking stuff
+        else if segue.identifier == self.segueIDShowTopRestos,
+        let cell = sender as? HomeCellWithIcon,
+        let indexPath = newsFeedTable.indexPath(for: cell),
+            let topRestosVC = segue.destination as? RestoRankViewController{
+            let parseResult = parseTopRestos(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            
+            topRestosVC.currentCity = parseResult.city
+            topRestosVC.currentFood = parseResult.food
+        }
         //
-        
     }
 
 }
@@ -224,14 +231,28 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
-        
-        // OLD CELLS: User initiated events in timeline
+        // New best in ranking
+        else if somePost[indexPath.row].type == TimelineEvents.NewBestRestoInRanking.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            cell.titleLabel.text = "New Best!"
+            setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+        // New arrival in ranking
+        else if somePost[indexPath.row].type == TimelineEvents.NewArrivalInRanking.rawValue,
+        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            cell.titleLabel.text = "Let's go taste"
+            setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+            
+        // Foodz.guru stuff
         else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
             setupPostCell(cell: postCell,
                           type: somePost[indexPath.row].type,
                           timestamp: somePost[indexPath.row].timestamp,
                           payload: somePost[indexPath.row].payload,
-                          icon: somePost[indexPath.row].icon)
+                          icon: "💬")
             
             return postCell
         }else{
@@ -253,15 +274,7 @@ extension HomeViewController{
         let localDate = dateFormatter.string(from: date)
         cell.dateLabel.text = localDate
         
-        if (type == TimelineEvents.NewBestRestoInRanking.rawValue){
-            cell.titleLabel.text = "New Best!"
-            cell.bodyLabel.text = payload
-            cell.iconLabel.text = icon
-        }else if (type == TimelineEvents.NewArrivalInRanking.rawValue){
-            cell.titleLabel.text = "Among the best"
-            cell.bodyLabel.text = payload
-            cell.iconLabel.text = icon
-        }else if (type == TimelineEvents.FoodzGuruPost.rawValue){
+        if (type == TimelineEvents.FoodzGuruPost.rawValue){
             cell.titleLabel.text = "foodz.guru"
             cell.bodyLabel.text = payload
             cell.iconLabel.text = "💬"
@@ -270,7 +283,30 @@ extension HomeViewController{
     }
     
     // MARK: new cells
-    func setImageDateBodyInCell(cell: HomeCellWithImage, forPost: (key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String, targetName: String)){
+    // With icon
+    func setIconDateBodyInCell(cell: HomeCellWithIcon, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
+        // Set icon
+        let tmpArray = forPost.targetName.components(separatedBy: "/")
+        if tmpArray.count > 3{
+            cell.iconLabel.text = tmpArray[2]
+        }else{
+            cell.iconLabel.text = "💬"
+        }
+        
+        // Set Date
+        let date = Date(timeIntervalSince1970: TimeInterval(forPost.timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        cell.dateLabel.text = localDate
+        
+        // Body
+        cell.bodyLabel.text = forPost.payload
+    }
+    
+    // With image
+    func setImageDateBodyInCell(cell: HomeCellWithImage, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
         // Set Image
         let userRef = SomeApp.dbUserData
         userRef.child(forPost.initiator).observeSingleEvent(of: .value, with: {snapshot in
@@ -309,12 +345,12 @@ extension HomeViewController{
         return City(country: cityArray[0] , state: cityArray[1], key: cityArray[2], name: targetArray[1])
     }
     //
-    private func getUserObjectFromNewRanking(post: (key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String, targetName: String)) -> UserDetails{
+    private func getUserObjectFromNewRanking(post: (key: String, type:String, timestamp:Double, payload: String,initiator: String, target: String, targetName: String)) -> UserDetails{
         let payLoadArray = post.payload.components(separatedBy: " ")
         return UserDetails(nickName: payLoadArray[0], key: post.initiator)
     }
     // Get user object from following post
-    private func getUserObjectFromNewFollowing(post: (key: String, type:String, timestamp:Double, payload: String, icon: String, initiator: String, target: String, targetName: String)) -> UserDetails{
+    private func getUserObjectFromNewFollowing(post: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)) -> UserDetails{
         let nick = post.targetName
         let payLoadArray = post.target.components(separatedBy: "/")
         let userKey = payLoadArray[payLoadArray.count-1]
@@ -334,6 +370,16 @@ extension HomeViewController{
         let tmpCity = City(country: targetArray[0] , state: targetArray[1], key: targetArray[2], name: targetNameArray[1])
         let tmpFood = FoodType(icon: targetNameArray[3], name: targetNameArray[2], key: targetArray[3])
         return (food: tmpFood, user: tmpUser, city: tmpCity)
+    }
+    
+    // Parse top restos post
+    private func parseTopRestos(target:String, targetName:String, initiator:String) -> (food:FoodType, city: City){
+        let targetArray = target.components(separatedBy: "/")
+        let targetNameArray = targetName.components(separatedBy: "/")
+        let tmpCity = City(country: targetArray[0] , state: targetArray[1], key: targetArray[2], name: targetNameArray[0])
+        let tmpFood = FoodType(icon: targetNameArray[2], name: targetNameArray[1], key: targetArray[3])
+        
+        return (food: tmpFood, city: tmpCity)
     }
     
 }
