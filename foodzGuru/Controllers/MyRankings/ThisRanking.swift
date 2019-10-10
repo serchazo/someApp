@@ -1151,6 +1151,12 @@ extension ThisRanking: GADBannerViewDelegate{
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+        // Here
+        let placeHolderAd = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        placeHolderAd.text = "Get this spot!"
+        placeHolderAd.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
+        adView.addSubview(placeHolderAd)
+        
     }
     
     /// Tells the delegate that a full-screen view will be presented in response

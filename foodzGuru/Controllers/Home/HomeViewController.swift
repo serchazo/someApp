@@ -173,7 +173,7 @@ class HomeViewController: UIViewController {
         else if segue.identifier == self.segueIDShowTopRestos,
         let cell = sender as? HomeCellWithIcon,
         let indexPath = newsFeedTable.indexPath(for: cell),
-            let topRestosVC = segue.destination as? RestoRankViewController{
+            let topRestosVC = segue.destination as? BestRestosViewController{
             let parseResult = parseTopRestos(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
             
             topRestosVC.currentCity = parseResult.city
@@ -287,7 +287,7 @@ extension HomeViewController{
     func setIconDateBodyInCell(cell: HomeCellWithIcon, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
         // Set icon
         let tmpArray = forPost.targetName.components(separatedBy: "/")
-        if tmpArray.count > 3{
+        if tmpArray.count >= 3{
             cell.iconLabel.text = tmpArray[2]
         }else{
             cell.iconLabel.text = "💬"

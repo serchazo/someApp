@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class RestoRankViewController: UIViewController {
+class BestRestosViewController: UIViewController {
     private static var showRestoDetailSegue = "showRestoDetail"
     private static let screenSize = UIScreen.main.bounds.size
     
@@ -203,7 +203,7 @@ class RestoRankViewController: UIViewController {
         // Pass the selected object to the new view controller.
         if let identifier = segue.identifier{
             switch identifier{
-            case RestoRankViewController.showRestoDetailSegue:
+            case BestRestosViewController.showRestoDetailSegue:
                 if let cell = sender as? RestoRankTableViewCell,
                     let indexPath = tableView.indexPath(for: cell),
                     let seguedToResto = segue.destination as? MyRestoDetail{
@@ -218,7 +218,7 @@ class RestoRankViewController: UIViewController {
 }
 
 // MARK: objc funcs
-extension RestoRankViewController{
+extension BestRestosViewController{
     
     @objc func followRanking(){
         SomeApp.followRanking(userId: user.uid, city: currentCity, foodId: currentFood.key)
@@ -255,7 +255,7 @@ extension RestoRankViewController{
 }
 
 // MARK: Table stuff
-extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  {
+extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource  {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -370,7 +370,7 @@ extension RestoRankViewController : UITableViewDelegate, UITableViewDataSource  
 
 
 // MARK: Some view stuff
-extension RestoRankViewController{
+extension BestRestosViewController{
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
@@ -392,7 +392,7 @@ extension RestoRankViewController{
 }
 
 // MARK : Adds extension
-extension RestoRankViewController: GADUnifiedNativeAdLoaderDelegate{
+extension BestRestosViewController: GADUnifiedNativeAdLoaderDelegate{
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
         print("Received native ad: \(nativeAd)")
         
@@ -412,7 +412,7 @@ extension RestoRankViewController: GADUnifiedNativeAdLoaderDelegate{
 }
 
 // MARK: Banner Ad Delegate
-extension RestoRankViewController: GADBannerViewDelegate{
+extension BestRestosViewController: GADBannerViewDelegate{
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         adView.addSubview(bannerView)

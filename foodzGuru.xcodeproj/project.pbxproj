@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		341705BF234F10BE006123A7 /* CustomCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */; };
 		341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */; };
 		341C754C231622EA00BA26D9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 341C754B231622EA00BA26D9 /* Localizable.strings */; };
 		341C7550231651E200BA26D9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754F231651E200BA26D9 /* LocationManager.swift */; };
@@ -26,7 +27,7 @@
 		3465E53F2315033C00166699 /* MyRanksMapSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3465E53E2315033B00166699 /* MyRanksMapSearchViewController.swift */; };
 		346FE0DF230E7D07000556EB /* RestoRankTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */; };
 		346FE0E3230E8008000556EB /* BasicSomeAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */; };
-		346FE0E7230F70E9000556EB /* RestoRankViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E6230F70E9000556EB /* RestoRankViewController.swift */; };
+		346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E6230F70E9000556EB /* BestRestosViewController.swift */; };
 		346FE0E9230FC632000556EB /* ItemChooserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E8230FC632000556EB /* ItemChooserViewController.swift */; };
 		347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347F55A72324931700F85DB7 /* RestoMapArray.swift */; };
 		34873A882332066900463AFE /* EditableRestoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34873A872332066900463AFE /* EditableRestoCell.xib */; };
@@ -64,6 +65,7 @@
 /* Begin PBXFileReference section */
 		0403D58CB775E255165F1414 /* Pods-foodzGuru.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-foodzGuru.release.xcconfig"; path = "Target Support Files/Pods-foodzGuru/Pods-foodzGuru.release.xcconfig"; sourceTree = "<group>"; };
 		2810C6E94509AEF2B6290F08 /* Pods_foodzGuru.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_foodzGuru.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewLayout.swift; sourceTree = "<group>"; };
 		341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsTableTableViewController.swift; sourceTree = "<group>"; };
 		341C754B231622EA00BA26D9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		341C754F231651E200BA26D9 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -83,7 +85,7 @@
 		3465E53E2315033B00166699 /* MyRanksMapSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRanksMapSearchViewController.swift; sourceTree = "<group>"; };
 		346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoRankTableViewCell.swift; sourceTree = "<group>"; };
 		346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSomeAppModel.swift; sourceTree = "<group>"; };
-		346FE0E6230F70E9000556EB /* RestoRankViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoRankViewController.swift; sourceTree = "<group>"; };
+		346FE0E6230F70E9000556EB /* BestRestosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestRestosViewController.swift; sourceTree = "<group>"; };
 		346FE0E8230FC632000556EB /* ItemChooserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemChooserViewController.swift; sourceTree = "<group>"; };
 		347F55A72324931700F85DB7 /* RestoMapArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoMapArray.swift; sourceTree = "<group>"; };
 		34873A872332066900463AFE /* EditableRestoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditableRestoCell.xib; sourceTree = "<group>"; };
@@ -231,9 +233,10 @@
 			children = (
 				34FEE9C12311207C00FE0590 /* SearchViewController.swift */,
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
+				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
 				344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */,
 				34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */,
-				346FE0E6230F70E9000556EB /* RestoRankViewController.swift */,
+				346FE0E6230F70E9000556EB /* BestRestosViewController.swift */,
 				346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */,
 			);
 			path = SearchForFood;
@@ -427,7 +430,7 @@
 				346FE0E3230E8008000556EB /* BasicSomeAppModel.swift in Sources */,
 				34FEE9CC23120F6300FE0590 /* MyRanks.swift in Sources */,
 				346FE0E9230FC632000556EB /* ItemChooserViewController.swift in Sources */,
-				346FE0E7230F70E9000556EB /* RestoRankViewController.swift in Sources */,
+				346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */,
 				344EA299232E4092001F1FBC /* HomeViewController.swift in Sources */,
 				341DD15C232895E300102472 /* MyRestoDetail.swift in Sources */,
 				341C7552231684F200BA26D9 /* MKPlacemark+Extension.swift in Sources */,
@@ -439,6 +442,7 @@
 				34DA7EB5234AEF4900EBD360 /* AddRanking.swift in Sources */,
 				34FEE9D42312B52300FE0590 /* ThisRankingCell.swift in Sources */,
 				34F197AB2320BB38007D556F /* LoginViewController.swift in Sources */,
+				341705BF234F10BE006123A7 /* CustomCollectionViewLayout.swift in Sources */,
 				346FE0DF230E7D07000556EB /* RestoRankTableViewCell.swift in Sources */,
 				341DD165232A369E00102472 /* Foodies.swift in Sources */,
 				34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */,

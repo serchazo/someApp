@@ -12,7 +12,11 @@ class LocationManager: NSObject {
     
     private let locationManager = CLLocationManager()
     
-    @objc dynamic var currentLocation: CLLocation?
+    @objc dynamic var currentLocation: CLLocation?{
+        didSet{
+            print("location set")
+        }
+    }
     
     override init() {
         super.init()

@@ -57,9 +57,10 @@ class MyRanksMapSearchViewController: UIViewController {
     }
     @IBOutlet weak var coolMap: MKMapView!
     
+    //MARK: timeline funcs
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+        print("awaken from nib")
         suggestionController = SuggestionsTableTableViewController()
         suggestionController.tableView.delegate = self
         
@@ -93,6 +94,8 @@ class MyRanksMapSearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("loaded")
+        
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
         searchBar.placeholder = "Search for your fav restorant"
@@ -115,7 +118,7 @@ class MyRanksMapSearchViewController: UIViewController {
         }
     }
     
-    // MARK : Some search functions
+    // MARK: Some search functions
     
     /// - Parameter suggestedCompletion: A search completion provided by `MKLocalSearchCompleter` when tapping on a search completion table row
     private func search(for suggestedCompletion: MKLocalSearchCompletion) {
@@ -170,7 +173,7 @@ class MyRanksMapSearchViewController: UIViewController {
     }
 }
 
-// MARK : table stuff
+// MARK: table stuff
 extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard locationManager.currentLocation != nil else { return 1 }
@@ -181,6 +184,7 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //If we are waiting^^
         guard locationManager.currentLocation != nil else {
+            print("started waiting")
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
             let spinner = UIActivityIndicatorView(style: .gray)

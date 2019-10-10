@@ -31,6 +31,11 @@
     <string>2398373916918165</string>
     <key>FacebookDisplayName</key>
     <string>foodz.Guru</string>
+    <!-- Disable Facebook data collecion -->
+    <key>FacebookAutoLogAppEventsEnabled</key>
+    <false/>
+    <key>FacebookAdvertiserIDCollectionEnabled</key>
+    <false/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-5723552712049473~4784782033</string>
 	<key>LSApplicationQueriesSchemes</key>

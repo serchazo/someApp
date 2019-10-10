@@ -16,6 +16,9 @@ target 'foodzGuru' do
     #Storage pod
     pod 'Firebase/Storage'
     
+    #Messaging pod - for Push Notifications
+    pod 'Firebase/Messaging' 
+    
     # add the Firebase pod for AdMob
     pod 'Firebase/AdMob'
     

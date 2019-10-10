@@ -59,8 +59,7 @@ class LoginViewController: UIViewController {
                         self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
                     }
                 })
-                
-                
+
             }
         }
         
