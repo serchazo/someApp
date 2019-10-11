@@ -194,12 +194,8 @@ class MyRanks: UIViewController {
     
     // MARK: Fetch image from URL
     private func fetchImage(){
-        profilePictureImage.layer.cornerRadius = 0.5 * self.profilePictureImage.bounds.size.width
-        profilePictureImage.layer.borderColor = SomeApp.themeColorOpaque.cgColor
-        profilePictureImage.layer.borderWidth = 2.0
-        profilePictureImage.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-        profilePictureImage.clipsToBounds = true
-        
+        FoodzLayout.configureProfilePicture(imageView: profilePictureImage)
+
         profilePictureImage.sd_setImage(
         with: photoURL,
         placeholderImage: UIImage(named: "userdefault"),

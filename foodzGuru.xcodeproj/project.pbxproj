@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		341705BF234F10BE006123A7 /* CustomCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */; };
+		341705C1235009B4006123A7 /* FirstLoginSecondScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705C0235009B4006123A7 /* FirstLoginSecondScreen.swift */; };
+		341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705C2235017D8006123A7 /* FirstLoginThirdScreen.swift */; };
+		341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705C4235017F9006123A7 /* FirstLoginFourthScreen.swift */; };
+		341705C723506210006123A7 /* FoodzLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705C623506210006123A7 /* FoodzLayout.swift */; };
 		341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */; };
 		341C754C231622EA00BA26D9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 341C754B231622EA00BA26D9 /* Localizable.strings */; };
 		341C7550231651E200BA26D9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754F231651E200BA26D9 /* LocationManager.swift */; };
@@ -66,6 +70,10 @@
 		0403D58CB775E255165F1414 /* Pods-foodzGuru.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-foodzGuru.release.xcconfig"; path = "Target Support Files/Pods-foodzGuru/Pods-foodzGuru.release.xcconfig"; sourceTree = "<group>"; };
 		2810C6E94509AEF2B6290F08 /* Pods_foodzGuru.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_foodzGuru.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewLayout.swift; sourceTree = "<group>"; };
+		341705C0235009B4006123A7 /* FirstLoginSecondScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginSecondScreen.swift; sourceTree = "<group>"; };
+		341705C2235017D8006123A7 /* FirstLoginThirdScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginThirdScreen.swift; sourceTree = "<group>"; };
+		341705C4235017F9006123A7 /* FirstLoginFourthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginFourthScreen.swift; sourceTree = "<group>"; };
+		341705C623506210006123A7 /* FoodzLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodzLayout.swift; sourceTree = "<group>"; };
 		341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsTableTableViewController.swift; sourceTree = "<group>"; };
 		341C754B231622EA00BA26D9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		341C754F231651E200BA26D9 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -147,6 +155,9 @@
 			isa = PBXGroup;
 			children = (
 				34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */,
+				341705C0235009B4006123A7 /* FirstLoginSecondScreen.swift */,
+				341705C2235017D8006123A7 /* FirstLoginThirdScreen.swift */,
+				341705C4235017F9006123A7 /* FirstLoginFourthScreen.swift */,
 				34F197AA2320BB38007D556F /* LoginViewController.swift */,
 			);
 			path = FirstScreen;
@@ -188,6 +199,7 @@
 				34A0D089234E10080015E496 /* foodzGuru.entitlements */,
 				348EBFCD230E3E8A008026A0 /* AppDelegate.swift */,
 				346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */,
+				341705C623506210006123A7 /* FoodzLayout.swift */,
 				34A76E2B232113EF005951A2 /* Controllers */,
 				34F197AC2320D658007D556F /* Model */,
 				348EBFD6230E3E8C008026A0 /* LaunchScreen.storyboard */,
@@ -433,6 +445,7 @@
 				346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */,
 				344EA299232E4092001F1FBC /* HomeViewController.swift in Sources */,
 				341DD15C232895E300102472 /* MyRestoDetail.swift in Sources */,
+				341705C1235009B4006123A7 /* FirstLoginSecondScreen.swift in Sources */,
 				341C7552231684F200BA26D9 /* MKPlacemark+Extension.swift in Sources */,
 				34FEE9CE231229C000FE0590 /* MyRanksTableViewCell.swift in Sources */,
 				348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */,
@@ -455,13 +468,16 @@
 				34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */,
 				3465E53F2315033C00166699 /* MyRanksMapSearchViewController.swift in Sources */,
 				34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */,
+				341705C723506210006123A7 /* FoodzLayout.swift in Sources */,
 				341DD1602329DF2200102472 /* Comment.swift in Sources */,
 				34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */,
 				34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */,
+				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
 				341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */,
 				341C7550231651E200BA26D9 /* LocationManager.swift in Sources */,
 				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,
+				341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */,
 				344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */,
 				34942D87234DCFAF001DA068 /* HomeCellWithIcon.swift in Sources */,
 			);

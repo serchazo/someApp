@@ -262,11 +262,8 @@ class ThisRanking: UIViewController {
         }
         
         // Picture
-        imageView.layer.cornerRadius = 0.5 * self.imageView.bounds.size.width
-        imageView.layer.borderColor = SomeApp.themeColorOpaque.cgColor
-        imageView.layer.borderWidth = 2.0
-        imageView.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-        imageView.clipsToBounds = true
+        FoodzLayout.configureProfilePicture(imageView: imageView)
+        
         if profileImage != nil{
             imageView.image = profileImage!
         }else{
@@ -305,12 +302,7 @@ class ThisRanking: UIViewController {
         
         // Edit Description Button
         if calledUser == nil {
-            editDescriptionButton.backgroundColor = .white
-            editDescriptionButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            editDescriptionButton.layer.cornerRadius = 15
-            editDescriptionButton.layer.borderColor = SomeApp.themeColor.cgColor
-            editDescriptionButton.layer.borderWidth = 1.0
-            editDescriptionButton.layer.masksToBounds = true
+            FoodzLayout.configureButton(button: editDescriptionButton)
             
             editDescriptionButton.setTitle("Edit Description", for: .normal)
             editDescriptionButton.addTarget(self, action: #selector(popUpEditDescriptionTable), for: .touchUpInside)
