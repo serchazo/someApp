@@ -12,6 +12,7 @@ import Firebase
 class FirstLoginFourthScreen: UIViewController {
     
     private let segueBioOK = "segueBioOK"
+    private let defaults = UserDefaults.standard
     
     // Instance variables
     private var user: User!
@@ -39,16 +40,11 @@ class FirstLoginFourthScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButtons()
-        
         // Get user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
             self.user = user
         }
-        
-        print(userName!)
-        print(photoURL.absoluteString)
-        print(currentCity.name)
     }
     
 
@@ -81,7 +77,15 @@ extension FirstLoginFourthScreen{
     // Setting up the user
     @objc func goButtonPressed(){
         // If the user is not signed in with facebook, we update display name and photo url on firebase
-        /*
+        
+        if bioTextField.text == nil || bioTextField.text == ""{
+            bio = ""
+        }else{
+            bio = bioTextField.text
+        }
+        let tmpCityString = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentCity.name
+        
+        // Update the user profile
         if user.providerID != "facebook.com" {
             let changeRequest = user.createProfileChangeRequest()
             changeRequest.displayName = userName
@@ -91,7 +95,19 @@ extension FirstLoginFourthScreen{
                     print("There was an error updating the user profile: \(error.localizedDescription)")
                 }
             })
-        }*/
+        }
+        // Create the user details object
+        SomeApp.createUserFirstLogin(
+            userId: user.uid,
+            username: userName!,
+            bio: bio!,
+            defaultCity: tmpCityString,
+            photoURL: photoURL.absoluteString)
+        
+        // Save the default City
+        defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)
+        
+        // And Go! to the app
         self.performSegue(withIdentifier: self.segueBioOK, sender: nil)
     }
 }

@@ -97,8 +97,6 @@ class FirstLoginThirdScreen: UIViewController {
             return false
         }
     }
-    
-
 }
 
 // MARK: Edit text field delegate
@@ -117,6 +115,7 @@ extension FirstLoginThirdScreen: UITextFieldDelegate{
 extension FirstLoginThirdScreen: ItemChooserViewDelegate {
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
+        cityTextField.text = city.name + ", " + countryName
         cityTextField.placeholder = city.name
         cityChosenFlag = true
         configureButtons()

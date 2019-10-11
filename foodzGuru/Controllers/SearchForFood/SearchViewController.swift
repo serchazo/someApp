@@ -11,12 +11,13 @@ import Firebase
 
 class SearchViewController: UIViewController {
     // TODO : to change later on.  Current city should be read from properties
-    private var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
+    private var currentCity:City!
     
     private static let screenSize = UIScreen.main.bounds.size
     private let cityChooserSegueID = "cityChooser"
     private let foodChosen = "GoNinjaGo"
     
+    private let defaults = UserDefaults.standard
     //Instance vars
     private var foodList:[FoodType] = []
     private var user: User!
@@ -36,6 +37,7 @@ class SearchViewController: UIViewController {
             guard let user = user else {return}
             self.user = user
         }
+        currentCity = self.getCurrentCityFromDefaults()
         
         // Do any additional setup after loading the view.
         let layout = foodSelectorCollection.collectionViewLayout as? CustomCollectionViewLayout
@@ -44,6 +46,16 @@ class SearchViewController: UIViewController {
         loadFoodTypesFromDB()
     }
 
+    //
+    private func getCurrentCityFromDefaults() -> City{
+        if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
+            print(currentCityString)
+            let cityArray = currentCityString.components(separatedBy: "/")
+            return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
+        }else{
+            return City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
+        }
+    }
 
     func loadFoodTypesFromDB(){
         // Get the list from the Database (an observer)
@@ -95,7 +107,7 @@ class SearchViewController: UIViewController {
                     let indexPath = collectionView.indexPath(for: cell),
                     let seguedDestinationVC = segue.destination as? BestRestosViewController{
                     seguedDestinationVC.currentFood = foodList[indexPath.row]
-                    seguedDestinationVC.currentCity = currentCity
+                    seguedDestinationVC.currentCity = currentCity!
                 }
             case cityChooserSegueID :
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
@@ -195,12 +207,9 @@ extension SearchViewController{
 //MARK: Layout Delegate
 extension SearchViewController: CustomCollectionViewDelegate {
     func theNumberOfItemsInCollectionView() -> Int {
-        print("called")
         guard foodList.count > 0 else {
-            print("1")
             return 1
         }
-        print("nah")
         return foodList.count
     }
     

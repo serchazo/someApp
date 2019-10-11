@@ -11,6 +11,10 @@ import Firebase
 import MapKit
 
 class SomeApp{
+    // Constant
+    static let currentCityDefault = "currentCity"
+    
+    // DB
     private static let dbRootRef:DatabaseReference = Database.database().reference()
     static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child("foodType")
     static let dbResto:DatabaseReference = dbRootRef.child("resto")

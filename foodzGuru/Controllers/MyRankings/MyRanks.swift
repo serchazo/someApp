@@ -30,6 +30,7 @@ class MyRanks: UIViewController {
     private var emptyListFlag = false
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
+    private let defaults = UserDefaults.standard
     private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
     private var photoURL: URL!{
         didSet{
@@ -167,10 +168,13 @@ class MyRanks: UIViewController {
             var thisUserId:String
             if self.calledUser == nil{
                 thisUserId = user.uid
+                // Get the current city
+                self.currentCity = self.getCurrentCityFromDefaults()
             }else{
                 thisUserId = self.calledUser!.key
             }
             self.configureHeader(userId: thisUserId)
+            
             if self.currentCity != nil{
                 self.updateTablewithRanking(userId: thisUserId)
             }
@@ -181,6 +185,17 @@ class MyRanks: UIViewController {
         configureBannerAd()
 
     }
+    
+    //
+    private func getCurrentCityFromDefaults() -> City{
+        if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
+            let cityArray = currentCityString.components(separatedBy: "/")
+            return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
+        }else{
+            return City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
+        }
+    }
+    
     // MARK: Ad stuff
     private func configureBannerAd(){
         bannerView = GADBannerView(adSize: kGADAdSizeBanner)
@@ -815,6 +830,10 @@ extension MyRanks: MyCitiesDelegate{
             foodItems.removeAll()
             currentCity = sender
             changeCityButton.setTitle(currentCity.name, for: .normal)
+            
+            let tmpCityString = sender.country + "/" + sender.state + "/" + "/" + sender.key + "/" + sender.name
+            // Save the default City
+            defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)
             
             if calledUser == nil{
                 updateTablewithRanking(userId: user.uid)

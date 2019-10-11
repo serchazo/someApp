@@ -34,7 +34,11 @@ class FirstLoginSecondScreen: UIViewController {
     }
     
     @IBOutlet weak var instructionLabel: UILabel!
-    @IBOutlet weak var warningLabel: UILabel!
+    @IBOutlet weak var warningLabel: UILabel!{
+        didSet{
+            warningLabel.text = "Don't worry, you can change the picture later."
+        }
+    }
     @IBOutlet weak var profilePicture: UIImageView!
     @IBOutlet weak var spinner: UIActivityIndicatorView!{
         didSet{
@@ -115,6 +119,8 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         spinner.startAnimating()
+        goButton.isHidden = true
+        
         profilePicture.image = nil
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -145,6 +151,8 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
                                 }
                                 // Update the current photo
                                 self.photoURL = downloadURL
+                                self.spinner.stopAnimating()
+                                self.goButton.isHidden = false
                             }
                         }
                     }
