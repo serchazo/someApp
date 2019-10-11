@@ -189,6 +189,7 @@ class MyRanks: UIViewController {
     //
     private func getCurrentCityFromDefaults() -> City{
         if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
+            print("city from defaults: \(currentCityString)")
             let cityArray = currentCityString.components(separatedBy: "/")
             return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
         }else{
@@ -831,7 +832,7 @@ extension MyRanks: MyCitiesDelegate{
             currentCity = sender
             changeCityButton.setTitle(currentCity.name, for: .normal)
             
-            let tmpCityString = sender.country + "/" + sender.state + "/" + "/" + sender.key + "/" + sender.name
+            let tmpCityString = sender.country + "/" + sender.state + "/" + sender.key + "/" + sender.name
             // Save the default City
             defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)
             

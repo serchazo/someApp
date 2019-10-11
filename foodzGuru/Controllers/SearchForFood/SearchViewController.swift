@@ -37,7 +37,9 @@ class SearchViewController: UIViewController {
             guard let user = user else {return}
             self.user = user
         }
+        
         currentCity = self.getCurrentCityFromDefaults()
+        cityNavBarButton.title = currentCity.name
         
         // Do any additional setup after loading the view.
         let layout = foodSelectorCollection.collectionViewLayout as? CustomCollectionViewLayout
@@ -48,6 +50,7 @@ class SearchViewController: UIViewController {
 
     //
     private func getCurrentCityFromDefaults() -> City{
+        print("called")
         if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
             print(currentCityString)
             let cityArray = currentCityString.components(separatedBy: "/")
@@ -122,7 +125,6 @@ class SearchViewController: UIViewController {
 
 
 // MARK: Extension for the property observer
-
 extension SearchViewController: ItemChooserViewDelegate{
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
