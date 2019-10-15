@@ -18,6 +18,7 @@ class FoodzLayout{
         button.layer.borderColor = SomeApp.themeColor.cgColor
         button.layer.borderWidth = 1.0
         button.layer.masksToBounds = true
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
         button.setTitleColor(SomeApp.themeColor, for: .normal)
     }
     

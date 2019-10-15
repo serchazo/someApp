@@ -21,6 +21,11 @@
 		341DD1602329DF2200102472 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD15F2329DF2200102472 /* Comment.swift */; };
 		341DD162232A282200102472 /* UserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD161232A282100102472 /* UserDetails.swift */; };
 		341DD165232A369E00102472 /* Foodies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD164232A369E00102472 /* Foodies.swift */; };
+		3435198A235420A900A01CAA /* MyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34351989235420A900A01CAA /* MyProfile.swift */; };
+		3435198E235458B000A01CAA /* ChangeProfilePicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3435198D235458B000A01CAA /* ChangeProfilePicCell.xib */; };
+		34351990235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3435198F235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift */; };
+		34351992235460F400A01CAA /* ChangeBioCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34351991235460F400A01CAA /* ChangeBioCell.xib */; };
+		3435199423546C0500A01CAA /* MyProfileBioCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3435199323546C0500A01CAA /* MyProfileBioCell.swift */; };
 		34387AFB2335ADE800B4CC5B /* TimelineCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34387AFA2335ADE800B4CC5B /* TimelineCell.xib */; };
 		34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34387AFC2335AFF600B4CC5B /* TimelineCell.swift */; };
 		344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */; };
@@ -83,6 +88,11 @@
 		341DD15F2329DF2200102472 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		341DD161232A282100102472 /* UserDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetails.swift; sourceTree = "<group>"; };
 		341DD164232A369E00102472 /* Foodies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foodies.swift; sourceTree = "<group>"; };
+		34351989235420A900A01CAA /* MyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfile.swift; sourceTree = "<group>"; };
+		3435198D235458B000A01CAA /* ChangeProfilePicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangeProfilePicCell.xib; sourceTree = "<group>"; };
+		3435198F235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileChangePicCellTableViewCell.swift; sourceTree = "<group>"; };
+		34351991235460F400A01CAA /* ChangeBioCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangeBioCell.xib; sourceTree = "<group>"; };
+		3435199323546C0500A01CAA /* MyProfileBioCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileBioCell.swift; sourceTree = "<group>"; };
 		34387AFA2335ADE800B4CC5B /* TimelineCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TimelineCell.xib; sourceTree = "<group>"; };
 		34387AFC2335AFF600B4CC5B /* TimelineCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimelineCell.swift; path = foodzGuru/Controllers/Home/TimelineCell.swift; sourceTree = SOURCE_ROOT; };
 		344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSelectorHeader.swift; sourceTree = "<group>"; };
@@ -207,6 +217,8 @@
 				34873A872332066900463AFE /* EditableRestoCell.xib */,
 				3491B9362341E99700CECF80 /* CommentCell.xib */,
 				34387AFA2335ADE800B4CC5B /* TimelineCell.xib */,
+				3435198D235458B000A01CAA /* ChangeProfilePicCell.xib */,
+				34351991235460F400A01CAA /* ChangeBioCell.xib */,
 				34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */,
 				348EBFD1230E3E8A008026A0 /* Main.storyboard */,
 				341C7551231684F200BA26D9 /* MKPlacemark+Extension.swift */,
@@ -269,6 +281,9 @@
 				34FEE9CF23126F8500FE0590 /* MyRanksAddRankingViewController.swift */,
 				3465E53E2315033B00166699 /* MyRanksMapSearchViewController.swift */,
 				341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */,
+				34351989235420A900A01CAA /* MyProfile.swift */,
+				3435198F235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift */,
+				3435199323546C0500A01CAA /* MyProfileBioCell.swift */,
 				341DD15B232895E300102472 /* MyRestoDetail.swift */,
 				3491B9382341ED1E00CECF80 /* CommentCell.swift */,
 				341DD15D2328EAD500102472 /* MyRestoMap.swift */,
@@ -379,7 +394,9 @@
 				348EBFD8230E3E8C008026A0 /* LaunchScreen.storyboard in Resources */,
 				341C754C231622EA00BA26D9 /* Localizable.strings in Resources */,
 				34873A882332066900463AFE /* EditableRestoCell.xib in Resources */,
+				34351992235460F400A01CAA /* ChangeBioCell.xib in Resources */,
 				34507DFE2345AB4A00BD7B3C /* EditReviewCell.xib in Resources */,
+				3435198E235458B000A01CAA /* ChangeProfilePicCell.xib in Resources */,
 				3491B9372341E99700CECF80 /* CommentCell.xib in Resources */,
 				348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */,
 				348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */,
@@ -440,6 +457,7 @@
 				34FEE9C22311207C00FE0590 /* SearchViewController.swift in Sources */,
 				34D2B4B3233AF336007C4B8F /* FirstLoginViewController.swift in Sources */,
 				346FE0E3230E8008000556EB /* BasicSomeAppModel.swift in Sources */,
+				3435198A235420A900A01CAA /* MyProfile.swift in Sources */,
 				34FEE9CC23120F6300FE0590 /* MyRanks.swift in Sources */,
 				346FE0E9230FC632000556EB /* ItemChooserViewController.swift in Sources */,
 				346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */,
@@ -452,6 +470,7 @@
 				34A76E3423225615005951A2 /* Resto.swift in Sources */,
 				34A76E312322063B005951A2 /* Ranking.swift in Sources */,
 				341DD15E2328EAD500102472 /* MyRestoMap.swift in Sources */,
+				3435199423546C0500A01CAA /* MyProfileBioCell.swift in Sources */,
 				34DA7EB5234AEF4900EBD360 /* AddRanking.swift in Sources */,
 				34FEE9D42312B52300FE0590 /* ThisRankingCell.swift in Sources */,
 				34F197AB2320BB38007D556F /* LoginViewController.swift in Sources */,
@@ -470,6 +489,7 @@
 				34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */,
 				341705C723506210006123A7 /* FoodzLayout.swift in Sources */,
 				341DD1602329DF2200102472 /* Comment.swift in Sources */,
+				34351990235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift in Sources */,
 				34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */,
 				34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */,
 				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
@@ -628,6 +648,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -648,6 +669,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

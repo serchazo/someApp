@@ -20,8 +20,8 @@ class MyRanks: UIViewController {
     private static let addRanking = "addRankSegue"
     private static let showRakingDetail = "editRestoList"
     private static let screenSize = UIScreen.main.bounds.size
-    private static let logoffSegue = "logoffSegue"
     private let segueChangeCoty = "changeCity"
+    private let segueMyProfile = "showMyProfile"
     
     // Instance variables
     private var user:User!
@@ -31,17 +31,16 @@ class MyRanks: UIViewController {
     private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
     private let defaults = UserDefaults.standard
-    private var profileMenu = ["My profile", "Pic", "Settings", "Help & Support", "Log out"]
     private var photoURL: URL!{
         didSet{
             fetchImage()
         }
     }
-    private let photoPickerController = UIImagePickerController()
+    private var bioString:String!
     
     //For the myProfile swipe table
-    private var transparentView = UIView()
-    private var myProfileTableView = UITableView()
+    //private var transparentView = UIView()
+    //private var myProfileTableView = UITableView()
     
     // Ad stuff
     private var bannerView: GADBannerView!
@@ -80,69 +79,6 @@ class MyRanks: UIViewController {
     @IBOutlet weak var adView: UIView!
     
     
-    // MARK: Show myProfile table
-    @IBAction func myProfileAction(_ sender: UIBarButtonItem) {        
-        // Create the frame
-        let window = UIApplication.shared.keyWindow
-        transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        transparentView.frame = self.view.frame
-        window?.addSubview(transparentView)
-        
-        // Add the table
-        myProfileTableView.frame = CGRect(
-            x: MyRanks.screenSize.width,
-            y: MyRanks.screenSize.height * 0.1,
-            width: MyRanks.screenSize.width * 0.9,
-            height: MyRanks.screenSize.height * 0.9)
-        window?.addSubview(myProfileTableView)
-        
-        // Go back to "normal" if we tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
-        transparentView.addGestureRecognizer(tapGesture)
-        
-        // Cool "slide-up" animation when appearing
-        transparentView.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
-                        self.myProfileTableView.frame = CGRect(
-                            x: MyRanks.screenSize.width * 0.1,
-                            y: MyRanks.screenSize.height * 0.1 ,
-                            width: MyRanks.screenSize.width * 0.9,
-                            height: MyRanks.screenSize.height * 0.9)
-        },
-                       completion: nil)
-    }
-    
-    //Disappear!
-    @objc func onClickTransparentView(){
-        // Animation when disapearing
-        
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0 //Start at value above, go to 0
-                        self.myProfileTableView.frame = CGRect(
-                            x: MyRanks.screenSize.width,
-                            y: MyRanks.screenSize.height * 0.1,
-                            width: MyRanks.screenSize.width * 0.9,
-                            height: MyRanks.screenSize.height * 0.9)
-                        
-        },
-                       completion: nil)
-        
-        // Deselect the row to go back to normal
-        if let indexPath = myRanksTable.indexPathForSelectedRow {
-            myRanksTable.deselectRow(at: indexPath, animated: true)
-        }
-    }
     
     // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
@@ -151,14 +87,15 @@ class MyRanks: UIViewController {
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
         }
+        
+        // Deselect the row to go back to normal
+        if let indexPath = myRanksTable.indexPathForSelectedRow {
+            myRanksTable.deselectRow(at: indexPath, animated: true)
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        myProfileTableView.delegate = self
-        myProfileTableView.dataSource = self
-        myProfileTableView.rowHeight = UITableView.automaticDimension
-        myProfileTableView.estimatedRowHeight = 100
         
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -246,6 +183,7 @@ class MyRanks: UIViewController {
                 if let userBio = value["bio"] as? String,
                     userBio != ""{
                     self.bioLabel.text = userBio
+                    self.bioString = userBio
                 }else{
                     if self.calledUser == nil{
                         self.bioLabel.textColor = .lightGray
@@ -386,13 +324,17 @@ class MyRanks: UIViewController {
                 }
                 cityChoserVC.myCitiesDelegate = self
             }
+        case self.segueMyProfile:
+            if let myProfileVC = segue.destination as? MyProfile{
+                myProfileVC.bioString = bioString
+                myProfileVC.profileImage = profilePictureImage.image
+            }
         default: 
             break
         }
     }
     
     // MARK: objc functions
-    
     @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
         configureHeader(userId: user.uid)
@@ -426,37 +368,7 @@ class MyRanks: UIViewController {
         present(alert, animated: false, completion: nil)
     }
     
-    @objc func logout(){
-        do {
-            try Auth.auth().signOut()
-        } catch let error as NSError {
-            print("Auth sign out failed: \(error.localizedDescription)")
-        }
-        onClickTransparentView()
-        performSegue(withIdentifier: MyRanks.logoffSegue, sender: nil)
-    }
     
-    // Change profile pic
-    @objc func changeProfilePicture(){
-        print("change pic")
-        photoPickerController.delegate = self
-        photoPickerController.sourceType =  UIImagePickerController.SourceType.photoLibrary
-        self.present(photoPickerController, animated: true, completion: nil)
-    }
-    
-    // update user profile
-    @objc func updateUserProfile(){
-        let changeRequest = user.createProfileChangeRequest()
-        changeRequest.photoURL = photoURL
-        changeRequest.commitChanges(completion: {error in
-            if let error = error{
-                print("There was an error updating the user profile: \(error.localizedDescription)")
-            }
-            else{
-                SomeApp.updateProfilePic(userId: self.user.uid, photoURL: self.photoURL.absoluteString)
-            }
-        })
-    }
     
 }
 
@@ -499,47 +411,19 @@ extension MyRanks: AddRankingDelegate{
 extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
         // Verifiy if it's the myProfile table
-        if tableView == myProfileTableView{
-            return 1
-        }else{
-            return 1
-        }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // Verifiy if it's the myProfile table
-        if tableView == myProfileTableView{
-            return 5
-        }else{
-            // The normal table
-            switch(section){
-            case 0:
-                guard rankings.count == foodItems.count else { return 1 }
-                if emptyListFlag == true{
-                    return 1
-                }else{
-                    return rankings.count
-                }
-            default: return 0
+        switch(section){
+        case 0:
+            guard rankings.count == foodItems.count else { return 1 }
+            if emptyListFlag == true{
+                return 1
+            }else{
+                return rankings.count
             }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if tableView == myProfileTableView{
-            print(indexPath)
-            print("\(indexPath.row) :  \(profileMenu[indexPath.row])")
-            
-            if indexPath.row == 1{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 2{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 3{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 5{
-                print(profileMenu[indexPath.row-1])
-                
-            }
+        default: return 0
         }
     }
     
@@ -568,106 +452,33 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     //cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        // Verifiy if it's the myProfile table
-        if tableView == myProfileTableView{
+        // The normal table
+        guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            if indexPath.row == 0 {
-                // Change picture row
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                configureChangePictureCell(cell: cell)
-                return cell
-            }
-            if indexPath.row == 4 {
-                // Logout row
-                let logoutButton = UIButton(type: .custom)
-                logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTableView.frame.width, height: cell.frame.height)
-                logoutButton.setTitleColor(.red, for: .normal)
-                logoutButton.setTitle("Log out", for: .normal)
-                logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
-                cell.selectionStyle = .none
-                cell.addSubview(logoutButton)
-                
-                return cell
-                
-            }else{
-                cell.textLabel?.text = profileMenu[indexPath.row]
-                return cell
-            }
+            cell.textLabel?.text = "Waiting for services"
+            let spinner = UIActivityIndicatorView(style: .gray)
+            spinner.startAnimating()
+            cell.accessoryView = spinner
             
-        }else{
-            // The normal table
-            guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Waiting for services"
-                let spinner = UIActivityIndicatorView(style: .gray)
-                spinner.startAnimating()
-                cell.accessoryView = spinner
-                
-                return cell
-            }
-            
-            if emptyListFlag{
-                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = "No rankings in \(currentCity.name) yet!"
-                cell.detailTextLabel?.text = "Click on + and tell the world your favorite places!"
-                return cell
-            }else{
-                // Rankings table
-                let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
-                if let cell = tmpCell as? MyRanksTableViewCell {
-                    cell.iconLabel.text = foodItems[indexPath.row].icon
-                    let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
-                    cell.titleLabel.text = tmpTitleText
-                    cell.descriptionLabel.text = rankings[indexPath.row].description
-                }
-                return tmpCell
-            }
-            
+            return cell
         }
         
-    }
-    
-    // Sizing
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if tableView == myProfileTableView && indexPath.row == 0 {
-            return 120
+        if emptyListFlag{
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+            cell.textLabel?.text = "No rankings in \(currentCity.name) yet!"
+            cell.detailTextLabel?.text = "Click on + and tell the world your favorite places!"
+            return cell
         }else{
-            return UITableView.automaticDimension
+            // Rankings table
+            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
+            if let cell = tmpCell as? MyRanksTableViewCell {
+                cell.iconLabel.text = foodItems[indexPath.row].icon
+                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
+                cell.titleLabel.text = tmpTitleText
+                cell.descriptionLabel.text = rankings[indexPath.row].description
+            }
+            return tmpCell
         }
-    }
-    
-}
-
-// MARK: configure cells
-extension MyRanks{
-    private func configureChangePictureCell(cell: UITableViewCell){
-        
-        let backView = UIView(frame: CGRect(x: 0, y: 0, width: cell.frame.width, height: 110))
-        
-        let profilePicThumbnail = UIImageView()
-        profilePicThumbnail.frame = CGRect(x: myProfileTableView.frame.width/2 - 35, y: 10, width: 70, height: 70)
-        profilePicThumbnail.layer.cornerRadius = 0.5 * profilePicThumbnail.bounds.size.width
-        profilePicThumbnail.layer.borderColor = SomeApp.themeColorOpaque.cgColor
-        profilePicThumbnail.layer.borderWidth = 1.0
-        profilePicThumbnail.clipsToBounds = true
-        profilePicThumbnail.image = profilePictureImage.image
-        
-        backView.addSubview(profilePicThumbnail)
-        
-        let changeProfilePicButton = UIButton(type: .custom)
-        changeProfilePicButton.frame = CGRect(x: myProfileTableView.frame.width * 3/8, y: 90, width: myProfileTableView.frame.width/4, height: 20)
-        changeProfilePicButton.layer.cornerRadius = 10
-        changeProfilePicButton.layer.masksToBounds = true
-        changeProfilePicButton.setTitle("Change", for: .normal)
-        changeProfilePicButton.tintColor = .white
-        changeProfilePicButton.backgroundColor = SomeApp.themeColor
-        changeProfilePicButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-
-        backView.addSubview(changeProfilePicButton)
-        
-        cell.addSubview(backView)
-        
     }
 }
 
@@ -730,96 +541,6 @@ extension MyRanks: GADBannerViewDelegate{
     /// the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         print("adViewWillLeaveApplication")
-    }
-}
-
-// MARK: photo picker extension
-extension MyRanks: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        profilePictureImage.image = nil
-        DispatchQueue.main.async {
-            if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                // Resize the image before uploading (less MBs on the user)
-                let squareImage = self.squareImage(image: pickedImage)
-                let transformedImage = self.resizeImage(image: squareImage, newDimension: 200)
-                // Transform to data
-                if transformedImage != nil {
-                    let imageData:Data = transformedImage!.pngData()!
-                    // Prepare the file first
-                    let storagePath = self.user.uid + "/profilepicture.png"
-                    let imageRef = SomeApp.storageUsersRef.child(storagePath)
-                    let metadata = StorageMetadata()
-                    metadata.contentType = "image/png"
-
-                    // Upload data and metadata
-                    imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
-                        if let error = error {
-                            print("Error uploading the image! \(error.localizedDescription)")
-                        }else{
-                            // Then get the download URL
-                            imageRef.downloadURL { (url, error) in
-                                guard let downloadURL = url else {
-                                    // Uh-oh, an error occurred!
-                                    print("Error getting the download URL")
-                                    return
-                                }
-                                // Update the current photo
-                                self.photoURL = downloadURL
-                                // Update the user
-                                self.updateUserProfile()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        photoPickerController.dismiss(animated: true, completion: nil)
-        onClickTransparentView()
-    }
-    
-    // MARK: Resize the image
-    // Snipet from StackOverFlow
-    func resizeImage(image: UIImage, newDimension: CGFloat) -> UIImage? {
-        let scale = newDimension / image.size.width
-        let newHeight = image.size.height * scale
-        UIGraphicsBeginImageContext(CGSize(width: newDimension, height: newHeight))
-        
-        image.draw(in: CGRect(x: 0, y: 0, width: newDimension, height: newHeight))
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return newImage
-    }
-    
-    //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
-    func squareImage(image: UIImage) -> UIImage{
-        let originalWidth  = image.size.width
-        let originalHeight = image.size.height
-        var x: CGFloat = 0.0
-        var y: CGFloat = 0.0
-        var edge: CGFloat = 0.0
-        
-        if (originalWidth > originalHeight) {
-            // landscape
-            edge = originalHeight
-            x = (originalWidth - edge) / 2.0
-            y = 0.0
-            
-        } else if (originalHeight > originalWidth) {
-            // portrait
-            edge = originalWidth
-            x = 0.0
-            y = (originalHeight - originalWidth) / 2.0
-        } else {
-            // square
-            edge = originalWidth
-        }
-        
-        let cropSquare = CGRect(x: x, y: y, width: edge, height: edge)
-        let imageRef = image.cgImage!.cropping(to: cropSquare)!;
-        
-        return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
     }
 }
 

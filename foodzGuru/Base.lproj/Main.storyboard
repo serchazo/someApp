@@ -476,7 +476,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Profile" id="YSc-kP-6FY">
                             <connections>
-                                <action selector="myProfileAction:" destination="bUE-hb-C5b" id="mec-vv-Z0C"/>
+                                <segue destination="1cm-ok-TDk" kind="show" identifier="showMyProfile" id="qFD-be-p68"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -498,6 +498,42 @@
                 <exit id="kNq-x7-Sai" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1728.985507246377" y="663.61607142857144"/>
+        </scene>
+        <!--My Profile-->
+        <scene sceneID="ypt-S9-ag6">
+            <objects>
+                <viewController id="1cm-ok-TDk" customClass="MyProfile" customModule="foodz_Guru" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="o90-vu-dsa"/>
+                        <viewControllerLayoutGuide type="bottom" id="2Hs-df-hYj"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="u1W-ad-KcH">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="D5G-xa-qoz">
+                                <rect key="frame" x="20" y="56" width="374" height="703"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="D5G-xa-qoz" firstAttribute="leading" secondItem="u1W-ad-KcH" secondAttribute="leadingMargin" id="E4g-HT-GG7"/>
+                            <constraint firstItem="2Hs-df-hYj" firstAttribute="top" secondItem="D5G-xa-qoz" secondAttribute="bottom" id="Lxn-ZX-ncA"/>
+                            <constraint firstItem="D5G-xa-qoz" firstAttribute="top" secondItem="o90-vu-dsa" secondAttribute="bottom" id="YSQ-bc-dc1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="D5G-xa-qoz" secondAttribute="trailing" id="hsD-Pq-Sk1"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="1lo-gP-Vlh"/>
+                    <connections>
+                        <outlet property="myProfileTable" destination="D5G-xa-qoz" id="vPo-Vk-cPf"/>
+                        <segue destination="OSO-BJ-p3T" kind="unwind" unwindAction="unwindToLoginScreenWithSegue:" id="xWL-QA-B9V"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="axQ-B7-LeZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="OSO-BJ-p3T" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1741" y="1397"/>
         </scene>
         <!--This Ranking-->
         <scene sceneID="ead-kz-coi">
@@ -987,7 +1023,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TfY-8W-Fz0">
-                                <rect key="frame" x="20" y="0.0" width="374" height="808"/>
+                                <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                         </subviews>
@@ -2059,7 +2095,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Cn7-O9-9ml"/>
+        <segue reference="1Yi-jY-eDW"/>
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="ou3-RT-r6a"/>
         <segue reference="sfx-Yu-7uu"/>

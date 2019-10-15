@@ -26,16 +26,15 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<false/>
 	<key>FacebookAppID</key>
-    <string>2398373916918165</string>
-    <key>FacebookDisplayName</key>
-    <string>foodz.Guru</string>
-    <!-- Disable Facebook data collecion -->
-    <key>FacebookAutoLogAppEventsEnabled</key>
-    <false/>
-    <key>FacebookAdvertiserIDCollectionEnabled</key>
-    <false/>
+	<string>2398373916918165</string>
+	<key>FacebookAutoLogAppEventsEnabled</key>
+	<false/>
+	<key>FacebookDisplayName</key>
+	<string>foodz.Guru</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-5723552712049473~4784782033</string>
 	<key>LSApplicationQueriesSchemes</key>
