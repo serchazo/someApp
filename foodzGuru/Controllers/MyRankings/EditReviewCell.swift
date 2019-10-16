@@ -11,7 +11,9 @@ import UIKit
 class EditReviewCell: UITableViewCell {
     var updateReviewAction: ((EditReviewCell) -> Void)?
     
+    @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
+    
     @IBOutlet weak var editReviewTextView: UITextView!
     @IBOutlet weak var doneButton: UIButton!
     

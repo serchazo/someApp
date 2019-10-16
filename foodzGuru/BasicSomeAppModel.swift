@@ -117,6 +117,11 @@ class SomeApp{
         dbRef.setValue(objectToWrite)
     }
     
+    // MARK: Delete user
+    static func deleteUser(userId: String){
+        dbUserData.child(userId).removeValue()
+    }
+    
     // MARK: ranking functions
     // Update the position of a resto
     static func updateRestoPositionInRanking(userId: String, city: City, foodId: String, restoId: String, position: Int){

@@ -9,6 +9,7 @@
 import UIKit
 import SDWebImage
 import Firebase
+import MessageUI
 
 class MyProfile: UIViewController {
     
@@ -28,6 +29,19 @@ class MyProfile: UIViewController {
     private let changeBioCellId = "changeBioCellId"
     private let changePicCellXib = "ChangeProfilePicCell"
     private let changeBioCellXib = "ChangeBioCell"
+    private let screenSize = UIScreen.main.bounds.size
+    private let editBioCellId = "EditReviewCell"
+    private let editBioCellXib = "EditReviewCell"
+    
+    // Suport stuff
+    private let supportAdress = "support@foodz.guru"
+    private let supportSubject = "Feedback on Foodz.guru"
+    private let supportBody = "My feedback: "
+    
+    //For Edit the Bio swipe-up
+    private var bioTransparentView = UIView()
+    private var bioTableView = UITableView()
+    private var bioTextField = UITextView()
 
     @IBOutlet weak var myProfileTable: UITableView!{
         didSet{
@@ -47,10 +61,21 @@ class MyProfile: UIViewController {
             guard let user = user else {return}
             self.user = user
         }
+        setUpTables()
         
+    }
+    
+    // Set up the tables
+    private func setUpTables(){
+        // myProfileTable (normal table)
         myProfileTable.register(UINib(nibName: changePicCellXib, bundle: nil), forCellReuseIdentifier: changePicCellId)
         myProfileTable.register(UINib(nibName: changeBioCellXib, bundle: nil), forCellReuseIdentifier: changeBioCellId)
         
+        // Edit Bio Table
+        bioTableView.delegate = self
+        bioTableView.dataSource = self
+        bioTextField.delegate = self
+        bioTableView.register(UINib(nibName: editBioCellXib, bundle: nil), forCellReuseIdentifier: editBioCellId)
     }
     
 
@@ -69,133 +94,143 @@ class MyProfile: UIViewController {
 // MARK: Table stuff
 extension MyProfile: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return profileMenu.count
+        if tableView == self.bioTableView{
+            return 1
+        }else{
+            return profileMenu.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Picture cell
-        if indexPath.row == 0,
-            let cell = myProfileTable.dequeueReusableCell(withIdentifier: changePicCellId, for: indexPath) as? MyProfileChangePicCellTableViewCell{
-            FoodzLayout.configureProfilePicture(imageView: cell.profilePicture)
-            cell.profilePicture.image = self.profileImage
-            cell.selectionStyle = .none
+        // Edit Bio pop-up
+        if tableView == self.bioTableView,
+            let cell = bioTableView.dequeueReusableCell(withIdentifier: self.editBioCellId, for: indexPath) as? EditReviewCell{
             
+            configureEditBioCell(cell: cell)
             return cell
         }
-        // Change picture button
-        else if indexPath.row == 1{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let changePicButton = UIButton(type: .custom)
-            changePicButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
-            changePicButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            changePicButton.setTitle("Change Profile Picture", for: .normal)
-            changePicButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-            //cell.selectionStyle = .none
-            cell.addSubview(changePicButton)
-            
-            return cell
-            
-        }
-        // Change bio cell
-        else if indexPath.row == 2,
-            let cell = myProfileTable.dequeueReusableCell(withIdentifier: changeBioCellId, for: indexPath) as? MyProfileBioCell{
-            cell.titleLabel.text = "Bio"
-            
-            if bioString != nil && bioString != ""{
-                cell.bioLabel.text = bioString!
-            }else{
-                cell.bioLabel.text = "Enter a bio."
+        // [Start] The normal Table
+        else if tableView == self.myProfileTable{
+            // Picture cell
+            if indexPath.row == 0,
+                let cell = myProfileTable.dequeueReusableCell(withIdentifier: changePicCellId, for: indexPath) as? MyProfileChangePicCellTableViewCell{
+                FoodzLayout.configureProfilePicture(imageView: cell.profilePicture)
+                cell.profilePicture.image = self.profileImage
+                cell.selectionStyle = .none
+                
+                return cell
             }
-            return cell
-        }
-        // Change bio button
-        else if indexPath.row == 3{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let changeBioButton = UIButton(type: .custom)
-            changeBioButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
-            changeBioButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            changeBioButton.setTitle("Edit Bio", for: .normal)
-            changeBioButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-            cell.selectionStyle = .none
-            cell.addSubview(changeBioButton)
-            
-            return cell
-        }
-        // Help button
-        else if indexPath.row == 4 {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let helpButton = UIButton(type: .custom)
-            helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
-            helpButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            helpButton.setTitle("Help & Support", for: .normal)
-            helpButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-            cell.selectionStyle = .none
-            cell.addSubview(helpButton)
-            
-            return cell
-        }
-        // More button
-        else if indexPath.row == 5{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let moreButton = UIButton(type: .custom)
-            moreButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
-            moreButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            moreButton.setTitle("More", for: .normal)
-            moreButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-            cell.selectionStyle = .none
-            cell.addSubview(moreButton)
-            
-            return cell
-        }
-        // Log out
-        else if indexPath.row == 6 {
-            // Logout row
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let logoutButton = UIButton(type: .custom)
-            logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
-            logoutButton.setTitleColor(.red, for: .normal)
-            logoutButton.setTitle("Log out", for: .normal)
-            logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
-            cell.selectionStyle = .none
-            cell.addSubview(logoutButton)
-            
-            return cell
-            
-        }else{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = profileMenu[indexPath.row]
-            return cell
-        }
-        
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if tableView == myProfileTable{
-            print(indexPath)
-            print("\(indexPath.row) :  \(profileMenu[indexPath.row])")
-            
-            if indexPath.row == 1{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 2{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 3{
-                print(profileMenu[indexPath.row-1])
-            }else if indexPath.row == 5{
-                print(profileMenu[indexPath.row-1])
+                // Change picture button
+            else if indexPath.row == 1{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let changePicButton = UIButton(type: .custom)
+                changePicButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                changePicButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                changePicButton.setTitle("Change Profile Picture", for: .normal)
+                changePicButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
+                //cell.selectionStyle = .none
+                cell.addSubview(changePicButton)
+                
+                return cell
                 
             }
+                // Change bio cell
+            else if indexPath.row == 2,
+                let cell = myProfileTable.dequeueReusableCell(withIdentifier: changeBioCellId, for: indexPath) as? MyProfileBioCell{
+                cell.titleLabel.text = "Bio"
+                
+                if bioString != nil && bioString != ""{
+                    cell.bioLabel.text = bioString!
+                }else{
+                    cell.bioLabel.text = "Enter a bio."
+                }
+                return cell
+            }
+                // Change bio button
+            else if indexPath.row == 3{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let changeBioButton = UIButton(type: .custom)
+                changeBioButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                changeBioButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                changeBioButton.setTitle("Edit Bio", for: .normal)
+                changeBioButton.addTarget(self, action: #selector(changeBio), for: .touchUpInside)
+                cell.selectionStyle = .none
+                cell.addSubview(changeBioButton)
+                
+                return cell
+            }
+                // Help button
+            else if indexPath.row == 4 {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let helpButton = UIButton(type: .custom)
+                helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                helpButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                helpButton.setTitle("Help & Support", for: .normal)
+                helpButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
+                cell.selectionStyle = .none
+                cell.addSubview(helpButton)
+                
+                return cell
+            }
+                // More button
+            else if indexPath.row == 5{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let moreButton = UIButton(type: .custom)
+                moreButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                moreButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                moreButton.setTitle("More", for: .normal)
+                moreButton.addTarget(self, action: #selector(popupMoreMenu), for: .touchUpInside)
+                cell.selectionStyle = .none
+                cell.addSubview(moreButton)
+                
+                return cell
+            }
+                // Log out
+            else if indexPath.row == 6 {
+                // Logout row
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let logoutButton = UIButton(type: .custom)
+                logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                logoutButton.setTitleColor(.red, for: .normal)
+                logoutButton.setTitle("Log out", for: .normal)
+                logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
+                cell.selectionStyle = .none
+                cell.addSubview(logoutButton)
+                
+                return cell
+                
+            }else{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = profileMenu[indexPath.row]
+                return cell
+            }
+        }
+        // [END] Normal table
+        else{
+            fatalError("Cannot")
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView == bioTableView{
+            return 450
+        }
+        // "Normal" Table
+        else{
+            return UITableView.automaticDimension
+        }
+    }
 }
 
 // MARK: funcs
 extension MyProfile{
     // Change profile pic
-    @objc func changeProfilePicture(){
+    @objc func changeProfilePicture(_ sender: UIButton){
+        sender.backgroundColor = SomeApp.themeColorOpaque
         photoPickerController.delegate = self
         photoPickerController.sourceType =  UIImagePickerController.SourceType.photoLibrary
         self.present(photoPickerController, animated: true, completion: nil)
+        sender.backgroundColor = .white
     }
     
     // update user profile
@@ -212,6 +247,75 @@ extension MyProfile{
         })
     }
     
+    // MARK: Change bio
+    @objc func changeBio(_ sender: UIButton){
+        //sender.backgroundColor = SomeApp.themeColorOpaque
+        
+        FoodzLayout.popupTable(viewController: self,
+                               transparentView: bioTransparentView,
+                               tableView: bioTableView)
+        
+        // Set the first responder
+        if let cell = bioTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
+            cell.editReviewTextView.becomeFirstResponder()
+        }
+        
+        // Go back to "normal" if we tap
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickBioTransparentView))
+        bioTransparentView.addGestureRecognizer(tapGesture)
+    }
+    
+    //Disappear!
+    @objc func onClickBioTransparentView(){
+        // Animation when disapearing
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.bioTransparentView.alpha = 0 //Start at value above, go to 0
+                        self.bioTableView.frame = CGRect(
+                            x: 0,
+                            y: self.screenSize.height ,
+                            width: self.screenSize.width,
+                            height: self.screenSize.height * 0.9)
+                        self.bioTableView.endEditing(true)
+                        
+        },
+                       completion: nil)
+        
+        // Deselect the row to go back to normal
+        //if let indexPath = editRankTableView.indexPathForSelectedRow {
+        //    editRankTableView.deselectRow(at: indexPath, animated: true)
+        //}
+    }
+    
+    // MARK: Edit Bio cell
+    func configureEditBioCell(cell: EditReviewCell){
+        
+        FoodzLayout.configureEditTextCell(cell: cell)
+        //title
+         cell.titleLabel.text = "Edit Bio"
+        
+        // set up the TextField.  This var is defined in the class to take the value later
+        if bioString == nil || bioString!.count < 5{
+            cell.editReviewTextView.text = "Write a Bio here."
+        }else{
+            cell.editReviewTextView.text = bioString!
+        }
+        cell.editReviewTextView.becomeFirstResponder()
+        
+        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.updateReviewAction = { (cell) in
+            //self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
+                              //commentText: cell.editReviewTextView.text)
+            print("here!")
+        }
+        
+        cell.selectionStyle = .none
+    }
+    
     // MARK: logout
     @objc func logout(){
         do {
@@ -220,6 +324,56 @@ extension MyProfile{
             print("Auth sign out failed: \(error.localizedDescription)")
         }
         performSegue(withIdentifier: self.logoffSegue, sender: nil)
+    }
+    
+    // MARK: popup More menu
+    @objc func popupMoreMenu(){
+        let alert = UIAlertController(
+            title: "More actions",
+            message: "Some text",
+            preferredStyle: .actionSheet)
+        
+        let feedbackAction = UIAlertAction(title: "Send Feedback", style: .default, handler: { _ in
+            let mailComposeViewController = self.configureMailComposer()
+            if MFMailComposeViewController.canSendMail(){
+                self.present(mailComposeViewController, animated: true, completion: nil)
+            }else{
+                print("Can't send email")
+            }
+        })
+        // Delete Action
+        let deleteProfileAction = UIAlertAction(title: "Delete profile", style: .destructive, handler: {  _ in
+            let deleteAlert = UIAlertController(
+                title: "Delete Profile?", message: "Warning: this can't be undone.", preferredStyle: .alert)
+            let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {_ in
+                print("Yeah delete")
+                SomeApp.deleteUser(userId: self.user.uid)
+            })
+            let cancelDelete = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            deleteAlert.addAction(cancelDelete)
+            deleteAlert.addAction(deleteAction)
+            self.present(deleteAlert,animated: true)
+            
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            print("Cancel")
+        })
+        alert.addAction(feedbackAction)
+        alert.addAction(deleteProfileAction)
+        alert.addAction(cancelAction)
+        
+        present(alert,animated: true, completion: nil)
+    }
+    
+    // Send mail
+    func configureMailComposer() -> MFMailComposeViewController{
+        let mailComposeVC = MFMailComposeViewController()
+        mailComposeVC.mailComposeDelegate = self
+        mailComposeVC.setToRecipients([self.supportAdress])
+        mailComposeVC.setSubject(self.supportSubject)
+        mailComposeVC.setMessageBody(self.supportBody, isHTML: false)
+        return mailComposeVC
     }
     
 }
@@ -310,5 +464,23 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
         let imageRef = image.cgImage!.cropping(to: cropSquare)!;
         
         return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
+    }
+}
+
+// MARK: UITextView Delegate
+extension MyProfile:UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else {return false}
+        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+        return changedText.count <= 250
+    }
+    
+}
+
+// MARK: mail delegate
+extension MyProfile: MFMailComposeViewControllerDelegate{
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }

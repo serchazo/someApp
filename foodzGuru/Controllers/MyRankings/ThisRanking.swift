@@ -50,6 +50,8 @@ class ThisRanking: UIViewController {
     private var transparentView = UIView()
     private var editDescriptionTableView = UITableView()
     private var editTextField = UITextView()
+    private let editDescriptionCellId = "EditReviewCell"
+    private let editDescriptionCellXib = "EditReviewCell"
     
     //For "Edit the ranking" swipe left
     private var editRankTransparentView = UIView()
@@ -233,7 +235,7 @@ class ThisRanking: UIViewController {
         // The editDescriptionTableView needs to be loaded only if it's my data
         editDescriptionTableView.delegate = self
         editDescriptionTableView.dataSource = self
-        editDescriptionTableView.register(MyRanksEditDescriptionCell.self, forCellReuseIdentifier: "EditDescriptionCell")
+        editDescriptionTableView.register(UINib(nibName: editDescriptionCellXib, bundle: nil), forCellReuseIdentifier: editDescriptionCellId)
         editTextField.delegate = self
         
         // The editRankingTableView needs to be loaded only if it's my data
@@ -433,7 +435,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             // test if the table is the EditDescription pop-up
             return 1
         }else if tableView == self.editRankTableView{
-            return 2
+            return 1
         }else{
             // the normal table
             // I'm asking for my data
@@ -454,8 +456,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         else if tableView == self.editDescriptionTableView{
             return 1
         }else if tableView == self.editRankTableView{
-            if section == 0{ return 1}
-            else {return thisEditableRanking.count}
+            return thisEditableRanking.count
         }else{
             // The normal table
             switch(section){
@@ -477,50 +478,43 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             return editReviewCell
         }
         // EditDescription pop-up
-        else if tableView == self.editDescriptionTableView{
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "EditDescriptionCell", for: indexPath) as? MyRanksEditDescriptionCell{
-                setupEditDescriptionCell(cell: cell)
-                return cell
-            }else{
-                fatalError("Unable to create cell")
-            }
+        else if tableView == self.editDescriptionTableView,
+            let cell = tableView.dequeueReusableCell(withIdentifier: editDescriptionCellId, for: indexPath) as? EditReviewCell{
+            configureEditDescriptionCell(cell: cell)
+            return cell
+            
         // The Editable Ranking Table
         }else if tableView == self.editRankTableView{
-            // Description cell
-            if indexPath.section == 0 {
-                let descriptionCell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                setupDescriptionEditRankingCell(descriptionEditRankingCell: descriptionCell)
-                return descriptionCell
-            }else{
-                if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
-                    editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
-                    editRestoCell.tapAction = { (cell) in
-                        // If the delete button is pressed, we show an alert asking for confirmation
-                        let alert = UIAlertController(title: "Delete Restaurant?",
-                                                      message: "",
-                                                      preferredStyle: .alert)
-                        let cancelAction = UIAlertAction(title: "Cancel",
-                                                         style: .cancel)
+            
+            if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
+                editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
+                editRestoCell.tapAction = { (cell) in
+                    // If the delete button is pressed, we show an alert asking for confirmation
+                    let alert = UIAlertController(title: "Delete Restaurant?",
+                                                  message: "",
+                                                  preferredStyle: .alert)
+                    let cancelAction = UIAlertAction(title: "Cancel",
+                                                     style: .cancel)
+                    
+                    let delAction = UIAlertAction(title: "Delete", style: .destructive){ _ in
+                        //Get the indexPath
+                        let delIndexPath = self.editRankTableView.indexPath(for: cell)
+                        // Add to the list of operations
+                        self.operations.append(RankingOperation(operationType: .Delete, restoIdentifier: self.thisEditableRanking[delIndexPath!.row].key))
+                        //Do the animation
+                        self.thisEditableRanking.remove(at: delIndexPath!.row)
+                        self.editRankTableView.deleteRows(at: [delIndexPath!], with: .fade)
                         
-                        let delAction = UIAlertAction(title: "Delete", style: .destructive){ _ in
-                            //Get the indexPath
-                            let delIndexPath = self.editRankTableView.indexPath(for: cell)
-                            // Add to the list of operations
-                            self.operations.append(RankingOperation(operationType: .Delete, restoIdentifier: self.thisEditableRanking[delIndexPath!.row].key))
-                            //Do the animation
-                            self.thisEditableRanking.remove(at: delIndexPath!.row)
-                            self.editRankTableView.deleteRows(at: [delIndexPath!], with: .fade)
-                            
-                        }
-                        alert.addAction(cancelAction)
-                        alert.addAction(delAction)
-                        self.present(alert, animated: true, completion: nil)
-                        // End of the Action
                     }
-                    return editRestoCell
-                }else{fatalError() }
-            }
-            /// The "normal" table
+                    alert.addAction(cancelAction)
+                    alert.addAction(delAction)
+                    self.present(alert, animated: true, completion: nil)
+                    // End of the Action
+                }
+                return editRestoCell
+            }else{fatalError() }
+            
+            // The "normal" table
         }else{
             if indexPath.section == 0 {
                 // Restaurants cells
@@ -546,15 +540,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     
                     // Edit review button
                     if calledUser == nil{
-                        cell.editReviewButton.backgroundColor = .white
-                        cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                        cell.editReviewButton.layer.cornerRadius = 15
-                        cell.editReviewButton.layer.borderColor = SomeApp.themeColor.cgColor
-                        cell.editReviewButton.layer.borderWidth = 1.0
-                        cell.editReviewButton.layer.masksToBounds = true
-                        
-                        
-                        // Review button
+                        FoodzLayout.configureButton(button: cell.editReviewButton)
                         cell.editReviewButton.setTitle("Edit Review", for: .normal)
                         cell.editReviewButton.isHidden = false
                         cell.editReviewButton.isEnabled = true
@@ -584,48 +570,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         }
     }
     
-    // If we press on a cell
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == self.editRankTableView && indexPath.section == 0{
-            
-            // Slide up the Edit TableView
-            let window = UIApplication.shared.keyWindow
-            transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-            transparentView.frame = self.view.frame
-            window?.addSubview(transparentView)
-            
-            // Add the table
-            editDescriptionTableView.frame = CGRect(
-                x: 0,
-                y: ThisRanking.screenSize.height,
-                width: ThisRanking.screenSize.width,
-                height: ThisRanking.screenSize.height * 0.9)
-            window?.addSubview(editDescriptionTableView)
-            
-            // Go back to "normal" if we tap
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
-            transparentView.addGestureRecognizer(tapGesture)
-            
-            // Cool "slide-up" animation when appearing
-            transparentView.alpha = 0
-            UIView.animate(withDuration: 0.5,
-                           delay: 0,
-                           usingSpringWithDamping: 1.0,
-                           initialSpringVelocity: 1.0,
-                           options: .curveEaseInOut,
-                           animations: {
-                            self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
-                            self.editDescriptionTableView.frame = CGRect(
-                                x: 0,
-                                y: ThisRanking.screenSize.height - ThisRanking.screenSize.height * 0.9 ,
-                                width: ThisRanking.screenSize.width,
-                                height: ThisRanking.screenSize.height * 0.9)
-                            self.editTextField.becomeFirstResponder()
-                            },
-                           completion: nil)
-        }
-    }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView == editReviewTableView{
             return 450
@@ -633,11 +577,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         // Test if it's the Edit Description table
         else if tableView == self.editDescriptionTableView {
             return 450
-        // "Editable" Table
-        }else if tableView == editRankTableView{
-            if indexPath.section == 0{ return descriptionEditRankingRowHeight+20}
-            else{ return UITableView.automaticDimension}
-        // "Normal" Table
+        // All the others are automatic dimension
         }else{
             return UITableView.automaticDimension
         }
@@ -646,6 +586,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
 
 // MARK: setup cells
 extension ThisRanking{
+    
     // MARK: "normal" Description cell
     func setupDescriptionCell(descriptionCell :UITableViewCell){
         let descriptionLabel = UILabel()
@@ -695,91 +636,53 @@ extension ThisRanking{
     }
     
     // MARK: Edit Description Cell
-    func setupEditDescriptionCell(cell: MyRanksEditDescriptionCell){
-        let backView = UIView(frame: CGRect(x: 0, y: 0, width: ThisRanking.screenSize.width, height: ThisRanking.screenSize.height))
+    func configureEditDescriptionCell(cell: EditReviewCell){
+        FoodzLayout.configureEditTextCell(cell: cell)
         
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: ThisRanking.screenSize.width, height: SomeApp.titleFont.lineHeight + 20 ))
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SomeApp.themeColor,
-            .font: SomeApp.titleFont,
-            ]
-        titleLabel.attributedText = NSAttributedString(string: "Edit your Ranking description", attributes: attributes)
-        titleLabel.textAlignment = NSTextAlignment.center
+        //title
+        cell.titleLabel.text = "Edit your Ranking description"
         
-        //A label for warning the user about the max chars
-        let maxCharsLabel = UILabel(frame: CGRect(
-            x: 0,
-            y: SomeApp.titleFont.lineHeight + 20,
-            width: cell.frame.width,
-            height: SomeApp.titleFont.lineHeight + 30 ))
-        maxCharsLabel.textColor = UIColor.lightGray
-        maxCharsLabel.textAlignment = NSTextAlignment.center
-        maxCharsLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
-        maxCharsLabel.text = "(Max 250 characters)"
+        // Warning Label
+        cell.warningLabel.text = "(Max 250 characters)"
         
-        // set up the TextField.  This var is defined in the class to take the value later
-        editTextField.frame = CGRect(x: 8, y: 2 * SomeApp.titleFont.lineHeight + 60, width: cell.frame.width - 16, height: 250)
-        editTextField.textColor = UIColor.gray
-        editTextField.font = UIFont.preferredFont(forTextStyle: .body)
+        
+        // set up the TextField
         if thisRankingDescription != "" {
-            editTextField.text = thisRankingDescription
+            cell.editReviewTextView.text = thisRankingDescription
         }else{
-            editTextField.text = "Enter a description for your ranking."
+            cell.editReviewTextView.text = "Enter a description for your ranking."
         }
-        editTextField.keyboardType = UIKeyboardType.default
-        editTextField.allowsEditingTextAttributes = true
+        cell.editReviewTextView.becomeFirstResponder()
         
-        let doneButton = UIButton(type: .custom)
-        doneButton.frame = CGRect(x: cell.frame.width - 100, y: 250, width: 70, height: 70)
-        doneButton.backgroundColor = SomeApp.themeColor
-        doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
-        doneButton.layer.masksToBounds = true
-        doneButton.setTitle("Done!", for: .normal)
-        doneButton.addTarget(self, action: #selector(doneUpdatingDescription), for: .touchUpInside)
-        
-        cell.selectionStyle = .none
-        
-        backView.addSubview(titleLabel)
-        backView.addSubview(maxCharsLabel)
-        backView.addSubview(editTextField)
-        backView.addSubview(doneButton)
-        cell.addSubview(backView)
+        // Button
+        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.updateReviewAction = { (cell) in
+            self.doneUpdatingDescription()
+        }
     }
     
     // MARK: Edit review cell
     func configureEditReviewCell(cell: EditReviewCell, forIndex: Int){
-        cell.titleLabel.textColor = SomeApp.themeColor
-        cell.titleLabel.font = SomeApp.titleFont
-        cell.titleLabel.textAlignment = .center
+        FoodzLayout.configureEditTextCell(cell: cell)
+        
+        //title
         cell.titleLabel.text = "My review for \(thisRanking[forIndex].name)"
         
-        
-        // set up the TextField.  This var is defined in the class to take the value later
+        // set up the TextField placeholder
         if thisRankingReviews[forIndex].text.count < 5{
             cell.editReviewTextView.text = "Write your Review here."
         }else{
             cell.editReviewTextView.text = thisRankingReviews[forIndex].text
         }
-        cell.editReviewTextView.textColor = UIColor.gray
-        cell.editReviewTextView.font = UIFont.preferredFont(forTextStyle: .body)
-        cell.editReviewTextView.isScrollEnabled = true
-        cell.editReviewTextView.keyboardType = UIKeyboardType.default
-        cell.editReviewTextView.allowsEditingTextAttributes = true
-        
         cell.editReviewTextView.becomeFirstResponder()
         
-        cell.doneButton.backgroundColor = SomeApp.themeColor
-        cell.doneButton.layer.cornerRadius = 0.5 * cell.doneButton.bounds.size.width
-        cell.doneButton.layer.masksToBounds = true
+        // Done Button
         cell.doneButton.setTitle("Done!", for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
                               commentText: cell.editReviewTextView.text)
         }
-        
-        cell.selectionStyle = .none
     }
-    
 }
 
 
@@ -828,7 +731,7 @@ extension ThisRanking{
                             y: ThisRanking.screenSize.height ,
                             width: ThisRanking.screenSize.width,
                             height: ThisRanking.screenSize.height * 0.9)
-                        self.editTextField.resignFirstResponder()
+                        self.editDescriptionTableView.endEditing(true)
                         
         },
                        completion: nil)
@@ -839,12 +742,12 @@ extension ThisRanking{
         }
     }
     
-    // MARK: Write the review
+    // MARK: Write review & close the pop-up table
     func doneUpdating(resto: Resto, commentText: String){
+        // Write to model
         if ![""," ","Write your Review here","Write your Review here."].contains(commentText){
             SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, foodId: currentFood.key ,text: commentText)
         }
-
         //Close the view
         onClickEditReviewTransparentView()
     }
@@ -852,7 +755,6 @@ extension ThisRanking{
     //Disappear!
     @objc func onClickEditReviewTransparentView(){
         // Animation when disapearing
-        
         UIView.animate(withDuration: 0.5,
                        delay: 0,
                        usingSpringWithDamping: 1.0,
@@ -901,90 +803,43 @@ extension ThisRanking{
                        completion: nil)
     }
     
-    // Popup the Edit description table
+    // MARK: Popup the Edit description table
     @objc func popUpEditDescriptionTable(){
-        // Slide up the Edit TableView
-        let window = UIApplication.shared.keyWindow
-        transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        transparentView.frame = self.view.frame
-        window?.addSubview(transparentView)
+        FoodzLayout.popupTable(viewController: self,
+                               transparentView: transparentView,
+                               tableView: editDescriptionTableView)
         
-        // Add the table
-        editDescriptionTableView.frame = CGRect(
-            x: 0,
-            y: ThisRanking.screenSize.height,
-            width: ThisRanking.screenSize.width,
-            height: ThisRanking.screenSize.height * 0.9)
-        window?.addSubview(editDescriptionTableView)
+        // Set the first responder
+        if let cell = editDescriptionTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
+            cell.editReviewTextView.becomeFirstResponder()
+        }
         
         // Go back to "normal" if we tap
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
         transparentView.addGestureRecognizer(tapGesture)
-        
-        // Cool "slide-up" animation when appearing
-        transparentView.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
-                        self.editDescriptionTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height - ThisRanking.screenSize.height * 0.9 ,
-                            width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
-                        self.editTextField.becomeFirstResponder()
-        },
-                       completion: nil)
     }
     
-    // MARK: update Review pop-up
+    // MARK: Popup the Edit Review table
     @objc func editReview(){
-        // Create the frame
-        let window = UIApplication.shared.keyWindow
-        editReviewTransparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        editReviewTransparentView.frame = self.view.frame
-        window?.addSubview(editReviewTransparentView)
-        
-        // Add the table
         editReviewTableView.reloadData()
-        editReviewTableView.frame = CGRect(
-            x: 0,
-            y: ThisRanking.screenSize.height,
-            width: ThisRanking.screenSize.width,
-            height: ThisRanking.screenSize.height * 0.9)
-        window?.addSubview(editReviewTableView)
+        
+        FoodzLayout.popupTable(viewController: self,
+                               transparentView: editReviewTransparentView,
+                               tableView: editReviewTableView)
+        
+        // Set the first responder
+        if let cell = editReviewTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
+            cell.editReviewTextView.becomeFirstResponder()
+        }
         
         // Go back to "normal" if we tap
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickEditReviewTransparentView))
         editReviewTransparentView.addGestureRecognizer(tapGesture)
-        
-        // Cool "slide-up" animation when appearing
-        editReviewTransparentView.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.editReviewTransparentView.alpha = 0.7 //Start at 0, go to 0.5
-                        self.editReviewTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height - ThisRanking.screenSize.height * 0.9 ,
-                            width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
-                        //self.editReviewTextView.becomeFirstResponder()
-                    },
-                       completion: nil)
     }
     
 }
 
-///////////////////
 // MARK: get stuff from the segued view and process the info
-//////////////////
 
 extension ThisRanking: MyRanksMapSearchViewDelegate{
     //
@@ -1055,7 +910,7 @@ extension ThisRanking: UITableViewDragDelegate{
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
         // Only allow dragging of the section with the names
-        if indexPath.section == 1, let restoNameToDrag = (editRankTableView.cellForRow(at: indexPath) as? EditableRestoCell)?.restoLabel.attributedText{
+        if let restoNameToDrag = (editRankTableView.cellForRow(at: indexPath) as? EditableRestoCell)?.restoLabel.attributedText{
             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: restoNameToDrag))
             dragItem.localObject = restoNameToDrag
             return[dragItem]
@@ -1111,6 +966,7 @@ extension ThisRanking : UITableViewDropDelegate {
     }
 }
 
+// MARK: UITextView Delegate
 extension ThisRanking:UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
