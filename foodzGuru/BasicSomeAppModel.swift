@@ -59,7 +59,7 @@ class SomeApp{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
     }
     
-    // MARK: user functions
+    // MARK: User timeline
     static func createUserFirstLogin(userId: String, username: String, bio: String, defaultCity:String, photoURL: String = ""){
         let userDataDBRef = dbUserData.child(userId)
         // Transform the data to AnyObject
@@ -85,6 +85,19 @@ class SomeApp{
         userDataDBRef.updateChildValues(["photourl":photoURL])
     }
     
+    // Update bio
+    static func updateBio(userId: String, bio: String){
+        let userDataDBRef = dbUserData.child(userId).child("bio")
+        userDataDBRef.setValue(bio)
+    }
+    
+    // Delete user
+    static func deleteUser(userId: String){
+        dbUserData.child(userId).removeValue()
+    }
+    
+    
+    // MARK: User follow users and rankings
     static func follow(userId: String, toFollowId: String){
         let followingDBReference = SomeApp.dbUserFollowing.child(userId)
         let newfollowerRef = followingDBReference.child(toFollowId)
@@ -118,6 +131,7 @@ class SomeApp{
     
     // Add a new city to user (country name and state name will be added with functions)
     static func addUserCity(userId: String, city: City, countryName: String, stateName: String){
+        print("here \(countryName)")
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key
         let objectToWrite: [String:Any] = ["country": countryName,
                                                  "state": stateName,
@@ -126,12 +140,18 @@ class SomeApp{
         dbRef.setValue(objectToWrite)
     }
     
-    // MARK: Delete user
-    static func deleteUser(userId: String){
-        dbUserData.child(userId).removeValue()
+    // MARK: ranking functions
+    // Add a new ranking
+    static func newUserRanking(userId: String, city: City, food: FoodType){
+        let defaultDescription = "Spent all my life looking for the best " + food.name + " places in " + city.name + ". This is the definitive list."
+        let newRanking = Ranking(foodKey: food.key,name: food.name, icon: food.icon, description: defaultDescription)
+        // Create a child reference and update the value
+        let pathId = userId + "/"+city.country+"/"+city.state+"/"+city.key
+        let newRankingRef = SomeApp.dbUserRankings.child(pathId).child(newRanking.key)
+        newRankingRef.setValue(newRanking.toAnyObject())
     }
     
-    // MARK: ranking functions
+    
     // Update the position of a resto
     static func updateRestoPositionInRanking(userId: String, city: City, foodId: String, restoId: String, position: Int){
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + restoId + "/position"

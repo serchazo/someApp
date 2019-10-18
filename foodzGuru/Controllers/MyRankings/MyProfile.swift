@@ -55,7 +55,9 @@ class MyProfile: UIViewController {
     // MARK: timeline funcs
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        self.navigationItem.title = "My Profile"
+        
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -144,6 +146,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 }else{
                     cell.bioLabel.text = "Enter a bio."
                 }
+                cell.selectionStyle = .none
                 return cell
             }
                 // Change bio button
@@ -296,7 +299,8 @@ extension MyProfile{
         
         FoodzLayout.configureEditTextCell(cell: cell)
         //title
-         cell.titleLabel.text = "Edit Bio"
+        cell.titleLabel.text = "Edit Bio"
+        cell.warningLabel.text = "Max 500 characters"
         
         // set up the TextField.  This var is defined in the class to take the value later
         if bioString == nil || bioString!.count < 5{
@@ -308,9 +312,40 @@ extension MyProfile{
         
         cell.doneButton.setTitle("Done!", for: .normal)
         cell.updateReviewAction = { (cell) in
-            //self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
-                              //commentText: cell.editReviewTextView.text)
-            print("here!")
+            let tmpBio = cell.editReviewTextView.text
+            if tmpBio != "" && tmpBio != "Write a Bio here." {
+                if tmpBio!.count > 500 {
+                    // Too long
+                    //Can't use FoodzLayout cz of the closure
+                    let alert = UIAlertController(title: "Bio too long",
+                                                  message: "Your bio shouldn't exceed 500 characters.",
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert,animated:true) {
+                        cell.editReviewTextView.becomeFirstResponder()
+                    }
+                    
+                }else{
+                    // can write
+                    SomeApp.updateBio(userId: self.user.uid, bio: tmpBio!)
+                    self.bioString = tmpBio!
+                    self.onClickBioTransparentView()
+                    // Update cell
+                    self.myProfileTable.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .automatic)
+                    
+                    
+                }
+            }else{
+                //Empty bio
+                //Can't use FoodzLayout cz of the closure
+                let alert = UIAlertController(title: "Empty Bio",
+                                              message: "Your bio is empty.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert,animated:true) {
+                    cell.editReviewTextView.becomeFirstResponder()
+                }
+            }
         }
         
         cell.selectionStyle = .none

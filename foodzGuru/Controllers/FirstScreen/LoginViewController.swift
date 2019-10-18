@@ -82,11 +82,14 @@ class LoginViewController: UIViewController {
             let password = textFieldLoginPassword.text,
             email.count > 0,
             password.count > 0 else {
+                FoodzLayout.showWarning(vc: self, title: "Empty information", text: "Your e-mail or password can't be empty.")
+                /*
                 let alert = UIAlertController(title: "Empty information",
                                               message: "Your e-mail or password can't be empty.",
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 present(alert,animated: true, completion: nil)
+                */
                 return
         }
         
@@ -103,7 +106,7 @@ class LoginViewController: UIViewController {
     // MARK: Sign up
     @IBAction func signUpPressed(_ sender: UIButton) {
         let alert = UIAlertController(title: "Register",
-                                      message: "Register",
+                                      message: "Enter your e-mail and create a new password.",
                                       preferredStyle: .alert)
         
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in

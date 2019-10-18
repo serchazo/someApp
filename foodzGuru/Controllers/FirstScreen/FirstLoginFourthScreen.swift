@@ -20,6 +20,8 @@ class FirstLoginFourthScreen: UIViewController {
     // Get from segue-r
     var userName:String!
     var currentCity: City!
+    var currentCountryName: String!
+    var currentStateName: String!
     var bio:String!
     var photoURL:URL!
     
@@ -102,12 +104,16 @@ extension FirstLoginFourthScreen{
             urlString = photoURL.absoluteString
         }
         
+        // Create the user details
         SomeApp.createUserFirstLogin(
             userId: user.uid,
             username: userName!,
             bio: bio!,
             defaultCity: tmpCityString,
             photoURL: urlString)
+        
+        // Ad the first city
+        SomeApp.addUserCity(userId: user.uid, city: currentCity, countryName: currentCountryName, stateName: currentStateName)
         
         // Save the default City
         defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)

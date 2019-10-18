@@ -188,6 +188,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
                 cell.textLabel?.text = "No rankings in yet!"
                 cell.detailTextLabel?.text = "Click on + and tell the world your favorite places to grab a bite !"
+                cell.selectionStyle = .none
                 return cell
             }
             // If it's not, then
@@ -204,7 +205,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
     // Selected city
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Get city and send to delegate - only for the section containing the cities
-        if tableView == myCitiesTableView && indexPath.section == 0 {
+        if tableView == myCitiesTableView && indexPath.section == 0 && !emptyListFlag{
             let chosenCity = cityList[indexPath.row].city
             self.myCitiesDelegate?.myCitiesChangeCity(chosenCity)
             self.navigationController?.popViewController(animated: true)

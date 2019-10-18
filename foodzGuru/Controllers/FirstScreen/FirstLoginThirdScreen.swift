@@ -14,6 +14,8 @@ class FirstLoginThirdScreen: UIViewController {
     
     private var cityChosenFlag = false
     private var currentCity: City!
+    private var currentCountryName: String!
+    private var currentStateName: String!
     
     // Get from segue-r
     var username:String!
@@ -115,6 +117,8 @@ extension FirstLoginThirdScreen: UITextFieldDelegate{
 extension FirstLoginThirdScreen: ItemChooserViewDelegate {
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
+        currentCountryName = countryName
+        currentStateName = stateName
         cityTextField.text = city.name + ", " + countryName
         cityTextField.placeholder = city.name
         cityChosenFlag = true

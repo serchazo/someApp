@@ -122,7 +122,6 @@ class MyRanks: UIViewController {
     //
     private func getCurrentCityFromDefaults() -> City{
         if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
-            print("city from defaults: \(currentCityString)")
             let cityArray = currentCityString.components(separatedBy: "/")
             return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
         }else{
@@ -367,14 +366,10 @@ class MyRanks: UIViewController {
 // MARK: Add ranking delegate
 extension MyRanks: AddRankingDelegate{
     func addRankingReceiveInfoToCreate(city: City, withFood: FoodType) {
-        // Test if we already have that ranking in our list
+        // Test if the ranking isn't in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let defaultDescription = "Spent all my life looking for the best " + withFood.name + " places in " + currentCity.name + ". This is the definitive list."
-            let newRanking = Ranking(foodKey: withFood.key,name: withFood.name, icon: withFood.icon, description: defaultDescription)
-            // Create a child reference and update the value
-            let newRankingRef = self.rankingReferenceForUser.child(newRanking.key)
-            newRankingRef.setValue(newRanking.toAnyObject())
+            SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood)
             // Only need to reload.  The firebase observer will update the content
             myRanksTable.reloadData()
             
@@ -391,8 +386,6 @@ extension MyRanks: AddRankingDelegate{
                 handler: {
                     (action: UIAlertAction)->Void in
                     //do nothing
-                    
-                    
             }))
             present(alert, animated: false, completion: nil)
         }

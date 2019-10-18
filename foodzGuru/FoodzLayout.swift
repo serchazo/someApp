@@ -97,6 +97,16 @@ class FoodzLayout{
     
 }
 
+// MARK: Alerts
+extension FoodzLayout{
+    static func showWarning(vc: UIViewController, title: String, text: String){
+        let alert = UIAlertController(title: title,
+                                      message: text,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        vc.present(alert,animated: true, completion: nil)
+    }
+}
 
 // MARK: fonts
 extension FoodzLayout{
