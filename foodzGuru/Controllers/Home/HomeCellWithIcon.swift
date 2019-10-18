@@ -17,6 +17,7 @@ class HomeCellWithIcon: UITableViewCell {
         didSet{
             bodyLabel.lineBreakMode = .byWordWrapping
             bodyLabel.numberOfLines = 0
+            bodyLabel.font = FoodzLayout.cellBody
         }
     }
     

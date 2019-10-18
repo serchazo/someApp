@@ -96,3 +96,13 @@ class FoodzLayout{
     }
     
 }
+
+
+// MARK: fonts
+extension FoodzLayout{
+    static var cellBody: UIFont{
+        return UIFontMetrics(forTextStyle: .footnote).scaledFont(for: UIFont.preferredFont(forTextStyle: .footnote).withSize(15.0))
+    }
+    
+    
+}

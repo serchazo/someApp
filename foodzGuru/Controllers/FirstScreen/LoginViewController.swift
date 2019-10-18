@@ -21,7 +21,11 @@ class LoginViewController: UIViewController {
     // Facebook login permissions
     private let readPermissions: [Permission] =  [ .publicProfile, .email ]
     
-    @IBOutlet weak var textFieldLoginEmail: UITextField!
+    @IBOutlet weak var textFieldLoginEmail: UITextField!{
+        didSet{
+            textFieldLoginEmail.keyboardType = .emailAddress
+        }
+    }
     @IBOutlet weak var textFieldLoginPassword: UITextField!
     
     @IBOutlet weak var facebookLoginButton: UIButton!
@@ -117,7 +121,9 @@ class LoginViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
-        alert.addTextField { textEmail in textEmail.placeholder = "Enter your email"}
+        alert.addTextField { textEmail in
+            textEmail.keyboardType = .emailAddress
+            textEmail.placeholder = "Enter your email"}
         
         alert.addTextField { textPassword in
             textPassword.isSecureTextEntry = true

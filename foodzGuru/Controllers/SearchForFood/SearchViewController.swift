@@ -50,9 +50,7 @@ class SearchViewController: UIViewController {
 
     //
     private func getCurrentCityFromDefaults() -> City{
-        print("called")
         if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
-            print(currentCityString)
             let cityArray = currentCityString.components(separatedBy: "/")
             return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
         }else{

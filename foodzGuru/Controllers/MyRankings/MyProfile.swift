@@ -346,8 +346,8 @@ extension MyProfile{
             let deleteAlert = UIAlertController(
                 title: "Delete Profile?", message: "Warning: this can't be undone.", preferredStyle: .alert)
             let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {_ in
-                print("Yeah delete")
                 SomeApp.deleteUser(userId: self.user.uid)
+                self.logout()
             })
             let cancelDelete = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             

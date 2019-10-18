@@ -337,7 +337,7 @@ class MyRanks: UIViewController {
     // MARK: objc functions
     @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
-        configureHeader(userId: user.uid)
+        configureHeader(userId: calledUser!.key)
         followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
     }
     
@@ -362,7 +362,7 @@ class MyRanks: UIViewController {
                 (action: UIAlertAction)->Void in
                 // Unfollow
                 SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
-                self.configureHeader(userId: self.user.uid)
+                self.configureHeader(userId: self.calledUser!.key)
                 self.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
         }))
         present(alert, animated: false, completion: nil)

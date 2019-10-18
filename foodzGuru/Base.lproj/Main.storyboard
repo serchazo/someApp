@@ -527,7 +527,7 @@
                     <navigationItem key="navigationItem" id="1lo-gP-Vlh"/>
                     <connections>
                         <outlet property="myProfileTable" destination="D5G-xa-qoz" id="vPo-Vk-cPf"/>
-                        <segue destination="OSO-BJ-p3T" kind="unwind" unwindAction="unwindToLoginScreenWithSegue:" id="xWL-QA-B9V"/>
+                        <segue destination="OSO-BJ-p3T" kind="unwind" identifier="logoffSegue" unwindAction="unwindToLoginScreenWithSegue:" id="xWL-QA-B9V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="axQ-B7-LeZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1741,6 +1741,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3hP-r7-mrg">
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="separatorColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserRanking" rowHeight="113" id="Sg5-93-7Bg" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="374" height="113"/>
@@ -2097,10 +2098,10 @@
     <inferredMetricsTieBreakers>
         <segue reference="1Yi-jY-eDW"/>
         <segue reference="B4g-Yk-vFu"/>
-        <segue reference="ou3-RT-r6a"/>
+        <segue reference="EfA-b9-uGt"/>
         <segue reference="sfx-Yu-7uu"/>
         <segue reference="LmG-dI-q1d"/>
-        <segue reference="ktI-CK-hAu"/>
+        <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>

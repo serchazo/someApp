@@ -66,7 +66,7 @@ class FirstLoginThirdScreen: UIViewController {
         if cityChosenFlag{
             self.performSegue(withIdentifier: self.segueCityOK, sender: nil)
         }else{
-            let alert = UIAlertController(title: "No city selected", message: "Press on Select City to select a ctiy. You can change this later.", preferredStyle: .alert)
+            let alert = UIAlertController(title: "No city selected", message: "Press Select City. You can change this later.", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(okAction)
             self.present(alert,animated: true)

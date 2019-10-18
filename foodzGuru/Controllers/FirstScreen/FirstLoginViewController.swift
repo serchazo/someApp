@@ -36,6 +36,7 @@ class FirstLoginViewController: UIViewController {
         
         userNameField.delegate = self
         userNameField.keyboardType = .default
+        userNameField.autocorrectionType = .no
         
         // Get user
         Auth.auth().addStateDidChangeListener {auth, user in

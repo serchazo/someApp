@@ -21,6 +21,7 @@ class MyCities: UIViewController {
     private var cityList: [(city: City, countryName:String, stateName:String)] = []
     private let segueAddCityId = "addCity"
     private let addCityCellId = "addCityCell"
+    private var emptyListFlag = false
     
     // MARK: Broadcast messages
     weak var myCitiesDelegate: MyCitiesDelegate!
@@ -85,51 +86,60 @@ extension MyCities{
         
         // The vars inside so they reset
         tmpRef.observe(.value, with: {snapshot in
-            var countryCount = 0
-            var stateCount = 0
-            var cityCount = 0
             
-            var tmpCityList: [(city: City, countryName:String, stateName:String)] = []
-            // Get country key
-            for child in snapshot.children{
-                if let countrySnap = child as? DataSnapshot{
-                    let countryKey = countrySnap.key
-                    // Count the countries
-                    countryCount += 1
-                    // Get the states
-                    for countryChild in countrySnap.children{
-                        if let stateSnap = countryChild as? DataSnapshot{
-                            let stateKey = stateSnap.key
-                            // If the last country, count the states
-                            if countryCount == snapshot.childrenCount{
-                                stateCount += 1
-                            }
-                            // Get the cities and the data
-                            for stateChild in stateSnap.children{
-                                if let citySnap = stateChild as? DataSnapshot,
-                                    let value = citySnap.value as? [String:AnyObject],
-                                    let cityName = value["name"] as? String,
-                                    let stateName = value["state"] as? String,
-                                    let countryName = value["country"] as? String{
-                                    // Add the city to the Array
-                                    let cityKey = citySnap.key
-                                    let tmpCity = City(country: countryKey, state: stateKey, key: cityKey, name: cityName)
-                                    tmpCityList.append((city:tmpCity, countryName: countryName, stateName: stateName))
-                                    // If the last state in the last country, count the cities
-                                    if countryCount == snapshot.childrenCount &&
-                                        stateCount == countrySnap.childrenCount{
-                                        cityCount += 1
-                                        if cityCount == stateSnap.childrenCount{
-                                            self.cityList = tmpCityList
-                                            self.myCitiesTableView.reloadData()
+            if !snapshot.exists(){
+                // If we don't have a ranking, mark the empty list flag
+                self.emptyListFlag = true
+                self.myCitiesTableView.reloadData()
+            }else{
+                
+                self.emptyListFlag = false
+                var countryCount = 0
+                var stateCount = 0
+                var cityCount = 0
+                
+                var tmpCityList: [(city: City, countryName:String, stateName:String)] = []
+                // Get country key
+                for child in snapshot.children{
+                    if let countrySnap = child as? DataSnapshot{
+                        let countryKey = countrySnap.key
+                        // Count the countries
+                        countryCount += 1
+                        // Get the states
+                        for countryChild in countrySnap.children{
+                            if let stateSnap = countryChild as? DataSnapshot{
+                                let stateKey = stateSnap.key
+                                // If the last country, count the states
+                                if countryCount == snapshot.childrenCount{
+                                    stateCount += 1
+                                }
+                                // Get the cities and the data
+                                for stateChild in stateSnap.children{
+                                    if let citySnap = stateChild as? DataSnapshot,
+                                        let value = citySnap.value as? [String:AnyObject],
+                                        let cityName = value["name"] as? String,
+                                        let stateName = value["state"] as? String,
+                                        let countryName = value["country"] as? String{
+                                        // Add the city to the Array
+                                        let cityKey = citySnap.key
+                                        let tmpCity = City(country: countryKey, state: stateKey, key: cityKey, name: cityName)
+                                        tmpCityList.append((city:tmpCity, countryName: countryName, stateName: stateName))
+                                        // If the last state in the last country, count the cities
+                                        if countryCount == snapshot.childrenCount &&
+                                            stateCount == countrySnap.childrenCount{
+                                            cityCount += 1
+                                            if cityCount == stateSnap.childrenCount{
+                                                self.cityList = tmpCityList
+                                                self.myCitiesTableView.reloadData()
+                                            }
                                         }
                                     }
-                                }
+                                } // End for
                             }
                         }
                     }
                 }
-            }
+            }// End verification of snapshot.exists()
         })
     }
 }
@@ -148,10 +158,12 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
         if section == 1{
             return 1
         }else{
-            guard cityList.count > 0 else{
+            guard cityList.count > 0 else{return 1}
+            if emptyListFlag == true{
                 return 1
+            }else{
+                return cityList.count
             }
-            return cityList.count
         }
     }
     
@@ -162,7 +174,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
             return cell
         }else{
             // The cities list
-            guard cityList.count > 0 else{
+            guard cityList.count > 0 || emptyListFlag else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Getting cities for user"
                 let spinner = UIActivityIndicatorView(style: .gray)
@@ -171,11 +183,21 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
                 
                 return cell
             }
-            
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let cellText = cityList[indexPath.row].city.name + ", " + cityList[indexPath.row].stateName + ", " + cityList[indexPath.row].countryName
-            cell.textLabel?.text = cellText
-            return cell
+            // Verify if the city list is empty
+            if emptyListFlag{
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                cell.textLabel?.text = "No rankings in yet!"
+                cell.detailTextLabel?.text = "Click on + and tell the world your favorite places to grab a bite !"
+                return cell
+            }
+            // If it's not, then
+            else{
+                
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let cellText = cityList[indexPath.row].city.name + ", " + cityList[indexPath.row].stateName + ", " + cityList[indexPath.row].countryName
+                cell.textLabel?.text = cellText
+                return cell
+            }
         }
     }
     

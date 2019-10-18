@@ -89,7 +89,7 @@ extension FirstLoginFourthScreen{
         if user.providerID != "facebook.com" {
             let changeRequest = user.createProfileChangeRequest()
             changeRequest.displayName = userName
-            //changeRequest.photoURL = photoURL
+            changeRequest.photoURL = photoURL
             changeRequest.commitChanges(completion: {error in
                 if let error = error{
                     print("There was an error updating the user profile: \(error.localizedDescription)")
@@ -97,12 +97,17 @@ extension FirstLoginFourthScreen{
             })
         }
         // Create the user details object
+        var urlString = ""
+        if photoURL != nil {
+            urlString = photoURL.absoluteString
+        }
+        
         SomeApp.createUserFirstLogin(
             userId: user.uid,
             username: userName!,
             bio: bio!,
             defaultCity: tmpCityString,
-            photoURL: photoURL.absoluteString)
+            photoURL: urlString)
         
         // Save the default City
         defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)

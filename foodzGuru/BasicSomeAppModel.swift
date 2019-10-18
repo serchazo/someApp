@@ -25,6 +25,7 @@ class SomeApp{
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
+    static let dbUserFollowingRankings:DatabaseReference = dbRootRef.child("user-following-rankings")
     static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
     static let dbUserNbFollowing:DatabaseReference = dbRootRef.child("user-nbfollowing")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
@@ -98,13 +99,21 @@ class SomeApp{
     // Follow and unfollow rankings
     static func followRanking(userId: String, city: City, foodId: String){
         let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
+        let userFollowingPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
+        let userFollowingRankingRef = SomeApp.dbUserFollowingRankings.child(userFollowingPath)
         let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
-        followingRankingDBReference.setValue("true")
+        userFollowingRankingRef.setValue(true)
+        followingRankingDBReference.setValue(true)
+        
+        
     }
     static func unfollowRanking(userId: String, city: City, foodId: String){
         let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
+        let userFollowingPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
         let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
+        let userFollowingRankingRef = SomeApp.dbUserFollowingRankings.child(userFollowingPath)
         followingRankingDBReference.removeValue()
+        userFollowingRankingRef.removeValue()
     }
     
     // Add a new city to user (country name and state name will be added with functions)
