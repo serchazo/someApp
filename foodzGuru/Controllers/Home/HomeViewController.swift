@@ -68,7 +68,6 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         self.navigationItem.title = "Foodz.guru"
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         // 1. Get the logged in user - needed for the next step
         Auth.auth().addStateDidChangeListener {auth, user in

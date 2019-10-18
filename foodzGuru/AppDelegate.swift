@@ -26,6 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize the Google Mobile Ads SDK.
         GADMobileAds.sharedInstance().start(completionHandler: nil)
     
+        // Set the colors of navigation bar
+        let navigationBarAppearace = UINavigationBar.appearance()
+        navigationBarAppearace.tintColor = SomeApp.themeColor // Background color
+        navigationBarAppearace.barTintColor = .white //Buttons color
+        navigationBarAppearace.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .title2)]
+        
         
         return true
     }

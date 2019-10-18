@@ -38,10 +38,6 @@ class MyRanks: UIViewController {
     }
     private var bioString:String!
     
-    //For the myProfile swipe table
-    //private var transparentView = UIView()
-    //private var myProfileTableView = UITableView()
-    
     // Ad stuff
     private var bannerView: GADBannerView!
     
@@ -171,7 +167,7 @@ class MyRanks: UIViewController {
                 // 1. Username
                 if let userNick = value["nickname"] as? String { username = userNick }
                 self.navigationItem.title = username
-                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+    
                 // 2. User photo
                 if let photoURL = value["photourl"] as? String {
                     self.photoURL = URL(string: photoURL)
@@ -193,11 +189,7 @@ class MyRanks: UIViewController {
         })
         
         // Change city button
-        changeCityButton.backgroundColor = .white
-        changeCityButton.setTitleColor(SomeApp.themeColor, for: .normal)
-        changeCityButton.layer.cornerRadius = 15
-        changeCityButton.layer.borderColor = SomeApp.themeColor.cgColor
-        changeCityButton.layer.borderWidth = 1.0
+        FoodzLayout.configureButton(button: changeCityButton)
         if currentCity != nil{
             changeCityButton.setTitle(currentCity.name, for: .normal)
         }else{

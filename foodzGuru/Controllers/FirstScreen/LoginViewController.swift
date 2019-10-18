@@ -113,9 +113,16 @@ class LoginViewController: UIViewController {
             
             // Call create user
             Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!){ user, error in
-
-                Auth.auth().signIn(withEmail: self.textFieldLoginEmail.text!, password: self.textFieldLoginPassword.text!)
-                self.firstTimeFlag = true
+                // If there is an error
+                if let error = error, user == nil {
+                    let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert,animated: true, completion: nil)
+                }
+                else{
+                    Auth.auth().signIn(withEmail: self.textFieldLoginEmail.text!, password: self.textFieldLoginPassword.text!)
+                    self.firstTimeFlag = true
+                }
             }
         }
         

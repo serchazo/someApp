@@ -39,6 +39,7 @@ class SearchViewController: UIViewController {
         }
         
         currentCity = self.getCurrentCityFromDefaults()
+        
         cityNavBarButton.title = currentCity.name
         
         // Do any additional setup after loading the view.
@@ -157,7 +158,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             
             // Decorate first
             cell.layer.borderColor = SomeApp.themeColor.cgColor
-            cell.layer.borderWidth = 2.0
+            cell.layer.borderWidth = 1.0
             cell.layer.cornerRadius = cell.frame.width / 2
             cell.clipsToBounds = true
             

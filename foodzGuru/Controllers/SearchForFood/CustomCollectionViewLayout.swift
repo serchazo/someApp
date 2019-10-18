@@ -20,7 +20,7 @@ extension CustomCollectionViewDelegate {
 
 class CustomCollectionViewLayout: UICollectionViewLayout {
     fileprivate let numberOfColumns = 2
-    fileprivate let cellPadding: CGFloat = 30
+    fileprivate let cellPadding: CGFloat = 25
     fileprivate let cellHeight: CGFloat = 130
     
     weak var delegate: CustomCollectionViewDelegate?
@@ -79,7 +79,7 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
             for column in 0..<numberOfColumns {
                 switch column {
                 case 0:
-                    yOffset.append(2 * cellPadding)
+                    yOffset.append(cellPadding)
                 case 1:
                     yOffset.append(cellPadding + cellHeight * 0.5)
                 //case 2: yOffset.append(cellPadding + cellHeight)
