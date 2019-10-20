@@ -262,6 +262,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="selectedImageTintColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="dQF-5R-KcC" kind="relationship" relationship="viewControllers" id="dLK-Oj-Jei"/>
@@ -927,11 +928,11 @@
             </objects>
             <point key="canvasLocation" x="4717" y="1809"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Cravings-->
         <scene sceneID="IDC-jZ-Og4">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dJB-Us-4lv" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="search" id="vbt-jy-dO4"/>
+                    <tabBarItem key="tabBarItem" title="Cravings" image="icon_food" selectedImage="icon_food" id="vbt-jy-dO4"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" alpha="0.80000000000000004" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="BHL-qb-JAg">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
@@ -1695,11 +1696,13 @@
             </objects>
             <point key="canvasLocation" x="-591.304347826087" y="-1556.25"/>
         </scene>
-        <!--My-->
+        <!--My Foodz-->
         <scene sceneID="ETV-a1-ONN">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yNL-Sp-wrN" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="My" id="jGD-U0-LWf"/>
+                    <tabBarItem key="tabBarItem" title="My Foodz" image="icon_my" selectedImage="icon_my" id="jGD-U0-LWf">
+                        <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="-5"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="zor-NO-6S2">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
@@ -2067,11 +2070,11 @@
             </objects>
             <point key="canvasLocation" x="2279.7101449275365" y="-2916.2946428571427"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Foodies-->
         <scene sceneID="fw5-hP-fWj">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bsx-1v-hcb" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="contacts" id="Izl-eu-3R6">
+                    <tabBarItem key="tabBarItem" title="Foodies" image="icon_foodies" selectedImage="icon_foodies" id="Izl-eu-3R6">
                         <color key="badgeColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="0.0"/>
                     </tabBarItem>
@@ -2089,11 +2092,13 @@
             </objects>
             <point key="canvasLocation" x="1347.8260869565217" y="-2079.2410714285716"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Home-->
         <scene sceneID="PCz-y8-cNc">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dQF-5R-KcC" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="6De-Go-MJ0"/>
+                    <tabBarItem key="tabBarItem" title="Home" image="icon_home" selectedImage="icon_home" id="6De-Go-MJ0">
+                        <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="-5"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FOK-JT-HEP">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
@@ -2109,11 +2114,17 @@
             <point key="canvasLocation" x="1369.5652173913045" y="-2916.2946428571427"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="icon_food" width="25" height="25"/>
+        <image name="icon_foodies" width="25" height="25"/>
+        <image name="icon_home" width="25" height="25"/>
+        <image name="icon_my" width="25" height="25"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="sT7-BS-49X"/>
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="o5v-7N-j0t"/>
-        <segue reference="sfx-Yu-7uu"/>
+        <segue reference="ceb-H0-aSB"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>

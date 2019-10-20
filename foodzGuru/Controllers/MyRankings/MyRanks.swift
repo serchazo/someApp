@@ -188,6 +188,8 @@ class MyRanks: UIViewController {
                     self.currentCity = self.parseCityFromString(string2parse: tmpCity)
                 }else if let currentCityString = self.defaults.object(forKey: SomeApp.currentCityDefault) as? String{
                     self.currentCity = self.parseCityFromString(string2parse: currentCityString)
+                }else{
+                    self.currentCity = City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
                 }
                 // Change city button
                 if self.currentCity != nil{
