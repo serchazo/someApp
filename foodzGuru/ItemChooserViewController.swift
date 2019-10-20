@@ -44,7 +44,9 @@ class ItemChooserViewController: UIViewController {
         cityTable.dataSource = self
         
         getCountryListFromDB()
-        setCountryTableHeader()
+        if firstLoginFlag{
+            setCountryTableHeader()
+        }
         
     }
     

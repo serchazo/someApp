@@ -331,7 +331,7 @@ extension MyProfile{
                     self.bioString = tmpBio!
                     self.onClickBioTransparentView()
                     // Update cell
-                    self.myProfileTable.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .automatic)
+                    self.myProfileTable.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
                     
                     
                 }

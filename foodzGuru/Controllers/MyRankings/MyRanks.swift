@@ -168,7 +168,7 @@ class MyRanks: UIViewController {
         FoodzLayout.configureButton(button: changeCityButton)
         
         // First, go get some data from the DB
-        SomeApp.dbUserData.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbUserData.child(userId).observe(.value, with: {snapshot in
             var username:String = "User Profile"
             if let value = snapshot.value as? [String: AnyObject]{
                 // 1. Username
