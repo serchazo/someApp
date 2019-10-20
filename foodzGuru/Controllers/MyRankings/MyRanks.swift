@@ -101,8 +101,6 @@ class MyRanks: UIViewController {
             var thisUserId:String
             if self.calledUser == nil{
                 thisUserId = user.uid
-                // Get the current city
-                self.currentCity = self.getCurrentCityFromDefaults()
             }else{
                 thisUserId = self.calledUser!.key
             }
@@ -119,7 +117,8 @@ class MyRanks: UIViewController {
 
     }
     
-    //
+    // MARK: get city
+    /*
     private func getCurrentCityFromDefaults() -> City{
         if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
             let cityArray = currentCityString.components(separatedBy: "/")
@@ -127,7 +126,15 @@ class MyRanks: UIViewController {
         }else{
             return City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
         }
+    }*/
+    
+    //
+    private func parseCityFromString(string2parse: String) -> City{
+        print(string2parse)
+        let cityArray = string2parse.components(separatedBy: "/")
+        return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
     }
+    
     
     // MARK: Ad stuff
     private func configureBannerAd(){
@@ -158,6 +165,7 @@ class MyRanks: UIViewController {
             navigationItem.rightBarButtonItem = nil
             navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
+        FoodzLayout.configureButton(button: changeCityButton)
         
         // First, go get some data from the DB
         SomeApp.dbUserData.child(userId).observeSingleEvent(of: .value, with: {snapshot in
@@ -173,8 +181,22 @@ class MyRanks: UIViewController {
                 }else{
                     self.photoURL = URL(string: "")
                 }
+                
+                // 3. Default city
+                if self.calledUser != nil,
+                    let tmpCity = value["default"] as? String {
+                    self.currentCity = self.parseCityFromString(string2parse: tmpCity)
+                }else if let currentCityString = self.defaults.object(forKey: SomeApp.currentCityDefault) as? String{
+                    self.currentCity = self.parseCityFromString(string2parse: currentCityString)
+                }
+                // Change city button
+                if self.currentCity != nil{
+                    self.changeCityButton.setTitle(self.currentCity.name, for: .normal)
+                }else{
+                    self.changeCityButton.setTitle("Select city", for: .normal)
+                }
         
-                // 3. User bio
+                // 4. User bio
                 if let userBio = value["bio"] as? String,
                     userBio != ""{
                     self.bioLabel.text = userBio
@@ -184,16 +206,11 @@ class MyRanks: UIViewController {
                         self.bioLabel.textColor = .lightGray
                         self.bioLabel.text = "Click on Profile to add a bio."}
                 }
+                
+                // 5. Update ranking
+                self.updateTablewithRanking(userId: userId)
             }
         })
-        
-        // Change city button
-        FoodzLayout.configureButton(button: changeCityButton)
-        if currentCity != nil{
-            changeCityButton.setTitle(currentCity.name, for: .normal)
-        }else{
-            changeCityButton.setTitle("Select city", for: .normal)
-        }
         
         
         // Follow button
