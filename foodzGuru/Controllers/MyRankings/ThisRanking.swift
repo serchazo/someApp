@@ -220,15 +220,6 @@ class ThisRanking: UIViewController {
         //self.userRankingDetailRef.removeAllObservers()
     }
     
-    // MARK: Ad stuff
-    private func configureBannerAd(){
-        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = SomeApp.adBAnnerUnitID
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-        bannerView.delegate = self
-    }
     
     // MARK: setup My tables
     private func setupMyTables(){
@@ -332,6 +323,7 @@ class ThisRanking: UIViewController {
                     let position = value["position"] as? Int {
                     let restoId = testChild.key
                     tmpPositions[position-1] = restoId
+                    
                     // Get the Resto data
                     self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
                         let tmpResto = Resto(snapshot: restoDetailSnap)
@@ -344,6 +336,7 @@ class ThisRanking: UIViewController {
                             self.thisRanking = tmpRanking
                             self.thisEditableRanking = tmpRanking
                             self.myRankingTable.reloadData()
+                            
                             // then get the Reviews.  Update by row
                             for tmpRestoId in tmpPositions{
                                 self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
@@ -701,16 +694,12 @@ extension ThisRanking{
     
     // Perform the update
     @objc func performUpdate(){
-        print("Update here")
         if operations.count > 0{
             let delOperations = operations.filter({$0.operationType == .Delete})
             delOperations.map({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: $0.restoIdentifier) })
             
-            // Then update the positions in the ranking
-            for index in 0..<thisEditableRanking.count{
-                let tmpResto = thisEditableRanking[index]
-                SomeApp.updateRestoPositionInRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: tmpResto.key, position:index+1 )
-            }
+            // Update the ranking
+            SomeApp.updateRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, ranking: thisEditableRanking)
         }
         //Update view
         onClickEditRankTransparentView()
@@ -839,7 +828,7 @@ extension ThisRanking{
     
 }
 
-// MARK: get stuff from the segued view and process the info
+// MARK: Add new resto
 
 extension ThisRanking: MyRanksMapSearchViewDelegate{
     //
@@ -927,8 +916,10 @@ extension ThisRanking : UITableViewDropDelegate {
     }
     
      func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        // Only for the editable Table view, and for section 1
-        if tableView == editRankTableView, let indexPath = destinationIndexPath, indexPath.section == 1{
+        // Only for the editable Table view, and for section 0
+        if tableView == editRankTableView,
+            let indexPath = destinationIndexPath, indexPath.section == 0{
+            
             let isSelf = (session.localDragSession?.localContext as? UITableView) == editRankTableView
             return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
         }else{
@@ -960,7 +951,7 @@ extension ThisRanking : UITableViewDropDelegate {
                 })
                 coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
                 // Now reload
-                editRankTableView.reloadData()
+                //editRankTableView.reloadData()
             }
         }
     }
@@ -979,6 +970,17 @@ extension ThisRanking:UITextViewDelegate {
 
 // MARK: Banner Ad Delegate
 extension ThisRanking: GADBannerViewDelegate{
+    // my funcs
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
+    
+    // Delegate funcs
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         adView.addSubview(bannerView)
@@ -999,11 +1001,9 @@ extension ThisRanking: GADBannerViewDelegate{
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
-        // Here
-        let placeHolderAd = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-        placeHolderAd.text = "Get this spot!"
-        placeHolderAd.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
-        adView.addSubview(placeHolderAd)
+        
+        // Default Ad
+        FoodzLayout.defaultAd(adView: adView)
         
     }
     

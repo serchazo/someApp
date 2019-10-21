@@ -132,7 +132,6 @@ class SomeApp{
     
     // Add a new city to user (country name and state name will be added with functions)
     static func addUserCity(userId: String, city: City, countryName: String, stateName: String){
-        print("here \(countryName)")
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key
         let objectToWrite: [String:Any] = ["country": countryName,
                                                  "state": stateName,
@@ -154,9 +153,19 @@ class SomeApp{
     
     
     // Update the position of a resto
-    static func updateRestoPositionInRanking(userId: String, city: City, foodId: String, restoId: String, position: Int){
-        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + restoId + "/position"
-        SomeApp.dbUserRankingDetails.child(dbPath).setValue(position)
+    static func updateRanking(userId:String, city:City, foodId: String, ranking: [Resto]){
+        var updateObject:[String:Any] = [:]
+        
+        // The object to update
+        for index in 0..<ranking.count{
+            let tmpResto = ranking[index]
+            let tmpPosition = index + 1
+            let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + tmpResto.key + "/position"
+            updateObject[dbPath] = tmpPosition
+        }
+        // Then write!
+        dbUserRankingDetails.updateChildValues(updateObject)
+        
     }
     
     // Delete resto

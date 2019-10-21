@@ -57,6 +57,20 @@ class FoodzLayout{
         cell.doneButton.layer.masksToBounds = true
     }
     
+    // Configure Default Ad
+    static func defaultAd(adView: UIView){
+        //Gradient for the background
+        let layer = CAGradientLayer()
+        layer.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
+        layer.colors = [SomeApp.themeColorOpaque.cgColor, SomeApp.themeColor.cgColor]
+        adView.layer.addSublayer(layer)
+        
+        // Here
+        let placeHolderAd = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        placeHolderAd.text = "Get this spot!"
+        adView.addSubview(placeHolderAd)
+    }
+    
     // Pop-up table
     static func popupTable(viewController: UIViewController, transparentView: UIView, tableView: UITableView){
         // Window
