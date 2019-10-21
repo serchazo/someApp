@@ -38,8 +38,7 @@ class MyRanks: UIViewController {
     }
     private var bioString:String!
     
-    // Ad stuff
-    private var bannerView: GADBannerView!
+    
     
     // MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -72,8 +71,11 @@ class MyRanks: UIViewController {
     }
     
     @IBOutlet weak var changeCityButton: UIButton!
-    @IBOutlet weak var adView: UIView!
     
+    // MARK: Ad stuff
+    @IBOutlet weak var adView: UIView!
+    // Ad stuff
+    private var bannerView: GADBannerView!
     
     
     // MARK: Timeline funcs
@@ -134,18 +136,6 @@ class MyRanks: UIViewController {
         let cityArray = string2parse.components(separatedBy: "/")
         return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
     }
-    
-    
-    // MARK: Ad stuff
-    private func configureBannerAd(){
-        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = SomeApp.adBAnnerUnitID
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-        bannerView.delegate = self
-    }
-    
     
     // MARK: Fetch image from URL
     private func fetchImage(){
@@ -501,8 +491,19 @@ extension MyRanks{
     }
 }
 
-// MARK: Banner Ad Delegate
+// MARK: Ad Stuff
 extension MyRanks: GADBannerViewDelegate{
+    // My funcs
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
+    
+    // Ad delegate
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         adView.addSubview(bannerView)

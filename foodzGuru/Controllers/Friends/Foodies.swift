@@ -28,7 +28,19 @@ class Foodies: UIViewController {
         }
     }
     
+    @IBOutlet weak var headerView: UIView!
     
+    // MARK: Ad stuff
+    @IBOutlet weak var adView: UIView!
+    private var bannerView: GADBannerView!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        if let indexPath = myFoodies.indexPathForSelectedRow {
+            myFoodies.deselectRow(at: indexPath, animated: true)
+        }        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +61,9 @@ class Foodies: UIViewController {
         friendsSearchController.searchBar.placeholder = "Search for More Foodies"
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
+        
+        // Configure the banner ad
+        configureBannerAd()
 
     }
     
@@ -120,7 +135,7 @@ class Foodies: UIViewController {
         switch segue.identifier {
         case Foodies.segueToFoodie:
             if let seguedController = segue.destination as? MyRanks,
-                let senderCell = sender as? UITableViewCell,
+                let senderCell = sender as? HomeCellWithImage,
                 let indexNumber = myFoodies.indexPath(for: senderCell){
                 seguedController.calledUser = myFoodiesList[indexNumber.row]
             }
@@ -180,6 +195,63 @@ extension Foodies: UISearchResultsUpdating{
         guard textToSearch.count >= 3 else { return }
         filterContentForSearchText(textToSearch.lowercased())
     }
+}
+
+
+// MARK: Ad stuff
+extension Foodies: GADBannerViewDelegate{
+    // My func
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
     
+    // delegate funcs
+    func addBannerViewToView(_ bannerView: GADBannerView) {
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(bannerView)
+    }
     
+    /// Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd")
+        
+        //small animation
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1, animations: {
+            bannerView.alpha = 1
+        })
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that a full-screen view will be presented in response
+    /// to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        print("adViewWillPresentScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewWillDismissScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app (such as
+    /// the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("adViewWillLeaveApplication")
+    }
 }
