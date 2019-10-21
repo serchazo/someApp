@@ -14,12 +14,16 @@ class UserDetails{
     let key: String
     let nickName: String
     var bio: String
+    var photoURLString: String
+    var defaultCity:String
     
-    init(nickName: String, bio: String = "", key: String = "") {
+    init(nickName: String, bio: String = "", key: String = "", photoURL:String = "", defaultCity:String = "") {
         self.ref = nil
         self.key = key
         self.nickName = nickName
         self.bio = bio
+        self.photoURLString = photoURL
+        self.defaultCity = defaultCity
     }
     
     init?(snapshot: DataSnapshot){
@@ -33,6 +37,8 @@ class UserDetails{
         self.nickName = name
         
         if let bio = value["bio"] as? String {self.bio = bio} else {self.bio = ""}
+        if let tmpURL = value["photourl"] as? String {self.photoURLString = tmpURL} else {self.photoURLString = ""}
+        if let tmpCity = value["default"] as? String {self.defaultCity = tmpCity} else {self.defaultCity = "singapore/singapore/singapore/Singapore"}
     }
     
     // Turn Ranking to a Dictionary
@@ -40,6 +46,8 @@ class UserDetails{
         return[
             "nickname" : nickName,
             "bio" : bio,
+            "photourl" : photoURLString,
+            "default" : defaultCity
         ]
     }
     

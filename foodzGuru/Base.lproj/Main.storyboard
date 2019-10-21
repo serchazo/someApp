@@ -463,7 +463,7 @@
                             <constraint firstItem="N1f-Jn-B4e" firstAttribute="trailing" secondItem="Izr-qd-VWX" secondAttribute="trailing" id="cFG-SO-e5h"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="My Ranks" id="9vH-ZG-lYc">
+                    <navigationItem key="navigationItem" id="9vH-ZG-lYc">
                         <barButtonItem key="leftBarButtonItem" systemItem="add" id="GJT-bV-Q6c">
                             <connections>
                                 <segue destination="ZF4-k3-DzE" kind="show" identifier="addRankSegue" id="gh7-La-gyV"/>
@@ -736,7 +736,7 @@
                             <constraint firstItem="ljf-mn-kdL" firstAttribute="top" secondItem="g8T-ZW-hwj" secondAttribute="bottom" id="uiU-zu-80h"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="This Ranking" id="gjz-Ol-EEO">
+                    <navigationItem key="navigationItem" id="gjz-Ol-EEO">
                         <barButtonItem key="rightBarButtonItem" systemItem="edit" id="O2h-r2-NPR">
                             <connections>
                                 <action selector="editButtonPressed:" destination="0L4-C9-dg9" id="pUX-pr-SkT"/>
@@ -966,15 +966,65 @@
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="foodieCell" id="CQW-qb-pcf">
-                                        <rect key="frame" x="0.0" y="28" width="374" height="43.5"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="foodieCell" rowHeight="113" id="6sr-Uz-MWT" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CQW-qb-pcf" id="QHa-Cy-ETT">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6sr-Uz-MWT" id="27F-YY-Wmv">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3nz-4b-SxE">
+                                                    <rect key="frame" x="0.0" y="26.5" width="60" height="60"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="3nz-4b-SxE" secondAttribute="height" multiplier="1:1" id="6hG-7U-sxs"/>
+                                                        <constraint firstAttribute="width" constant="60" id="SEz-tI-xRp"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ybg-4D-pbI">
+                                                    <rect key="frame" x="80" y="21" width="150" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="WOn-Vw-WWW"/>
+                                                        <constraint firstAttribute="height" constant="21" id="gqi-Ru-mFG"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lXK-7F-jfY">
+                                                    <rect key="frame" x="304" y="26" width="50" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="VeG-D1-k5z"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3NW-OT-agZ">
+                                                    <rect key="frame" x="80" y="50" width="274" height="55"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="lXK-7F-jfY" firstAttribute="leading" relation="lessThanOrEqual" secondItem="Ybg-4D-pbI" secondAttribute="trailing" constant="74" id="7O7-Eq-TIT"/>
+                                                <constraint firstItem="lXK-7F-jfY" firstAttribute="bottom" secondItem="Ybg-4D-pbI" secondAttribute="bottom" id="K0D-7I-fKn"/>
+                                                <constraint firstItem="3NW-OT-agZ" firstAttribute="leading" secondItem="Ybg-4D-pbI" secondAttribute="leading" id="KF6-3o-wmz"/>
+                                                <constraint firstItem="3nz-4b-SxE" firstAttribute="leading" secondItem="27F-YY-Wmv" secondAttribute="leading" id="SGk-w8-fZQ"/>
+                                                <constraint firstItem="3NW-OT-agZ" firstAttribute="top" secondItem="Ybg-4D-pbI" secondAttribute="bottom" constant="8" symbolic="YES" id="Xdj-PA-BBA"/>
+                                                <constraint firstItem="3nz-4b-SxE" firstAttribute="centerY" secondItem="27F-YY-Wmv" secondAttribute="centerY" id="cB9-Ve-4mq"/>
+                                                <constraint firstItem="Ybg-4D-pbI" firstAttribute="top" secondItem="27F-YY-Wmv" secondAttribute="topMargin" constant="10" id="rNJ-p9-f0D"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="lXK-7F-jfY" secondAttribute="trailing" id="rnj-dS-jFC"/>
+                                                <constraint firstAttribute="trailing" secondItem="3NW-OT-agZ" secondAttribute="trailing" constant="20" symbolic="YES" id="tl0-qy-dZO"/>
+                                                <constraint firstItem="3NW-OT-agZ" firstAttribute="leading" secondItem="3nz-4b-SxE" secondAttribute="trailing" multiplier="1.2" constant="8" symbolic="YES" id="vx4-gA-wRp"/>
+                                                <constraint firstAttribute="bottom" secondItem="3NW-OT-agZ" secondAttribute="bottom" constant="8" id="wEr-zc-ouI"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="bUE-hb-C5b" kind="show" identifier="showFoodie" id="Gf5-S0-mxm"/>
+                                            <outlet property="bodyLabel" destination="3NW-OT-agZ" id="ZBb-c1-Ba8"/>
+                                            <outlet property="cellImage" destination="3nz-4b-SxE" id="aN2-aF-L3K"/>
+                                            <outlet property="dateLabel" destination="lXK-7F-jfY" id="gca-dA-khw"/>
+                                            <outlet property="titleLabel" destination="Ybg-4D-pbI" id="WfK-ik-7eg"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -990,12 +1040,12 @@
                     </view>
                     <navigationItem key="navigationItem" id="ge7-Iu-U2o"/>
                     <connections>
-                        <outlet property="someTable" destination="I4M-ji-k9d" id="pSw-5I-13d"/>
+                        <outlet property="myFoodies" destination="I4M-ji-k9d" id="pSw-5I-13d"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gCW-O2-321" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2257.971014492754" y="-2079.2410714285716"/>
+            <point key="canvasLocation" x="2257.971014492754" y="-2079.9107142857142"/>
         </scene>
         <!--Select your Country-->
         <scene sceneID="Uw5-fh-CLg">
@@ -2123,8 +2173,8 @@
     <inferredMetricsTieBreakers>
         <segue reference="sT7-BS-49X"/>
         <segue reference="B4g-Yk-vFu"/>
-        <segue reference="o5v-7N-j0t"/>
-        <segue reference="ceb-H0-aSB"/>
+        <segue reference="ou3-RT-r6a"/>
+        <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>

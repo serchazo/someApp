@@ -16,15 +16,15 @@ class Foodies: UIViewController {
     private var user:User!
     private var friendsSearchController: UISearchController!
     private var filteredFoodies: [String] = []
-    private var recommendedFoodies: [UserDetails] = []
+    private var myFoodiesList: [UserDetails] = []
     
     // The user to be passed on
     private var visitedUserData: UserDetails!
 
-    @IBOutlet weak var someTable: UITableView!{
+    @IBOutlet weak var myFoodies: UITableView!{
         didSet{
-            someTable.delegate = self
-            someTable.dataSource = self
+            myFoodies.delegate = self
+            myFoodies.dataSource = self
         }
     }
     
@@ -46,7 +46,7 @@ class Foodies: UIViewController {
         friendsSearchController.searchResultsUpdater = self
         friendsSearchController.hidesNavigationBarDuringPresentation = false
         friendsSearchController.obscuresBackgroundDuringPresentation = false
-        friendsSearchController.searchBar.placeholder = "Search for Foodies"
+        friendsSearchController.searchBar.placeholder = "Search for More Foodies"
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
 
@@ -55,14 +55,14 @@ class Foodies: UIViewController {
     // MARK : the recommended list
     func getRecommendedUsers(){
         // Outer : get the top users from the app
-        SomeApp.dbUserNbFollowers.queryOrderedByValue().queryLimited(toFirst: 20).observeSingleEvent(of: .value, with: {snapshot in
+        SomeApp.dbUserFollowing.child(user.uid).observe(.value, with: {snapshot in
             var tmpUserDetails:[UserDetails] = []
             var count = 0
             
             // Inner: get the user data
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot{
-                    SomeApp.dbUserData.child(childSnapshot.key).observeSingleEvent(of: .value, with: { userDataSnap in
+                    SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
                         // We don't add ourselve to the suggested
                         if userDataSnap.exists(){
                             if(childSnapshot.key != self.user.uid){
@@ -73,8 +73,8 @@ class Foodies: UIViewController {
                         // Use the trick
                         count += 1
                         if count == snapshot.childrenCount {
-                            self.recommendedFoodies = tmpUserDetails
-                            self.someTable.reloadData()
+                            self.myFoodiesList = tmpUserDetails
+                            self.myFoodies.reloadData()
                         }
                     })
                     
@@ -104,7 +104,7 @@ class Foodies: UIViewController {
                     // Use the trick
                     count += 1
                     if count == snapshot.childrenCount{
-                        self.someTable.reloadData()
+                        self.myFoodies.reloadData()
                     }
                 }
             }
@@ -121,8 +121,8 @@ class Foodies: UIViewController {
         case Foodies.segueToFoodie:
             if let seguedController = segue.destination as? MyRanks,
                 let senderCell = sender as? UITableViewCell,
-                let indexNumber = someTable.indexPath(for: senderCell){
-                seguedController.calledUser = recommendedFoodies[indexNumber.row]
+                let indexNumber = myFoodies.indexPath(for: senderCell){
+                seguedController.calledUser = myFoodiesList[indexNumber.row]
             }
         default: break
         }
@@ -131,26 +131,39 @@ class Foodies: UIViewController {
 
 }
 
-// MARK : table stuff
+// MARK: table stuff
 
 extension Foodies:UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard recommendedFoodies.count > 0 else { return 1}
-        return recommendedFoodies.count
+        guard myFoodiesList.count > 0 else { return 1}
+        return myFoodiesList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard recommendedFoodies.count > 0 else{
+        guard myFoodiesList.count > 0 else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Loading recommendations"
+            cell.textLabel?.text = "Getting Foodies' data"
             let spinner = UIActivityIndicatorView(style: .gray)
             spinner.startAnimating()
             cell.accessoryView = spinner
             return cell
         }
-        let cell = someTable.dequeueReusableCell(withIdentifier: Foodies.foodieCell)
-        cell?.textLabel?.text = recommendedFoodies[indexPath.row].nickName
-        return cell!
+        
+        if let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
+            cell.titleLabel.text = myFoodiesList[indexPath.row].nickName
+            cell.bodyLabel.text = myFoodiesList[indexPath.row].bio
+            cell.cellImage.sd_setImage(
+                with: URL(string: myFoodiesList[indexPath.row].photoURLString),
+                placeholderImage: UIImage(named: "userdefault"),
+                options: [],
+                completed: nil)
+            cell.dateLabel.text = ""
+            
+            return cell
+        }else{
+            fatalError("Can't create cell")
+        }
+        
     }
 }
 
