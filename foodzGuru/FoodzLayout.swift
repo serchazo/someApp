@@ -62,12 +62,19 @@ class FoodzLayout{
         //Gradient for the background
         let layer = CAGradientLayer()
         layer.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
-        layer.colors = [SomeApp.themeColorOpaque.cgColor, SomeApp.themeColor.cgColor]
+        layer.cornerRadius = 10
+        layer.borderColor = #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)
+        layer.borderWidth = 1.0
+        layer.masksToBounds = true
         adView.layer.addSublayer(layer)
         
         // Here
         let placeHolderAd = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-        placeHolderAd.text = "Get this spot!"
+        placeHolderAd.numberOfLines = 2
+        placeHolderAd.textAlignment = .center
+        placeHolderAd.textColor = #colorLiteral(red: 0, green: 0.5628422499, blue: 0.3188166618, alpha: 1)
+        placeHolderAd.font = UIFont.preferredFont(forTextStyle: .footnote)
+        placeHolderAd.text = "Place your announcement here! support@foodz.guru"
         adView.addSubview(placeHolderAd)
     }
     

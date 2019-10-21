@@ -524,6 +524,9 @@ extension MyRanks: GADBannerViewDelegate{
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+        
+        // Default Ad
+        FoodzLayout.defaultAd(adView: adView)
     }
     
     /// Tells the delegate that a full-screen view will be presented in response

@@ -966,11 +966,11 @@
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="OJi-gv-pfH">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="86"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yHO-9i-YLx">
-                                            <rect key="frame" x="27" y="20" width="320" height="4"/>
+                                            <rect key="frame" x="27" y="20" width="320" height="46"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="50" id="Gak-FX-pA3"/>
@@ -987,7 +987,7 @@
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="foodieCell" rowHeight="113" id="6sr-Uz-MWT" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="72" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="114" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6sr-Uz-MWT" id="27F-YY-Wmv">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -1810,11 +1810,11 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="L3R-2i-Aw8">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="51"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="85"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="22U-AQ-FLU">
-                                            <rect key="frame" x="27" y="20" width="320" height="11"/>
+                                            <rect key="frame" x="27" y="20" width="320" height="45"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="320" id="ozH-9N-aFx"/>
@@ -1831,7 +1831,7 @@
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserRanking" rowHeight="113" id="Sg5-93-7Bg" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="79" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="113" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sg5-93-7Bg" id="yZt-6w-LI7">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -1893,7 +1893,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFollowing" rowHeight="113" id="Kct-ND-SrU" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="192" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="226" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Kct-ND-SrU" id="9K3-Nz-yFl">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -1955,7 +1955,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserNewReview" rowHeight="113" id="PYE-e6-KR0" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="305" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="339" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PYE-e6-KR0" id="ALN-Q2-6FN">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2017,7 +2017,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFavorite" rowHeight="113" id="MsN-2l-fW5" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="418" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="452" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MsN-2l-fW5" id="VlB-0e-jIa">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2079,7 +2079,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineRankingInfoCell" rowHeight="113" id="9N3-Mq-itK" customClass="HomeCellWithIcon" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="531" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="565" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9N3-Mq-itK" id="3Sj-QP-hDg">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2219,7 +2219,7 @@
         <segue reference="sT7-BS-49X"/>
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="o5v-7N-j0t"/>
-        <segue reference="7KI-8z-099"/>
+        <segue reference="EGh-pU-zKk"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>
