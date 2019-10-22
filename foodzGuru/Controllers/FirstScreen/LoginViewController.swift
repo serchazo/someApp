@@ -28,7 +28,10 @@ class LoginViewController: UIViewController {
     }
     @IBOutlet weak var textFieldLoginPassword: UITextField!
     
-    @IBOutlet weak var facebookLoginButton: UIButton!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var forgotPasswordButton: UIButton!
+    @IBOutlet weak var signUpButton: UIButton!
+    
     
     @IBOutlet weak var facebookButton: UIButton!
     
@@ -67,7 +70,25 @@ class LoginViewController: UIViewController {
             }
         }
         
+        // Configure the buttons
+        FoodzLayout.configureButton(button: signUpButton)
+        signUpButton.titleLabel?.text = "Create account"
+        
+        loginButton.layer.cornerRadius = 15
+        loginButton.backgroundColor = SomeApp.themeColor
+        //loginButton.layer.borderColor = SomeApp.themeColor.cgColor
+        loginButton.layer.borderWidth = 1.0
+        loginButton.layer.masksToBounds = true
+        
+        textFieldLoginEmail.layer.cornerRadius = 15
+        textFieldLoginEmail.layer.masksToBounds = true
+        
+        textFieldLoginPassword.layer.cornerRadius = 15
+        textFieldLoginPassword.layer.masksToBounds = true 
+        
         // Configure the Login with Facebook button
+        facebookButton.layer.cornerRadius = 15
+        facebookButton.layer.masksToBounds = true
         facebookButton.setTitle("Facebook Login", for: .normal)
         facebookButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
         facebookButton.setTitleColor(.white, for: .normal)
@@ -102,6 +123,42 @@ class LoginViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: forgot password
+    @IBAction func forgotPasswordPressed(_ sender: Any) {
+        let alert = UIAlertController(title: "Password reset",
+        message: "Enter your e-mail and you'll receive an e-mail with the instructions.",
+        preferredStyle: .alert)
+        
+        let passwordResetAction = UIAlertAction(title: "Reset", style: .default){ _ in
+            //Get e-mail from the alert
+            let emailField = alert.textFields![0]
+            
+            // Call firebase function
+            Auth.auth().sendPasswordReset(withEmail: emailField.text!) { error in
+                // There is an error
+                if let error = error{
+                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert,animated: true, completion: nil)
+                }
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alert.addTextField { textEmail in
+            textEmail.keyboardType = .emailAddress
+            textEmail.placeholder = "Enter your email"
+        }
+        
+        alert.addAction(passwordResetAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
+    
+    
     
     // MARK: Sign up
     @IBAction func signUpPressed(_ sender: UIButton) {

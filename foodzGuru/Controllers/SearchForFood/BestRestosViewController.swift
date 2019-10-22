@@ -111,7 +111,10 @@ class BestRestosViewController: UIViewController {
         tableHeaderFoodIcon.layer.borderColor = SomeApp.themeColor.cgColor
         tableHeaderFoodIcon.layer.borderWidth = 2.0
         tableHeaderFoodIcon.layer.masksToBounds = true
+        tableHeaderFoodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
         tableHeaderFoodIcon.text = currentFood.icon
+        
+        
         tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
         
         // Configure follow button
