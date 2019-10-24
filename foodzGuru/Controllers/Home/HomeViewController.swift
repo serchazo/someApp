@@ -43,6 +43,12 @@ class HomeViewController: UIViewController {
     
     // Ad stuff
     private var bannerView: GADBannerView!
+    private let adsToLoad = 5 //The number of native ads to load
+    private var adsLoadedIndex = 0 // to count the ads we are loading
+    
+    private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
+    private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
+    private let adFrequency = 7
     
     @IBOutlet weak var newsFeedTable: UITableView!{
         didSet{
@@ -53,6 +59,8 @@ class HomeViewController: UIViewController {
             newsFeedTable.register(UINib(nibName: HomeViewController.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
             newsFeedTable.register(UINib(nibName: timelineCellWithImageNibId, bundle: nil), forCellReuseIdentifier: timelineCellWithImage)
             
+            newsFeedTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
+            forCellReuseIdentifier: "UnifiedNativeAdCell")
             
             newsFeedTable.rowHeight = UITableView.automaticDimension
             newsFeedTable.estimatedRowHeight = 150
@@ -85,14 +93,16 @@ class HomeViewController: UIViewController {
             self.updateTimelinefromDB()
         }
         
-        // Configure the banner ad
+        // Configure the Ads
         configureBannerAd()
+        configureNativeAds()
     }
     
     // MARK: update from DB
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
+            var adCount = 0
             var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, initiator:String, target: String, targetName: String)] = []
         
             for child in snapshot.children{
@@ -120,8 +130,21 @@ class HomeViewController: UIViewController {
                     
                     // Use the trick
                     count += 1
+                        
+                    // ... but first, let me take an ad
                     if count == snapshot.childrenCount{
-                        self.somePost = tmpPosts.reversed()
+                        tmpPosts = tmpPosts.reversed()
+                        
+                        // Then, add the Ads at adFrequency positions
+                        for i in 0 ..< tmpPosts.count{
+                            if i % self.adFrequency == (self.adFrequency - 1){
+                                let placeholderAd = self.placeHolderAd()
+                                tmpPosts.insert(placeholderAd, at: i)
+                            }
+                        }
+                        
+                        self.somePost = tmpPosts
+                        // Then reload
                         self.newsFeedTable.reloadData()
                     }
                 }
@@ -129,6 +152,18 @@ class HomeViewController: UIViewController {
         })
     }
     
+    // Placeholder Ad
+    private func placeHolderAd() -> (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String){
+        let tmpKey = "nativeAd"
+        let tmpType = TimelineEvents.NativeAd.rawValue
+        let tmpTimestamp = NSDate().timeIntervalSince1970
+        let tmpPayoload = "Place your Advertisement here! Contact support@foodz.guru"
+        let tmpInitiator = "foodz.guru"
+        let target = "nil"
+        let targetName = "nil"
+        return (key: tmpKey, type:tmpType, timestamp:tmpTimestamp, payload: tmpPayoload, initiator: tmpInitiator, target: target, targetName: targetName)
+        
+    }
 
     
     // MARK: - Navigation
@@ -253,6 +288,37 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
+            // If it is an Ad, we have two options: load one or placeholder
+        else if somePost[indexPath.row].type == TimelineEvents.NativeAd.rawValue{
+            // If we have loaded Ads
+            if nativeAds.count > 0{
+                // Ad Cell
+                let nativeAdCell = tableView.dequeueReusableCell(
+                    withIdentifier: "UnifiedNativeAdCell", for: indexPath)
+                configureAddCell(nativeAdCell: nativeAdCell, index: adsLoadedIndex)
+                print("here")
+                adsLoadedIndex += 1
+                if adsLoadedIndex == (adsToLoad - 1) {
+                    adsLoadedIndex = 0
+                }
+                
+                return(nativeAdCell)
+            }
+                // If we don't have loaded Ads, we put a placeholder
+            else{
+                if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell {
+                    
+                    setupPostCell(cell: postCell,
+                                  type: somePost[indexPath.row].type,
+                                  timestamp: somePost[indexPath.row].timestamp,
+                                  payload: somePost[indexPath.row].payload,
+                                  icon: "💡")
+                    
+                    return postCell
+                }
+                else{fatalError("Can't create cell")}
+            }
+        }
             
         // Foodz.guru stuff
         else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
@@ -267,6 +333,16 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             fatalError("Unable to create cell")
         }
     }
+    
+    /*
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if nativeAds.count > 0 && ( indexPath.row % self.adFrequency == (self.adFrequency - 1)){
+            return 120
+        }else{
+            return UITableView.automaticDimension
+        }
+    }*/
+    
 }
 
 // MARK: Home cells
@@ -286,6 +362,11 @@ extension HomeViewController{
             cell.titleLabel.text = "foodz.guru"
             cell.bodyLabel.text = payload
             cell.iconLabel.text = "💬"
+        }
+        else if (type == TimelineEvents.NativeAd.rawValue){
+            cell.titleLabel.text = "Advertise here!"
+            cell.bodyLabel.text = payload
+            cell.iconLabel.text = "💡"
         }
 
     }
@@ -404,6 +485,19 @@ extension HomeViewController: GADBannerViewDelegate{
         bannerView.delegate = self
     }
     
+    func configureNativeAds(){
+        let options = GADMultipleAdsAdLoaderOptions()
+        options.numberOfAds = adsToLoad
+
+        // Prepare the ad loader and start loading ads.
+        adLoader = GADAdLoader(adUnitID: SomeApp.adNativeUnitID,
+                               rootViewController: self,
+                               adTypes: [.unifiedNative],
+                               options: [options])
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
+    }
+    
     // delegate funcs
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
@@ -450,5 +544,79 @@ extension HomeViewController: GADBannerViewDelegate{
     /// the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: ad Loader delegate
+extension HomeViewController: GADUnifiedNativeAdLoaderDelegate{
+    // Ad adds to table
+    func addNativeAdds(){
+        if nativeAds.count <= 0 {
+          return
+        }
+        var index = adFrequency - 1
+        
+        for i in 0 ..< somePost.count{
+            if i == index{
+                newsFeedTable.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                index += adFrequency
+            }
+        }
+    }
+    
+    
+    // My cell
+    func configureAddCell(nativeAdCell: UITableViewCell, index: Int){
+        guard nativeAds.count > 0 else {return}
+        let nativeAd = nativeAds[index] // GADUnifiedNativeAd()
+        
+        // Set the native ad's rootViewController to the current view controller.
+        nativeAd.rootViewController = self
+        
+        // Get the ad view from the Cell. The view hierarchy for this cell is defined in
+        // UnifiedNativeAdCell.xib.
+        let adView : GADUnifiedNativeAdView = nativeAdCell.contentView.subviews.first as! GADUnifiedNativeAdView
+        
+        // Associate the ad view with the ad object.
+        // This is required to make the ad clickable.
+        adView.nativeAd = nativeAd
+        
+        // Populate the ad view with the ad assets.
+        (adView.headlineView as! UILabel).text = nativeAd.headline
+        (adView.priceView as! UILabel).text = nativeAd.price
+        if let starRating = nativeAd.starRating {
+            (adView.starRatingView as! UILabel).text =
+                starRating.description + "\u{2605}"
+        } else {
+            (adView.starRatingView as! UILabel).text = nil
+        }
+        (adView.bodyView as! UILabel).text = nativeAd.body
+        (adView.advertiserView as! UILabel).text = nativeAd.advertiser
+        // The SDK automatically turns off user interaction for assets that are part of the ad, but
+        // it is still good to be explicit.
+        (adView.callToActionView as! UIButton).isUserInteractionEnabled = false
+        (adView.callToActionView as! UIButton).setTitle(
+            nativeAd.callToAction, for: UIControl.State.normal)
+    }
+    
+    // Delegate funcs
+    func adLoader(_ adLoader: GADAdLoader,
+                  didFailToReceiveAdWithError error: GADRequestError) {
+      print("\(adLoader) failed with error: \(error.localizedDescription)")
+
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+      print("Received native ad: \(nativeAd)")
+
+      // Add the native ad to the list of native ads.
+      nativeAds.append(nativeAd)
+    }
+    
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+        //When we finish loading Ads, we update the table view
+        addNativeAdds()
+        
+        
     }
 }

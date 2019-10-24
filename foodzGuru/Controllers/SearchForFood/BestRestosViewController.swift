@@ -213,6 +213,7 @@ class BestRestosViewController: UIViewController {
                     // Segue
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                     seguedToResto.currentCity = currentCity
+                    seguedToResto.currentFood = currentFood
                 }
             default: break
             }

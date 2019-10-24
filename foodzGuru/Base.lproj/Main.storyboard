@@ -847,9 +847,44 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gyO-Yw-2Wx">
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="xbC-t6-AQj">
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="112"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Resto Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d4x-LB-vFN">
+                                            <rect key="frame" x="20" y="20" width="334" height="31"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOy-WV-ZRr">
+                                            <rect key="frame" x="204" y="59" width="150" height="33"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" relation="lessThanOrEqual" constant="33" id="sN6-sD-OFA"/>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="sc5-sm-MiI"/>
+                                            </constraints>
+                                            <state key="normal" title="Button">
+                                                <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="addToRankAction:" destination="xkY-9F-qMX" eventType="touchUpInside" id="m3E-ai-73L"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="d4x-LB-vFN" secondAttribute="trailing" constant="20" symbolic="YES" id="8Pq-V3-ToF"/>
+                                        <constraint firstItem="d4x-LB-vFN" firstAttribute="leading" secondItem="xbC-t6-AQj" secondAttribute="leading" constant="20" symbolic="YES" id="9kU-vQ-Yfo"/>
+                                        <constraint firstItem="cOy-WV-ZRr" firstAttribute="leading" relation="lessThanOrEqual" secondItem="xbC-t6-AQj" secondAttribute="leading" constant="204" id="MBY-23-lOm"/>
+                                        <constraint firstAttribute="trailing" secondItem="cOy-WV-ZRr" secondAttribute="trailing" constant="20" symbolic="YES" id="csr-ZR-1f5"/>
+                                        <constraint firstItem="d4x-LB-vFN" firstAttribute="top" secondItem="xbC-t6-AQj" secondAttribute="top" constant="20" symbolic="YES" id="fEh-VV-TlC"/>
+                                        <constraint firstAttribute="bottom" secondItem="cOy-WV-ZRr" secondAttribute="bottom" constant="20" symbolic="YES" id="ldQ-Zr-scy"/>
+                                        <constraint firstItem="cOy-WV-ZRr" firstAttribute="top" secondItem="d4x-LB-vFN" secondAttribute="bottom" constant="8" symbolic="YES" id="zlc-J5-Wn8"/>
+                                    </constraints>
+                                </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AddressCell" textLabel="FPu-ed-nZG" detailTextLabel="BZu-pm-1Jc" style="IBUITableViewCellStyleValue2" id="Ok5-Mf-Q1Y">
-                                        <rect key="frame" x="0.0" y="28" width="374" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="140" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ok5-Mf-Q1Y" id="h3b-3Z-fwp">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="43.5"/>
@@ -888,12 +923,14 @@
                     </view>
                     <navigationItem key="navigationItem" title="Details" id="aGR-2p-AwM"/>
                     <connections>
+                        <outlet property="addToRankButton" destination="cOy-WV-ZRr" id="J4O-7O-dcs"/>
                         <outlet property="restoDetailTable" destination="gyO-Yw-2Wx" id="h7l-2z-7dA"/>
+                        <outlet property="restoNameLabel" destination="d4x-LB-vFN" id="3Ac-MD-a4G"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Giz-1A-VZe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3830" y="1811"/>
+            <point key="canvasLocation" x="3828.985507246377" y="1810.7142857142856"/>
         </scene>
         <!--Map-->
         <scene sceneID="oYv-B2-c10">
@@ -1824,8 +1861,8 @@
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <view key="tableHeaderView" contentMode="scaleToFill" id="L3R-2i-Aw8">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="85"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="L3R-2i-Aw8">
+                                    <rect key="frame" x="0.0" y="621" width="374" height="85"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="22U-AQ-FLU">
@@ -1846,7 +1883,7 @@
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserRanking" rowHeight="113" id="Sg5-93-7Bg" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="113" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="28" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sg5-93-7Bg" id="yZt-6w-LI7">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -1908,7 +1945,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFollowing" rowHeight="113" id="Kct-ND-SrU" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="226" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="141" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Kct-ND-SrU" id="9K3-Nz-yFl">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -1970,7 +2007,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserNewReview" rowHeight="113" id="PYE-e6-KR0" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="339" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="254" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PYE-e6-KR0" id="ALN-Q2-6FN">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2032,7 +2069,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFavorite" rowHeight="113" id="MsN-2l-fW5" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="452" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="367" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MsN-2l-fW5" id="VlB-0e-jIa">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2094,7 +2131,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineRankingInfoCell" rowHeight="113" id="9N3-Mq-itK" customClass="HomeCellWithIcon" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="565" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="480" width="374" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9N3-Mq-itK" id="3Sj-QP-hDg">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
@@ -2236,8 +2273,8 @@
     <inferredMetricsTieBreakers>
         <segue reference="sT7-BS-49X"/>
         <segue reference="YoF-pa-6fi"/>
-        <segue reference="ou3-RT-r6a"/>
-        <segue reference="ceb-H0-aSB"/>
+        <segue reference="EfA-b9-uGt"/>
+        <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>

@@ -10,6 +10,7 @@ import UIKit
 import SafariServices
 import MapKit
 import Firebase
+import NotificationBannerSwift
 
 class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
@@ -26,16 +27,76 @@ class MyRestoDetail: UIViewController {
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
     var currentCity: City!
+    var currentFood: FoodType!
     var dbMapReference: DatabaseReference!
     
     // Variable to pass to map Segue
     private var currentRestoMapItem : MKMapItem!
     private var OKtoPerformSegue = true
-
-    //For Edit the description swipe-up
-    private var transparentView = UIView()
-    private var addCommentTableView = UITableView()
-    private var addCommentTextView = UITextView()
+    
+    @IBOutlet weak var restoNameLabel: UILabel!
+    @IBOutlet weak var addToRankButton: UIButton!
+    
+    // MARK: Add to ranking action
+    @IBAction func addToRankAction(_ sender: Any) {
+        // Check if the user has this food already
+        let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
+        
+        SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
+            // Le ranking doesn't exist
+            if !snapshot.exists(){
+                let alert = UIAlertController(title: "Create ranking",
+                                              message: "You don't have this ranking, create and add restorant?",
+                                              preferredStyle: .alert)
+                let createAction = UIAlertAction(title: "Create", style: .default){ _ in
+                    // If we don't have the ranking, we add it to Firebase
+                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
+                    // then add to ranking
+                    SomeApp.addRestoToRanking(userId: self.user.uid,
+                                              resto: self.currentResto,
+                                              mapItem: self.currentRestoMapItem,
+                                              forFood: self.currentFood,
+                                              foodId: self.currentFood.key,
+                                              city: self.currentCity)
+                    // Show confirmation banner
+                    self.bannerStuff()
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                alert.addAction(createAction)
+                alert.addAction(cancelAction)
+                
+            }
+            // The ranking exists
+            else{
+                // Add to ranking sans autre
+                SomeApp.addRestoToRanking(userId: self.user.uid,
+                                          resto: self.currentResto,
+                                          mapItem: self.currentRestoMapItem,
+                                          forFood: self.currentFood,
+                                          foodId: self.currentFood.key,
+                                          city: self.currentCity)
+                self.bannerStuff()
+            }
+        })
+    }
+    
+    private func bannerStuff(){
+        // Show confirmation banner
+        let tmpView = UILabel(frame: CGRect(x: 0, y: 0, width: FoodzLayout.screenSize.width, height: 120))
+        tmpView.backgroundColor = .white
+        tmpView.textAlignment = .center
+        tmpView.textColor = SomeApp.themeColor
+        tmpView.font = UIFont.preferredFont(forTextStyle: .headline)
+        tmpView.text = "\(self.currentFood.icon) \(self.currentResto.name) added to your \(self.currentFood.name) places!"
+        
+        let banner = NotificationBanner(customView: tmpView)
+        banner.show()
+        
+        // clean up
+        addToRankButton.isHidden = true
+        addToRankButton.isEnabled = false
+    }
+    
     
     @IBOutlet weak var restoDetailTable: UITableView!{
         didSet{
@@ -69,8 +130,8 @@ class MyRestoDetail: UIViewController {
             guard let user = user else {return}
             self.user = user
             
-            // 2. Update the dbReference
-            //self.dbCommentsPerUser = SomeApp.dbCommentsPerUser.child(user.uid)
+            // 2. Once we have the user we configure the header
+            self.configureHeader()
         }
         
         // Get the comments from the DB
@@ -94,13 +155,25 @@ class MyRestoDetail: UIViewController {
                 self.OKtoPerformSegue = false
             }
         })
+    }
+    
+    // Configure header
+    private func configureHeader(){
+        restoNameLabel.text = currentResto.name
         
-        // Define the properties for the editDescription TableView
-        addCommentTableView.delegate = self
-        addCommentTableView.dataSource = self
-        addCommentTableView.allowsSelection = false
-        addCommentTextView.delegate = self
         
+        let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
+        // Check if the user has this resto in his/her ranking already
+        SomeApp.dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
+            if snapshot.exists(){
+                self.addToRankButton.isEnabled = false
+                self.addToRankButton.isHidden = true
+                self.addToRankButton = nil
+            }else{
+                FoodzLayout.configureButton(button: self.addToRankButton)
+                self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
+            }
+        })
     }
     
     // MARK: - Navigation
@@ -127,151 +200,113 @@ class MyRestoDetail: UIViewController {
 extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
         // test if the table is the Add Comment pop-up
-        if tableView == self.addCommentTableView {
-            return 1
-        }else{
-            // the normal table
-            return 2
-        }
+        return 2
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // test if the table is the Add Comment pop-up
-        if tableView == self.addCommentTableView {
-            return 1
-        }else{
-            // the normal table
-            switch(section){
-            case 0: return 5
-            case 1:
-                guard commentArray.count > 0 else {return 1}
-                return commentArray.count
-            default: return 0
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // test if the table is the Add Comment pop-up
-        if tableView == self.addCommentTableView {
-            return 450
-        }else{
-            return UITableView.automaticDimension
+        // the normal table
+        switch(section){
+        case 0: return 4
+        case 1:
+            guard commentArray.count > 0 else {return 1}
+            return commentArray.count
+        default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // test if the table is the Add Comment pop-up
-        if tableView == self.addCommentTableView {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            editCommentCell(cell: cell)
-            return cell
-        }else{
-            // The normal table
-            if indexPath.section == 0 {
-                if indexPath.row == 0 {
-                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    cell.textLabel?.textAlignment = .center
-                    cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
-                    cell.textLabel?.text = currentResto.name
-                    cell.isUserInteractionEnabled = false
-                    return cell
-                }else if indexPath.row == 1{
-                    let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
-                    cell!.textLabel?.textColor = .black
-                    cell!.textLabel?.text = "Address"
-                    cell!.detailTextLabel?.text = currentResto.address
-                    return cell!
-                }else if indexPath.row == 2 {
-                    let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                    cell.textLabel?.textColor = .black
-                    cell.accessoryType = .disclosureIndicator
-                    cell.textLabel?.text = "Phone"
-                    cell.detailTextLabel?.text = currentResto.phoneNumber
-                    return cell
-                }else if indexPath.row == 3 {
-                    let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                    cell.textLabel?.textColor = .black
-                    cell.accessoryType = .disclosureIndicator
-                    cell.textLabel?.text = "URL"
-                    if currentResto.url != nil{
-                        cell.detailTextLabel?.text = currentResto.url!.absoluteString
-                    }else{
-                        cell.detailTextLabel?.text = ""
-                    }
-                    return cell
+        // The normal table
+        if indexPath.section == 0 {
+            if indexPath.row == 0{
+                let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
+                cell!.textLabel?.textColor = .black
+                cell!.textLabel?.text = "Address"
+                cell!.detailTextLabel?.text = currentResto.address
+                return cell!
+            }else if indexPath.row == 1 {
+                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = .black
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "Phone"
+                cell.detailTextLabel?.text = currentResto.phoneNumber
+                return cell
+            }else if indexPath.row == 2 {
+                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = .black
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "URL"
+                if currentResto.url != nil{
+                    cell.detailTextLabel?.text = currentResto.url!.absoluteString
                 }else{
-                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    // The button
-                    let addCommentButton = UIButton(type: .custom)
-                    addCommentButton.frame = CGRect(x: cell.frame.width/3, y: 5, width: cell.frame.width/2, height: cell.frame.height-10)
-                    addCommentButton.backgroundColor = SomeApp.themeColor
-                    addCommentButton.layer.cornerRadius = 20 //0.5 * addCommentButton.bounds.size.width
-                    addCommentButton.layer.masksToBounds = true
-                    addCommentButton.setTitle("Add Comment", for: .normal)
-                    addCommentButton.addTarget(self, action: #selector(addComment), for: .touchUpInside)
-                    
-                    cell.selectionStyle = .none
-                    cell.addSubview(addCommentButton)
-                    
-                    return cell
+                    cell.detailTextLabel?.text = ""
                 }
+                return cell
             }else{
-                guard commentArray.count > 0 else {
-                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    cell.textLabel?.text = "Loading comments"
-                    let spinner = UIActivityIndicatorView(style: .gray)
-                    spinner.startAnimating()
-                    cell.accessoryView = spinner
-                    
-                    return cell
-                }
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                // Title
+                cell.selectionStyle = .none
+                cell.textLabel?.textAlignment = .center
+                cell.textLabel?.textColor = SomeApp.themeColor
+                cell.textLabel?.text = "Reviews"
                 
-                // Comment cell
-                if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
-                    
-                    // Date stuff
-                    let date = Date(timeIntervalSince1970: TimeInterval(commentArray[indexPath.row].timestamp/1000)) // in milliseconds
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
-                    dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-                    let localDate = dateFormatter.string(from: date)
-                    
-                    // Then
-                    postCell.dateLabel.text = localDate
-                    postCell.titleLabel.text = commentArray[indexPath.row].username
-                    postCell.bodyLabel.text = commentArray[indexPath.row].text
-                    
-                    // Buttons
-                    postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                    postCell.likeButton.setTitle("Like", for: .normal)
-                    postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                    postCell.dislikeButton.setTitle("Dislike", for: .normal)
-                    
-                    // If it's not the first comment, then we can add some actions
-                    if !firstCommentFlag{
-                        postCell.likeAction = {(cell) in
-                            print("Like!")
-                        }
-                        // Dislike
-                        postCell.dislikeAction = {(cell) in
-                            print("Dislike!")
-                        }
-                    }
-                    
-                    return postCell
-                }else{
-                    fatalError("Couln't create cell")
-                }
-
+                return cell
             }
+        }else{
+            guard commentArray.count > 0 else {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = "Loading comments"
+                let spinner = UIActivityIndicatorView(style: .gray)
+                spinner.startAnimating()
+                cell.accessoryView = spinner
+                
+                return cell
+            }
+            
+            // Comment cell
+            if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
+                
+                // Date stuff
+                let date = Date(timeIntervalSince1970: TimeInterval(commentArray[indexPath.row].timestamp/1000)) // in milliseconds
+                let dateFormatter = DateFormatter()
+                dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+                dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+                let localDate = dateFormatter.string(from: date)
+                
+                // Then
+                postCell.dateLabel.text = localDate
+                postCell.titleLabel.text = commentArray[indexPath.row].username
+                postCell.bodyLabel.text = commentArray[indexPath.row].text
+                
+                // Buttons
+                postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                postCell.likeButton.setTitle("Like", for: .normal)
+                postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                postCell.dislikeButton.setTitle("Dislike", for: .normal)
+                
+                // If it's not the first comment, then we can add some actions
+                if !firstCommentFlag{
+                    postCell.likeAction = {(cell) in
+                        print("Like!")
+                    }
+                    // Dislike
+                    postCell.dislikeAction = {(cell) in
+                        print("Dislike!")
+                    }
+                }
+                postCell.selectionStyle = .none
+                
+                return postCell
+            }else{
+                fatalError("Couln't create cell")
+            }
+            
         }
     }
     
-    // Actions
+    // MARK: Actions
      func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
          if indexPath.section == 0{
-             if indexPath.row == 2{
+             if indexPath.row == 1{
                  let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
                  if let number = URL(string: tmpModifiedPhone){
                      UIApplication.shared.open(number)
@@ -292,7 +327,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                      present(alert, animated: false, completion: nil)
                      
                  }
-             }else if indexPath.row == 3{
+             }else if indexPath.row == 2{
                  // URL clicket, open the web page
                  if currentResto.url != nil{
                      let config = SFSafariViewController.Configuration()
@@ -305,125 +340,16 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
              }
          }
      }
+    
+    //
+    
+    
+    
+
 }
 
     // MARK: objc funcs
 extension MyRestoDetail{
-    @objc
-    func addComment(){
-        // Create the frame
-        let window = UIApplication.shared.keyWindow
-        transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        transparentView.frame = self.view.frame
-        window?.addSubview(transparentView)
-        
-        // Add the table
-        addCommentTableView.frame = CGRect(
-            x: 0,
-            y: MyRestoDetail.screenSize.height,
-            width: MyRestoDetail.screenSize.width,
-            height: MyRestoDetail.screenSize.height * 0.9)
-        window?.addSubview(addCommentTableView)
-        
-        // Go back to "normal" if we tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
-        transparentView.addGestureRecognizer(tapGesture)
-        
-        // Cool "slide-up" animation when appearing
-        transparentView.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0.7 //Start at 0, go to 0.5
-                        self.addCommentTableView.frame = CGRect(
-                            x: 0,
-                            y: MyRestoDetail.screenSize.height - MyRestoDetail.screenSize.height * 0.9 ,
-                            width: MyRestoDetail.screenSize.width,
-                            height: MyRestoDetail.screenSize.height * 0.9)
-                        self.addCommentTextView.becomeFirstResponder()
-                    },
-                       completion: nil)
-    }
-    
-    // Update the model when the button is pressed
-    @objc
-    func doneUpdating(){
-        print("todo")
-        /*
-        let timestamp = NSDate().timeIntervalSince1970
-        let comment = Comment(userid: user.uid, restoid: currentResto.key, text: addCommentTextView.text, timestamp: timestamp)
-        
-        let tempCommentRef = dbCommentReference.childByAutoId()
-        tempCommentRef.setValue(comment.toAnyObject())
-        let tempRestoCommentRef = dbCommentsPerResto.child(tempCommentRef.key!)
-        tempRestoCommentRef.setValue(timestamp)
-        let tempUserCommentRef = dbCommentsPerUser.child(tempCommentRef.key!)
-        tempUserCommentRef.setValue(timestamp)
-        */
-        
-        //Close the view
-        onClickTransparentView()
-        getReviewsFromDB()
-    }
-    
-    //Disappear!
-    @objc func onClickTransparentView(){
-        // Animation when disapearing
-        
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0 //Start at value above, go to 0
-                        self.addCommentTableView.frame = CGRect(
-                            x: 0,
-                            y: MyRestoDetail.screenSize.height ,
-                            width: MyRestoDetail.screenSize.width,
-                            height: MyRestoDetail.screenSize.height * 0.9)
-                        self.addCommentTextView.resignFirstResponder()
-        },
-                       completion: nil)
-    }
-    
-    // MARK: Setup cells
-    // The comment cell
-    func editCommentCell(cell: UITableViewCell){
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: MyRestoDetail.screenSize.width, height: SomeApp.titleFont.lineHeight + 20 ))
-        
-        //let textColor = UIColor.white
-        titleLabel.textColor = SomeApp.themeColor
-        titleLabel.font = SomeApp.titleFont
-        titleLabel.textAlignment = .center
-        titleLabel.text = "My comment for \(currentResto.name)"
-        
-        // set up the TextField.  This var is defined in the class to take the value later
-        addCommentTextView.frame = CGRect(x: 8, y: SomeApp.titleFont.lineHeight + 40, width: cell.frame.width - 16, height: 200)
-        addCommentTextView.textColor = UIColor.gray
-        addCommentTextView.font = UIFont.preferredFont(forTextStyle: .body)
-        addCommentTextView.text = "Write your comment."
-        addCommentTextView.isScrollEnabled = true
-        addCommentTextView.keyboardType = UIKeyboardType.default
-        addCommentTextView.allowsEditingTextAttributes = true
-        
-        let doneButton = UIButton(type: .custom)
-        doneButton.frame = CGRect(x: MyRestoDetail.screenSize.width * 3/4, y: 250, width: 70, height: 70)
-        doneButton.backgroundColor = SomeApp.themeColor
-        doneButton.layer.cornerRadius = 0.5 * doneButton.bounds.size.width
-        doneButton.layer.masksToBounds = true
-        doneButton.setTitle("Done!", for: .normal)
-        doneButton.addTarget(self, action: #selector(doneUpdating), for: .touchUpInside)
-        
-        cell.selectionStyle = .none
-        cell.addSubview(titleLabel)
-        cell.addSubview(addCommentTextView)
-        cell.addSubview(doneButton)
-    }
-    
     // MARK: Get comments from DB
     func getReviewsFromDB(){
         var tmpCommentArray:[Comment] = []

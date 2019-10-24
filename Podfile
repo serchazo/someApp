@@ -29,4 +29,7 @@ target 'foodzGuru' do
     # SDWebImage
     pod 'SDWebImage'
     
+    # Banner pod
+    pod 'NotificationBannerSwift', '~> 3.0.0'
+    
 end

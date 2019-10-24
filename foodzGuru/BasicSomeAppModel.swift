@@ -271,6 +271,7 @@ enum TimelineEvents:String{
     case NewBestRestoInRanking = "newBestRestoInRanking"
     case NewArrivalInRanking = "newArrivalInRanking"
     case NewUserReview = "newUserReview"
+    case NativeAd = "nativeAd" 
     case FoodzGuruPost = "systemNotification"
 }
 

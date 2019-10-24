@@ -87,7 +87,7 @@ PODS:
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 6.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - Google-Mobile-Ads-SDK (7.50.0):
+  - Google-Mobile-Ads-SDK (7.51.0):
     - GoogleAppMeasurement (~> 6.0)
   - GoogleAppMeasurement (6.1.3):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
@@ -95,8 +95,8 @@ PODS:
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (~> 0.3.901)
-  - GoogleDataTransport (3.0.0)
-  - GoogleDataTransportCCTSupport (1.2.0):
+  - GoogleDataTransport (3.0.1)
+  - GoogleDataTransportCCTSupport (1.2.1):
     - GoogleDataTransport (~> 3.0)
     - nanopb (~> 0.3.901)
   - GoogleUtilities/AppDelegateSwizzler (6.3.1):
@@ -119,15 +119,20 @@ PODS:
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.2.2)
   - leveldb-library (1.22)
+  - MarqueeLabel (4.0.0)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - NotificationBannerSwift (3.0.0):
+    - MarqueeLabel (~> 4.0.0)
+    - SnapKit (~> 5.0.0)
   - Protobuf (3.10.0)
   - SDWebImage (5.2.3):
     - SDWebImage/Core (= 5.2.3)
   - SDWebImage/Core (5.2.3)
+  - SnapKit (5.0.1)
 
 DEPENDENCIES:
   - FacebookCore
@@ -139,10 +144,11 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
+  - NotificationBannerSwift (~> 3.0.0)
   - SDWebImage
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - FacebookCore
     - FacebookLogin
     - FBSDKCoreKit
@@ -166,9 +172,12 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - leveldb-library
+    - MarqueeLabel
     - nanopb
+    - NotificationBannerSwift
     - Protobuf
     - SDWebImage
+    - SnapKit
 
 SPEC CHECKSUMS:
   FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
@@ -187,17 +196,20 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: 550df9be1f99f751d8fcde3ac342a1e21a0e6c42
   FirebaseMessaging: 35edef69a6af9b34e9e44624089f054be3c09089
   FirebaseStorage: b7c6d00997bc21d4465453bdcc5cc65513110fed
-  Google-Mobile-Ads-SDK: d48dbaf5bae1ab7a94a9786f493c26c454bc6f16
+  Google-Mobile-Ads-SDK: 5c625884f0788d22b48e3bb641e1d65c673dc7a5
   GoogleAppMeasurement: 434cc7be25e71dc04b8d0e3079125127b330e84a
-  GoogleDataTransport: f6fe28f43e3a300736854260961ad485b473edc5
-  GoogleDataTransportCCTSupport: 862418a8cdda520c4dd4af83a756d04efe4a6990
+  GoogleDataTransport: 166f9b9f82cbf60a204e8fe2daa9db3e3ec1fb15
+  GoogleDataTransportCCTSupport: f6ab1962e9dc05ab1fb938b795e5b310209edeec
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  MarqueeLabel: b55b26e690b6ad41faedd95cbf5eae6f1d1735b4
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  NotificationBannerSwift: 842401d30f5c36e4f2eafc152824566f6b3c1bb5
   Protobuf: a4dc852ad69c027ca2166ed287b856697814375b
   SDWebImage: 46a7f73228f84ce80990c786e4372cf4db5875ce
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
 
-PODFILE CHECKSUM: 36b722733bf6eb5857d9645438a32a9a8ac0b231
+PODFILE CHECKSUM: 975b44e0f82dc93a51026b296c1591f17d450301
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4

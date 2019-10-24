@@ -405,6 +405,7 @@ class ThisRanking: UIViewController {
                     let seguedToResto = segue.destination as? MyRestoDetail{
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                     seguedToResto.currentCity = currentCity
+                    seguedToResto.currentFood = currentFood
                 }
             case ThisRanking.addResto:
                 if let seguedMVC = segue.destination as? MyRanksMapSearchViewController{
