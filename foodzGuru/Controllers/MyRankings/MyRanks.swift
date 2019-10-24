@@ -132,7 +132,6 @@ class MyRanks: UIViewController {
     
     //
     private func parseCityFromString(string2parse: String) -> City{
-        print(string2parse)
         let cityArray = string2parse.components(separatedBy: "/")
         return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
     }

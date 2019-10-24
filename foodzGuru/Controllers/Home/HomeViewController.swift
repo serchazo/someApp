@@ -296,7 +296,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
                 let nativeAdCell = tableView.dequeueReusableCell(
                     withIdentifier: "UnifiedNativeAdCell", for: indexPath)
                 configureAddCell(nativeAdCell: nativeAdCell, index: adsLoadedIndex)
-                print("here")
                 adsLoadedIndex += 1
                 if adsLoadedIndex == (adsToLoad - 1) {
                     adsLoadedIndex = 0
@@ -504,7 +503,7 @@ extension HomeViewController: GADBannerViewDelegate{
         adView.addSubview(bannerView)
     }
     
-    /// Tells the delegate an ad request loaded an ad.
+    // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         print("adViewDidReceiveAd")
         
@@ -515,7 +514,7 @@ extension HomeViewController: GADBannerViewDelegate{
         })
     }
     
-    /// Tells the delegate an ad request failed.
+    // Tells the delegate an ad request failed.
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")

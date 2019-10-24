@@ -34,6 +34,14 @@ class MyRestoDetail: UIViewController {
     private var currentRestoMapItem : MKMapItem!
     private var OKtoPerformSegue = true
     
+    // MARK: Ad stuff
+    private let adsToLoad = 5 //The number of native ads to load
+    private var adsLoadedIndex = 0 // to count the ads we are loading
+       
+    private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
+    private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
+    private let adFrequency = 5
+    
     @IBOutlet weak var restoNameLabel: UILabel!
     @IBOutlet weak var addToRankButton: UIButton!
     
@@ -105,7 +113,8 @@ class MyRestoDetail: UIViewController {
             restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
             restoDetailTable.rowHeight = UITableView.automaticDimension
             restoDetailTable.estimatedRowHeight = 150
-            
+            restoDetailTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
+            forCellReuseIdentifier: "UnifiedNativeAdCell")
         }
     }
     
@@ -136,6 +145,9 @@ class MyRestoDetail: UIViewController {
         
         // Get the comments from the DB
         getReviewsFromDB()
+        
+        // Configure ads
+        configureNativeAds()
         
         // Get the map from the database
         self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
@@ -261,6 +273,33 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 return cell
             }
+            // If it is an Ad cell, we have two options: load one or placeholder
+            if (indexPath.row % adFrequency == (adFrequency - 1) ) {
+                // If we have loaded Ads
+                if nativeAds.count > 0{
+                    // Ad Cell
+                    let nativeAdCell = tableView.dequeueReusableCell(
+                        withIdentifier: "UnifiedNativeAdCell", for: indexPath)
+                    configureAddCell(nativeAdCell: nativeAdCell, index: adsLoadedIndex)
+                    adsLoadedIndex += 1
+                    if adsLoadedIndex == (adsToLoad - 1) {
+                        adsLoadedIndex = 0
+                    }
+                    
+                    return(nativeAdCell)
+                }
+                // If not : placeholder
+                else{
+                    if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
+                        postCell.dateLabel.isHidden = true
+                        postCell.likeButton.isHidden = true
+                        postCell.dislikeButton.isHidden = true
+                        
+                        return postCell
+                    }
+                    else{fatalError("Can't create cell")}
+                }
+            }
             
             // Comment cell
             if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
@@ -341,16 +380,11 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
          }
      }
     
-    //
-    
-    
-    
-
 }
 
-    // MARK: objc funcs
+// MARK: Get comments from DB
 extension MyRestoDetail{
-    // MARK: Get comments from DB
+    
     func getReviewsFromDB(){
         var tmpCommentArray:[Comment] = []
         var count = 0
@@ -384,7 +418,17 @@ extension MyRestoDetail{
                     tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle))
                     //Use the trick
                     count += 1
+                    
                     if count == snapshot.childrenCount{
+                        // Then, add the Ads at adFrequency positions
+                        for i in 0 ..< tmpCommentArray.count{
+                            if i % self.adFrequency == (self.adFrequency - 1){
+                                //
+                                let placeholderAd = Comment(username: "foodz.guru", restoname: "Placeholder", text: "Advertise here! Contact support@foodz.guru", timestamp: NSDate().timeIntervalSince1970, title: "Advertise here!")
+                                tmpCommentArray.insert(placeholderAd, at: i)
+                            }
+                        }
+                        
                         self.commentArray = tmpCommentArray
                         self.restoDetailTable.reloadData()
                     }
@@ -406,4 +450,91 @@ extension MyRestoDetail: UITextViewDelegate {
         return changedText.count <= 2500
     }
     
+}
+
+// MARK: ad Loader delegate
+extension MyRestoDetail: GADUnifiedNativeAdLoaderDelegate{
+    // Ad adds to table
+    func addNativeAdds(){
+        if nativeAds.count <= 0 {
+          return
+        }
+        var index = adFrequency - 1
+        
+        for i in 0 ..< commentArray.count{
+            if i == index{
+                restoDetailTable.reloadRows(at: [IndexPath(row: index, section: 1)], with: .automatic)
+                index += adFrequency
+            }
+        }
+    }
+    
+    
+    // My cell
+    func configureAddCell(nativeAdCell: UITableViewCell, index: Int){
+        guard nativeAds.count > 0 else {return}
+        let nativeAd = nativeAds[index] // GADUnifiedNativeAd()
+        
+        // Set the native ad's rootViewController to the current view controller.
+        nativeAd.rootViewController = self
+        
+        // Get the ad view from the Cell. The view hierarchy for this cell is defined in
+        // UnifiedNativeAdCell.xib.
+        let adView : GADUnifiedNativeAdView = nativeAdCell.contentView.subviews.first as! GADUnifiedNativeAdView
+        
+        // Associate the ad view with the ad object.
+        // This is required to make the ad clickable.
+        adView.nativeAd = nativeAd
+        
+        // Populate the ad view with the ad assets.
+        (adView.headlineView as! UILabel).text = nativeAd.headline
+        (adView.priceView as! UILabel).text = nativeAd.price
+        if let starRating = nativeAd.starRating {
+            (adView.starRatingView as! UILabel).text =
+                starRating.description + "\u{2605}"
+        } else {
+            (adView.starRatingView as! UILabel).text = nil
+        }
+        (adView.bodyView as! UILabel).text = nativeAd.body
+        (adView.advertiserView as! UILabel).text = nativeAd.advertiser
+        // The SDK automatically turns off user interaction for assets that are part of the ad, but
+        // it is still good to be explicit.
+        (adView.callToActionView as! UIButton).isUserInteractionEnabled = false
+        (adView.callToActionView as! UIButton).setTitle(
+            nativeAd.callToAction, for: UIControl.State.normal)
+    }
+    
+    func configureNativeAds(){
+        let options = GADMultipleAdsAdLoaderOptions()
+        options.numberOfAds = adsToLoad
+
+        // Prepare the ad loader and start loading ads.
+        adLoader = GADAdLoader(adUnitID: SomeApp.adNativeUnitID,
+                               rootViewController: self,
+                               adTypes: [.unifiedNative],
+                               options: [options])
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
+    }
+    
+    // Delegate funcs
+    func adLoader(_ adLoader: GADAdLoader,
+                  didFailToReceiveAdWithError error: GADRequestError) {
+      print("\(adLoader) failed with error: \(error.localizedDescription)")
+
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+      print("Received native ad: \(nativeAd)")
+
+      // Add the native ad to the list of native ads.
+      nativeAds.append(nativeAd)
+    }
+    
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+        //When we finish loading Ads, we update the table view
+        addNativeAdds()
+        
+        
+    }
 }
