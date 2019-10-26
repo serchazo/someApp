@@ -345,6 +345,27 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     }
                 })
                 
+                // NbLikes label
+                let restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key + "/" + commentArray[indexPath.row].key
+                SomeApp.dbRestoReviewsLikesNb.child(restoDBPath).observe(.value, with: {likesNbSnap in
+                    if likesNbSnap.exists(),
+                        let nbLikes = likesNbSnap.value as? Int{
+                        postCell.nbLikesLabel.text = String(nbLikes)
+                    }else{
+                        postCell.nbLikesLabel.text = "0"
+                    }
+                })
+                // NbDislikes label
+                SomeApp.dbRestoReviewsDislikesNb.child(restoDBPath).observe(.value, with: {disLikesSnap in
+                    if disLikesSnap.exists(),
+                    let nbDislikes = disLikesSnap.value as? Int{
+                        postCell.nbDislikesLabel.text = String(nbDislikes)
+                    }else{
+                        postCell.nbDislikesLabel.text = "0"
+                    }
+                })
+                
+                
                 // If it's not the first comment, then we can add some actions
                 if !firstCommentFlag{
                     postCell.likeAction = {(cell) in
@@ -363,6 +384,52 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                                            city: self.currentCity,
                                            foodId: self.currentFood.key,
                                            reviewerId: self.commentArray[tmpIndexPath!.row].key)
+                    }
+                    
+                    // More (report) button
+                    postCell.moreAction = {(cell) in
+                        let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
+                        let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                        let reportAction = UIAlertAction(title: "Report", style: .destructive, handler: {_ in
+                            // [START] Inner Alert
+                            let innerAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                            let inappropriateAction = UIAlertAction(title: "It's inappropriate", style: .destructive, handler: {_ in
+                                
+                                SomeApp.reportReview(userid: self.commentArray[tmpIndexPath!.row].key,
+                                                     resto: self.currentResto,
+                                                     city: self.currentCity,
+                                                     foodId: self.currentFood.key,
+                                                     text: self.commentArray[tmpIndexPath!.row].text,
+                                                     reportReason: "Inappropriate",
+                                                     postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
+                                                     reporterId: self.user.uid)
+                                
+                                self.navigationController?.popViewController(animated: true)
+                            })
+                            let spamAction = UIAlertAction(title: "It's spam", style: .destructive, handler: {_ in
+                                SomeApp.reportReview(userid: self.commentArray[tmpIndexPath!.row].key,
+                                resto: self.currentResto,
+                                city: self.currentCity,
+                                foodId: self.currentFood.key,
+                                text: self.commentArray[tmpIndexPath!.row].text,
+                                reportReason: "Spam",
+                                postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
+                                reporterId: self.user.uid)
+                                
+                                self.navigationController?.popViewController(animated: true)
+                            })
+                            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                            innerAlert.addAction(inappropriateAction)
+                            innerAlert.addAction(spamAction)
+                            innerAlert.addAction(cancelAction)
+                            self.present(innerAlert,animated: true)
+                            // [END] Inner alert
+                        })
+                        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                        
+                        moreAlert.addAction(reportAction)
+                        moreAlert.addAction(cancelAction)
+                        self.present(moreAlert,animated: true)
                     }
                 }
                 postCell.selectionStyle = .none

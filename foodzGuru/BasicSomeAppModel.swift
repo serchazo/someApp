@@ -33,10 +33,13 @@ class SomeApp{
     static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
+    static let dbUserReportedReviews: DatabaseReference = dbRootRef.child("user-reported-reviews")
     
     // likes
     static let dbUserLikedReviews:DatabaseReference = dbRootRef.child("user-liked-reviews")
     static let dbUserDislikedReviews:DatabaseReference = dbRootRef.child("user-disliked-reviews")
+    static let dbRestoReviewsLikesNb:DatabaseReference = dbRootRef.child("resto-reviews-likes-nb")
+    static let dbRestoReviewsDislikesNb:DatabaseReference = dbRootRef.child("resto-reviews-dislikes-nb")
     
     //rankings
     static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
@@ -251,6 +254,20 @@ class SomeApp{
                                        "restoname": resto.name]
         dbRef.setValue(reviewPost)
     }
+    
+    static func reportReview(userid: String, resto: Resto, city: City, foodId: String, text: String, reportReason: String, postTimestamp: Double, reporterId: String){
+        let dbPath = reporterId + "/" + userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key
+        let dbRef = dbUserReportedReviews.child(dbPath)
+        
+        let reportedTimestamp = NSDate().timeIntervalSince1970 * 1000
+        let reportedReview:[String:Any] = ["timestamp": postTimestamp,
+                                       "text": text,
+                                       "restoname": resto.name,
+                                       "reportedtimestamp" : reportedTimestamp,
+                                       "reason":reportReason]
+        dbRef.setValue(reportedReview)
+    }
+    
     // Like review
     static func likeReview(userid: String, resto: Resto, city: City, foodId: String, reviewerId: String){
         print("like")
@@ -272,11 +289,6 @@ class SomeApp{
         updateObject["user-reviews-dislikes/" + reviewerLikedPath] = NSNull()
         
         dbRootRef.updateChildValues(updateObject)
-        
-        // Update 4 numbers:
-        // 1. resto reviews likes / dislikes
-        // 2. user reviews likes / dislikes
-        // nb of user likes / dislikes is not relevant
     }
     
     // Dislike review
@@ -301,11 +313,6 @@ class SomeApp{
         updateObject["user-reviews-dislikes/" + reviewerLikedPath] = true
         
         dbRootRef.updateChildValues(updateObject)
-        
-        // Update 4 numbers:
-        // 1. resto reviews likes / dislikes
-        // 2. user reviews likes / dislikes
-        // nb of user likes / dislikes is not relevant
     }
     
 }

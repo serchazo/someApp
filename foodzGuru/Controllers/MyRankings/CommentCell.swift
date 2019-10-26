@@ -11,6 +11,7 @@ import UIKit
 class CommentCell: UITableViewCell {
     var likeAction: ((UITableViewCell) -> Void)?
     var dislikeAction: ((UITableViewCell) -> Void)?
+    var moreAction: ((UITableViewCell) -> Void)?
     
     @IBAction func likeButtonPressed(_ sender: Any) {
         likeAction?(self)
@@ -31,7 +32,13 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dislikeButton: UIButton!
     
-    @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var nbLikesLabel: UILabel!
+    @IBOutlet weak var nbDislikesLabel: UILabel!
+    
+    @IBAction func moreButtonPressed(_ sender: Any) {
+        moreAction?(self)
+    }
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
