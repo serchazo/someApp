@@ -26,11 +26,12 @@ class BestRestosViewController: UIViewController {
     private var emptyListFlag: Bool = false
     private var user:User!
 
-    /// Adds part// Ad stuff
+    // Ad stuff
     private var bannerView: GADBannerView!
-    private let numAdsToLoad = 5 //The number of native ads to load (between 1 and 5 for this example).
-    private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
-    private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
+    private let adsToLoad = 1 //The number of native ads to load
+    private var nativeAds = [GADUnifiedNativeAd]() // The native ads.
+    private var adLoader: GADAdLoader!  // The ad loader that loads the native ads.
+    //private let adFrequency = 5
     
     // MARK: outlets
     @IBOutlet var tableView: UITableView!
@@ -75,17 +76,8 @@ class BestRestosViewController: UIViewController {
             self.configureHeader()
         }
         
-        // Initialize the adds
-        let options = GADMultipleAdsAdLoaderOptions()
-        options.numberOfAds = numAdsToLoad
-        
-        // Prepare the ad loader and start loading ads.
-        adLoader = GADAdLoader(adUnitID: SomeApp.adNativeUnitID,
-                               rootViewController: self,
-                               adTypes: [.unifiedNative],
-                               options: [options])
-        adLoader.delegate = self
-        adLoader.load(GADRequest())
+        // Configure ads
+        configureNativeAds()
         
         // Configure the banner ad
         configureBannerAd()
@@ -140,16 +132,6 @@ class BestRestosViewController: UIViewController {
             self.followButton.isHidden = false
             self.followButton.isEnabled = true
         })
-    }
-    
-    // MARK: Ad stuff
-    private func configureBannerAd(){
-        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = SomeApp.adBAnnerUnitID
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-        bannerView.delegate = self
     }
     
     // MARK: update from database
@@ -328,6 +310,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                     
                     return spinnerCell
                 }
+            
                 let nativeAdCell = tableView.dequeueReusableCell(
                     withIdentifier: "UnifiedNativeAdCell", for: indexPath)
                 configureAddCell(nativeAdCell: nativeAdCell)
@@ -340,7 +323,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
     // MARK: Ad Cell
     func configureAddCell(nativeAdCell: UITableViewCell){
         guard nativeAds.count > 0 else {return}
-        var nativeAd = nativeAds[0] // GADUnifiedNativeAd()
+        let nativeAd = nativeAds[0] // GADUnifiedNativeAd()
         /// Set the native ad's rootViewController to the current view controller.
         nativeAd.rootViewController = self
         
@@ -376,10 +359,11 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
 // MARK: Some view stuff
 extension BestRestosViewController{
     
+    /*
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
         return CGFloat(cellHeight)
-    }
+    }*/
     
     // MARK : Fonts
     private var restorantNameFont: UIFont{
@@ -395,36 +379,36 @@ extension BestRestosViewController{
     }
 }
 
-// MARK : Adds extension
-extension BestRestosViewController: GADUnifiedNativeAdLoaderDelegate{
-    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-        print("Received native ad: \(nativeAd)")
-        
-        // Add the native ad to the list of native ads.
-        nativeAds.append(nativeAd)
-        
-        //
-        let adIndexPath = IndexPath(row: 0, section: 0)
-        restoRankTableView.beginUpdates()
-        restoRankTableView.reloadRows(at: [adIndexPath], with: .automatic)
-        restoRankTableView.endUpdates()
+    /*
+    let adIndexPath = IndexPath(row: 0, section: 0)
+    restoRankTableView.beginUpdates()
+    restoRankTableView.reloadRows(at: [adIndexPath], with: .automatic)
+    restoRankTableView.endUpdates()
+ */
+
+
+
+// MARK: Ad stuff
+extension BestRestosViewController: GADBannerViewDelegate{
+    // My func
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
     }
     
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
-        print("\(adLoader) failed with error: \(error.localizedDescription)")
-    }
-}
-
-// MARK: Banner Ad Delegate
-extension BestRestosViewController: GADBannerViewDelegate{
+    // delegate funcs
     func addBannerViewToView(_ bannerView: GADBannerView) {
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         adView.addSubview(bannerView)
     }
     
-    /// Tells the delegate an ad request loaded an ad.
+    // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        print("adViewDidReceiveAd")
+        //print("adViewDidReceiveAd")
         
         //small animation
         bannerView.alpha = 0
@@ -433,7 +417,7 @@ extension BestRestosViewController: GADBannerViewDelegate{
         })
     }
     
-    /// Tells the delegate an ad request failed.
+    // Tells the delegate an ad request failed.
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
@@ -442,25 +426,105 @@ extension BestRestosViewController: GADBannerViewDelegate{
         FoodzLayout.defaultAd(adView: adView)
     }
     
-    /// Tells the delegate that a full-screen view will be presented in response
-    /// to the user clicking on an ad.
+    // Tells the delegate that a full-screen view will be presented in response
+    // to the user clicking on an ad.
     func adViewWillPresentScreen(_ bannerView: GADBannerView) {
-        print("adViewWillPresentScreen")
+        //print("adViewWillPresentScreen")
     }
     
-    /// Tells the delegate that the full-screen view will be dismissed.
+    // Tells the delegate that the full-screen view will be dismissed.
     func adViewWillDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewWillDismissScreen")
+        //print("adViewWillDismissScreen")
     }
     
-    /// Tells the delegate that the full-screen view has been dismissed.
+    // Tells the delegate that the full-screen view has been dismissed.
     func adViewDidDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewDidDismissScreen")
+        //print("adViewDidDismissScreen")
     }
     
-    /// Tells the delegate that a user click will open another app (such as
-    /// the App Store), backgrounding the current app.
+    // Tells the delegate that a user click will open another app (such as
+    // the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
-        print("adViewWillLeaveApplication")
+        //print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: ad Loader delegate
+extension BestRestosViewController: GADUnifiedNativeAdLoaderDelegate{
+    // Ad adds to table
+    func addNativeAdds(){
+        if nativeAds.count <= 0 {
+          return
+        }
+        restoRankTableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+    }
+    
+    
+    // My cell
+    func configureAddCell(nativeAdCell: UITableViewCell, index: Int){
+        guard nativeAds.count > 0 else {return}
+        let nativeAd = nativeAds[index] // GADUnifiedNativeAd()
+        
+        // Set the native ad's rootViewController to the current view controller.
+        nativeAd.rootViewController = self
+        
+        // Get the ad view from the Cell. The view hierarchy for this cell is defined in
+        // UnifiedNativeAdCell.xib.
+        let adView : GADUnifiedNativeAdView = nativeAdCell.contentView.subviews.first as! GADUnifiedNativeAdView
+        
+        // Associate the ad view with the ad object.
+        // This is required to make the ad clickable.
+        adView.nativeAd = nativeAd
+        
+        // Populate the ad view with the ad assets.
+        (adView.headlineView as! UILabel).text = nativeAd.headline
+        (adView.priceView as! UILabel).text = nativeAd.price
+        if let starRating = nativeAd.starRating {
+            (adView.starRatingView as! UILabel).text =
+                starRating.description + "\u{2605}"
+        } else {
+            (adView.starRatingView as! UILabel).text = nil
+        }
+        (adView.bodyView as! UILabel).text = nativeAd.body
+        (adView.advertiserView as! UILabel).text = nativeAd.advertiser
+        // The SDK automatically turns off user interaction for assets that are part of the ad, but
+        // it is still good to be explicit.
+        (adView.callToActionView as! UIButton).isUserInteractionEnabled = false
+        (adView.callToActionView as! UIButton).setTitle(
+            nativeAd.callToAction, for: UIControl.State.normal)
+    }
+    
+    func configureNativeAds(){
+        let options = GADMultipleAdsAdLoaderOptions()
+        options.numberOfAds = adsToLoad
+
+        // Prepare the ad loader and start loading ads.
+        adLoader = GADAdLoader(adUnitID: SomeApp.adNativeUnitID,
+                               rootViewController: self,
+                               adTypes: [.unifiedNative],
+                               options: [options])
+        adLoader.delegate = self
+        adLoader.load(GADRequest())
+    }
+    
+    // Delegate funcs
+    func adLoader(_ adLoader: GADAdLoader,
+                  didFailToReceiveAdWithError error: GADRequestError) {
+      print("\(adLoader) failed with error: \(error.localizedDescription)")
+
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
+      //print("Received native ad: \(nativeAd)")
+
+      // Add the native ad to the list of native ads.
+      nativeAds.append(nativeAd)
+    }
+    
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+        //When we finish loading Ads, we update the table view
+        addNativeAdds()
+        
+        
     }
 }

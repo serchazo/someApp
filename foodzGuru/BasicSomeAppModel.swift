@@ -34,6 +34,10 @@ class SomeApp{
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     
+    // likes
+    static let dbUserLikedReviews:DatabaseReference = dbRootRef.child("user-liked-reviews")
+    static let dbUserDislikedReviews:DatabaseReference = dbRootRef.child("user-disliked-reviews")
+    
     //rankings
     static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
     
@@ -49,6 +53,7 @@ class SomeApp{
     // Hex code: #614051
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
+    static let selectionColor:UIColor = #colorLiteral(red: 0, green: 0.5628422499, blue: 0.3188166618, alpha: 1)
 
     // The adds
     /// The ad unit ID.
@@ -235,7 +240,7 @@ class SomeApp{
         }
     }
     
-    // MARK: Add/update Review
+    // MARK: Add/update/Like/Disklike Review
     static func updateUserReview(userid: String, resto: Resto, city: City, foodId: String, text: String){
         let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key
         let dbRef = dbUserReviews.child(dbPath)
@@ -244,11 +249,65 @@ class SomeApp{
         let reviewPost:[String:Any] = ["timestamp": timestamp,
                                        "text": text,
                                        "restoname": resto.name]
-        
         dbRef.setValue(reviewPost)
-        
-        
     }
+    // Like review
+    static func likeReview(userid: String, resto: Resto, city: City, foodId: String, reviewerId: String){
+        print("like")
+        var updateObject:[String:Any] = [:]
+        
+        // Add the like + remove the dislike to the resto review path
+        let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId + "/" + userid
+        updateObject["resto-reviews-likes/" + reviewPath] = true
+        updateObject["resto-reviews-dislikes/" + reviewPath] = NSNull()
+        
+        // Add the like + remove the dislike to the user's liked / disliked
+        let userLikedPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId
+        updateObject["user-liked-reviews/" + userLikedPath] = true
+        updateObject["user-disliked-reviews/" + userLikedPath] = NSNull()
+        
+        // Add the like + remove the dislike to the user reviews
+        let reviewerLikedPath = reviewerId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + userid
+        updateObject["user-reviews-likes/" + reviewerLikedPath] = true
+        updateObject["user-reviews-dislikes/" + reviewerLikedPath] = NSNull()
+        
+        dbRootRef.updateChildValues(updateObject)
+        
+        // Update 4 numbers:
+        // 1. resto reviews likes / dislikes
+        // 2. user reviews likes / dislikes
+        // nb of user likes / dislikes is not relevant
+    }
+    
+    // Dislike review
+    static func dislikeReview(userid: String, resto: Resto, city: City, foodId: String, reviewerId: String){
+        print("dislike")
+        var updateObject:[String:Any] = [:]
+        
+        // Add the like + remove the dislike to the resto review path
+        let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + resto.key + "/" + reviewerId + "/" + userid
+        updateObject["resto-reviews-likes/" + reviewPath] = NSNull()
+        updateObject["resto-reviews-dislikes/" + reviewPath] = true
+        
+        
+        // Add the like + remove the dislike to the user's liked / disliked
+        let userLikedPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId
+        updateObject["user-liked-reviews/" + userLikedPath] = NSNull()
+        updateObject["user-disliked-reviews/" + userLikedPath] = true
+        
+        // Add the like + remove the dislike to the user reviews
+        let reviewerLikedPath = reviewerId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + userid
+        updateObject["user-reviews-likes/" + reviewerLikedPath] = NSNull()
+        updateObject["user-reviews-dislikes/" + reviewerLikedPath] = true
+        
+        dbRootRef.updateChildValues(updateObject)
+        
+        // Update 4 numbers:
+        // 1. resto reviews likes / dislikes
+        // 2. user reviews likes / dislikes
+        // nb of user likes / dislikes is not relevant
+    }
+    
 }
 
 enum DefinedOperationsInRanking:String{

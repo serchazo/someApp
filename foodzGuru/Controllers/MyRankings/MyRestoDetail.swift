@@ -132,7 +132,8 @@ class MyRestoDetail: UIViewController {
         super.viewDidLoad()
         let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
         dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
-        dbRestoReviews = SomeApp.dbRestoReviews.child(dbPath)
+        let dbReviewsPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
+        dbRestoReviews = SomeApp.dbRestoReviews.child(dbReviewsPath)
         
         // 1. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -316,20 +317,52 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 postCell.titleLabel.text = commentArray[indexPath.row].username
                 postCell.bodyLabel.text = commentArray[indexPath.row].text
                 
-                // Buttons
-                postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                // Like/Dislike Button configuration: depends on the user past
+                let likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key + "/" + commentArray[indexPath.row].key
+                
+                
+                // Like button
                 postCell.likeButton.setTitle("Like", for: .normal)
-                postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                SomeApp.dbUserLikedReviews.child(likedDBPath).observe(.value, with: {likeSnap in
+                    if likeSnap.exists(){
+                        postCell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                        postCell.likeButton.isEnabled = false
+                    }else{
+                        postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                        postCell.likeButton.isEnabled = true
+                    }
+                })
+                
+                // Dislike button
                 postCell.dislikeButton.setTitle("Dislike", for: .normal)
+                SomeApp.dbUserDislikedReviews.child(likedDBPath).observe(.value, with: {dislikeSnap in
+                    if dislikeSnap.exists(){
+                        postCell.dislikeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                        postCell.dislikeButton.isEnabled = false
+                    }else{
+                        postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                        postCell.dislikeButton.isEnabled = true
+                    }
+                })
                 
                 // If it's not the first comment, then we can add some actions
                 if !firstCommentFlag{
                     postCell.likeAction = {(cell) in
-                        print("Like!")
+                        let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
+                        SomeApp.likeReview(userid: self.user.uid,
+                                           resto: self.currentResto,
+                                           city: self.currentCity,
+                                           foodId: self.currentFood.key,
+                                           reviewerId: self.commentArray[tmpIndexPath!.row].key)
                     }
                     // Dislike
                     postCell.dislikeAction = {(cell) in
-                        print("Dislike!")
+                        let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
+                        SomeApp.dislikeReview(userid: self.user.uid,
+                                           resto: self.currentResto,
+                                           city: self.currentCity,
+                                           foodId: self.currentFood.key,
+                                           reviewerId: self.commentArray[tmpIndexPath!.row].key)
                     }
                 }
                 postCell.selectionStyle = .none
@@ -414,8 +447,9 @@ extension MyRestoDetail{
                         title != ""{
                         tmpTitle = title
                     }
+                    let userId = commentRestoSnapshot.key
                     
-                    tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle))
+                    tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle,key: userId))
                     //Use the trick
                     count += 1
                     
@@ -525,7 +559,7 @@ extension MyRestoDetail: GADUnifiedNativeAdLoaderDelegate{
     }
 
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
-      print("Received native ad: \(nativeAd)")
+      //print("Received native ad: \(nativeAd)")
 
       // Add the native ad to the list of native ads.
       nativeAds.append(nativeAd)

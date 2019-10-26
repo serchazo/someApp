@@ -165,7 +165,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1. Restaurant name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1f8-8y-V7u">
-                                                    <rect key="frame" x="101" y="19" width="285" height="33"/>
+                                                    <rect key="frame" x="101.5" y="19" width="284.5" height="34"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="33" id="KVD-3d-lPX"/>
                                                     </constraints>
@@ -174,7 +174,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Points: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YOt-fR-3Di">
-                                                    <rect key="frame" x="101" y="60" width="293" height="16"/>
+                                                    <rect key="frame" x="101.5" y="61" width="292.5" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="16" id="oC4-8L-gkb"/>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="uey-UM-ftm"/>
@@ -184,7 +184,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Other:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9VJ-sG-H7E">
-                                                    <rect key="frame" x="101" y="84" width="293" height="16"/>
+                                                    <rect key="frame" x="101.5" y="85" width="292.5" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Dkx-1Q-grf"/>
                                                         <constraint firstAttribute="height" constant="16" id="Mb4-7U-yrP"/>
@@ -194,7 +194,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Of5-77-t6l">
-                                                    <rect key="frame" x="20" y="35.5" width="64.5" height="64.5"/>
+                                                    <rect key="frame" x="20" y="36" width="65" height="65"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="Of5-77-t6l" secondAttribute="height" multiplier="1:1" id="ClO-BU-mV8"/>
                                                     </constraints>
@@ -217,6 +217,7 @@
                                                 <constraint firstItem="1f8-8y-V7u" firstAttribute="centerY" secondItem="Of5-77-t6l" secondAttribute="top" id="U5i-Yb-jil"/>
                                                 <constraint firstItem="9VJ-sG-H7E" firstAttribute="leading" secondItem="1f8-8y-V7u" secondAttribute="leading" id="azV-JN-TyK"/>
                                                 <constraint firstItem="9VJ-sG-H7E" firstAttribute="top" secondItem="YOt-fR-3Di" secondAttribute="bottom" constant="8" symbolic="YES" id="j5v-ed-Jtx"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="9VJ-sG-H7E" secondAttribute="bottom" constant="8" id="liH-Rw-S5B"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
