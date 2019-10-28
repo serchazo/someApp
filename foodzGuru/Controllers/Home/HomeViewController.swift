@@ -50,6 +50,8 @@ class HomeViewController: UIViewController {
     private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
     private let adFrequency = 7
     
+    private let refreshControl = UIRefreshControl()
+    
     @IBOutlet weak var newsFeedTable: UITableView!{
         didSet{
             newsFeedTable.delegate = self
@@ -64,6 +66,8 @@ class HomeViewController: UIViewController {
             
             newsFeedTable.rowHeight = UITableView.automaticDimension
             newsFeedTable.estimatedRowHeight = 150
+            
+            newsFeedTable.refreshControl = refreshControl
         }
     }
     
@@ -96,13 +100,22 @@ class HomeViewController: UIViewController {
         // Configure the Ads
         configureBannerAd()
         configureNativeAds()
+        
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
     // MARK: update from DB
+    @objc private func refreshData(_ sender: Any) {
+        // If pull down the table, then refresh data
+        updateTimelinefromDB()
+        self.refreshControl.endRefreshing()
+    }
+    
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            var adCount = 0
+            let adCount = 0
             var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, initiator:String, target: String, targetName: String)] = []
         
             for child in snapshot.children{

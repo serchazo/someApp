@@ -58,10 +58,14 @@ class SomeApp{
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
     static let selectionColor:UIColor = #colorLiteral(red: 0, green: 0.5628422499, blue: 0.3188166618, alpha: 1)
 
-    // The adds
-    /// The ad unit ID.
-    static let adNativeUnitID = "ca-app-pub-3940256099942544/3986624511"
-    static let adBAnnerUnitID = "ca-app-pub-3940256099942544/2934735716"
+    // The ads
+    // Test ads
+    //static let adNativeUnitID = "ca-app-pub-3940256099942544/3986624511"
+    //static let adBAnnerUnitID = "ca-app-pub-3940256099942544/2934735716"
+    
+    // Prod ads
+    static let adBAnnerUnitID = "ca-app-pub-5723552712049473/6238131752"
+    static let adNativeUnitID = "ca-app-pub-5723552712049473/6280641581"
     
     // the fonts
     static var titleFont: UIFont{
