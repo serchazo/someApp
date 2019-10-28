@@ -149,13 +149,20 @@ class BestRestosViewController: UIViewController {
             // I. Get the values
             for child in snapshot.children{
                 if let snapChild = child as? DataSnapshot,
-                    let points = snapChild.value as? Int{
+                    let value = snapChild.value as? [String:Any],
+                    let points = value["points"] as? Int{
+                    
+                    var tmpReviewsNb = 0
+                    if let reviewsNb = value ["reviews"] as? Int{
+                        tmpReviewsNb = reviewsNb
+                    }
                     // II. Get the restaurants
                     let dbPathForResto = self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + snapChild.key
                     self.restoDatabaseReference.child(dbPathForResto).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
                         if tmpResto != nil {
                             tmpResto!.nbPoints = points
+                            tmpResto!.nbReviews = tmpReviewsNb
                             tmpRestoList.append(tmpResto!)
                         }
                         // Trick! If we have processed all children then we reload the Data
@@ -291,7 +298,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 
                 cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
                 cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
-                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: "Reviews: 10", attributes: [.font : restorantAddressFont])
+                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: "Reviews: \(thisResto.nbReviews)", attributes: [.font : restorantAddressFont])
 
                 return cell
             }else{

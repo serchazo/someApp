@@ -19,6 +19,7 @@ class Resto{
     var address: String
     let city: String
     var nbPoints:Int = 0 //This is a helper value, don't put in the -> Any
+    var nbReviews:Int = 0 // same
     
     
     init(name: String, city: String, url: String = "", phoneNumber:String = "", address: String = "") {

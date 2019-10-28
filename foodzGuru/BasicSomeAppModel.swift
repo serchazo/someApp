@@ -25,9 +25,9 @@ class SomeApp{
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
+    static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-followers-nb")
+    static let dbUserNbFollowing:DatabaseReference = dbRootRef.child("user-following-nb")
     static let dbUserFollowingRankings:DatabaseReference = dbRootRef.child("user-following-rankings")
-    static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-nbfollowers")
-    static let dbUserNbFollowing:DatabaseReference = dbRootRef.child("user-nbfollowing")
     static let dbUserTimeline:DatabaseReference = dbRootRef.child("user-timeline")
     static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
     static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
@@ -108,14 +108,20 @@ class SomeApp{
     
     // MARK: User follow users and rankings
     static func follow(userId: String, toFollowId: String){
-        let followingDBReference = SomeApp.dbUserFollowing.child(userId)
-        let newfollowerRef = followingDBReference.child(toFollowId)
-        newfollowerRef.setValue("true")
+        var updateObject:[String:Any] = [:]
+        updateObject["user-following/" + userId + "/" + toFollowId] = true
+        updateObject["user-followers/" + toFollowId + "/" + userId] = true
+        
+        dbRootRef.updateChildValues(updateObject)
     }
     
     static func unfollow(userId: String, unfollowId: String){
-        let followingDBReference = SomeApp.dbUserFollowing.child(userId)
-        followingDBReference.child(unfollowId).removeValue()
+        var updateObject:[String:Any] = [:]
+        updateObject["user-following/" + userId + "/" + unfollowId] = NSNull()
+        updateObject["user-followers/" + unfollowId + "/" + userId] = NSNull()
+        
+        dbRootRef.updateChildValues(updateObject)
+        
     }
     
     // Follow and unfollow rankings
@@ -270,7 +276,6 @@ class SomeApp{
     
     // Like review
     static func likeReview(userid: String, resto: Resto, city: City, foodId: String, reviewerId: String){
-        print("like")
         var updateObject:[String:Any] = [:]
         
         // Add the like + remove the dislike to the resto review path
@@ -297,7 +302,7 @@ class SomeApp{
         var updateObject:[String:Any] = [:]
         
         // Add the like + remove the dislike to the resto review path
-        let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + resto.key + "/" + reviewerId + "/" + userid
+        let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId + "/" + userid
         updateObject["resto-reviews-likes/" + reviewPath] = NSNull()
         updateObject["resto-reviews-dislikes/" + reviewPath] = true
         

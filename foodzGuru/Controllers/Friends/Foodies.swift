@@ -15,8 +15,16 @@ class Foodies: UIViewController {
     
     private var user:User!
     private var friendsSearchController: UISearchController!
-    private var filteredFoodies: [String] = []
+    private var filteredFoodies: [UserDetails] = []
     private var myFoodiesList: [UserDetails] = []
+    private var emptyListFlag = false
+    
+    var isSearchBarEmpty: Bool {
+      return friendsSearchController.searchBar.text?.isEmpty ?? true
+    }
+    var isFiltering: Bool {
+      return friendsSearchController.isActive && !isSearchBarEmpty
+    }
     
     // The user to be passed on
     private var visitedUserData: UserDetails!
@@ -50,11 +58,12 @@ class Foodies: UIViewController {
             guard let user = user else {return}
             self.user = user
             
-            self.getRecommendedUsers()
+            self.getFriends()
         }
         
         // Setup the search controller
         friendsSearchController = UISearchController(searchResultsController: nil) //to be modified for final
+        friendsSearchController.delegate = self
         friendsSearchController.searchResultsUpdater = self
         friendsSearchController.hidesNavigationBarDuringPresentation = false
         friendsSearchController.obscuresBackgroundDuringPresentation = false
@@ -67,58 +76,56 @@ class Foodies: UIViewController {
 
     }
     
-    // MARK : the recommended list
-    func getRecommendedUsers(){
+    // MARK: Initial: get my friends
+    func getFriends(){
         // Outer : get the top users from the app
         SomeApp.dbUserFollowing.child(user.uid).observe(.value, with: {snapshot in
             var tmpUserDetails:[UserDetails] = []
             var count = 0
             
-            // Inner: get the user data
-            for child in snapshot.children{
-                if let childSnapshot = child as? DataSnapshot{
-                    SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
-                        // We don't add ourselve to the suggested
-                        if userDataSnap.exists(){
-                            if(childSnapshot.key != self.user.uid){
-                                // No for current user
-                                tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
+            if !snapshot.exists(){
+                // If we don't have a ranking, mark the empty list flag
+                self.emptyListFlag = true
+                self.myFoodies.reloadData()
+            }else{
+                // [Start] if the snapshot exists, then read!
+                self.emptyListFlag = false
+                for child in snapshot.children{
+                    if let childSnapshot = child as? DataSnapshot{
+                        SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
+                            tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
+                            
+                            // Use the trick
+                            count += 1
+                            if count == snapshot.childrenCount {
+                                self.myFoodiesList = tmpUserDetails
+                                self.myFoodies.reloadData()
                             }
-                        }
-                        // Use the trick
-                        count += 1
-                        if count == snapshot.childrenCount {
-                            self.myFoodiesList = tmpUserDetails
-                            self.myFoodies.reloadData()
-                        }
-                    })
-                    
-                    //
-                    
-                    
+                        })
+                    }
                 }
+                // [End] if the snapshot exists, then read!
             }
         })
     }
     
     
-    // MARK : methods
-    func searchBarIsEmpty() -> Bool {
-        //Returns true if the search text is empty or nil
-        return friendsSearchController.searchBar.text?.isEmpty ?? true
-    }
-    
+    // MARK: Search
     func filterContentForSearchText(_ searchText:String, scope: String = "ALL"){
         print(searchText)
         SomeApp.dbUserData.queryOrdered(byChild: "nickname").queryStarting(atValue: searchText).queryLimited(toFirst: 30).observeSingleEvent(of: .value, with: {snapshot in
+            var tmpUserDetails:[UserDetails] = []
             var count = 0
+            
             for child in snapshot.children{
                 if let userDataSnapshot = child as? DataSnapshot{
                     
-                    print(userDataSnapshot)
+                    tmpUserDetails.append(UserDetails(snapshot: userDataSnapshot)!)
+                    //print(userDataSnapshot)
                     // Use the trick
                     count += 1
                     if count == snapshot.childrenCount{
+                        self.filteredFoodies = tmpUserDetails
                         self.myFoodies.reloadData()
                     }
                 }
@@ -128,8 +135,6 @@ class Foodies: UIViewController {
 
     
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Segue
         switch segue.identifier {
@@ -137,7 +142,13 @@ class Foodies: UIViewController {
             if let seguedController = segue.destination as? MyRanks,
                 let senderCell = sender as? HomeCellWithImage,
                 let indexNumber = myFoodies.indexPath(for: senderCell){
-                seguedController.calledUser = myFoodiesList[indexNumber.row]
+                if isFiltering{
+                    seguedController.calledUser = filteredFoodies[indexNumber.row]
+                }
+                else{
+                    seguedController.calledUser = myFoodiesList[indexNumber.row]
+                }
+                
             }
         default: break
         }
@@ -147,15 +158,24 @@ class Foodies: UIViewController {
 }
 
 // MARK: table stuff
-
 extension Foodies:UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard myFoodiesList.count > 0 else { return 1}
-        return myFoodiesList.count
+        
+        if isFiltering{
+            return filteredFoodies.count
+        }
+        else if emptyListFlag == true {
+            return 1
+        }else{
+            return myFoodiesList.count
+        }
+        
+       
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard myFoodiesList.count > 0 else{
+        guard myFoodiesList.count > 0 || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Getting Foodies' data"
             let spinner = UIActivityIndicatorView(style: .gray)
@@ -164,7 +184,37 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             return cell
         }
         
-        if let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
+        // Filtering
+        if isFiltering,
+            let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
+            cell.titleLabel.text = filteredFoodies[indexPath.row].nickName
+            cell.bodyLabel.text = filteredFoodies[indexPath.row].bio
+            cell.cellImage.sd_setImage(
+                with: URL(string: filteredFoodies[indexPath.row].photoURLString),
+                placeholderImage: UIImage(named: "userdefault"),
+                options: [],
+                completed: nil)
+            cell.dateLabel.text = ""
+            
+            return cell
+        }
+            // Start] Empty table
+        else if emptyListFlag,
+            let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
+            cell.titleLabel.text = "You are not following any foodies yet!"
+            cell.bodyLabel.text = "Use the search bar to find your friends."
+            cell.cellImage.sd_setImage(
+                with: URL(string: ""),
+                placeholderImage: UIImage(named: "userdefault"),
+                options: [],
+                completed: nil)
+            cell.dateLabel.text = ""
+            
+            return cell
+        }// [End] Empty table
+        
+            // [Start] Normal table
+        else if let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = myFoodiesList[indexPath.row].nickName
             cell.bodyLabel.text = myFoodiesList[indexPath.row].bio
             cell.cellImage.sd_setImage(
@@ -172,18 +222,19 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
                 placeholderImage: UIImage(named: "userdefault"),
                 options: [],
                 completed: nil)
+            
             cell.dateLabel.text = ""
             
             return cell
-        }else{
+        }// [End] Normal table
+        else{
             fatalError("Can't create cell")
         }
-        
     }
 }
 
 
-// MARK : search results updating, to allow the View controller to respond to the search bar
+// MARK: Search stuff
 // This extension will go to the new view controller
 extension Foodies: UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
@@ -194,6 +245,12 @@ extension Foodies: UISearchResultsUpdating{
         let textToSearch = barText.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
         guard textToSearch.count >= 3 else { return }
         filterContentForSearchText(textToSearch.lowercased())
+    }
+}
+
+extension Foodies: UISearchControllerDelegate{
+    func didDismissSearchController(_ searchController: UISearchController) {
+        myFoodies.reloadData()
     }
 }
 
