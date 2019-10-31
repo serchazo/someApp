@@ -62,12 +62,13 @@ class Foodies: UIViewController {
         }
         
         // Setup the search controller
-        friendsSearchController = UISearchController(searchResultsController: nil) //to be modified for final
+        friendsSearchController = UISearchController(searchResultsController: nil)
         friendsSearchController.delegate = self
         friendsSearchController.searchResultsUpdater = self
         friendsSearchController.hidesNavigationBarDuringPresentation = false
         friendsSearchController.obscuresBackgroundDuringPresentation = false
         friendsSearchController.searchBar.placeholder = "Search for More Foodies"
+        friendsSearchController.searchBar.autocapitalizationType = .none
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
         

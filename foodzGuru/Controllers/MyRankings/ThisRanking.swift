@@ -28,6 +28,7 @@ class ThisRanking: UIViewController {
     private var user: User!
     private var thisRankingId: String!
     private var thisRankingDescription: String = ""
+    private var userMultiplier: Int = 10
     
     private var userRankingDetailRef: DatabaseReference!
     private var userRankingsRef: DatabaseReference!
@@ -293,6 +294,14 @@ class ThisRanking: UIViewController {
             }
         })
         
+        // Points multiplier
+        SomeApp.dbUserPointsMultiplier.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+            if let tmpValue = snapshot.value as? Int{
+                self.userMultiplier = tmpValue
+            }
+        })
+        
+        
         // Edit Description Button
         if calledUser == nil {
             FoodzLayout.configureButton(button: editDescriptionButton)
@@ -520,7 +529,13 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // Name
                     cell.restoName.text = thisRanking[indexPath.row].name
                     // Points
-                    cell.pointsGivenLabel.text = "Points: ToDo"
+                    var positionMultiple = 10 - indexPath.row
+                    // Correct for the positions higher than 10
+                    if (positionMultiple < 0) {positionMultiple = 1}
+                    //write points
+                    let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
+                    
+                    cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
                     
                     // Review
                     if !(thisRankingReviews.count > 0) {

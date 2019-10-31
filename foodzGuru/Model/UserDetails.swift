@@ -38,7 +38,7 @@ class UserDetails{
         
         if let bio = value["bio"] as? String {self.bio = bio} else {self.bio = ""}
         if let tmpURL = value["photourl"] as? String {self.photoURLString = tmpURL} else {self.photoURLString = ""}
-        if let tmpCity = value["default"] as? String {self.defaultCity = tmpCity} else {self.defaultCity = "singapore/singapore/singapore/Singapore"}
+        if let tmpCity = value["default"] as? String {self.defaultCity = tmpCity} else {self.defaultCity = "sg/sg/sin/Singapore"}
     }
     
     // Turn Ranking to a Dictionary

@@ -23,6 +23,7 @@ class SomeApp{
     static let dbRestoReviews:DatabaseReference = dbRootRef.child("resto-reviews")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
+    static let dbUserPointsMultiplier:DatabaseReference = dbRootRef.child("user-pointsmultiplier")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
     static let dbUserNbFollowers:DatabaseReference = dbRootRef.child("user-followers-nb")

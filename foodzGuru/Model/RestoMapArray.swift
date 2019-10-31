@@ -33,7 +33,7 @@ struct RestoMapArray: Codable{
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        let mapData = try NSKeyedArchiver.archivedData(withRootObject: restoMapItem, requiringSecureCoding: false)
+        let mapData = try NSKeyedArchiver.archivedData(withRootObject: restoMapItem!, requiringSecureCoding: false)
         try container.encode(mapData, forKey: .map)
     }
 }

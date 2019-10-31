@@ -115,7 +115,6 @@ class HomeViewController: UIViewController {
     func updateTimelinefromDB(){
         userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
             var count = 0
-            let adCount = 0
             var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, initiator:String, target: String, targetName: String)] = []
         
             for child in snapshot.children{

@@ -55,7 +55,7 @@ class SearchViewController: UIViewController {
             let cityArray = currentCityString.components(separatedBy: "/")
             return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
         }else{
-            return City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
+            return City(country: "sg", state: "sg", key: "sin", name: "Singapore")
         }
     }
 

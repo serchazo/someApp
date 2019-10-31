@@ -18,7 +18,7 @@ class MyRanksAddRankingViewController: UIViewController {
     //To probably change later
     var foodList:[FoodType] = []
     var user: User!
-    var currentCity = City(name: "Singapore", state: "singapore", country: "singapore", key: "singapore")
+    var currentCity:City!
     
     // Action when a cell is pressed
     weak var delegate: MyRanksAddRankingViewDelegate!

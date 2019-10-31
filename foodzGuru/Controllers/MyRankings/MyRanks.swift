@@ -120,17 +120,6 @@ class MyRanks: UIViewController {
     }
     
     // MARK: get city
-    /*
-    private func getCurrentCityFromDefaults() -> City{
-        if let currentCityString = defaults.object(forKey: SomeApp.currentCityDefault) as? String{
-            let cityArray = currentCityString.components(separatedBy: "/")
-            return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
-        }else{
-            return City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
-        }
-    }*/
-    
-    //
     private func parseCityFromString(string2parse: String) -> City{
         let cityArray = string2parse.components(separatedBy: "/")
         return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
@@ -178,7 +167,7 @@ class MyRanks: UIViewController {
                 }else if let currentCityString = self.defaults.object(forKey: SomeApp.currentCityDefault) as? String{
                     self.currentCity = self.parseCityFromString(string2parse: currentCityString)
                 }else{
-                    self.currentCity = City(country: "singapore", state: "singapore", key: "singapore", name: "Singapore")
+                    self.currentCity = City(country: "sg", state: "sg", key: "sin", name: "Singapore")
                 }
                 // Change city button
                 if self.currentCity != nil{
