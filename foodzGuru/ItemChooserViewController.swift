@@ -153,7 +153,7 @@ extension ItemChooserViewController{
             x: 0,
             y: screenSize.height,
             width: screenSize.width,
-            height: screenSize.height)
+            height: screenSize.height * 0.9)
         window?.addSubview(cityTable)
         
         // Go back to "normal" if we tap
@@ -173,7 +173,7 @@ extension ItemChooserViewController{
                             x: 0,
                             y: self.screenSize.height * 0.1,
                             width: self.screenSize.width,
-                            height: self.screenSize.height)
+                            height: self.screenSize.height * 0.9)
         },
                        completion: nil)
     }

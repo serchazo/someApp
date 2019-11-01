@@ -30,6 +30,8 @@ class ThisRanking: UIViewController {
     private var thisRankingDescription: String = ""
     private var userMultiplier: Int = 10
     
+    private var emptyListFlag = false
+    
     private var userRankingDetailRef: DatabaseReference!
     private var userRankingsRef: DatabaseReference!
     private var userReviewsRef : DatabaseReference!
@@ -166,37 +168,33 @@ class ThisRanking: UIViewController {
         restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
         restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
-        // Verify if I'm asking for my data
-        if calledUser == nil {
-            // Get the logged in user
-            Auth.auth().addStateDidChangeListener {auth, user in
-                guard let user = user else {return}
-                self.user = user
-                
+        // Get the current user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            //Inside the closure (we need the user to proceed)
+            var dbPath = ""
+            var userId = ""
+            // Verify if I'm asking for my data
+            if self.calledUser == nil {
+                userId = self.user.uid
                 // I'm asking for my data
-                let dbPath = user.uid+"/"+self.thisRankingId
-                self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
-                self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
-                self.userReviewsRef = SomeApp.dbUserReviews.child(dbPath)
-                
-                self.updateTableFromDatabase()
                 self.setupMyTables()
                 
-                // Configure the header: Attention, need to do it after setting the DB vars
-                self.configureHeader(userId: user.uid)
+            }else {
+                userId = self.calledUser.key
             }
-        }else {
-            // I'm asking for data of someone else
-            let dbPath = calledUser.key+"/"+self.thisRankingId
+            // In both cases
+            dbPath = userId + "/"+self.thisRankingId
             self.userRankingDetailRef = SomeApp.dbUserRankingDetails.child(dbPath)
             self.userRankingsRef = SomeApp.dbUserRankings.child(dbPath)
             self.userReviewsRef = SomeApp.dbUserReviews.child(dbPath)
-            self.updateTableFromDatabase()
-            
             // Configure the header: Attention, need to do it after setting the DB vars
-            configureHeader(userId: calledUser.key)
+            self.configureHeader(userId: userId)
+            self.updateTableFromDatabase()
         }
-        // In both cases
+        
         
         // Some setup
         myRankingTable.estimatedRowHeight = 100
@@ -325,45 +323,52 @@ class ThisRanking: UIViewController {
             self.thisRankingReviews = self.initializeReviewArray(withElements: Int(snapshot.childrenCount))
             var count = 0
             
-            // 1. Get the resto keys
-            for child in snapshot.children{
-                if let testChild = child as? DataSnapshot,
-                    let value = testChild.value as? [String:AnyObject],
-                    let position = value["position"] as? Int {
-                    let restoId = testChild.key
-                    tmpPositions[position-1] = restoId
-                    
-                    // Get the Resto data
-                    self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
-                        let tmpResto = Resto(snapshot: restoDetailSnap)
-                        if tmpResto != nil{
-                            tmpRanking[position-1] = tmpResto!
-                        }
-                        // Then
-                        count += 1
-                        if count == snapshot.childrenCount{
-                            self.thisRanking = tmpRanking
-                            self.thisEditableRanking = tmpRanking
-                            self.myRankingTable.reloadData()
-                            
-                            // then get the Reviews.  Update by row
-                            for tmpRestoId in tmpPositions{
-                                self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
-                                    if let reviewValue = reviewSnap.value as? [String: AnyObject],
-                                        let reviewText = reviewValue["text"] as? String,
-                                        let timestamp = reviewValue["timestamp"] as? Double{
-                                        let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
-                                        self.thisRankingReviews[thisReviewPosition!] = (text: reviewText, timestamp: timestamp)
-                                        self.myRankingTable.reloadRows(
-                                            at: [IndexPath(row: thisReviewPosition!, section: 0)],
-                                            with: .none)
-                                    }
-                                })
+            if !snapshot.exists(){
+                // If we don't have a ranking, mark the empty list flag
+                self.emptyListFlag = true
+                self.myRankingTable.reloadData()
+            }else{
+                self.emptyListFlag = false
+                // 1. Get the resto keys
+                for child in snapshot.children{
+                    if let testChild = child as? DataSnapshot,
+                        let value = testChild.value as? [String:AnyObject],
+                        let position = value["position"] as? Int {
+                        let restoId = testChild.key
+                        tmpPositions[position-1] = restoId
+                        
+                        // Get the Resto data
+                        self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
+                            let tmpResto = Resto(snapshot: restoDetailSnap)
+                            if tmpResto != nil{
+                                tmpRanking[position-1] = tmpResto!
                             }
-                            //
-                        }
-                    })
-                    
+                            // Then
+                            count += 1
+                            if count == snapshot.childrenCount{
+                                self.thisRanking = tmpRanking
+                                self.thisEditableRanking = tmpRanking
+                                self.myRankingTable.reloadData()
+                                
+                                // then get the Reviews.  Update by row
+                                for tmpRestoId in tmpPositions{
+                                    self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
+                                        if let reviewValue = reviewSnap.value as? [String: AnyObject],
+                                            let reviewText = reviewValue["text"] as? String,
+                                            let timestamp = reviewValue["timestamp"] as? Double{
+                                            let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
+                                            self.thisRankingReviews[thisReviewPosition!] = (text: reviewText, timestamp: timestamp)
+                                            self.myRankingTable.reloadRows(
+                                                at: [IndexPath(row: thisReviewPosition!, section: 0)],
+                                                with: .none)
+                                        }
+                                    })
+                                }
+                                //
+                            }
+                        })
+                        
+                    }
                 }
             }
         })
@@ -464,7 +469,11 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             // The normal table
             switch(section){
             case 0:
-                return thisRanking.count
+                if emptyListFlag == true{
+                    return 1
+                }else{
+                    return thisRanking.count
+                }
             case 1: return 1
             default: return 0
             }
@@ -516,58 +525,219 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 }
                 return editRestoCell
             }else{fatalError() }
-            
-            // The "normal" table
-        }else{
+        }
+        // [START] The "normal" table
+        else{
             if indexPath.section == 0 {
-                // Restaurants cells
-                let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
-                if let cell = tmpCell as? ThisRankingCell {
-                    // Position
-                    let position = indexPath.row + 1
-                    cell.positionLabel.text = String(position)
-                    // Name
-                    cell.restoName.text = thisRanking[indexPath.row].name
-                    // Points
-                    var positionMultiple = 10 - indexPath.row
-                    // Correct for the positions higher than 10
-                    if (positionMultiple < 0) {positionMultiple = 1}
-                    //write points
-                    let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
-                    
-                    cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
-                    
-                    // Review
-                    if !(thisRankingReviews.count > 0) {
-                        cell.reviewLabel.text = " " // the space is important
-                        let spinner = UIActivityIndicatorView(style: .gray)
-                        spinner.startAnimating()
-                        cell.reviewLabel.addSubview(spinner)
-                    }else{ // We already downloaded the reviews
-                        cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
-                    }
-                    
-                    // Edit review button
-                    if calledUser == nil{
-                        FoodzLayout.configureButton(button: cell.editReviewButton)
-                        cell.editReviewButton.setTitle("Edit Review", for: .normal)
-                        cell.editReviewButton.isHidden = false
-                        cell.editReviewButton.isEnabled = true
-                        cell.editReviewAction = {(cell) in
+                // [START] Spinner while downloading
+                guard thisRanking.count > 0 || emptyListFlag else{
+                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                    cell.textLabel?.text = "Waiting for services"
+                    let spinner = UIActivityIndicatorView(style: .gray)
+                    spinner.startAnimating()
+                    cell.accessoryView = spinner
+                    return cell
+                } // [END] Spinner while downloading
+                
+                // [START] Empty list
+                if emptyListFlag && calledUser == nil{
+                    let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                    cell.textLabel?.text = "No restorants in your \(currentFood.name) list yet!"
+                    cell.detailTextLabel?.text = "Click on + and tell the world about your favorite places!"
+                    return cell
+                }else if emptyListFlag && calledUser != nil{
+                    let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                    cell.textLabel?.text = "No \(currentFood.name) places in \(calledUser.nickName)'s list yet"
+                    cell.detailTextLabel?.text = "Come back soon and check the list!"
+                    return cell
+                }// [END] Empty list
+                
+                // [START] Restaurant cells
+                else{
+                    let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
+                    if let cell = tmpCell as? ThisRankingCell {
+                        // Position
+                        let position = indexPath.row + 1
+                        cell.positionLabel.text = String(position)
+                        // Name
+                        cell.restoName.text = thisRanking[indexPath.row].name
+                        // Points
+                        var positionMultiple = 10 - indexPath.row
+                        // Correct for the positions higher than 10
+                        if (positionMultiple < 0) {positionMultiple = 1}
+                        //write points
+                        let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
+                        
+                        cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
+                        
+                        // Review
+                        if !(thisRankingReviews.count > 0) {
+                            cell.reviewLabel.text = " " // the space is important
+                            let spinner = UIActivityIndicatorView(style: .gray)
+                            spinner.startAnimating()
+                            cell.reviewLabel.addSubview(spinner)
+                        }else{ // We already downloaded the reviews
+                            cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
+                        }
+                        
+                        // [START] Edit review button
+                        if calledUser == nil{
+                            FoodzLayout.configureButton(button: cell.editReviewButton)
                             
-                            self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
-                            self.editReview()
+                            cell.editReviewButton.setTitle("Edit Review", for: .normal)
+                            cell.editReviewButton.isHidden = false
+                            cell.editReviewButton.isEnabled = true
+                            cell.editReviewAction = {(cell) in
+                                self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
+                                self.editReview()
+                            }
+                        }else{
+                            // The Edit review button becomes a "report" button
+                            cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
+                            cell.editReviewButton.setTitle("...", for: .normal)
+                            cell.editReviewButton.isHidden = false
+                            cell.editReviewButton.isEnabled = true
+                            cell.editReviewButton.tintColor = .lightGray
+                            cell.editReviewAction = {(cell) in
+                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                                let reportAction = UIAlertAction(title: "Report", style: .destructive, handler: {_ in
+                                    // [START] Inner Alert
+                                    let innerAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                                    let inappropriateAction = UIAlertAction(title: "It's inappropriate", style: .destructive, handler: {_ in
+                                        
+                                        SomeApp.reportReview(userid: self.calledUser.key,
+                                                             resto: self.thisRanking[indexPath.row],
+                                                             city: self.currentCity,
+                                                             foodId: self.currentFood.key,
+                                                             text: self.thisRankingReviews[tmpIndexPath!.row].text,
+                                                             reportReason: "Inappropriate",
+                                                             postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
+                                                             reporterId: self.user.uid)
+                                        
+                                        self.navigationController?.popViewController(animated: true)
+                                    })
+                                    let spamAction = UIAlertAction(title: "It's spam", style: .destructive, handler: {_ in
+                                        SomeApp.reportReview(userid: self.calledUser.key,
+                                        resto: self.thisRanking[indexPath.row],
+                                        city: self.currentCity,
+                                        foodId: self.currentFood.key,
+                                        text: self.thisRankingReviews[tmpIndexPath!.row].text,
+                                        reportReason: "Spam",
+                                        postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
+                                        reporterId: self.user.uid)
+                                        
+                                        self.navigationController?.popViewController(animated: true)
+                                    })
+                                    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                                    innerAlert.addAction(inappropriateAction)
+                                    innerAlert.addAction(spamAction)
+                                    innerAlert.addAction(cancelAction)
+                                    self.present(innerAlert,animated: true)
+                                    // [END] Inner alert
+                                })
+                                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                                
+                                moreAlert.addAction(reportAction)
+                                moreAlert.addAction(cancelAction)
+                                self.present(moreAlert,animated: true)
+                            }
+                        } // [END] Review button
+                        
+                        // [START] Like/Dislike buttons and labels
+                        var likedDBPath = ""
+                        var restoDBPath = ""
+                        var currentUser = ""
+                        if calledUser == nil{
+                            currentUser = user.uid
+                            likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + user.uid
+                            
+                            restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + user.uid
+                        }else{
+                            currentUser = calledUser.key
+                            likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + calledUser.key
+                            
+                            restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + calledUser.key
+                        }
+                        
+                        // Like button
+                        SomeApp.dbUserLikedReviews.child(likedDBPath).observe(.value, with: {likeSnap in
+                            if likeSnap.exists(){
+                                cell.likeButton.setTitle("Liked", for: .normal)
+                                cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                                cell.likeButton.isEnabled = false
+                            }else{
+                                cell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                                cell.likeButton.isEnabled = true
+                            }
+                        })
+                        
+                        // Dislike button
+                        cell.disLikeButton.setTitle("Dislike", for: .normal)
+                        SomeApp.dbUserDislikedReviews.child(likedDBPath).observe(.value, with: {dislikeSnap in
+                            if dislikeSnap.exists(){
+                                cell.disLikeButton.setTitle("Disliked", for: .normal)
+                                cell.disLikeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                                cell.disLikeButton.isEnabled = false
+                            }else{
+                                cell.disLikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                                cell.disLikeButton.isEnabled = true
+                            }
+                        })
+                        
+                        // NbLikes label
+                        SomeApp.dbRestoReviewsLikesNb.child(restoDBPath).observe(.value, with: {likesNbSnap in
+                            if likesNbSnap.exists(),
+                                let nbLikes = likesNbSnap.value as? Int{
+                                cell.nbLikesLabel.text = String(nbLikes)
+                            }else{
+                                cell.nbLikesLabel.text = "0"
+                            }
+                        })
+                        // NbDislikes label
+                        SomeApp.dbRestoReviewsDislikesNb.child(restoDBPath).observe(.value, with: {disLikesSnap in
+                            if disLikesSnap.exists(),
+                            let nbDislikes = disLikesSnap.value as? Int{
+                                cell.nbDislikesLabel.text = String(nbDislikes)
+                            }else{
+                                cell.nbDislikesLabel.text = "0"
+                            }
+                        })
+                        
+                        // Add the actions depending on the presence of review
+                        
+                        
+                        // [START] If it's not the first comment, then we can add some actions
+                        if thisRankingReviews[indexPath.row].text.count > 0{
+                            cell.likeAction = {(cell) in
+                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                SomeApp.likeReview(userid: self.user.uid,
+                                                   resto: self.thisRanking[tmpIndexPath!.row],
+                                                   city: self.currentCity,
+                                                   foodId: self.currentFood.key,
+                                                   reviewerId: currentUser)
+                            }
+                            // Dislike
+                            cell.dislikeAction = {(cell) in
+                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                SomeApp.dislikeReview(userid: self.user.uid,
+                                                      resto: self.thisRanking[tmpIndexPath!.row],
+                                                   city: self.currentCity,
+                                                   foodId: self.currentFood.key,
+                                                   reviewerId: currentUser)
+                            }
+                            
+                            
+                        } // [END] Add actions
+                        
+                        // Details button
+                        cell.showRestoDetailAction = {(cell) in
+                            self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
                         }
                         
                     }
-                    // Details button
-                    cell.showRestoDetailAction = {(cell) in
-                        self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
-                    }
-                    
-                }
-                return tmpCell
-                
+                    return tmpCell
+                }// [END] Restaurant cells
             }else if indexPath.section == 1 {
                 // The last cell : Add resto to ranking
                 return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
@@ -575,8 +745,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 return cell
             }
-            
-        }
+        }//[END] The "normal" table
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

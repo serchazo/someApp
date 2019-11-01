@@ -22,7 +22,7 @@ class MyProfile: UIViewController {
     // Instance variables
     private var user:User!
     private var photoURL: URL!
-    private var profileMenu = ["Profile Pic", "Button", "Bio","bioButton", "Help & Support", "More","Log out"]
+    private var profileMenu = ["Profile Pic", "Button", "Bio","bioButton","changePassButton", "Help & Support", "More","Log out"]
     private let photoPickerController = UIImagePickerController()
     private let logoffSegue = "logoffSegue"
     private let changePicCellId = "changePicCellId"
@@ -162,8 +162,21 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 
                 return cell
             }
+                // Change password button
+            else if indexPath.row == 4{
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let changePasswordButton = UIButton(type: .custom)
+                changePasswordButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
+                changePasswordButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                changePasswordButton.setTitle("Change Password", for: .normal)
+                changePasswordButton.addTarget(self, action: #selector(changePasswordAction), for: .touchUpInside)
+                cell.selectionStyle = .none
+                cell.addSubview(changePasswordButton)
+                
+                return cell
+            }
                 // Help button
-            else if indexPath.row == 4 {
+            else if indexPath.row == 5 {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let helpButton = UIButton(type: .custom)
                 helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -176,7 +189,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // More button
-            else if indexPath.row == 5{
+            else if indexPath.row == 6 {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let moreButton = UIButton(type: .custom)
                 moreButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -189,7 +202,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // Log out
-            else if indexPath.row == 6 {
+            else if indexPath.row == 7 {
                 // Logout row
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let logoutButton = UIButton(type: .custom)
@@ -246,6 +259,83 @@ extension MyProfile{
             }
             else{
                 SomeApp.updateProfilePic(userId: self.user.uid, photoURL: self.photoURL.absoluteString)
+            }
+        })
+    }
+    
+    // MARK: Change password
+       @objc func changePasswordAction(_ sender: UIButton){
+        let alert = UIAlertController(title: "Change password",
+        message: nil,
+        preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        let saveAction = UIAlertAction(title: "Change", style: .default) { _ in
+            //Get e-mail and password from the alert
+            let oldPassword = alert.textFields![0].text!
+            let newPassword = alert.textFields![1].text!
+            let confirmPassword = alert.textFields![2].text!
+            
+            // Passwords don't match
+            if newPassword != confirmPassword {
+                let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                notMatchAlert.addAction(okAction)
+                self.present(notMatchAlert, animated: true, completion: nil)
+            }
+            // Call Firebase for an upgrade
+            else{
+                self.changePassword(email: self.user.email!, currentPassword: oldPassword, newPassword: newPassword) { (error) in
+                    if error != nil {
+                        let alert = UIAlertController(title: "Sign In Failed", message: error!.localizedDescription, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        self.present(alert,animated: true, completion: nil)
+                    }
+                    else {
+                        let alert = UIAlertController(title: "Success", message: "Password change successfully.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        self.present(alert,animated: true, completion: nil)
+                    }
+                }
+                
+            }
+            
+        }// [END] saveAction
+        
+        alert.addTextField { oldPassword in
+            oldPassword.isSecureTextEntry = true
+            oldPassword.autocapitalizationType = .none
+            oldPassword.placeholder = "Old Password"}
+        
+        alert.addTextField { newPassword in
+            newPassword.isSecureTextEntry = true
+            newPassword.autocapitalizationType = .none
+            newPassword.placeholder = "New Password"
+        }
+        
+        alert.addTextField { confirmPassword in
+            confirmPassword.isSecureTextEntry = true
+            confirmPassword.autocapitalizationType = .none
+            confirmPassword.placeholder = "Confirm New Password"
+        }
+        
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
+       }
+    
+    func changePassword(email: String, currentPassword: String, newPassword: String, completion: @escaping (Error?) -> Void) {
+        let credential = EmailAuthProvider.credential(withEmail: email, password: currentPassword)
+        Auth.auth().currentUser?.reauthenticate(with: credential, completion: { (result, error) in
+            if let error = error {
+                completion(error)
+            }
+            else {
+                Auth.auth().currentUser?.updatePassword(to: newPassword, completion: { (error) in
+                    completion(error)
+                })
             }
         })
     }

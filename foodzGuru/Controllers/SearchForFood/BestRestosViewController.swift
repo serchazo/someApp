@@ -277,6 +277,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
                 cell.textLabel?.text = "Empty ranking"
                 cell.detailTextLabel?.text = "Add your favorite restaurants for the world to see!"
+                cell.selectionStyle = .none
                 return cell
             }
             
@@ -306,15 +307,12 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
             }
         }else if indexPath.section == 1{
                 guard nativeAds.count > 0 else{
-                    let spinnerCell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    spinnerCell.textLabel?.text = "Something good will appear here"
-                    spinnerCell.backgroundColor = #colorLiteral(red: 0.9983033538, green: 0.9953654408, blue: 0.8939318061, alpha: 1)
-                    
-                    let spinner = UIActivityIndicatorView(style: .gray)
-                    spinner.startAnimating()
-                    
-                    spinnerCell.accessoryView = spinner
-                    
+                    let spinnerCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                    spinnerCell.textLabel?.text = "Advertise here!"
+                    spinnerCell.detailTextLabel?.text = "Contact support@foodz.guru"
+                    spinnerCell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+                    spinnerCell.imageView?.image = UIImage(named: "idea")
+                    spinnerCell.selectionStyle = .none
                     return spinnerCell
                 }
             
@@ -363,16 +361,8 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
 
 
 
-// MARK: Some view stuff
+// MARK: Fonts
 extension BestRestosViewController{
-    
-    /*
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cellHeight = restorantNameFont.lineHeight + restorantAddressFont.lineHeight + restorantPointsFont.lineHeight + 65.0
-        return CGFloat(cellHeight)
-    }*/
-    
-    // MARK : Fonts
     private var restorantNameFont: UIFont{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .title3).withSize(23.0))
     }
@@ -385,14 +375,6 @@ extension BestRestosViewController{
         return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
     }
 }
-
-    /*
-    let adIndexPath = IndexPath(row: 0, section: 0)
-    restoRankTableView.beginUpdates()
-    restoRankTableView.reloadRows(at: [adIndexPath], with: .automatic)
-    restoRankTableView.endUpdates()
- */
-
 
 
 // MARK: Ad stuff

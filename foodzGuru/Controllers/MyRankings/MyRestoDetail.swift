@@ -366,7 +366,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 })
                 
                 
-                // If it's not the first comment, then we can add some actions
+                // [START] If it's not the first comment, then we can add some actions
                 if !firstCommentFlag{
                     postCell.likeAction = {(cell) in
                         let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
@@ -431,7 +431,8 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                         moreAlert.addAction(cancelAction)
                         self.present(moreAlert,animated: true)
                     }
-                }
+                } // [END] Add actions
+                
                 postCell.selectionStyle = .none
                 
                 return postCell

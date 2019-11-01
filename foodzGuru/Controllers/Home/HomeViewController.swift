@@ -317,17 +317,13 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             }
                 // If we don't have loaded Ads, we put a placeholder
             else{
-                if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell {
-                    
-                    setupPostCell(cell: postCell,
-                                  type: somePost[indexPath.row].type,
-                                  timestamp: somePost[indexPath.row].timestamp,
-                                  payload: somePost[indexPath.row].payload,
-                                  icon: "💡")
-                    
-                    return postCell
-                }
-                else{fatalError("Can't create cell")}
+                let spinnerCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                spinnerCell.textLabel?.text = "Advertise here!"
+                spinnerCell.detailTextLabel?.text = "Contact support@foodz.guru"
+                spinnerCell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+                spinnerCell.imageView?.image = UIImage(named: "idea")
+                spinnerCell.selectionStyle = .none
+                return spinnerCell
             }
         }
             

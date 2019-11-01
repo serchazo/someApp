@@ -13,12 +13,23 @@ class ThisRankingCell: UITableViewCell {
     // Actions
     var editReviewAction: ((UITableViewCell) -> Void)?
     var showRestoDetailAction: ((UITableViewCell) -> Void)?
+    var likeAction: ((UITableViewCell) -> Void)?
+    var dislikeAction: ((UITableViewCell) -> Void)?
     
+    // Actions
     @IBAction func detailsButtonPressed(_ sender: Any) {
         showRestoDetailAction?(self)
     }
     @IBAction func editReviewPressed(_ sender: Any) {
         editReviewAction?(self)
+    }
+    
+    @IBAction func likeButtonPressed(_ sender: Any) {
+        likeAction?(self)
+    }
+    
+    @IBAction func dislikeButtonPressed(_ sender: Any) {
+        dislikeAction?(self)
     }
     
     // Outlets
@@ -27,6 +38,11 @@ class ThisRankingCell: UITableViewCell {
     @IBOutlet weak var pointsGivenLabel: UILabel!
     @IBOutlet weak var reviewLabel: UILabel!
     @IBOutlet weak var detailsButton: UIButton!
+    
+    @IBOutlet weak var likeButton: UIButton!
+    @IBOutlet weak var nbLikesLabel: UILabel!
+    @IBOutlet weak var disLikeButton: UIButton!
+    @IBOutlet weak var nbDislikesLabel: UILabel!
     
     @IBOutlet weak var editReviewButton: UIButton!{
         didSet{
