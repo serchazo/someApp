@@ -46,6 +46,7 @@ class BestRestosViewController: UIViewController {
     @IBOutlet weak var restoRankTableHeader: UIView!
     @IBOutlet weak var tableHeaderFoodIcon: UILabel!
     @IBOutlet weak var tableHeaderFoodName: UILabel!
+    @IBOutlet weak var tableHeaderDescription: UILabel!
     @IBOutlet weak var followButton: UIButton!
     @IBOutlet weak var adView: UIView!
     
@@ -98,16 +99,18 @@ class BestRestosViewController: UIViewController {
         self.navigationItem.title = "foodz.guru"
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
+        // Title and description
+        tableHeaderFoodName.text = "Best \(currentFood.name) places in \(currentCity.name)"
+        tableHeaderDescription.font = UIFont.preferredFont(forTextStyle: .footnote)
+        tableHeaderDescription.text = SomeApp.getPhrase()
+        
         // Food Icon
         tableHeaderFoodIcon.layer.cornerRadius = 0.5 * tableHeaderFoodIcon.frame.width
         tableHeaderFoodIcon.layer.borderColor = SomeApp.themeColor.cgColor
-        tableHeaderFoodIcon.layer.borderWidth = 2.0
+        tableHeaderFoodIcon.layer.borderWidth = 1.0
         tableHeaderFoodIcon.layer.masksToBounds = true
         tableHeaderFoodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
         tableHeaderFoodIcon.text = currentFood.icon
-        
-        
-        tableHeaderFoodName.text = "Best \(currentFood.name) restaurants in \(currentCity.name)"
         
         // Configure follow button
         followButton.backgroundColor = .white

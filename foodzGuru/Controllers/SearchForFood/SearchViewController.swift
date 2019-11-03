@@ -162,7 +162,8 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             cell.layer.cornerRadius = cell.frame.width / 2
             cell.clipsToBounds = true
             
-            cell.cellIcon.text = foodList[indexPath.row].icon
+            let iconText = NSAttributedString(string: foodList[indexPath.row].icon , attributes: [.strokeColor: SomeApp.themeColor, .font: iconFont])
+            cell.cellIcon.attributedText = iconText
             
             let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.strokeColor: SomeApp.themeColor, .font: cellTitleFont])
             cell.cellLabel.attributedText = foodTitleText
@@ -192,11 +193,11 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
 // MARK: Fonts
 extension SearchViewController{
     private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(40.0))
+        return UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50.0))
     }
     
     private var cellTitleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
+        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(18.0))
     }
     
     private var titleFont: UIFont{

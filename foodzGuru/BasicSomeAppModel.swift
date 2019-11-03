@@ -68,6 +68,17 @@ class SomeApp{
     static let adBAnnerUnitID = "ca-app-pub-5723552712049473/6238131752"
     static let adNativeUnitID = "ca-app-pub-5723552712049473/6280641581"
     
+    static let rankingDescription:[String] =
+    ["And the winners are...",
+    "People have spoken...",
+    "Is your favorite place in the list?",
+    "Ready, set, eat!"]
+    
+    static func getPhrase() -> String{
+        let number = Int.random(in: 0 ..< rankingDescription.count)
+        return rankingDescription[number]
+    }
+    
     // the fonts
     static var titleFont: UIFont{
         return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
