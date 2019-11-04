@@ -10,16 +10,11 @@ import UIKit
 
 class CommentCell: UITableViewCell {
     var likeAction: ((UITableViewCell) -> Void)?
-    var dislikeAction: ((UITableViewCell) -> Void)?
     var moreAction: ((UITableViewCell) -> Void)?
     
     @IBAction func likeButtonPressed(_ sender: Any) {
         likeAction?(self)
     }
-    @IBAction func dislikeButtonPressed(_ sender: Any) {
-        dislikeAction?(self)
-    }
-    
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -30,10 +25,8 @@ class CommentCell: UITableViewCell {
         }
     }
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var dislikeButton: UIButton!
-    
+    @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var nbLikesLabel: UILabel!
-    @IBOutlet weak var nbDislikesLabel: UILabel!
     
     @IBAction func moreButtonPressed(_ sender: Any) {
         moreAction?(self)

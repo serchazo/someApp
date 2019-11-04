@@ -13,8 +13,6 @@ class BestRestosViewController: UIViewController {
     private static var showRestoDetailSegue = "showRestoDetail"
     private static let screenSize = UIScreen.main.bounds.size
     
-    var restoDatabaseReference: DatabaseReference!
-    var restoPointsDatabaseReference: DatabaseReference!
     var thisRanking: [Resto] = []
     
     // To get from Segue-r
@@ -40,6 +38,8 @@ class BestRestosViewController: UIViewController {
             restoRankTableView.dataSource = self
             restoRankTableView.delegate = self
             restoRankTableView.refreshControl = refreshControl
+            restoRankTableView.rowHeight = UITableView.automaticDimension
+            restoRankTableView.estimatedRowHeight = 110
         }
     }
     
@@ -65,10 +65,6 @@ class BestRestosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Initialize the references
-        restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(currentCity.country).child(currentCity.state).child(currentCity.key).child(currentFood.key)
-        restoDatabaseReference = SomeApp.dbResto
-        
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -89,6 +85,7 @@ class BestRestosViewController: UIViewController {
         restoRankTableView.separatorColor = SomeApp.themeColor
         
         updateTableFromDatabase()
+        
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
@@ -139,7 +136,9 @@ class BestRestosViewController: UIViewController {
     
     // MARK: update from database
     func updateTableFromDatabase(){
-        restoPointsDatabaseReference.observeSingleEvent(of: .value, with: { snapshot in
+        let cityDBPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/"  + currentFood.key
+        
+        SomeApp.dbRestoPoints.child(cityDBPath).observeSingleEvent(of: .value, with: { snapshot in
             // What to do if the list is empty
             guard snapshot.exists() else {
                 self.thisRanking.append(Resto(name: "placeholder", city: "placeholder"))
@@ -161,7 +160,7 @@ class BestRestosViewController: UIViewController {
                     }
                     // II. Get the restaurants
                     let dbPathForResto = self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + snapChild.key
-                    self.restoDatabaseReference.child(dbPathForResto).observeSingleEvent(of: .value, with: {shot in
+                    SomeApp.dbResto.child(dbPathForResto).observeSingleEvent(of: .value, with: {shot in
                         let tmpResto = Resto(snapshot: shot)
                         if tmpResto != nil {
                             tmpResto!.nbPoints = points
@@ -332,7 +331,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
     func configureAddCell(nativeAdCell: UITableViewCell){
         guard nativeAds.count > 0 else {return}
         let nativeAd = nativeAds[0] // GADUnifiedNativeAd()
-        /// Set the native ad's rootViewController to the current view controller.
+        // Set the native ad's rootViewController to the current view controller.
         nativeAd.rootViewController = self
         
         // Get the ad view from the Cell. The view hierarchy for this cell is defined in

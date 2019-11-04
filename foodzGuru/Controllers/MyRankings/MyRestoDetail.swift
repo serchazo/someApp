@@ -22,6 +22,8 @@ class MyRestoDetail: UIViewController {
     private var user:User!
     private var dbRestoReviews:DatabaseReference!
     private var commentArray:[Comment] = []
+    private var restoReviewLiked:[Bool] = []
+    private var restoReviewsLikeNb:[Int] = []
     private var firstCommentFlag:Bool = false
     
     // We get this var from the preceding ViewController 
@@ -295,7 +297,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
                         postCell.dateLabel.isHidden = true
                         postCell.likeButton.isHidden = true
-                        postCell.dislikeButton.isHidden = true
+                        postCell.moreButton.isHidden = true
                         
                         return postCell
                     }
@@ -318,55 +320,53 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 postCell.titleLabel.text = commentArray[indexPath.row].username
                 postCell.bodyLabel.text = commentArray[indexPath.row].text
                 
-                // Like/Dislike Button configuration: depends on the user past
-                let likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key + "/" + commentArray[indexPath.row].key
-                
-                
                 // Like button
-                postCell.likeButton.setTitle("Like", for: .normal)
-                SomeApp.dbUserLikedReviews.child(likedDBPath).observe(.value, with: {likeSnap in
-                    if likeSnap.exists(){
-                        postCell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                        postCell.likeButton.isEnabled = false
-                    }else{
-                        postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                        postCell.likeButton.isEnabled = true
-                    }
-                })
+                postCell.likeButton.setTitle("Yum!", for: .normal)
+                if restoReviewLiked[indexPath.row]{
+                    postCell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+                    postCell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                }else{
+                    postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                }
                 
                 // NbLikes label
-                let restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key + "/" + commentArray[indexPath.row].key
-                SomeApp.dbRestoReviewsLikesNb.child(restoDBPath).observe(.value, with: {likesNbSnap in
-                    if likesNbSnap.exists(),
-                        let nbLikes = likesNbSnap.value as? Int{
-                        postCell.nbLikesLabel.text = String(nbLikes)
-                    }else{
-                        postCell.nbLikesLabel.text = "0"
-                    }
-                })
+                postCell.nbLikesLabel.textColor = .black
+                postCell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+                postCell.nbLikesLabel.text = "Yums! (\(restoReviewsLikeNb[indexPath.row]))"
                 
-                
+                // Report button
                 // [START] If it's not the first comment, then we can add some actions
                 if !firstCommentFlag{
-                    postCell.likeAction = {(cell) in
-                        let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
-                        SomeApp.likeReview(userid: self.user.uid,
-                                           resto: self.currentResto,
-                                           city: self.currentCity,
-                                           foodId: self.currentFood.key,
-                                           reviewerId: self.commentArray[tmpIndexPath!.row].key)
+                    // We can Like
+                    if !restoReviewLiked[indexPath.row]{
+                        postCell.likeAction = {(cell) in
+                            let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
+                            SomeApp.likeReview(userid: self.user.uid,
+                                               resto: self.currentResto,
+                                               city: self.currentCity,
+                                               foodId: self.currentFood.key,
+                                               reviewerId: self.commentArray[tmpIndexPath!.row].key)
+                        }
                     }
-                    // Dislike
-                    postCell.dislikeAction = {(cell) in
-                        let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
-                        SomeApp.dislikeReview(userid: self.user.uid,
-                                           resto: self.currentResto,
-                                           city: self.currentCity,
-                                           foodId: self.currentFood.key,
-                                           reviewerId: self.commentArray[tmpIndexPath!.row].key)
+                    // if we aleready liked
+                    else{
+                        postCell.likeAction = {(cell) in
+                            let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
+                            SomeApp.dislikeReview(userid: self.user.uid,
+                                               resto: self.currentResto,
+                                               city: self.currentCity,
+                                               foodId: self.currentFood.key,
+                                               reviewerId: self.commentArray[tmpIndexPath!.row].key)
+                        }
                     }
                     
                     // More (report) button
+                    postCell.moreButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
+                    postCell.moreButton.setTitleColor(.lightGray, for: .normal)
+                    postCell.moreButton.setTitle("...", for: .normal)
+                    postCell.moreButton.isHidden = false
+                    postCell.moreButton.isEnabled = true
+                    
                     postCell.moreAction = {(cell) in
                         let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
                         let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -467,12 +467,13 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     
 }
 
-// MARK: Get comments from DB
+// MARK: Get reviews from DB
 extension MyRestoDetail{
     
     func getReviewsFromDB(){
         var tmpCommentArray:[Comment] = []
         var count = 0
+        
        
         // Get from database
         dbRestoReviews.observeSingleEvent(of: .value, with: {snapshot in
@@ -486,6 +487,9 @@ extension MyRestoDetail{
                 self.restoDetailTable.reloadData()
                 return
             }
+            // Initialize the arrays
+            self.restoReviewLiked = self.initializeBoolArray(withElements: Int(snapshot.childrenCount))
+            self.restoReviewsLikeNb = self.initializeIntArray(withElements: Int(snapshot.childrenCount))
             
             for child in snapshot.children{
                 if let commentRestoSnapshot = child as? DataSnapshot,
@@ -500,8 +504,10 @@ extension MyRestoDetail{
                         tmpTitle = title
                     }
                     let userId = commentRestoSnapshot.key
-                    
+
                     tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle,key: userId))
+                    
+                    
                     //Use the trick
                     count += 1
                     
@@ -514,9 +520,9 @@ extension MyRestoDetail{
                                 tmpCommentArray.insert(placeholderAd, at: i)
                             }
                         }
-                        
                         self.commentArray = tmpCommentArray
                         self.restoDetailTable.reloadData()
+                        self.getLikes()
                     }
                     
                     
@@ -524,6 +530,37 @@ extension MyRestoDetail{
             }
         })
     }
+    
+    private func getLikes(){
+        let restoLikesDBPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
+        
+        for i in 0 ..< commentArray.count{
+            let dbPath = restoLikesDBPath + "/" + commentArray[i].key
+            // 1. Verify if the user has liked
+            SomeApp.dbRestoReviewsLikes.child(dbPath + "/" + user.uid).observe(.value, with: {snapshot in
+                self.restoReviewLiked[i] = snapshot.exists()
+                
+                //2. Get the numb of likes
+                SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
+                    if likesNbSnap.exists(),
+                        let nbLikes = likesNbSnap.value as? Int{
+                        self.restoReviewsLikeNb[i] = nbLikes
+                    }else{
+                        self.restoReviewsLikeNb[i] = 0
+                    }
+                    // Update by row, section 1 (comments)
+                    self.restoDetailTable.reloadRows(
+                    at: [IndexPath(row: i, section: 1)],
+                    with: .none)
+                    
+                })
+            })
+            
+            
+        }
+        
+    }
+    
 }
 
 // MARK: UITextViewDelegate
@@ -536,6 +573,26 @@ extension MyRestoDetail: UITextViewDelegate {
         return changedText.count <= 2500
     }
     
+}
+
+// MARK: helper funcs
+extension MyRestoDetail {
+    
+    func initializeIntArray(withElements: Int) -> [Int]{
+        var tmpArray: [Int] = []
+        for _ in 0..<withElements {
+            tmpArray.append(0)
+        }
+        return tmpArray
+    }
+    
+    func initializeBoolArray(withElements: Int) -> [Bool]{
+        var tmpArray: [Bool] = []
+        for _ in 0..<withElements {
+            tmpArray.append(false)
+        }
+        return tmpArray
+    }
 }
 
 // MARK: ad Loader delegate

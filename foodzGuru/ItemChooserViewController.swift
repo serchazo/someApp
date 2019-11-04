@@ -96,7 +96,7 @@ class ItemChooserViewController: UIViewController {
                         }
                         count += 1
                         if count == snapshot.childrenCount{
-                            self.cityList = tmpCities
+                            self.cityList = tmpCities.sorted(by: {$0.city.name < $1.city.name})
                             self.cityTable.reloadData()
                         }
                     })

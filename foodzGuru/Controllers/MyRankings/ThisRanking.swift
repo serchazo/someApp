@@ -380,8 +380,6 @@ class ThisRanking: UIViewController {
                                                 self.thisRankingReviewsLiked[thisReviewPosition!] = likeSnap.exists()
                                                 
                                                 //4. Get nb of likes
-                                        
-                                                
                                                 SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
                                                     
                                                     if likesNbSnap.exists(),
@@ -554,7 +552,10 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         }else if tableView == self.editRankTableView{
             
             if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
+                // Text
+                //let tmpPosition = indexPath.row + 1
                 editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
+                
                 editRestoCell.tapAction = { (cell) in
                     // If the delete button is pressed, we show an alert asking for confirmation
                     let alert = UIAlertController(title: "Delete Restaurant?",
@@ -637,8 +638,8 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         // [START] Edit review button
                         if calledUser == nil{
-                            FoodzLayout.configureButton(button: cell.editReviewButton)
-                            
+                            cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                            cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
                             cell.editReviewButton.setTitle("Edit Review", for: .normal)
                             cell.editReviewButton.isHidden = false
                             cell.editReviewButton.isEnabled = true
@@ -700,8 +701,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         } // [END] Review button
                         
                         // [START] Like/Dislike buttons and labels
-                        print("\([indexPath.row]) : \(thisRanking[indexPath.row].key)")
-                        
                         if thisRankingReviewsLiked[indexPath.row] {
                             cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                             cell.likeButton.setTitle("Yum!", for: .normal)
@@ -1143,6 +1142,7 @@ extension ThisRanking : UITableViewDropDelegate {
                     {
                         //Add to the operations list
                         self.operations.append(RankingOperation(operationType: .Update, restoIdentifier: self.thisEditableRanking[sourceIndexPath.row].key))
+                        
                         // Update the "model"
                         let tmpResto = thisEditableRanking[sourceIndexPath.row]
                         thisEditableRanking.remove(at: sourceIndexPath.row)
@@ -1154,10 +1154,10 @@ extension ThisRanking : UITableViewDropDelegate {
                         editRankTableView.insertRows(at: [destinationIndexPath], with: UITableView.RowAnimation.right)
                 })
                 coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
-                // Now reload
-                //editRankTableView.reloadData()
             }
         }
+        // [END] Coordinator: Now reload
+        //editRankTableView.reloadData()
     }
 }
 

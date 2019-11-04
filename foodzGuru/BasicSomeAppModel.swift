@@ -20,7 +20,6 @@ class SomeApp{
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
-    static let dbRestoReviews:DatabaseReference = dbRootRef.child("resto-reviews")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserPointsMultiplier:DatabaseReference = dbRootRef.child("user-pointsmultiplier")
@@ -33,13 +32,15 @@ class SomeApp{
     static let dbUserRankings: DatabaseReference = dbRootRef.child("user-rankings")
     static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
-    static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     static let dbUserReportedReviews: DatabaseReference = dbRootRef.child("user-reported-reviews")
     
-    // likes
+    // Reviews and likes
+    static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
     static let dbUserLikedReviews:DatabaseReference = dbRootRef.child("user-liked-reviews")
     static let dbUserReviewsLikes:DatabaseReference = dbRootRef.child("user-reviews-likes")
     static let dbUserReviewsLikesNb:DatabaseReference = dbRootRef.child("user-reviews-likes-nb")
+    static let dbRestoReviews:DatabaseReference = dbRootRef.child("resto-reviews")
+    static let dbRestoReviewsLikes:DatabaseReference = dbRootRef.child("resto-reviews-likes")
     static let dbRestoReviewsLikesNb:DatabaseReference = dbRootRef.child("resto-reviews-likes-nb")
     
     //rankings
@@ -311,7 +312,6 @@ class SomeApp{
     
     // Dislike review
     static func dislikeReview(userid: String, resto: Resto, city: City, foodId: String, reviewerId: String){
-        print("dislike")
         var updateObject:[String:Any] = [:]
         
         // Add the like + remove the dislike to the resto review path

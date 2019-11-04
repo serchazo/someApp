@@ -21,7 +21,7 @@ class City{
         self.name = name
         self.state = state
         self.country = country
-        self.key = String(name.filter { !" \n\t\r!".contains($0) }).lowercased()
+        self.key = key
     }
     
     init(country: String, state: String, key: String, name:String = "") {
