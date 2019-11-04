@@ -260,6 +260,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 cell.selectionStyle = .none
                 cell.textLabel?.textAlignment = .center
                 cell.textLabel?.textColor = SomeApp.themeColor
+                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.text = "Reviews"
                 
                 return cell
@@ -333,18 +334,6 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     }
                 })
                 
-                // Dislike button
-                postCell.dislikeButton.setTitle("Dislike", for: .normal)
-                SomeApp.dbUserDislikedReviews.child(likedDBPath).observe(.value, with: {dislikeSnap in
-                    if dislikeSnap.exists(){
-                        postCell.dislikeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                        postCell.dislikeButton.isEnabled = false
-                    }else{
-                        postCell.dislikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                        postCell.dislikeButton.isEnabled = true
-                    }
-                })
-                
                 // NbLikes label
                 let restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key + "/" + commentArray[indexPath.row].key
                 SomeApp.dbRestoReviewsLikesNb.child(restoDBPath).observe(.value, with: {likesNbSnap in
@@ -353,15 +342,6 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                         postCell.nbLikesLabel.text = String(nbLikes)
                     }else{
                         postCell.nbLikesLabel.text = "0"
-                    }
-                })
-                // NbDislikes label
-                SomeApp.dbRestoReviewsDislikesNb.child(restoDBPath).observe(.value, with: {disLikesSnap in
-                    if disLikesSnap.exists(),
-                    let nbDislikes = disLikesSnap.value as? Int{
-                        postCell.nbDislikesLabel.text = String(nbDislikes)
-                    }else{
-                        postCell.nbDislikesLabel.text = "0"
                     }
                 })
                 
@@ -468,14 +448,18 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                      
                  }
              }else if indexPath.row == 2{
-                 // URL clicket, open the web page
-                 if currentResto.url != nil{
-                     let config = SFSafariViewController.Configuration()
-                     config.entersReaderIfAvailable = true
-                     let vc = SFSafariViewController(url: currentResto.url, configuration: config)
-                     vc.preferredControlTintColor = UIColor.white
-                     vc.preferredBarTintColor = SomeApp.themeColorOpaque
-                     present(vc, animated: true)
+                // URL clicked, open the web page
+                if currentResto.url != nil{
+                    let config = SFSafariViewController.Configuration()
+                    config.entersReaderIfAvailable = true
+                    
+                    let vc = SFSafariViewController(url: currentResto.url, configuration: config)
+                    vc.navigationController?.navigationBar.titleTextAttributes = [
+                    NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+                    vc.preferredControlTintColor = SomeApp.themeColor
+                    vc.preferredBarTintColor = UIColor.white
+                    
+                    present(vc, animated: true)
                  }
              }
          }

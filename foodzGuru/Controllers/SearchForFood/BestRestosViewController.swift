@@ -86,7 +86,7 @@ class BestRestosViewController: UIViewController {
         //Some setup
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
-        
+        restoRankTableView.separatorColor = SomeApp.themeColor
         
         updateTableFromDatabase()
         // Configure Refresh Control

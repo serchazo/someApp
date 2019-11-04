@@ -41,6 +41,8 @@ class ThisRanking: UIViewController {
     private var thisRanking: [Resto] = []
     private var thisEditableRanking: [Resto] = []
     private var thisRankingReviews: [(text: String, timestamp: Double)] = []
+    private var thisRankingReviewsLiked: [Bool] = []
+    private var thisRankingReviewsLikes: [Int] = []
     private var descriptionRowHeight = CGFloat(50.0)
     private var descriptionEditRankingRowHeight = CGFloat(70.0)
     
@@ -199,6 +201,8 @@ class ThisRanking: UIViewController {
         // Some setup
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
+        //myRankingTable.separatorColor = SomeApp.themeColor
+        myRankingTable.separatorInset = .zero
         
         // Configure the banner ad
         configureBannerAd()
@@ -315,11 +319,17 @@ class ThisRanking: UIViewController {
     
     // MARK: update from database
     private func updateTableFromDatabase(){
+        var currentUser = user.uid
+        if calledUser != nil{
+            currentUser = calledUser.key
+        }
         
         // I. Outer: get the Resto keys and Positions
         self.userRankingDetailRef.observe(.value, with: {snapshot in
             var tmpPositions = self.initializeStringArray(withElements: Int(snapshot.childrenCount))
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
+            self.thisRankingReviewsLiked = self.initializeBoolArray(withElements: Int(snapshot.childrenCount))
+            self.thisRankingReviewsLikes = self.initializeIntArray(withElements: Int(snapshot.childrenCount))
             self.thisRankingReviews = self.initializeReviewArray(withElements: Int(snapshot.childrenCount))
             var count = 0
             
@@ -337,6 +347,8 @@ class ThisRanking: UIViewController {
                         let restoId = testChild.key
                         tmpPositions[position-1] = restoId
                         
+                       
+                        
                         // Get the Resto data
                         self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
                             let tmpResto = Resto(snapshot: restoDetailSnap)
@@ -350,17 +362,43 @@ class ThisRanking: UIViewController {
                                 self.thisEditableRanking = tmpRanking
                                 self.myRankingTable.reloadData()
                                 
-                                // then get the Reviews.  Update by row
+                                // 2. Then get the Reviews.  Update by row
                                 for tmpRestoId in tmpPositions{
+                                    
+                                    let likedDBPath = currentUser + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/" + self.user.uid
+                                    let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
+                                    
                                     self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
                                         if let reviewValue = reviewSnap.value as? [String: AnyObject],
                                             let reviewText = reviewValue["text"] as? String,
                                             let timestamp = reviewValue["timestamp"] as? Double{
                                             let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
                                             self.thisRankingReviews[thisReviewPosition!] = (text: reviewText, timestamp: timestamp)
-                                            self.myRankingTable.reloadRows(
-                                                at: [IndexPath(row: thisReviewPosition!, section: 0)],
-                                                with: .none)
+                                            
+                                            // 3. Get if liked
+                                            SomeApp.dbUserLikedReviews.child(likedDBPath).observe( .value, with: {likeSnap in
+                                                self.thisRankingReviewsLiked[thisReviewPosition!] = likeSnap.exists()
+                                                
+                                                //4. Get nb of likes
+                                        
+                                                
+                                                SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                                                    
+                                                    if likesNbSnap.exists(),
+                                                        let nbLikes = likesNbSnap.value as? Int{
+                                                        self.thisRankingReviewsLikes[thisReviewPosition!] = nbLikes
+                                                    }else{
+                                                        self.thisRankingReviewsLikes[thisReviewPosition!] = 0
+                                                    }
+                                                    // Update per row
+                                                    self.myRankingTable.reloadRows(
+                                                        at: [IndexPath(row: thisReviewPosition!, section: 0)],
+                                                        with: .none)
+                                                })// [End] 4.
+                                                
+                                            })
+                                            
+                                            
                                         }
                                     })
                                 }
@@ -390,6 +428,23 @@ class ThisRanking: UIViewController {
         }
         return tmpArray
     }
+    
+    func initializeIntArray(withElements: Int) -> [Int]{
+        var tmpArray: [Int] = []
+        for _ in 0..<withElements {
+            tmpArray.append(0)
+        }
+        return tmpArray
+    }
+    
+    func initializeBoolArray(withElements: Int) -> [Bool]{
+        var tmpArray: [Bool] = []
+        for _ in 0..<withElements {
+            tmpArray.append(false)
+        }
+        return tmpArray
+    }
+    
     
     func initializeReviewArray(withElements: Int) -> [(text: String, timestamp: Double)]{
         var tmpReviewList: [(text: String, timestamp: Double)] = []
@@ -594,10 +649,10 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         }else{
                             // The Edit review button becomes a "report" button
                             cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
+                            cell.editReviewButton.setTitleColor(.lightGray, for: .normal)
                             cell.editReviewButton.setTitle("...", for: .normal)
                             cell.editReviewButton.isHidden = false
                             cell.editReviewButton.isEnabled = true
-                            cell.editReviewButton.tintColor = .lightGray
                             cell.editReviewAction = {(cell) in
                                 let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
                                 let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -645,89 +700,51 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         } // [END] Review button
                         
                         // [START] Like/Dislike buttons and labels
-                        var likedDBPath = ""
-                        var restoDBPath = ""
-                        var currentUser = ""
-                        if calledUser == nil{
-                            currentUser = user.uid
-                            likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + user.uid
+                        print("\([indexPath.row]) : \(thisRanking[indexPath.row].key)")
+                        
+                        if thisRankingReviewsLiked[indexPath.row] {
+                            cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+                            cell.likeButton.setTitle("Yum!", for: .normal)
+                            cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
                             
-                            restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + user.uid
                         }else{
-                            currentUser = calledUser.key
-                            likedDBPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + calledUser.key
-                            
-                            restoDBPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + thisRanking[indexPath.row].key + "/" + calledUser.key
+                            cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                            cell.likeButton.setTitle("Yum!", for: .normal)
+                            cell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
                         }
-                        
-                        // Like button
-                        SomeApp.dbUserLikedReviews.child(likedDBPath).observe(.value, with: {likeSnap in
-                            if likeSnap.exists(){
-                                cell.likeButton.setTitle("Liked", for: .normal)
-                                cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                                cell.likeButton.isEnabled = false
-                            }else{
-                                cell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                                cell.likeButton.isEnabled = true
-                            }
-                        })
-                        
-                        // Dislike button
-                        cell.disLikeButton.setTitle("Dislike", for: .normal)
-                        SomeApp.dbUserDislikedReviews.child(likedDBPath).observe(.value, with: {dislikeSnap in
-                            if dislikeSnap.exists(){
-                                cell.disLikeButton.setTitle("Disliked", for: .normal)
-                                cell.disLikeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                                cell.disLikeButton.isEnabled = false
-                            }else{
-                                cell.disLikeButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                                cell.disLikeButton.isEnabled = true
-                            }
-                        })
-                        
+
                         // NbLikes label
-                        SomeApp.dbRestoReviewsLikesNb.child(restoDBPath).observe(.value, with: {likesNbSnap in
-                            if likesNbSnap.exists(),
-                                let nbLikes = likesNbSnap.value as? Int{
-                                cell.nbLikesLabel.text = String(nbLikes)
-                            }else{
-                                cell.nbLikesLabel.text = "0"
-                            }
-                        })
-                        // NbDislikes label
-                        SomeApp.dbRestoReviewsDislikesNb.child(restoDBPath).observe(.value, with: {disLikesSnap in
-                            if disLikesSnap.exists(),
-                            let nbDislikes = disLikesSnap.value as? Int{
-                                cell.nbDislikesLabel.text = String(nbDislikes)
-                            }else{
-                                cell.nbDislikesLabel.text = "0"
-                            }
-                        })
-                        
-                        // Add the actions depending on the presence of review
-                        
+                        cell.nbLikesLabel.textColor = .black
+                        cell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+                        cell.nbLikesLabel.text = "Yums! (\(thisRankingReviewsLikes[indexPath.row]))"
                         
                         // [START] If it's not the first comment, then we can add some actions
+                        var currentUser = user.uid
+                        if calledUser != nil {currentUser = calledUser.key}
+                        
                         if thisRankingReviews[indexPath.row].text.count > 0{
-                            cell.likeAction = {(cell) in
-                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                SomeApp.likeReview(userid: self.user.uid,
-                                                   resto: self.thisRanking[tmpIndexPath!.row],
-                                                   city: self.currentCity,
-                                                   foodId: self.currentFood.key,
-                                                   reviewerId: currentUser)
+                            // We can Like
+                            if !thisRankingReviewsLiked[indexPath.row]{
+                                cell.likeAction = {(cell) in
+                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                    SomeApp.likeReview(userid: self.user.uid,
+                                                       resto: self.thisRanking[tmpIndexPath!.row],
+                                                       city: self.currentCity,
+                                                       foodId: self.currentFood.key,
+                                                       reviewerId: currentUser)
+                                }
                             }
-                            // Dislike
-                            cell.dislikeAction = {(cell) in
-                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                SomeApp.dislikeReview(userid: self.user.uid,
-                                                      resto: self.thisRanking[tmpIndexPath!.row],
-                                                   city: self.currentCity,
-                                                   foodId: self.currentFood.key,
-                                                   reviewerId: currentUser)
+                            // We can unlike
+                            else{
+                                cell.likeAction = {(cell) in
+                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                    SomeApp.dislikeReview(userid: self.user.uid,
+                                                          resto: self.thisRanking[tmpIndexPath!.row],
+                                                       city: self.currentCity,
+                                                       foodId: self.currentFood.key,
+                                                       reviewerId: currentUser)
+                                }
                             }
-                            
-                            
                         } // [END] Add actions
                         
                         // Details button
@@ -836,6 +853,8 @@ extension ThisRanking{
         cell.doneButton.setTitle("Done!", for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdatingDescription()
+            
+            
         }
     }
     
@@ -1171,9 +1190,9 @@ extension ThisRanking: GADBannerViewDelegate{
         adView.addSubview(bannerView)
     }
     
-    /// Tells the delegate an ad request loaded an ad.
+    // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        print("adViewDidReceiveAd")
+        //print("adViewDidReceiveAd")
         
         //small animation
         bannerView.alpha = 0
@@ -1192,25 +1211,25 @@ extension ThisRanking: GADBannerViewDelegate{
         
     }
     
-    /// Tells the delegate that a full-screen view will be presented in response
-    /// to the user clicking on an ad.
+    // Tells the delegate that a full-screen view will be presented in response
+    // to the user clicking on an ad.
     func adViewWillPresentScreen(_ bannerView: GADBannerView) {
-        print("adViewWillPresentScreen")
+        //print("adViewWillPresentScreen")
     }
     
     /// Tells the delegate that the full-screen view will be dismissed.
     func adViewWillDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewWillDismissScreen")
+        //print("adViewWillDismissScreen")
     }
     
     /// Tells the delegate that the full-screen view has been dismissed.
     func adViewDidDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewDidDismissScreen")
+        //print("adViewDidDismissScreen")
     }
     
     /// Tells the delegate that a user click will open another app (such as
     /// the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
-        print("adViewWillLeaveApplication")
+        //print("adViewWillLeaveApplication")
     }
 }

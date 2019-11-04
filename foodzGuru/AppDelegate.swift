@@ -28,11 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         // Set the colors of navigation bar
         let navigationBarAppearace = UINavigationBar.appearance()
-        navigationBarAppearace.tintColor = SomeApp.themeColor // Background color
-        navigationBarAppearace.barTintColor = .white //Buttons color
+        navigationBarAppearace.tintColor = SomeApp.themeColor // Butons color
+        navigationBarAppearace.barTintColor = .white //Background color
         navigationBarAppearace.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
-            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .title2)]
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline)]
         
         
         return true

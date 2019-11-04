@@ -38,9 +38,9 @@ class SomeApp{
     
     // likes
     static let dbUserLikedReviews:DatabaseReference = dbRootRef.child("user-liked-reviews")
-    static let dbUserDislikedReviews:DatabaseReference = dbRootRef.child("user-disliked-reviews")
+    static let dbUserReviewsLikes:DatabaseReference = dbRootRef.child("user-reviews-likes")
+    static let dbUserReviewsLikesNb:DatabaseReference = dbRootRef.child("user-reviews-likes-nb")
     static let dbRestoReviewsLikesNb:DatabaseReference = dbRootRef.child("resto-reviews-likes-nb")
-    static let dbRestoReviewsDislikesNb:DatabaseReference = dbRootRef.child("resto-reviews-dislikes-nb")
     
     //rankings
     static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
@@ -297,17 +297,14 @@ class SomeApp{
         // Add the like + remove the dislike to the resto review path
         let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId + "/" + userid
         updateObject["resto-reviews-likes/" + reviewPath] = true
-        updateObject["resto-reviews-dislikes/" + reviewPath] = NSNull()
         
         // Add the like + remove the dislike to the user's liked / disliked
         let userLikedPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId
         updateObject["user-liked-reviews/" + userLikedPath] = true
-        updateObject["user-disliked-reviews/" + userLikedPath] = NSNull()
         
         // Add the like + remove the dislike to the user reviews
         let reviewerLikedPath = reviewerId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + userid
         updateObject["user-reviews-likes/" + reviewerLikedPath] = true
-        updateObject["user-reviews-dislikes/" + reviewerLikedPath] = NSNull()
         
         dbRootRef.updateChildValues(updateObject)
     }
@@ -320,19 +317,15 @@ class SomeApp{
         // Add the like + remove the dislike to the resto review path
         let reviewPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId + "/" + userid
         updateObject["resto-reviews-likes/" + reviewPath] = NSNull()
-        updateObject["resto-reviews-dislikes/" + reviewPath] = true
-        
         
         // Add the like + remove the dislike to the user's liked / disliked
         let userLikedPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + reviewerId
         updateObject["user-liked-reviews/" + userLikedPath] = NSNull()
-        updateObject["user-disliked-reviews/" + userLikedPath] = true
         
         // Add the like + remove the dislike to the user reviews
         let reviewerLikedPath = reviewerId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + resto.key + "/" + userid
         updateObject["user-reviews-likes/" + reviewerLikedPath] = NSNull()
-        updateObject["user-reviews-dislikes/" + reviewerLikedPath] = true
-        
+
         dbRootRef.updateChildValues(updateObject)
     }
     

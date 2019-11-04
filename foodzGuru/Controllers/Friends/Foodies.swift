@@ -71,6 +71,8 @@ class Foodies: UIViewController {
         friendsSearchController.searchBar.autocapitalizationType = .none
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
+
+        myFoodies.separatorColor = SomeApp.themeColor
         
         // Configure the banner ad
         configureBannerAd()
