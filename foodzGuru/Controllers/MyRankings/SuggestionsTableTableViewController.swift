@@ -60,8 +60,6 @@ extension SuggestionsTableTableViewController {
 }
 
 extension SuggestionsTableTableViewController: MKLocalSearchCompleterDelegate {
-    
-    /// - Tag: QueryResults
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         // As the user types, new completion suggestions are continuously returned to this method.
         // Overwrite the existing results, and then refresh the UI with the new results.

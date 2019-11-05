@@ -22,15 +22,14 @@ class Resto{
     var nbReviews:Int = 0 // same
     
     
-    init(name: String, city: String, url: String = "", phoneNumber:String = "", address: String = "") {
+    init(name: String, city: String, url: String = "", phoneNumber:String = "", address: String = "", addressKey:String = "") {
         self.ref = nil
-        //let tmpModifiedName = String(name.filter { !" \n\t\r!".contains($0) })
         
         let pattern = "[^A-Za-z0-9]+"
         let tmpModifiedName = name.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
+        let tmpModifiedAddressKey = addressKey.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
         
-        
-        self.key = city.lowercased() + "-" + tmpModifiedName.lowercased()
+        self.key = city.lowercased() + "-" + tmpModifiedName.lowercased() + "-" + tmpModifiedAddressKey.lowercased()
         self.name = name
         self.url = URL(fileURLWithPath: url)
         self.phoneNumber = phoneNumber

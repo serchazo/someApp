@@ -9,12 +9,14 @@
 import UIKit
 import Firebase
 import FacebookCore
+import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let gcmMessageIDKey = "gcm.message_id"
+    let locationManagerT = CLLocationManager()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Firebase config
@@ -34,6 +36,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
             NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline)]
         
+        // Location stuff
+        locationManagerT.requestWhenInUseAuthorization()
+        locationManagerT.delegate = self
+        locationManagerT.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationManagerT.requestLocation()
         
         return true
     }
@@ -68,6 +75,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+}
 
 
+// MARK: Location stuff
+extension AppDelegate: CLLocationManagerDelegate{
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // We assign to the SomeApp location
+        SomeApp.currentLocation = locations.last
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        //
+        print("Can't get location.")
+    }
+    
+    private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            locationManagerT.requestLocation()
+        }
+    }
 }

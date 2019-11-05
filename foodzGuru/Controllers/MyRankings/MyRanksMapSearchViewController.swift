@@ -30,7 +30,7 @@ class MyRanksMapSearchViewController: UIViewController {
     var selectedPin: MKPlacemark? = nil
     var resultSearchController:UISearchController!
     private var suggestionController: SuggestionsTableTableViewController!
-    private var locationManagerObserver: NSKeyValueObservation?
+    //private var locationManagerObserver: NSKeyValueObservation?
     private var foregroundRestorationObserver: NSObjectProtocol?
     
     //Delegate var
@@ -45,8 +45,7 @@ class MyRanksMapSearchViewController: UIViewController {
         }
     }
     
-    @IBOutlet private var locationManager: LocationManager!
-    
+    //@IBOutlet private var locationManager: LocationManager!
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet weak var searchResultsTable: UITableView!{
@@ -60,41 +59,16 @@ class MyRanksMapSearchViewController: UIViewController {
     //MARK: timeline funcs
     override func awakeFromNib() {
         super.awakeFromNib()
-        print("awaken from nib")
         suggestionController = SuggestionsTableTableViewController()
         suggestionController.tableView.delegate = self
         
         resultSearchController = UISearchController(searchResultsController: suggestionController)
         resultSearchController.searchResultsUpdater = suggestionController
-        
-        locationManagerObserver = locationManager.observe(\LocationManager.currentLocation) { [weak self] (_, _) in
-            if let location = self?.locationManager.currentLocation {
-                // This sample only searches for nearby locations, defined by the device's location. Once the current location is
-                // determined, enable the search functionality.
-                
-                let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 12_000, longitudinalMeters: 12_000)
-                self?.suggestionController.searchCompleter.region = region
-                self?.boundingRegion = region
-                
-                self?.resultSearchController.searchBar.isUserInteractionEnabled = true
-                self?.resultSearchController.searchBar.alpha = 1.0
-                
-                self?.tableView.reloadData()
-            }
-        }
-        
-        let name = UIApplication.willEnterForegroundNotification
-        foregroundRestorationObserver = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: { [weak self] (_) in
-            // Get a new location when returning from Settings to enable location services.
-            self?.locationManager.requestLocation()
-        })
-        
+    
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("loaded")
         
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
@@ -104,6 +78,21 @@ class MyRanksMapSearchViewController: UIViewController {
         resultSearchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.titleView = resultSearchController?.searchBar
         definesPresentationContext = true
+        
+        // If we have a location, then we only search for nearby locations
+        if let location = SomeApp.currentLocation {
+            
+            //let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 12_000, longitudinalMeters: 12_000)
+            coolMap.setRegion(region, animated: true)
+            suggestionController.searchCompleter.region = region
+            boundingRegion = region
+            
+            resultSearchController.searchBar.isUserInteractionEnabled = true
+            resultSearchController.searchBar.alpha = 1.0
+            
+            tableView.reloadData()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -112,15 +101,13 @@ class MyRanksMapSearchViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        locationManager.requestLocation()
+        
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
     
     // MARK: Some search functions
-    
-    /// - Parameter suggestedCompletion: A search completion provided by `MKLocalSearchCompleter` when tapping on a search completion table row
     private func search(for suggestedCompletion: MKLocalSearchCompletion) {
         let searchRequest = MKLocalSearch.Request(completion: suggestedCompletion)
         search(using: searchRequest)
@@ -176,15 +163,14 @@ class MyRanksMapSearchViewController: UIViewController {
 // MARK: table stuff
 extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard locationManager.currentLocation != nil else { return 1 }
+        guard SomeApp.currentLocation != nil else { return 1 }
         return matchingMapItems?.count ?? 0
         //return matchingMapItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //If we are waiting^^
-        guard locationManager.currentLocation != nil else {
-            print("started waiting")
+        guard SomeApp.currentLocation != nil else {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
             let spinner = UIActivityIndicatorView(style: .gray)
@@ -203,8 +189,6 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        guard locationManager.currentLocation != nil else { return }
         
         if tableView == suggestionController.tableView, let suggestion = suggestionController.completerResults?[indexPath.row] {
             resultSearchController.isActive = false
@@ -252,12 +236,6 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
 
 // MARK: Location stuff
 extension MyRanksMapSearchViewController: CLLocationManagerDelegate{
-    private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
-            locationManager.requestLocation()
-        }
-    }
-    
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {

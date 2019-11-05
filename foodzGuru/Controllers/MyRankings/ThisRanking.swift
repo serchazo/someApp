@@ -1036,7 +1036,13 @@ extension ThisRanking{
 extension ThisRanking: MyRanksMapSearchViewDelegate{
     //
     func restaurantChosenFromMap(someMapItem: MKMapItem) {
-        let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.key)
+        var addressKey = ""
+        if someMapItem.placemark.thoroughfare != nil {
+            addressKey = someMapItem.placemark.thoroughfare!
+        }
+        
+        let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.key, addressKey: addressKey)
+        
         // Verify if the resto exists in the ranking
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
            showAlertDuplicateRestorant()

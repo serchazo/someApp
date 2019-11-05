@@ -47,7 +47,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The app wants to access your location when in use. </string>
+	<string>Find the best restaurants in your region.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Upload a profile picture.</string>
 	<key>UILaunchStoryboardName</key>

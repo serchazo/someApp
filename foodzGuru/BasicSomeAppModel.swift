@@ -13,6 +13,7 @@ import MapKit
 class SomeApp{
     // Constant
     static let currentCityDefault = "currentCity"
+    static var currentLocation:CLLocation!
     
     // DB
     private static let dbRootRef:DatabaseReference = Database.database().reference()

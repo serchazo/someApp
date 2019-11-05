@@ -861,13 +861,11 @@
                     <navigationItem key="navigationItem" id="phD-j7-m9h"/>
                     <connections>
                         <outlet property="coolMap" destination="bxv-VL-3vB" id="6RJ-8k-1gQ"/>
-                        <outlet property="locationManager" destination="Vuo-Gd-sCT" id="qte-b1-bUj"/>
                         <outlet property="searchResultsTable" destination="xQx-V0-cJP" id="4UZ-Av-DvN"/>
                         <outlet property="tableView" destination="xQx-V0-cJP" id="bvY-zp-RpK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="upN-uG-cpb" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <customObject id="Vuo-Gd-sCT" customClass="LocationManager" customModule="foodz_Guru" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="3830" y="1070"/>
         </scene>

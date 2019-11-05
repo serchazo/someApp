@@ -47,26 +47,19 @@ class LoginViewController: UIViewController {
         Auth.auth().addStateDidChangeListener(){ auth,user in
             // test the value of user
             if user != nil {
-                user?.reload(completion: {(error) in
-                    guard error == nil else{
-                        print("account disabled")
-                        return
-                    }
-                    //
-                    self.user = user
-                    // Some cleanup before the Segue
-                    self.textFieldLoginEmail.text = nil
-                    self.textFieldLoginPassword.text = nil
-                    // For testing the first screen
-                    //self.firstTimeFlag = true
-                    
-                    if !self.firstTimeFlag{
-                        self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
-                    }else{
-                        self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
-                    }
-                })
-
+                //
+                self.user = user
+                // Some cleanup before the Segue
+                self.textFieldLoginEmail.text = nil
+                self.textFieldLoginPassword.text = nil
+                // For testing the first screen
+                //self.firstTimeFlag = true
+                
+                if !self.firstTimeFlag{
+                    self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
+                }else{
+                    self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
+                } 
             }
         }
         
