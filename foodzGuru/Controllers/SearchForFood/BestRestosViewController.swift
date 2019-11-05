@@ -300,6 +300,9 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 cell.restoPositionLabel.text = String(tmpPosition)
                 
                 cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
+                cell.restoAddressLabel.textColor = .lightGray
+                cell.restoAddressLabel.text = thisResto.address
+                
                 cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
                 cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: "Reviews: \(thisResto.nbReviews)", attributes: [.font : restorantAddressFont])
 

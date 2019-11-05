@@ -202,8 +202,14 @@ class SomeApp{
     
     // Delete resto
     static func deleteRestoFromRanking(userId: String, city: City, foodId: String, restoId: String){
+        
+        var updateObject:[String:Any] = [:]
+        
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + restoId
-        SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
+        updateObject["user-ranking-detail/" + dbPath] = NSNull()
+        updateObject["user-reviews/" + dbPath] = NSNull()
+        
+        SomeApp.dbRootRef.updateChildValues(updateObject)
     }
     
     // Delete ranking

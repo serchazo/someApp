@@ -14,6 +14,7 @@ class RestoRankTableViewCell: UITableViewCell {
     @IBOutlet weak var restoPointsLabel: UILabel!
     @IBOutlet weak var restoOtherInfoLabel: UILabel!
     
+    @IBOutlet weak var restoAddressLabel: UILabel!
     @IBOutlet weak var restoPositionLabel: UILabel!
     
     

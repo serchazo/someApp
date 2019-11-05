@@ -201,7 +201,7 @@ class ThisRanking: UIViewController {
         // Some setup
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
-        //myRankingTable.separatorColor = SomeApp.themeColor
+        myRankingTable.separatorColor = SomeApp.themeColor
         myRankingTable.separatorInset = .zero
         
         // Configure the banner ad
@@ -326,8 +326,10 @@ class ThisRanking: UIViewController {
         
         // I. Outer: get the Resto keys and Positions
         self.userRankingDetailRef.observe(.value, with: {snapshot in
+            // Clean first
             var tmpPositions = self.initializeStringArray(withElements: Int(snapshot.childrenCount))
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
+            
             self.thisRankingReviewsLiked = self.initializeBoolArray(withElements: Int(snapshot.childrenCount))
             self.thisRankingReviewsLikes = self.initializeIntArray(withElements: Int(snapshot.childrenCount))
             self.thisRankingReviews = self.initializeReviewArray(withElements: Int(snapshot.childrenCount))
@@ -345,9 +347,8 @@ class ThisRanking: UIViewController {
                         let value = testChild.value as? [String:AnyObject],
                         let position = value["position"] as? Int {
                         let restoId = testChild.key
-                        tmpPositions[position-1] = restoId
                         
-                       
+                        tmpPositions[position-1] = restoId
                         
                         // Get the Resto data
                         self.restoDatabaseReference.child(restoId).observeSingleEvent(of: .value, with: {restoDetailSnap in
@@ -362,44 +363,8 @@ class ThisRanking: UIViewController {
                                 self.thisEditableRanking = tmpRanking
                                 self.myRankingTable.reloadData()
                                 
-                                // 2. Then get the Reviews.  Update by row
-                                for tmpRestoId in tmpPositions{
-                                    
-                                    let likedDBPath = currentUser + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/" + self.user.uid
-                                    let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
-                                    
-                                    self.userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
-                                        if let reviewValue = reviewSnap.value as? [String: AnyObject],
-                                            let reviewText = reviewValue["text"] as? String,
-                                            let timestamp = reviewValue["timestamp"] as? Double{
-                                            let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
-                                            self.thisRankingReviews[thisReviewPosition!] = (text: reviewText, timestamp: timestamp)
-                                            
-                                            // 3. Get if liked
-                                            SomeApp.dbUserLikedReviews.child(likedDBPath).observe( .value, with: {likeSnap in
-                                                self.thisRankingReviewsLiked[thisReviewPosition!] = likeSnap.exists()
-                                                
-                                                //4. Get nb of likes
-                                                SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
-                                                    
-                                                    if likesNbSnap.exists(),
-                                                        let nbLikes = likesNbSnap.value as? Int{
-                                                        self.thisRankingReviewsLikes[thisReviewPosition!] = nbLikes
-                                                    }else{
-                                                        self.thisRankingReviewsLikes[thisReviewPosition!] = 0
-                                                    }
-                                                    // Update per row
-                                                    self.myRankingTable.reloadRows(
-                                                        at: [IndexPath(row: thisReviewPosition!, section: 0)],
-                                                        with: .none)
-                                                })// [End] 4.
-                                                
-                                            })
-                                            
-                                            
-                                        }
-                                    })
-                                }
+                                // Then get the Reviews.  Update by row
+                                self.getReviews()
                                 //
                             }
                         })
@@ -408,6 +373,56 @@ class ThisRanking: UIViewController {
                 }
             }
         })
+    }
+    
+    // MARK: get reviews
+    func getReviews(){
+        // Setup first
+        var currentUser = user.uid
+        if calledUser != nil{
+            currentUser = calledUser.key
+        }
+        // Then
+        for i in 0 ..< thisRanking.count{
+            let tmpRestoId = thisRanking[i].key
+            let likedDBPath = currentUser + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/" + self.user.uid
+            let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
+            
+            userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
+                if let reviewValue = reviewSnap.value as? [String: AnyObject],
+                    let reviewText = reviewValue["text"] as? String,
+                    let timestamp = reviewValue["timestamp"] as? Double{
+                    
+                    //let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
+                    self.thisRankingReviews[i] = (text: reviewText, timestamp: timestamp)
+                    
+                    // 3. Get if liked
+                    SomeApp.dbUserLikedReviews.child(likedDBPath).observe( .value, with: {likeSnap in
+                        self.thisRankingReviewsLiked[i] = likeSnap.exists()
+                        
+                        //4. Get nb of likes
+                        SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                            
+                            if likesNbSnap.exists(),
+                                let nbLikes = likesNbSnap.value as? Int{
+                                self.thisRankingReviewsLikes[i] = nbLikes
+                            }else{
+                                self.thisRankingReviewsLikes[i] = 0
+                            }
+                            // Update per row
+                            self.myRankingTable.reloadRows(
+                                at: [IndexPath(row: i, section: 0)],
+                                with: .none)
+                        })// [End] 4.
+                        
+                    })
+                    
+                    
+                }
+            })
+            
+        }
+        
     }
     
     // MARK: Initialize Arrays
@@ -475,7 +490,7 @@ class ThisRanking: UIViewController {
                     seguedToResto.currentFood = currentFood
                 }
             case ThisRanking.addResto:
-                if let seguedMVC = segue.destination as? MyRanksMapSearchViewController{
+                if let seguedMVC = segue.destination as? MapSearchViewController{
                     seguedMVC.delegate = self
                 }
                 
@@ -612,19 +627,29 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 else{
                     let tmpCell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath)
                     if let cell = tmpCell as? ThisRankingCell {
-                        // Position
+                        // Position label
                         let position = indexPath.row + 1
                         cell.positionLabel.text = String(position)
+                        cell.positionLabel.textColor = .black
+                        cell.positionLabel.layer.cornerRadius = 0.5 * cell.positionLabel.bounds.width
+                        cell.positionLabel.layer.borderColor = SomeApp.themeColor.cgColor
+                        cell.positionLabel.layer.borderWidth = 1.0
+                        cell.positionLabel.layer.masksToBounds = true
+                        
                         // Name
                         cell.restoName.text = thisRanking[indexPath.row].name
+                        
+                        
                         // Points
                         var positionMultiple = 10 - indexPath.row
                         // Correct for the positions higher than 10
                         if (positionMultiple < 0) {positionMultiple = 1}
                         //write points
                         let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
-                        
                         cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
+                        
+                        // Address
+                        cell.addressLabel.text = thisRanking[indexPath.row].address
                         
                         // Review
                         if !(thisRankingReviews.count > 0) {
@@ -635,6 +660,12 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         }else{ // We already downloaded the reviews
                             cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
                         }
+                        
+                        // Stack View border
+                        cell.borderStack.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
+                        cell.borderStack.layer.borderWidth = 0.8
+                        cell.borderStack.layer.cornerRadius = 10
+                        cell.borderStack.layer.masksToBounds = true
                         
                         // [START] Edit review button
                         if calledUser == nil{
@@ -904,6 +935,12 @@ extension ThisRanking{
             // Update the ranking
             SomeApp.updateRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, ranking: thisEditableRanking)
         }
+        // Clean the vars
+        thisRanking.removeAll()
+        thisEditableRanking.removeAll()
+        thisRankingReviews.removeAll()
+        thisRankingReviewsLiked.removeAll()
+        thisRankingReviewsLikes.removeAll()
         //Update view
         onClickEditRankTransparentView()
     }

@@ -18,7 +18,7 @@ protocol MyRanksMapSearchViewDelegate: class{
     func restaurantChosenFromMap(someMapItem: MKMapItem)
 }
 
-class MyRanksMapSearchViewController: UIViewController {
+class MapSearchViewController: UIViewController {
     var matchingMapItems: [MKMapItem]? {
         didSet {
             tableView.reloadData()
@@ -161,7 +161,7 @@ class MyRanksMapSearchViewController: UIViewController {
 }
 
 // MARK: table stuff
-extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSource{
+extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard SomeApp.currentLocation != nil else { return 1 }
         return matchingMapItems?.count ?? 0
@@ -183,7 +183,7 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell")!
         let selectedItem = matchingMapItems?[indexPath.row].placemark
         cell.textLabel?.text = selectedItem?.name
-        cell.detailTextLabel?.text = parseAddress(selectedItem: selectedItem!)
+        cell.detailTextLabel?.text = selectedItem!.formattedAddress
         return cell
     }
     
@@ -235,7 +235,7 @@ extension MyRanksMapSearchViewController: UITableViewDelegate, UITableViewDataSo
 }
 
 // MARK: Location stuff
-extension MyRanksMapSearchViewController: CLLocationManagerDelegate{
+extension MapSearchViewController: CLLocationManagerDelegate{
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
@@ -253,7 +253,7 @@ extension MyRanksMapSearchViewController: CLLocationManagerDelegate{
     }
 }
 
-extension MyRanksMapSearchViewController: HandleMapSearch {
+extension MapSearchViewController: HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark){
         // cache the pin
         selectedPin = placemark
@@ -274,7 +274,7 @@ extension MyRanksMapSearchViewController: HandleMapSearch {
 }
 
 // MARK: search bar delegate stuff
-extension MyRanksMapSearchViewController: UISearchBarDelegate{
+extension MapSearchViewController: UISearchBarDelegate{
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
