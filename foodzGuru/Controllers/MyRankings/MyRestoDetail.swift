@@ -320,6 +320,23 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 postCell.titleLabel.text = commentArray[indexPath.row].username
                 postCell.bodyLabel.text = commentArray[indexPath.row].text
                 
+                // Stack View border
+                postCell.stackView.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
+                postCell.stackView.layer.borderWidth = 0.8
+                postCell.stackView.layer.cornerRadius = 10
+                postCell.stackView.layer.masksToBounds = true
+                
+                // If it is the firstComment, we don't activate the buttons
+                guard !firstCommentFlag else{
+                    postCell.likeButton.isEnabled = false
+                    postCell.nbLikesLabel.text = "Get Yums!"
+                    postCell.moreButton.setTitle("", for: .normal)
+                    postCell.moreButton.isEnabled = false
+                    postCell.selectionStyle = .none
+                    return postCell
+                }
+                
+                
                 // Like button
                 postCell.likeButton.setTitle("Yum!", for: .normal)
                 if restoReviewLiked[indexPath.row]{
@@ -331,7 +348,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 // NbLikes label
                 postCell.nbLikesLabel.textColor = .black
-                postCell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+                postCell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .body)
                 postCell.nbLikesLabel.text = "Yums! (\(restoReviewsLikeNb[indexPath.row]))"
                 
                 // Report button

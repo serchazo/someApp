@@ -30,8 +30,17 @@ class MapSearchViewController: UIViewController {
     var selectedPin: MKPlacemark? = nil
     var resultSearchController:UISearchController!
     private var suggestionController: SuggestionsTableTableViewController!
-    //private var locationManagerObserver: NSKeyValueObservation?
     private var foregroundRestorationObserver: NSObjectProtocol?
+    
+    // Search flags
+    var isSearchBarEmpty: Bool {
+      return resultSearchController.searchBar.text?.isEmpty ?? true
+    }
+    var isFiltering: Bool {
+      return resultSearchController.isActive && !isSearchBarEmpty
+    }
+    var isLocationAuthorized:Bool!
+    var hasSearched:Bool = false
     
     //Delegate var
     weak var delegate: MyRanksMapSearchViewDelegate!
@@ -80,6 +89,8 @@ class MapSearchViewController: UIViewController {
         definesPresentationContext = true
         
         // If we have a location, then we only search for nearby locations
+        isLocationAuthorized = (CLLocationManager.authorizationStatus() == .authorizedAlways || CLLocationManager.authorizationStatus() == .authorizedWhenInUse)
+        
         if let location = SomeApp.currentLocation {
             
             //let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -137,15 +148,17 @@ class MapSearchViewController: UIViewController {
                 self?.displaySearchError(error)
                 return
             }
-            
+            self?.hasSearched = true
             self?.matchingMapItems = response?.mapItems
             
             //coolMap
-            let tmpPlacemark = self?.matchingMapItems?[0].placemark
-            var region = self?.boundingRegion
-            region?.center = (tmpPlacemark?.coordinate)!
-            self?.coolMap.region = region!
-            self?.dropPinZoomIn(placemark: tmpPlacemark!)
+            if (self?.isLocationAuthorized!)!{
+                let tmpPlacemark = self?.matchingMapItems?[0].placemark
+                var region = self?.boundingRegion
+                region?.center = (tmpPlacemark?.coordinate)!
+                self?.coolMap.region = region!
+                self?.dropPinZoomIn(placemark: tmpPlacemark!)
+            }
             
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
@@ -163,22 +176,38 @@ class MapSearchViewController: UIViewController {
 // MARK: table stuff
 extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard SomeApp.currentLocation != nil else { return 1 }
-        return matchingMapItems?.count ?? 0
-        //return matchingMapItems.count
+        if isFiltering{
+            return matchingMapItems?.count ?? 0
+        }
+        else{
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //If we are waiting^^
-        guard SomeApp.currentLocation != nil else {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
-            let spinner = UIActivityIndicatorView(style: .gray)
-            spinner.startAnimating()
-            cell.accessoryView = spinner
+        if !isLocationAuthorized && !isFiltering && !hasSearched{
+            print("hao")
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+            cell.textLabel?.text = "Location Services Disabled"
+            cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
             
             return cell
         }
+        // if location is authorizied but we don't have location services
+        if isLocationAuthorized{
+            guard (SomeApp.currentLocation != nil)  else {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
+                let spinner = UIActivityIndicatorView(style: .gray)
+                spinner.startAnimating()
+                cell.accessoryView = spinner
+                
+                return cell
+            }
+        }
+        
+        
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell")!
         let selectedItem = matchingMapItems?[indexPath.row].placemark
@@ -189,6 +218,11 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        /*
+        guard isFiltering else{
+            return
+        }*/
         
         if tableView == suggestionController.tableView, let suggestion = suggestionController.completerResults?[indexPath.row] {
             resultSearchController.isActive = false
@@ -204,7 +238,6 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     //TODO: Improve this one
-    
     func parseAddress(selectedItem:MKPlacemark) -> String {
         // put a space between "4" and "Melrose Place"
         let firstSpace = (selectedItem.subThoroughfare != nil &&
@@ -276,18 +309,22 @@ extension MapSearchViewController: HandleMapSearch {
 // MARK: search bar delegate stuff
 extension MapSearchViewController: UISearchBarDelegate{
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        print("1")
         searchBar.resignFirstResponder()
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        print("2")
         searchBar.setShowsCancelButton(true, animated: true)
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        print("3")
         searchBar.setShowsCancelButton(false, animated: true)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print("4")
         searchBar.resignFirstResponder()
         dismiss(animated: true, completion: nil)
         

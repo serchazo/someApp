@@ -231,7 +231,8 @@ class SomeApp{
                 // Add resto details
                 if mapItem.url != nil{ resto.url = mapItem.url! }
                 if mapItem.phoneNumber != nil {resto.phoneNumber = mapItem.phoneNumber!}
-                if mapItem.placemark.formattedAddress != nil { resto.address = mapItem.placemark.formattedAddress!}
+                if mapItem.placemark.formattedAddress != nil {
+                    resto.address = mapItem.placemark.formattedAddress!}
                 // Write to Resto DB
                 let newRestoRef = self.dbResto.child(dbPath).child(resto.key)
                 newRestoRef.setValue(resto.toAnyObject())

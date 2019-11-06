@@ -10,11 +10,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="140" id="7Hm-uc-ViK" customClass="CommentCell" customModule="foodz_Guru" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="140"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="7Hm-uc-ViK" customClass="CommentCell" customModule="foodz_Guru" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="168"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7Hm-uc-ViK" id="Oxw-Fi-hBh">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="140"/>
+                <rect key="frame" x="0.0" y="0.0" width="414" height="168"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jf3-TU-WHL">
@@ -33,55 +33,64 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comment body" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hZH-NX-IXh">
-                        <rect key="frame" x="20" y="49" width="374" height="35"/>
+                        <rect key="frame" x="20" y="57" width="374" height="27"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SFI-jj-VvF">
-                        <rect key="frame" x="20" y="92" width="374" height="28"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S2o-v1-ahJ">
+                        <rect key="frame" x="20" y="109" width="374" height="39"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mck-HG-rUu">
-                                <rect key="frame" x="0.0" y="0.0" width="119.5" height="28"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
-                                <state key="normal" title="Like"/>
-                                <connections>
-                                    <action selector="likeButtonPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="EqV-xb-tEv"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t6h-US-RLg">
-                                <rect key="frame" x="127.5" y="0.0" width="119" height="28"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zDd-TU-Rah">
-                                <rect key="frame" x="254.5" y="0.0" width="119.5" height="28"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
-                                <state key="normal" title="...">
-                                    <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="moreButtonPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="k0m-bH-UuI"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SFI-jj-VvF">
+                                <rect key="frame" x="0.0" y="0.0" width="374" height="39"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mck-HG-rUu">
+                                        <rect key="frame" x="0.0" y="0.0" width="119.5" height="39"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                        <state key="normal" title="Like"/>
+                                        <connections>
+                                            <action selector="likeButtonPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="EqV-xb-tEv"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t6h-US-RLg">
+                                        <rect key="frame" x="127.5" y="0.0" width="119" height="39"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zDd-TU-Rah">
+                                        <rect key="frame" x="254.5" y="0.0" width="119.5" height="39"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                        <state key="normal" title="...">
+                                            <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="moreButtonPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="k0m-bH-UuI"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="28" id="IBZ-mG-v79"/>
+                            <constraint firstItem="SFI-jj-VvF" firstAttribute="leading" secondItem="S2o-v1-ahJ" secondAttribute="leading" id="cde-S3-BQi"/>
+                            <constraint firstItem="SFI-jj-VvF" firstAttribute="top" secondItem="S2o-v1-ahJ" secondAttribute="top" id="eeU-yL-3Ev"/>
+                            <constraint firstAttribute="bottom" secondItem="SFI-jj-VvF" secondAttribute="bottom" id="gH6-C8-YJG"/>
+                            <constraint firstAttribute="trailing" secondItem="SFI-jj-VvF" secondAttribute="trailing" id="pXs-Te-bXA"/>
                         </constraints>
-                    </stackView>
+                    </view>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="bottom" secondItem="S2o-v1-ahJ" secondAttribute="bottom" constant="20" symbolic="YES" id="BQw-Q5-jm8"/>
                     <constraint firstAttribute="trailing" secondItem="hZH-NX-IXh" secondAttribute="trailing" constant="20" symbolic="YES" id="IE5-dF-wn0"/>
                     <constraint firstItem="jf3-TU-WHL" firstAttribute="top" secondItem="Oxw-Fi-hBh" secondAttribute="top" constant="20" symbolic="YES" id="J3p-vc-w3G"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="SFI-jj-VvF" secondAttribute="trailing" id="LQ7-zR-efg"/>
-                    <constraint firstItem="hZH-NX-IXh" firstAttribute="top" secondItem="jf3-TU-WHL" secondAttribute="bottom" constant="8" symbolic="YES" id="Mv9-55-qPX"/>
+                    <constraint firstItem="hZH-NX-IXh" firstAttribute="top" secondItem="jf3-TU-WHL" secondAttribute="bottom" multiplier="1.2" constant="8" symbolic="YES" id="Mv9-55-qPX"/>
                     <constraint firstItem="hZH-NX-IXh" firstAttribute="leading" secondItem="Oxw-Fi-hBh" secondAttribute="leading" constant="20" symbolic="YES" id="O3f-Gg-mYl"/>
+                    <constraint firstItem="S2o-v1-ahJ" firstAttribute="top" secondItem="hZH-NX-IXh" secondAttribute="bottom" multiplier="1.2" constant="8" symbolic="YES" id="PHr-Dc-HMs"/>
+                    <constraint firstItem="S2o-v1-ahJ" firstAttribute="leading" secondItem="Oxw-Fi-hBh" secondAttribute="leading" constant="20" symbolic="YES" id="Pld-Ki-zVG"/>
                     <constraint firstItem="dIC-Xl-Bh6" firstAttribute="bottom" secondItem="jf3-TU-WHL" secondAttribute="bottom" id="ZFx-Eq-o8C"/>
-                    <constraint firstItem="SFI-jj-VvF" firstAttribute="top" secondItem="hZH-NX-IXh" secondAttribute="bottom" constant="8" symbolic="YES" id="a8y-cp-ZSg"/>
+                    <constraint firstAttribute="trailing" secondItem="S2o-v1-ahJ" secondAttribute="trailing" constant="20" symbolic="YES" id="ZYc-26-R5g"/>
                     <constraint firstAttribute="trailing" secondItem="dIC-Xl-Bh6" secondAttribute="trailing" constant="20" symbolic="YES" id="gJh-38-h7e"/>
-                    <constraint firstItem="SFI-jj-VvF" firstAttribute="leading" secondItem="Oxw-Fi-hBh" secondAttribute="leadingMargin" id="jUm-9Z-AG5"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="SFI-jj-VvF" secondAttribute="bottom" constant="9" id="rIq-ZM-5hQ"/>
                     <constraint firstItem="jf3-TU-WHL" firstAttribute="leading" secondItem="Oxw-Fi-hBh" secondAttribute="leading" constant="20" symbolic="YES" id="v3C-JZ-Ek7"/>
                 </constraints>
             </tableViewCellContentView>
@@ -91,9 +100,10 @@
                 <outlet property="likeButton" destination="mck-HG-rUu" id="Ggj-hI-U3Q"/>
                 <outlet property="moreButton" destination="zDd-TU-Rah" id="hwq-nt-xiy"/>
                 <outlet property="nbLikesLabel" destination="t6h-US-RLg" id="4n7-WL-ZKc"/>
+                <outlet property="stackView" destination="S2o-v1-ahJ" id="1Lf-qt-xje"/>
                 <outlet property="titleLabel" destination="jf3-TU-WHL" id="wWF-Bn-x0B"/>
             </connections>
-            <point key="canvasLocation" x="100.00000000000001" y="85.714285714285708"/>
+            <point key="canvasLocation" x="100.00000000000001" y="95.089285714285708"/>
         </tableViewCell>
     </objects>
 </document>

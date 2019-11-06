@@ -201,6 +201,7 @@ class ThisRanking: UIViewController {
         // Some setup
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
+        
         myRankingTable.separatorColor = SomeApp.themeColor
         myRankingTable.separatorInset = .zero
         
@@ -221,6 +222,38 @@ class ThisRanking: UIViewController {
         super.viewWillDisappear(animated)
         
         //self.userRankingDetailRef.removeAllObservers()
+    }
+    
+    //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard let headerView = myRankingTable.tableHeaderView else {
+            return
+        }
+
+        // The table view header is created with the frame size set in
+        // the Storyboard. Calculate the new size and reset the header
+        // view to trigger the layout.
+        // Calculate the minimum height of the header view that allows
+        // the text label to fit its preferred width.
+        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+
+            // Need to set the header view property of the table view
+            // to trigger the new layout. Be careful to only do this
+            // once when the height changes or we get stuck in a layout loop.
+            myRankingTable.tableHeaderView = headerView
+
+            // Now that the table view header is sized correctly have
+            // the table view redo its layout so that the cells are
+            // correcly positioned for the new header size.
+            // This only seems to be necessary on iOS 9.
+            myRankingTable.layoutIfNeeded()
+        }
     }
     
     
@@ -312,7 +345,6 @@ class ThisRanking: UIViewController {
             editDescriptionButton.addTarget(self, action: #selector(popUpEditDescriptionTable), for: .touchUpInside)
             editDescriptionButton.isHidden = false
             editDescriptionButton.isEnabled = true
-            
         }
         
     }
@@ -745,7 +777,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
 
                         // NbLikes label
                         cell.nbLikesLabel.textColor = .black
-                        cell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+                        cell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .body)
                         cell.nbLikesLabel.text = "Yums! (\(thisRankingReviewsLikes[indexPath.row]))"
                         
                         // [START] If it's not the first comment, then we can add some actions
@@ -1236,6 +1268,7 @@ extension ThisRanking: GADBannerViewDelegate{
     // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         //print("adViewDidReceiveAd")
+        FoodzLayout.removeDefaultAd(adView: adView)
         
         //small animation
         bannerView.alpha = 0

@@ -91,7 +91,7 @@ extension AppDelegate: CLLocationManagerDelegate{
     }
     
     private func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse || status == .authorizedAlways {
+        if status != .authorizedWhenInUse || status != .authorizedAlways {
             locationManagerT.requestLocation()
         }
     }

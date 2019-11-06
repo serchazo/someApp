@@ -24,6 +24,9 @@ class CommentCell: UITableViewCell {
             bodyLabel.numberOfLines = 0
         }
     }
+    
+    @IBOutlet weak var stackView: UIView!
+    
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var nbLikesLabel: UILabel!

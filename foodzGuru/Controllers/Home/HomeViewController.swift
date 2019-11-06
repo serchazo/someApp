@@ -514,6 +514,7 @@ extension HomeViewController: GADBannerViewDelegate{
     // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         //print("adViewDidReceiveAd")
+        FoodzLayout.removeDefaultAd(adView: adView)
         
         //small animation
         bannerView.alpha = 0
