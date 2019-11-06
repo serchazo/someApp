@@ -120,6 +120,15 @@ class SomeApp{
     
     // Delete user
     static func deleteUser(userId: String){
+        // Delete profile picture
+        let storagePath = userId + "/profilepicture.png"
+        let imageRef = SomeApp.storageUsersRef.child(storagePath)
+        imageRef.delete(completion: {(error) in
+            if let error = error{
+                print(error.localizedDescription)
+            }
+        })
+        // Delete user
         dbUserData.child(userId).removeValue()
     }
     
