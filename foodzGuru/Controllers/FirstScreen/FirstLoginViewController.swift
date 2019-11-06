@@ -148,6 +148,15 @@ extension FirstLoginViewController: UITextFieldDelegate{
         return true
     }
     
+    // Maximum characters for username
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else {return false}
+        let changedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return changedText.count <= 15
+    }
+    
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         userNameField.resignFirstResponder()
         return true

@@ -42,6 +42,10 @@ class FirstLoginFourthScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButtons()
+        
+        bioTextField.delegate = self
+        bioTextField.keyboardType = .default
+        
         // Get user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -137,5 +141,14 @@ extension FirstLoginFourthScreen: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         bioTextField.resignFirstResponder()
         return true
+    }
+    
+    // Max chars
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else {return false}
+        let changedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return changedText.count <= 150
     }
 }

@@ -55,11 +55,21 @@ class LoginViewController: UIViewController {
                 // For testing the first screen
                 //self.firstTimeFlag = true
                 
-                if !self.firstTimeFlag{
-                    self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
-                }else{
+                if user?.metadata.creationDate == user?.metadata.lastSignInDate{
+                    // new
                     self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
-                } 
+                }else{
+                    // welcome back
+                    self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
+                    
+                }
+                /*
+                if !self.firstTimeFlag{
+                    print("already")
+                }else{
+                    print("first time")
+                    
+                } */
             }
         }
         
@@ -88,6 +98,12 @@ class LoginViewController: UIViewController {
         facebookButton.backgroundColor = #colorLiteral(red: 0.2585989833, green: 0.4022747874, blue: 0.6941830516, alpha: 1)
 
         self.hideKeyboardWhenTappedAround()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        //Auth.auth().removeStateDidChangeListener(handle!)
+        
     }
     
     // MARK: Login
@@ -159,7 +175,7 @@ class LoginViewController: UIViewController {
                                       message: "Enter your e-mail and create a new password.",
                                       preferredStyle: .alert)
         
-        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+        let saveAction = UIAlertAction(title: "Create", style: .default) { _ in
             //Get e-mail and password from the alert
             let emailField = alert.textFields![0]
             let passwordField = alert.textFields![1]
@@ -171,10 +187,6 @@ class LoginViewController: UIViewController {
                     let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default))
                     self.present(alert,animated: true, completion: nil)
-                }
-                else{
-                    Auth.auth().signIn(withEmail: self.textFieldLoginEmail.text!, password: self.textFieldLoginPassword.text!)
-                    self.firstTimeFlag = true
                 }
             }
         }
@@ -274,6 +286,8 @@ class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: UITextFieldDelegate {
+    
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == textFieldLoginEmail {

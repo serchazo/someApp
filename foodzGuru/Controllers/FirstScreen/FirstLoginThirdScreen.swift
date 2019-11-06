@@ -50,13 +50,13 @@ class FirstLoginThirdScreen: UIViewController {
     
     //
     private func configureButtons(){
-        FoodzLayout.configureButton(button: selectCityButton)
+        FoodzLayout.configureButtonNoBorder(button: selectCityButton)
         FoodzLayout.configureButton(button: goButton)
         goButton.setTitle("Go", for: .normal)
         goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
         
         if !cityChosenFlag{
-            selectCityButton.setTitle("Select City", for: .normal)
+            selectCityButton.setTitle("Select", for: .normal)
         }else{
             selectCityButton.setTitle("Change", for: .normal)
         }
@@ -87,6 +87,8 @@ class FirstLoginThirdScreen: UIViewController {
         }else if segue.identifier == self.segueCityOK,
             let seguedVC = segue.destination as? FirstLoginFourthScreen{
             seguedVC.currentCity = currentCity
+            seguedVC.currentCountryName = currentCountryName
+            seguedVC.currentStateName = currentStateName
             seguedVC.userName = username
             seguedVC.photoURL = photoURL
         }

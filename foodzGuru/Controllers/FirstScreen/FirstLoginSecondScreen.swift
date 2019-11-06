@@ -70,6 +70,7 @@ class FirstLoginSecondScreen: UIViewController {
                 self.photoURL = user.photoURL
             }else{
                 // If the photoURL is empty, assign the default profile pic
+                self.profilePicture.image = UIImage(named: "userdefault")
                 self.photoURL = URL(string: "")
             }
         }
@@ -82,9 +83,9 @@ class FirstLoginSecondScreen: UIViewController {
         
         // Upload image button
         FoodzLayout.configureButton(button: goButton)
-        FoodzLayout.configureButton(button: uploadImageButton)
+        FoodzLayout.configureButtonNoBorder(button: uploadImageButton)
         goButton.setTitle("Go", for: .normal)
-        uploadImageButton.setTitle("Upload Image", for: .normal)
+        uploadImageButton.setTitle("Upload", for: .normal)
         uploadImageButton.addTarget(self, action: #selector(uploadPhoto), for: .touchUpInside)
     }
     
