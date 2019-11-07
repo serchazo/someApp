@@ -46,6 +46,13 @@ class ThisRanking: UIViewController {
     private var descriptionRowHeight = CGFloat(50.0)
     private var descriptionEditRankingRowHeight = CGFloat(70.0)
     
+    //Handles
+    private var userRankingHandle:UInt!
+    private var userRankingDetailHandle:UInt!
+    private var userReviewsHandle:UInt!
+    private var userLikedReviewsHandle:UInt!
+    private var userReviewsLikesNbHandle:UInt!
+    
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
     private var editReviewTableView = UITableView()
@@ -160,15 +167,8 @@ class ThisRanking: UIViewController {
     }
     
     // MARK: timeline funcs
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Set vars
-        let thisRankingIdwithoutFood = currentCity.country + "/" + currentCity.state + "/" + currentCity.key
-        thisRankingId = currentCity.country + "/" + currentCity.state + "/" + currentCity.key+"/" + currentFood.key
-        restoDatabaseReference = SomeApp.dbResto.child(thisRankingIdwithoutFood)
-        restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
-        restoAddressDatabaseReference = SomeApp.dbRestoAddress
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         // Get the current user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -197,6 +197,21 @@ class ThisRanking: UIViewController {
             self.updateTableFromDatabase()
         }
         
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    //
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Set vars
+        let thisRankingIdwithoutFood = currentCity.country + "/" + currentCity.state + "/" + currentCity.key
+        thisRankingId = currentCity.country + "/" + currentCity.state + "/" + currentCity.key+"/" + currentFood.key
+        restoDatabaseReference = SomeApp.dbResto.child(thisRankingIdwithoutFood)
+        restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
+        restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
         // Some setup
         myRankingTable.estimatedRowHeight = 100
@@ -209,19 +224,19 @@ class ThisRanking: UIViewController {
         configureBannerAd()
     }
     
-    // func
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
-        if let indexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: indexPath, animated: true)
+        // Remove handles
+        userRankingsRef.removeObserver(withHandle: userRankingHandle)
+        userRankingDetailRef.removeObserver(withHandle: userRankingDetailHandle)
+        userReviewsRef.removeObserver(withHandle: userReviewsHandle)
+        if userLikedReviewsHandle != nil {
+            SomeApp.dbUserLikedReviews.removeObserver(withHandle: userLikedReviewsHandle)
         }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        //self.userRankingDetailRef.removeAllObservers()
+        if userReviewsLikesNbHandle != nil {
+            SomeApp.dbUserReviewsLikesNb.removeObserver(withHandle: userReviewsLikesNbHandle)
+        }
     }
     
     //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
@@ -321,7 +336,7 @@ class ThisRanking: UIViewController {
             rankingTitleLabel.text = "\(calledUser.nickName)'s favorite \(currentFood.name) places"
         }
         // Description
-        self.userRankingsRef.observe(.value, with: {snapshot in
+        userRankingHandle = self.userRankingsRef.observe(.value, with: {snapshot in
             if let rankingItem = Ranking(snapshot: snapshot){
                 self.rankingDescriptionLabel.text = rankingItem.description
                 self.thisRankingDescription = rankingItem.description
@@ -339,9 +354,9 @@ class ThisRanking: UIViewController {
         
         // Edit Description Button
         if calledUser == nil {
-            FoodzLayout.configureButton(button: editDescriptionButton)
+            FoodzLayout.configureButtonNoBorder(button: editDescriptionButton)
             
-            editDescriptionButton.setTitle("Edit Description", for: .normal)
+            editDescriptionButton.setTitle("Description", for: .normal)
             editDescriptionButton.addTarget(self, action: #selector(popUpEditDescriptionTable), for: .touchUpInside)
             editDescriptionButton.isHidden = false
             editDescriptionButton.isEnabled = true
@@ -351,13 +366,9 @@ class ThisRanking: UIViewController {
     
     // MARK: update from database
     private func updateTableFromDatabase(){
-        var currentUser = user.uid
-        if calledUser != nil{
-            currentUser = calledUser.key
-        }
         
         // I. Outer: get the Resto keys and Positions
-        self.userRankingDetailRef.observe(.value, with: {snapshot in
+        userRankingDetailHandle = self.userRankingDetailRef.observe(.value, with: {snapshot in
             // Clean first
             var tmpPositions = self.initializeStringArray(withElements: Int(snapshot.childrenCount))
             var tmpRanking = self.initializeArray(withElements: Int(snapshot.childrenCount))
@@ -420,7 +431,7 @@ class ThisRanking: UIViewController {
             let likedDBPath = currentUser + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/" + self.user.uid
             let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
             
-            userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
+            userReviewsHandle = userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
                 if let reviewValue = reviewSnap.value as? [String: AnyObject],
                     let reviewText = reviewValue["text"] as? String,
                     let timestamp = reviewValue["timestamp"] as? Double{
@@ -429,11 +440,11 @@ class ThisRanking: UIViewController {
                     self.thisRankingReviews[i] = (text: reviewText, timestamp: timestamp)
                     
                     // 3. Get if liked
-                    SomeApp.dbUserLikedReviews.child(likedDBPath).observe( .value, with: {likeSnap in
+                    self.userLikedReviewsHandle = SomeApp.dbUserLikedReviews.child(likedDBPath).observe( .value, with: {likeSnap in
                         self.thisRankingReviewsLiked[i] = likeSnap.exists()
                         
                         //4. Get nb of likes
-                        SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                        self.userReviewsLikesNbHandle = SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
                             
                             if likesNbSnap.exists(),
                                 let nbLikes = likesNbSnap.value as? Int{
@@ -520,6 +531,7 @@ class ThisRanking: UIViewController {
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                     seguedToResto.currentCity = currentCity
                     seguedToResto.currentFood = currentFood
+                    seguedToResto.delegate = self
                 }
             case ThisRanking.addResto:
                 if let seguedMVC = segue.destination as? MapSearchViewController{
@@ -1266,7 +1278,17 @@ extension ThisRanking:UITextViewDelegate {
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         return changedText.count <= 250
     }
-    
+}
+
+// MARK: Resto delegate
+extension ThisRanking: MyRestoDelegate{
+    func myRestoReceiveResto(currentResto: Resto){
+        let index = thisRanking.firstIndex{$0.key == currentResto.key}
+        if index != nil{
+            self.indexPlaceholder = index!
+            editReview()
+        }
+    }
 }
 
 // MARK: Banner Ad Delegate

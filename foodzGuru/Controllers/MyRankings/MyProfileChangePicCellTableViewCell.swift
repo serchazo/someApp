@@ -12,7 +12,7 @@ class MyProfileChangePicCellTableViewCell: UITableViewCell {
     
     
     @IBOutlet weak var profilePicture: UIImageView!
-    
+    @IBOutlet weak var picSpinner: UIActivityIndicatorView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

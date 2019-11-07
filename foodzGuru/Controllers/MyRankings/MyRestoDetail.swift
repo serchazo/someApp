@@ -12,6 +12,10 @@ import MapKit
 import Firebase
 import NotificationBannerSwift
 
+protocol MyRestoDelegate: class{
+    func myRestoReceiveResto(currentResto: Resto)
+}
+
 class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private static let segueToMap = "showMap"
@@ -25,6 +29,10 @@ class MyRestoDetail: UIViewController {
     private var restoReviewLiked:[Bool] = []
     private var restoReviewsLikeNb:[Int] = []
     private var firstCommentFlag:Bool = false
+    private var restoInRankingFlag:Bool = false
+    
+    // MARK: Broadcast messages
+    weak var delegate: MyRestoDelegate?
     
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
@@ -49,45 +57,7 @@ class MyRestoDetail: UIViewController {
     
     // MARK: Add to ranking action
     @IBAction func addToRankAction(_ sender: Any) {
-        // Check if the user has this food already
-        let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
-        
-        SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
-            // Le ranking doesn't exist
-            if !snapshot.exists(){
-                let alert = UIAlertController(title: "Create ranking",
-                                              message: "You don't have this ranking, create and add restorant?",
-                                              preferredStyle: .alert)
-                let createAction = UIAlertAction(title: "Create", style: .default){ _ in
-                    // If we don't have the ranking, we add it to Firebase
-                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
-                    // then add to ranking
-                    SomeApp.addRestoToRanking(userId: self.user.uid,
-                                              resto: self.currentResto,
-                                              mapItem: self.currentRestoMapItem,
-                                              forFood: self.currentFood,
-                                              foodId: self.currentFood.key,
-                                              city: self.currentCity)
-                    // Show confirmation banner
-                    self.bannerStuff()
-                }
-                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                alert.addAction(createAction)
-                alert.addAction(cancelAction)
-                
-            }
-            // The ranking exists
-            else{
-                // Add to ranking sans autre
-                SomeApp.addRestoToRanking(userId: self.user.uid,
-                                          resto: self.currentResto,
-                                          mapItem: self.currentRestoMapItem,
-                                          forFood: self.currentFood,
-                                          foodId: self.currentFood.key,
-                                          city: self.currentCity)
-                self.bannerStuff()
-            }
-        })
+        addRestoToRanking()
     }
     
     private func bannerStuff(){
@@ -121,7 +91,6 @@ class MyRestoDetail: UIViewController {
     }
     
     // MARK: Timeline funcs
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -172,10 +141,41 @@ class MyRestoDetail: UIViewController {
         })
     }
     
-    // Configure header
+    //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard let headerView = restoDetailTable.tableHeaderView else {
+            return
+        }
+
+        // The table view header is created with the frame size set in
+        // the Storyboard. Calculate the new size and reset the header
+        // view to trigger the layout.
+        // Calculate the minimum height of the header view that allows
+        // the text label to fit its preferred width.
+        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+
+            // Need to set the header view property of the table view
+            // to trigger the new layout. Be careful to only do this
+            // once when the height changes or we get stuck in a layout loop.
+            restoDetailTable.tableHeaderView = headerView
+
+            // Now that the table view header is sized correctly have
+            // the table view redo its layout so that the cells are
+            // correcly positioned for the new header size.
+            // This only seems to be necessary on iOS 9.
+            restoDetailTable.layoutIfNeeded()
+        }
+    }
+    
+    // MARK: Configure header
     private func configureHeader(){
         restoNameLabel.text = currentResto.name
-        
         
         let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
         // Check if the user has this resto in his/her ranking already
@@ -184,6 +184,7 @@ class MyRestoDetail: UIViewController {
                 self.addToRankButton.isEnabled = false
                 self.addToRankButton.isHidden = true
                 self.addToRankButton = nil
+                self.restoInRankingFlag = true
             }else{
                 FoodzLayout.configureButton(button: self.addToRankButton)
                 self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
@@ -330,8 +331,21 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 guard !firstCommentFlag else{
                     postCell.likeButton.isEnabled = false
                     postCell.nbLikesButton.setTitle("Get Yums!", for: .normal)
+                    postCell.nbLikesButton.isEnabled = true
                     postCell.moreButton.setTitle("", for: .normal)
                     postCell.moreButton.isEnabled = false
+                    
+                    if !restoInRankingFlag{
+                        postCell.moreAction = {_ in
+                            self.addRestoToRanking()
+                        }
+                    }else{
+                        postCell.moreAction = {_ in
+                            self.delegate?.myRestoReceiveResto(currentResto: self.currentResto!)
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    }
+                    
                     postCell.selectionStyle = .none
                     return postCell
                 }
@@ -363,7 +377,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                                                reviewerId: self.commentArray[tmpIndexPath!.row].key)
                         }
                     }
-                    // if we aleready liked
+                    // if we already liked
                     else{
                         postCell.likeAction = {(cell) in
                             let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
@@ -607,6 +621,49 @@ extension MyRestoDetail {
             tmpArray.append(false)
         }
         return tmpArray
+    }
+    
+    //Add resto to Ranking
+    func addRestoToRanking(){
+        // Check if the user has this food already
+        let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
+        
+        SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
+            // Le ranking doesn't exist
+            if !snapshot.exists(){
+                let alert = UIAlertController(title: "Create ranking",
+                                              message: "You don't have this ranking, create and add restorant?",
+                                              preferredStyle: .alert)
+                let createAction = UIAlertAction(title: "Create", style: .default){ _ in
+                    // If we don't have the ranking, we add it to Firebase
+                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
+                    // then add to ranking
+                    SomeApp.addRestoToRanking(userId: self.user.uid,
+                                              resto: self.currentResto,
+                                              mapItem: self.currentRestoMapItem,
+                                              forFood: self.currentFood,
+                                              foodId: self.currentFood.key,
+                                              city: self.currentCity)
+                    // Show confirmation banner
+                    self.bannerStuff()
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                alert.addAction(createAction)
+                alert.addAction(cancelAction)
+                
+            }
+            // The ranking exists
+            else{
+                // Add to ranking sans autre
+                SomeApp.addRestoToRanking(userId: self.user.uid,
+                                          resto: self.currentResto,
+                                          mapItem: self.currentRestoMapItem,
+                                          forFood: self.currentFood,
+                                          foodId: self.currentFood.key,
+                                          city: self.currentCity)
+                self.bannerStuff()
+            }
+        })
     }
 }
 

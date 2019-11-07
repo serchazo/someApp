@@ -74,6 +74,15 @@ class HomeViewController: UIViewController {
     // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        // 1. Get the logged in user - needed for the next step
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+            // 2. Once we get the user, update!
+            self.userTimelineReference = SomeApp.dbUserTimeline.child(user.uid)
+            self.updateTimelinefromDB()
+        }
         
         if let indexPath = newsFeedTable.indexPathForSelectedRow {
             newsFeedTable.deselectRow(at: indexPath, animated: true)
@@ -84,18 +93,8 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.navigationItem.title = "Foodz.guru"
         
-        // 1. Get the logged in user - needed for the next step
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            
-            // 2. Once we get the user, update!
-            self.userTimelineReference = SomeApp.dbUserTimeline.child(user.uid)
-            self.updateTimelinefromDB()
-        }
         
         // Configure the Ads
         configureBannerAd()

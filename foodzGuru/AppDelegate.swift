@@ -17,10 +17,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let gcmMessageIDKey = "gcm.message_id"
     let locationManagerT = CLLocationManager()
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    override init(){
         // Firebase config
         FirebaseApp.configure()
+        Database.database().isPersistenceEnabled = true
+    }
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Facebook login config
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)

@@ -33,6 +33,8 @@ class MyProfile: UIViewController {
     private let editBioCellId = "EditReviewCell"
     private let editBioCellXib = "EditReviewCell"
     
+    private var isUploadingPic:Bool = false
+    
     // Suport stuff
     private let supportAdress = "support@foodz.guru"
     private let supportSubject = "Feedback on Foodz.guru"
@@ -116,8 +118,20 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
             // Picture cell
             if indexPath.row == 0,
                 let cell = myProfileTable.dequeueReusableCell(withIdentifier: changePicCellId, for: indexPath) as? MyProfileChangePicCellTableViewCell{
+                
                 FoodzLayout.configureProfilePicture(imageView: cell.profilePicture)
-                cell.profilePicture.image = self.profileImage
+                
+                if isUploadingPic{
+                    cell.profilePicture.isHidden = true
+                    cell.picSpinner.startAnimating()
+                    cell.picSpinner.isHidden = false
+                }else{
+                    cell.profilePicture.image = self.profileImage
+                    cell.profilePicture.isHidden = false
+                    cell.picSpinner.stopAnimating()
+                    cell.picSpinner.isHidden = true
+                }
+                
                 cell.selectionStyle = .none
                 
                 return cell
@@ -393,7 +407,7 @@ extension MyProfile{
         cell.warningLabel.text = "Max 500 characters"
         
         // set up the TextField.  This var is defined in the class to take the value later
-        if bioString == nil || bioString!.count < 5{
+        if bioString == nil || bioString!.count < 3{
             cell.editReviewTextView.text = "Write a Bio here."
         }else{
             cell.editReviewTextView.text = bioString!
@@ -506,10 +520,17 @@ extension MyProfile{
 // MARK: photo picker extension
 extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        isUploadingPic = true
+        //profileImage = nil
         
-        profileImage = nil
+        myProfileTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                // First dismiss picker
+                self.photoPickerController.dismiss(animated: true, completion: nil)
+                self.isUploadingPic = true
+                
                 // Resize the image before uploading (less MBs on the user)
                 let squareImage = self.squareImage(image: pickedImage)
                 let transformedImage = self.resizeImage(image: squareImage, newDimension: 200)
@@ -538,13 +559,17 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
                                 self.photoURL = downloadURL
                                 // Update the user
                                 self.updateUserProfile()
+                                // Update the table
+                                self.isUploadingPic = false
+                                self.myProfileTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+                                
                             }
                         }
                     }
                 }
             }
         }
-        photoPickerController.dismiss(animated: true, completion: nil)
+        
     }
     
     // MARK: Resize the image

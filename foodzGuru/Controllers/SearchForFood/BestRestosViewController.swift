@@ -23,6 +23,9 @@ class BestRestosViewController: UIViewController {
     private let refreshControl = UIRefreshControl()
     private var emptyListFlag: Bool = false
     private var user:User!
+    
+    //Handlers
+    private var rankingFollowersHandle:UInt!
 
     // Ad stuff
     private var bannerView: GADBannerView!
@@ -55,6 +58,15 @@ class BestRestosViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // I. Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            // the user is needed in the header
+            self.configureHeader()
+            self.updateTableFromDatabase()
+        }
+        
         // Deselect the row when segued pops
         if let indexPath = restoRankTableView.indexPathForSelectedRow {
             restoRankTableView.deselectRow(at: indexPath, animated: true)
@@ -65,18 +77,8 @@ class BestRestosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // I. Get the logged in user
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            // the user is needed in the header
-            self.configureHeader()
-        }
-        
         // Configure ads
         configureNativeAds()
-        
-        // Configure the banner ad
         configureBannerAd()
         
         //Some setup
@@ -84,10 +86,14 @@ class BestRestosViewController: UIViewController {
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
         restoRankTableView.separatorColor = SomeApp.themeColor
         
-        updateTableFromDatabase()
-        
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+    }
+    
+    //
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        SomeApp.dbRankingFollowers.removeObserver(withHandle: rankingFollowersHandle)
     }
     
     // MARK: configure header
@@ -119,8 +125,7 @@ class BestRestosViewController: UIViewController {
         
         // We need to verify if the user is already following the ranking
         let dbPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
-        let tmpRef = SomeApp.dbRankingFollowers.child(dbPath)
-        tmpRef.child(user.uid).observe(.value, with: {snapshot in
+        rankingFollowersHandle = SomeApp.dbRankingFollowers.child(dbPath).child(user.uid).observe(.value, with: {snapshot in
             
             if snapshot.exists() {
                 self.followButton.setTitle("Unfollow", for: .normal)

@@ -23,12 +23,17 @@ class MyRanks: UIViewController {
     private let segueChangeCoty = "changeCity"
     private let segueMyProfile = "showMyProfile"
     
+    // Handles
+    private var userDataHandle:UInt!
+    private var followersHandle:UInt!
+    private var followingHandle:UInt!
+    private var rankingRefHandle:UInt!
+    
     // Instance variables
     private var user:User!
     private var rankings:[Ranking] = []
     private var foodItems:[FoodType] = []
     private var emptyListFlag = false
-    private var rankingReferenceForUser: DatabaseReference!
     private var foodDBReference: DatabaseReference!
     private let defaults = UserDefaults.standard
     private var photoURL: URL!{
@@ -37,8 +42,6 @@ class MyRanks: UIViewController {
         }
     }
     private var bioString:String!
-    
-    
     
     // MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -82,19 +85,6 @@ class MyRanks: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let indexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-        
-        // Deselect the row to go back to normal
-        if let indexPath = myRanksTable.indexPathForSelectedRow {
-            myRanksTable.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -114,9 +104,31 @@ class MyRanks: UIViewController {
             self.foodDBReference = SomeApp.dbFoodTypeRoot
         }
         
+        // Deselect the rows to go back to normal
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+        
+        if let indexPath = myRanksTable.indexPathForSelectedRow {
+            myRanksTable.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         // Configure the banner ad
         configureBannerAd()
-
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        //Remove handlers
+        SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        SomeApp.dbUserNbFollowers.removeObserver(withHandle: followersHandle)
+        SomeApp.dbUserNbFollowing.removeObserver(withHandle: followingHandle)
+        SomeApp.dbUserRankings.removeObserver(withHandle: rankingRefHandle)
     }
     
     // MARK: get city
@@ -146,7 +158,7 @@ class MyRanks: UIViewController {
         FoodzLayout.configureButton(button: changeCityButton)
         
         // First, go get some data from the DB
-        SomeApp.dbUserData.child(userId).observe(.value, with: {snapshot in
+        userDataHandle = SomeApp.dbUserData.child(userId).observe(.value, with: {snapshot in
             var username:String = "User Profile"
             if let value = snapshot.value as? [String: AnyObject]{
                 // 1. Username
@@ -218,8 +230,7 @@ class MyRanks: UIViewController {
         }
         
         // Followers button
-        let followersRef = SomeApp.dbUserNbFollowers
-        followersRef.child(userId).observe(.value, with: {snapshot in
+        followersHandle = SomeApp.dbUserNbFollowers.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let followers = snapshot.value as? Int {
                 self.followersLabel.text = "Followers: \(followers)"
@@ -228,8 +239,7 @@ class MyRanks: UIViewController {
             }
         })
         // Following button
-        let followingRef = SomeApp.dbUserNbFollowing
-        followingRef.child(userId).observe(.value, with: {snapshot in
+        followingHandle = SomeApp.dbUserNbFollowing.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let following = snapshot.value as? Int {
                 self.followingLabel.text = "Following: \(following)"
@@ -244,9 +254,8 @@ class MyRanks: UIViewController {
     // MARK: Update from DB
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
-        rankingReferenceForUser = SomeApp.dbUserRankings.child(pathId)
         
-        rankingReferenceForUser.observe(.value, with: {snapshot in
+        rankingRefHandle = SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
             var tmpFoodType: [FoodType] = []

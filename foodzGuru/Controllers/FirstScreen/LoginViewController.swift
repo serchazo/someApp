@@ -52,16 +52,7 @@ class LoginViewController: UIViewController {
             // test the value of user
             if user != nil {
                 //
-                self.spinner.isHidden = false
-                self.spinner.startAnimating()
-                
-                self.textFieldLoginEmail.isHidden = true
-                self.textFieldLoginPassword.isHidden = true
-                self.facebookButton.isHidden = true
-                self.loginButton.isHidden = true
-                self.signUpButton.isHidden = true
-                self.orLabel.isHidden = true
-                self.forgotPasswordButton.isHidden = true
+                self.hideAndSeek(hide: true)
                 
                 self.user = user
                 // Some cleanup before the Segue
@@ -78,7 +69,9 @@ class LoginViewController: UIViewController {
                         self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
                     }
                 })
-               
+            }else{
+                //Set normal login page (Attention: this is useful in case we delete the profile)
+                self.hideAndSeek(hide: false)
             }
         }
         
@@ -311,6 +304,24 @@ extension LoginViewController: UITextFieldDelegate {
 
 // MARK: helper funcs
 extension LoginViewController{
+    
+    private func hideAndSeek(hide: Bool){
+        self.spinner.isHidden = !hide
+        if hide{
+            self.spinner.startAnimating()
+        }else{
+            self.spinner.stopAnimating()
+        }
+        self.textFieldLoginEmail.isHidden = hide
+        self.textFieldLoginPassword.isHidden = hide
+        self.facebookButton.isHidden = hide
+        self.loginButton.isHidden = hide
+        self.signUpButton.isHidden = hide
+        self.orLabel.isHidden = hide
+        self.forgotPasswordButton.isHidden = hide
+        
+    }
+    
     func hideKeyboardWhenTappedAround() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false

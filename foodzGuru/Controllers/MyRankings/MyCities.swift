@@ -23,6 +23,9 @@ class MyCities: UIViewController {
     private let addCityCellId = "addCityCell"
     private var emptyListFlag = false
     
+    //Handlers
+    private var userRankingGeoHandler:UInt!
+    
     // MARK: Broadcast messages
     weak var myCitiesDelegate: MyCitiesDelegate!
 
@@ -36,17 +39,6 @@ class MyCities: UIViewController {
     // MARK: timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
-        // deselect row
-        if let indexPath = myCitiesTableView.indexPathForSelectedRow {
-            myCitiesTableView.deselectRow(at: indexPath, animated: true)
-        }
-        
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -63,6 +55,21 @@ class MyCities: UIViewController {
             self.getGeographyPerClient(userId: thisUserId)
         }
         
+        // deselect row
+        if let indexPath = myCitiesTableView.indexPathForSelectedRow {
+            myCitiesTableView.deselectRow(at: indexPath, animated: true)
+        }
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        SomeApp.dbUserRankingGeography.removeObserver(withHandle: userRankingGeoHandler)
     }
     
 
@@ -82,10 +89,8 @@ class MyCities: UIViewController {
 // MARK: get cities for user from DB
 extension MyCities{
     private func getGeographyPerClient(userId: String){
-        let tmpRef = SomeApp.dbUserRankingGeography.child(userId)
-        
         // The vars inside so they reset
-        tmpRef.observe(.value, with: {snapshot in
+        userRankingGeoHandler = SomeApp.dbUserRankingGeography.child(userId).observe(.value, with: {snapshot in
             
             if !snapshot.exists(){
                 // If we don't have a ranking, mark the empty list flag

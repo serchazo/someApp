@@ -19,6 +19,10 @@ class Foodies: UIViewController {
     private var myFoodiesList: [UserDetails] = []
     private var emptyListFlag = false
     
+    // Handles
+    private var userFollowingHandle: UInt!
+    private var userDataHandle: UInt!
+    
     var isSearchBarEmpty: Bool {
       return friendsSearchController.searchBar.text?.isEmpty ?? true
     }
@@ -42,8 +46,17 @@ class Foodies: UIViewController {
     @IBOutlet weak var adView: UIView!
     private var bannerView: GADBannerView!
     
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        // I. Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            self.getFriends()
+        }
         
         if let indexPath = myFoodies.indexPathForSelectedRow {
             myFoodies.deselectRow(at: indexPath, animated: true)
@@ -52,14 +65,6 @@ class Foodies: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // I. Get the logged in user
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-            
-            self.getFriends()
-        }
         
         // Setup the search controller
         friendsSearchController = UISearchController(searchResultsController: nil)
@@ -79,10 +84,16 @@ class Foodies: UIViewController {
 
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        SomeApp.dbUserFollowing.removeObserver(withHandle: userFollowingHandle)
+        SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+    }
+    
     // MARK: Initial: get my friends
     func getFriends(){
         // Outer : get the top users from the app
-        SomeApp.dbUserFollowing.child(user.uid).observe(.value, with: {snapshot in
+        userFollowingHandle = SomeApp.dbUserFollowing.child(user.uid).observe(.value, with: {snapshot in
             var tmpUserDetails:[UserDetails] = []
             var count = 0
             
@@ -95,7 +106,7 @@ class Foodies: UIViewController {
                 self.emptyListFlag = false
                 for child in snapshot.children{
                     if let childSnapshot = child as? DataSnapshot{
-                        SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
+                        self.userDataHandle = SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
                             tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
                             
                             // Use the trick
