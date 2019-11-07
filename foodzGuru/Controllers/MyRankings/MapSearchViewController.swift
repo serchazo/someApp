@@ -187,14 +187,13 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //If we are waiting^^
         if !isLocationAuthorized && !isFiltering && !hasSearched{
-            print("hao")
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
             cell.textLabel?.text = "Location Services Disabled"
             cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
             
             return cell
         }
-        // if location is authorizied but we don't have location services
+        // guard location is authorizied but we don't have current location
         if isLocationAuthorized{
             guard (SomeApp.currentLocation != nil)  else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -205,15 +204,26 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
                 
                 return cell
             }
+            if isFiltering || hasSearched {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell")!
+                let selectedItem = matchingMapItems?[indexPath.row].placemark
+                cell.textLabel?.text = selectedItem?.name
+                cell.detailTextLabel?.text = selectedItem!.formattedAddress
+                return cell
+            }
+            else{
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                cell.textLabel?.text = "Search for your fav' places!"
+                
+                return cell
+            }
+        }else{
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+            cell.textLabel?.text = "Search for your fav' places!"
+            
+            return cell
         }
         
-        
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell")!
-        let selectedItem = matchingMapItems?[indexPath.row].placemark
-        cell.textLabel?.text = selectedItem?.name
-        cell.detailTextLabel?.text = selectedItem!.formattedAddress
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

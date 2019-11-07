@@ -23,6 +23,11 @@ class ThisRankingCell: UITableViewCell {
         editReviewAction?(self)
     }
     
+    @IBAction func getYumsButtonPressed(_ sender: Any) {
+        editReviewAction?(self)
+    }
+    
+    
     @IBAction func likeButtonPressed(_ sender: Any) {
         likeAction?(self)
     }
@@ -38,7 +43,12 @@ class ThisRankingCell: UITableViewCell {
     
     @IBOutlet weak var borderStack: UIView!
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var nbLikesLabel: UILabel!
+    @IBOutlet weak var nbLikesButton: UIButton!{
+        didSet{
+            nbLikesButton.isEnabled = false
+        }
+    }
+    
     
     @IBOutlet weak var editReviewButton: UIButton!{
         didSet{

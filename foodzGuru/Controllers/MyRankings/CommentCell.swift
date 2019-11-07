@@ -29,7 +29,16 @@ class CommentCell: UITableViewCell {
     
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var moreButton: UIButton!
-    @IBOutlet weak var nbLikesLabel: UILabel!
+    @IBOutlet weak var nbLikesButton: UIButton!{
+        didSet{
+            nbLikesButton.isEnabled = false 
+        }
+    }
+    
+    
+    @IBAction func getYumsPressed(_ sender: Any) {
+        moreAction?(self)
+    }
     
     @IBAction func moreButtonPressed(_ sender: Any) {
         moreAction?(self)

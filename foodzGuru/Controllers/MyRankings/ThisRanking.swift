@@ -693,11 +693,38 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                             cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
                         }
                         
+                        // Details button
+                        cell.showRestoDetailAction = {(cell) in
+                            self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
+                        }
+                        
+                        // [Below part]
                         // Stack View border
                         cell.borderStack.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
                         cell.borderStack.layer.borderWidth = 0.8
                         cell.borderStack.layer.cornerRadius = 10
                         cell.borderStack.layer.masksToBounds = true
+                        
+                        
+                        // [START] Guard first comment
+                        guard thisRankingReviews[indexPath.row].text.count > 0 else{
+                            cell.likeButton.isHidden = true
+                            cell.likeButton.isEnabled = false
+                            cell.nbLikesButton.setTitle("Get Yums!", for: .normal)
+                            cell.editReviewAction = {(cell) in
+                                self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
+                                self.editReview()
+                            }
+                            cell.nbLikesButton.isEnabled = true
+                            cell.editReviewButton.isHidden = true
+                            cell.editReviewButton.isEnabled = false
+                            
+                            cell.selectionStyle = .none
+                            return cell
+                        }
+                        
+                        
+                        // [END] Guard first comment
                         
                         // [START] Edit review button
                         if calledUser == nil{
@@ -776,43 +803,38 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         }
 
                         // NbLikes label
-                        cell.nbLikesLabel.textColor = .black
-                        cell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .body)
-                        cell.nbLikesLabel.text = "Yums! (\(thisRankingReviewsLikes[indexPath.row]))"
+                        cell.nbLikesButton.setTitleColor(.black, for: .normal)
+                        cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
                         
                         // [START] If it's not the first comment, then we can add some actions
                         var currentUser = user.uid
                         if calledUser != nil {currentUser = calledUser.key}
                         
-                        if thisRankingReviews[indexPath.row].text.count > 0{
-                            // We can Like
-                            if !thisRankingReviewsLiked[indexPath.row]{
-                                cell.likeAction = {(cell) in
-                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                    SomeApp.likeReview(userid: self.user.uid,
-                                                       resto: self.thisRanking[tmpIndexPath!.row],
-                                                       city: self.currentCity,
-                                                       foodId: self.currentFood.key,
-                                                       reviewerId: currentUser)
-                                }
+                        // We can Like
+                        if !thisRankingReviewsLiked[indexPath.row]{
+                            cell.likeAction = {(cell) in
+                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                SomeApp.likeReview(userid: self.user.uid,
+                                                   resto: self.thisRanking[tmpIndexPath!.row],
+                                                   city: self.currentCity,
+                                                   foodId: self.currentFood.key,
+                                                   reviewerId: currentUser)
                             }
-                            // We can unlike
-                            else{
-                                cell.likeAction = {(cell) in
-                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                    SomeApp.dislikeReview(userid: self.user.uid,
-                                                          resto: self.thisRanking[tmpIndexPath!.row],
-                                                       city: self.currentCity,
-                                                       foodId: self.currentFood.key,
-                                                       reviewerId: currentUser)
-                                }
-                            }
-                        } // [END] Add actions
-                        
-                        // Details button
-                        cell.showRestoDetailAction = {(cell) in
-                            self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
                         }
+                            // We can unlike
+                        else{
+                            cell.likeAction = {(cell) in
+                                let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                                SomeApp.dislikeReview(userid: self.user.uid,
+                                                      resto: self.thisRanking[tmpIndexPath!.row],
+                                                      city: self.currentCity,
+                                                      foodId: self.currentFood.key,
+                                                      reviewerId: currentUser)
+                            }
+                        }
+                        // [END] Add actions
+                        
+                        
                         
                     }
                     return tmpCell

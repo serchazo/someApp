@@ -27,18 +27,22 @@ class LoginViewController: UIViewController {
         }
     }
     @IBOutlet weak var textFieldLoginPassword: UITextField!
-    
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var forgotPasswordButton: UIButton!
     @IBOutlet weak var signUpButton: UIButton!
-    
-    
     @IBOutlet weak var facebookButton: UIButton!
+    
+    @IBOutlet weak var orLabel: UILabel!
+    
+    @IBOutlet weak var spinner: UIActivityIndicatorView!{
+        didSet{
+            spinner.isHidden = true
+        }
+    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +52,17 @@ class LoginViewController: UIViewController {
             // test the value of user
             if user != nil {
                 //
+                self.spinner.isHidden = false
+                self.spinner.startAnimating()
+                
+                self.textFieldLoginEmail.isHidden = true
+                self.textFieldLoginPassword.isHidden = true
+                self.facebookButton.isHidden = true
+                self.loginButton.isHidden = true
+                self.signUpButton.isHidden = true
+                self.orLabel.isHidden = true
+                self.forgotPasswordButton.isHidden = true
+                
                 self.user = user
                 // Some cleanup before the Segue
                 self.textFieldLoginEmail.text = nil
@@ -55,21 +70,15 @@ class LoginViewController: UIViewController {
                 // For testing the first screen
                 //self.firstTimeFlag = true
                 
-                if user?.metadata.creationDate == user?.metadata.lastSignInDate{
-                    // new
-                    self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
-                }else{
-                    // welcome back
-                    self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
-                    
-                }
-                /*
-                if !self.firstTimeFlag{
-                    print("already")
-                }else{
-                    print("first time")
-                    
-                } */
+                SomeApp.dbUserData.child(user!.uid).observeSingleEvent(of: .value, with: {snapshot in
+                    // User data is already created
+                    if snapshot.exists(){
+                        self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
+                    }else{
+                        self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
+                    }
+                })
+               
             }
         }
         

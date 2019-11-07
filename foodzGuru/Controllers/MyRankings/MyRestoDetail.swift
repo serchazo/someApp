@@ -329,7 +329,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 // If it is the firstComment, we don't activate the buttons
                 guard !firstCommentFlag else{
                     postCell.likeButton.isEnabled = false
-                    postCell.nbLikesLabel.text = "Get Yums!"
+                    postCell.nbLikesButton.setTitle("Get Yums!", for: .normal)
                     postCell.moreButton.setTitle("", for: .normal)
                     postCell.moreButton.isEnabled = false
                     postCell.selectionStyle = .none
@@ -347,9 +347,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 }
                 
                 // NbLikes label
-                postCell.nbLikesLabel.textColor = .black
-                postCell.nbLikesLabel.font = UIFont.preferredFont(forTextStyle: .body)
-                postCell.nbLikesLabel.text = "Yums! (\(restoReviewsLikeNb[indexPath.row]))"
+                postCell.nbLikesButton.setTitle("Yums! (\(restoReviewsLikeNb[indexPath.row]))", for: .normal)
                 
                 // Report button
                 // [START] If it's not the first comment, then we can add some actions

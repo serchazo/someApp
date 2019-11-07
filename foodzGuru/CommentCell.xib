@@ -33,33 +33,37 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comment body" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hZH-NX-IXh">
-                        <rect key="frame" x="20" y="57" width="374" height="27"/>
+                        <rect key="frame" x="20" y="57" width="374" height="20.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S2o-v1-ahJ">
-                        <rect key="frame" x="20" y="109" width="374" height="39"/>
+                        <rect key="frame" x="20" y="101" width="374" height="47"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SFI-jj-VvF">
-                                <rect key="frame" x="0.0" y="0.0" width="374" height="39"/>
+                                <rect key="frame" x="0.0" y="0.0" width="374" height="47"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mck-HG-rUu">
-                                        <rect key="frame" x="0.0" y="0.0" width="119.5" height="39"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="119.5" height="47"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <state key="normal" title="Like"/>
                                         <connections>
                                             <action selector="likeButtonPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="EqV-xb-tEv"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t6h-US-RLg">
-                                        <rect key="frame" x="127.5" y="0.0" width="119" height="39"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qKI-rj-miw">
+                                        <rect key="frame" x="127.5" y="0.0" width="119" height="47"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                        <state key="normal" title="Get Yums!">
+                                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="getYumsPressed:" destination="7Hm-uc-ViK" eventType="touchUpInside" id="hp6-fz-G5q"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zDd-TU-Rah">
-                                        <rect key="frame" x="254.5" y="0.0" width="119.5" height="39"/>
+                                        <rect key="frame" x="254.5" y="0.0" width="119.5" height="47"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                                         <state key="normal" title="...">
                                             <color key="titleColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -99,7 +103,7 @@
                 <outlet property="dateLabel" destination="dIC-Xl-Bh6" id="dV3-J2-fxv"/>
                 <outlet property="likeButton" destination="mck-HG-rUu" id="Ggj-hI-U3Q"/>
                 <outlet property="moreButton" destination="zDd-TU-Rah" id="hwq-nt-xiy"/>
-                <outlet property="nbLikesLabel" destination="t6h-US-RLg" id="4n7-WL-ZKc"/>
+                <outlet property="nbLikesButton" destination="qKI-rj-miw" id="f74-Jc-GsS"/>
                 <outlet property="stackView" destination="S2o-v1-ahJ" id="1Lf-qt-xje"/>
                 <outlet property="titleLabel" destination="jf3-TU-WHL" id="wWF-Bn-x0B"/>
             </connections>
