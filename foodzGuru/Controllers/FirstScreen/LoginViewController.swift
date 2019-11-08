@@ -13,6 +13,7 @@ import FacebookCore
 import FacebookLogin
 
 class LoginViewController: UIViewController {
+    private let cornerRadious:CGFloat = 9
     private let loginOKSegueID = "loginOK"
     private let firstTimeSegueID = "firstTime"
     private var user:User!
@@ -76,23 +77,24 @@ class LoginViewController: UIViewController {
         }
         
         // Configure the buttons
-        FoodzLayout.configureButton(button: signUpButton)
-        signUpButton.titleLabel?.text = "Create account"
-        
-        loginButton.layer.cornerRadius = 15
-        loginButton.backgroundColor = SomeApp.themeColor
-        //loginButton.layer.borderColor = SomeApp.themeColor.cgColor
-        loginButton.layer.borderWidth = 1.0
-        loginButton.layer.masksToBounds = true
-        
-        textFieldLoginEmail.layer.cornerRadius = 15
+        textFieldLoginEmail.layer.cornerRadius = cornerRadious
         textFieldLoginEmail.layer.masksToBounds = true
         
-        textFieldLoginPassword.layer.cornerRadius = 15
-        textFieldLoginPassword.layer.masksToBounds = true 
+        textFieldLoginPassword.layer.cornerRadius = cornerRadious
+        textFieldLoginPassword.layer.masksToBounds = true
+        
+        
+        
+        FoodzLayout.configureButton(button: loginButton)
+        
+        FoodzLayout.configureButton(button: signUpButton)
+        signUpButton.setTitle("Create account", for: .normal)
+        
+        forgotPasswordButton.setTitle("- Forgot password -", for: .normal)
+        
         
         // Configure the Login with Facebook button
-        facebookButton.layer.cornerRadius = 15
+        facebookButton.layer.cornerRadius = cornerRadious
         facebookButton.layer.masksToBounds = true
         facebookButton.setTitle("Facebook Login", for: .normal)
         facebookButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
@@ -138,7 +140,7 @@ class LoginViewController: UIViewController {
     // MARK: forgot password
     @IBAction func forgotPasswordPressed(_ sender: Any) {
         let alert = UIAlertController(title: "Password reset",
-        message: "Enter your e-mail and you'll receive an e-mail with the instructions.",
+        message: "Enter your e-mail and we will send you the instructions.",
         preferredStyle: .alert)
         
         let passwordResetAction = UIAlertAction(title: "Reset", style: .default){ _ in
@@ -181,6 +183,8 @@ class LoginViewController: UIViewController {
             //Get e-mail and password from the alert
             let emailField = alert.textFields![0]
             let passwordField = alert.textFields![1]
+            
+            self.hideAndSeek(hide: true)
             
             // Call create user
             Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!){ user, error in

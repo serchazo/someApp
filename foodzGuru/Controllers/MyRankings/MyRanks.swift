@@ -458,6 +458,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
             cell.textLabel?.text = "No rankings in \(currentCity.name) yet!"
             cell.detailTextLabel?.text = "Click on + and tell the world about your favorite places!"
+            cell.selectionStyle = .none
             return cell
         }else{
             // Rankings table

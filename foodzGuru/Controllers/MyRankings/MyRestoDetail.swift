@@ -44,6 +44,10 @@ class MyRestoDetail: UIViewController {
     private var currentRestoMapItem : MKMapItem!
     private var OKtoPerformSegue = true
     
+    //Handles
+    private var restoReviewsLikesHandle:UInt!
+    private var restoReviewsLikesNbHandle:UInt!
+    
     // MARK: Ad stuff
     private let adsToLoad = 5 //The number of native ads to load
     private var adsLoadedIndex = 0 // to count the ads we are loading
@@ -52,8 +56,13 @@ class MyRestoDetail: UIViewController {
     private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
     private let adFrequency = 5
     
+    private var bannerView: GADBannerView!
+    
     @IBOutlet weak var restoNameLabel: UILabel!
     @IBOutlet weak var addToRankButton: UIButton!
+    
+    @IBOutlet weak var foodIcon: UILabel!
+    @IBOutlet weak var adView: UIView!
     
     // MARK: Add to ranking action
     @IBAction func addToRankAction(_ sender: Any) {
@@ -94,18 +103,6 @@ class MyRestoDetail: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let indexPath = restoDetailTable.indexPathForSelectedRow {
-            restoDetailTable.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
-        dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
-        let dbReviewsPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
-        dbRestoReviews = SomeApp.dbRestoReviews.child(dbReviewsPath)
-        
         // 1. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -113,13 +110,9 @@ class MyRestoDetail: UIViewController {
             
             // 2. Once we have the user we configure the header
             self.configureHeader()
+            // Get the comments from the DB
+            self.getReviewsFromDB()
         }
-        
-        // Get the comments from the DB
-        getReviewsFromDB()
-        
-        // Configure ads
-        configureNativeAds()
         
         // Get the map from the database
         self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
@@ -139,6 +132,38 @@ class MyRestoDetail: UIViewController {
                 self.OKtoPerformSegue = false
             }
         })
+        
+        if let indexPath = restoDetailTable.indexPathForSelectedRow {
+            restoDetailTable.deselectRow(at: indexPath, animated: true)
+        }
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
+        dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
+        let dbReviewsPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
+        dbRestoReviews = SomeApp.dbRestoReviews.child(dbReviewsPath)
+        
+        // Configure ads
+        configureNativeAds()
+        
+        // Configure the banner ad
+        configureBannerAd()
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        // Remove handles
+        if restoReviewsLikesHandle != nil{
+            SomeApp.dbRestoReviewsLikes.removeObserver(withHandle: restoReviewsLikesHandle)
+        }
+        if restoReviewsLikesNbHandle != nil{
+            SomeApp.dbRestoReviewsLikesNb.removeObserver(withHandle: restoReviewsLikesNbHandle)
+        }
     }
     
     //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
@@ -177,6 +202,14 @@ class MyRestoDetail: UIViewController {
     private func configureHeader(){
         restoNameLabel.text = currentResto.name
         
+        // Food Icon
+        foodIcon.layer.cornerRadius = 0.5 * foodIcon.frame.width
+        foodIcon.layer.borderColor = SomeApp.themeColor.cgColor
+        foodIcon.layer.borderWidth = 1.0
+        foodIcon.layer.masksToBounds = true
+        foodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
+        foodIcon.text = currentFood.icon
+        
         let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
         // Check if the user has this resto in his/her ranking already
         SomeApp.dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
@@ -186,7 +219,9 @@ class MyRestoDetail: UIViewController {
                 self.addToRankButton = nil
                 self.restoInRankingFlag = true
             }else{
-                FoodzLayout.configureButton(button: self.addToRankButton)
+                self.addToRankButton.isEnabled = true
+                self.addToRankButton.isHidden = false
+                FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
                 self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
             }
         })
@@ -354,13 +389,14 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 // Like button
                 postCell.likeButton.setTitle("Yum!", for: .normal)
                 if restoReviewLiked[indexPath.row]{
-                    postCell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                    postCell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                    postCell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                    postCell.likeButton.setTitleColor(SomeApp.selectionColor , for: .normal)
                 }else{
-                    postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                    postCell.likeButton.setTitleColor(.darkGray, for: .normal)
                 }
                 
                 // NbLikes label
+                postCell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
                 postCell.nbLikesButton.setTitle("Yums! (\(restoReviewsLikeNb[indexPath.row]))", for: .normal)
                 
                 // Report button
@@ -391,7 +427,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     
                     // More (report) button
                     postCell.moreButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
-                    postCell.moreButton.setTitleColor(.lightGray, for: .normal)
+                    postCell.moreButton.setTitleColor(.darkGray, for: .normal)
                     postCell.moreButton.setTitle("...", for: .normal)
                     postCell.moreButton.isHidden = false
                     postCell.moreButton.isEnabled = true
@@ -566,11 +602,11 @@ extension MyRestoDetail{
         for i in 0 ..< commentArray.count{
             let dbPath = restoLikesDBPath + "/" + commentArray[i].key
             // 1. Verify if the user has liked
-            SomeApp.dbRestoReviewsLikes.child(dbPath + "/" + user.uid).observe(.value, with: {snapshot in
+            restoReviewsLikesHandle = SomeApp.dbRestoReviewsLikes.child(dbPath + "/" + user.uid).observe(.value, with: {snapshot in
                 self.restoReviewLiked[i] = snapshot.exists()
                 
                 //2. Get the numb of likes
-                SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
+                self.restoReviewsLikesNbHandle = SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
                     if likesNbSnap.exists(),
                         let nbLikes = likesNbSnap.value as? Int{
                         self.restoReviewsLikeNb[i] = nbLikes
@@ -631,6 +667,7 @@ extension MyRestoDetail {
         SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             // Le ranking doesn't exist
             if !snapshot.exists(){
+                print("so?")
                 let alert = UIAlertController(title: "Create ranking",
                                               message: "You don't have this ranking, create and add restorant?",
                                               preferredStyle: .alert)
@@ -650,6 +687,8 @@ extension MyRestoDetail {
                 let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
                 alert.addAction(createAction)
                 alert.addAction(cancelAction)
+                
+                self.present(alert, animated: true, completion: nil)
                 
             }
             // The ranking exists
@@ -751,5 +790,67 @@ extension MyRestoDetail: GADUnifiedNativeAdLoaderDelegate{
         addNativeAdds()
         
         
+    }
+}
+
+// MARK: Banner Ad Stuff
+extension MyRestoDetail: GADBannerViewDelegate{
+    // My funcs
+    private func configureBannerAd(){
+        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        bannerView.adUnitID = SomeApp.adBAnnerUnitID
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        bannerView.delegate = self
+    }
+    
+    // Ad delegate
+    func addBannerViewToView(_ bannerView: GADBannerView) {
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(bannerView)
+    }
+    
+    // Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        //print("adViewDidReceiveAd")
+        FoodzLayout.removeDefaultAd(adView: adView)
+        
+        //small animation
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1, animations: {
+            bannerView.alpha = 1
+        })
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+        
+        // Default Ad
+        FoodzLayout.defaultAd(adView: adView)
+    }
+    
+    // Tells the delegate that a full-screen view will be presented in response
+    // to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        //print("adViewWillPresentScreen")
+    }
+    
+    // Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        //print("adViewWillDismissScreen")
+    }
+    
+    // Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        //print("adViewDidDismissScreen")
+    }
+    
+    // Tells the delegate that a user click will open another app (such as
+    // the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        //print("adViewWillLeaveApplication")
     }
 }

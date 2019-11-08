@@ -12,6 +12,8 @@ import Firebase
 class Foodies: UIViewController {
     private static let segueToFoodie = "showFoodie"
     private static let foodieCell = "foodieCell"
+    private let timelineCellIdentifier = "TimelineCell"
+    private let timelineCellNibIdentifier = "TimelineCell"
     
     private var user:User!
     private var friendsSearchController: UISearchController!
@@ -37,6 +39,8 @@ class Foodies: UIViewController {
         didSet{
             myFoodies.delegate = self
             myFoodies.dataSource = self
+            // register cells
+            myFoodies.register(UINib(nibName: self.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: self.timelineCellNibIdentifier)
         }
     }
     
@@ -87,7 +91,9 @@ class Foodies: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         SomeApp.dbUserFollowing.removeObserver(withHandle: userFollowingHandle)
-        SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        if userDataHandle != nil {
+            SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        }
     }
     
     // MARK: Initial: get my friends
@@ -149,6 +155,22 @@ class Foodies: UIViewController {
 
     
     // MARK: - Navigation
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        switch identifier{
+        case Foodies.segueToFoodie:
+            if isFiltering && filteredFoodies.count > 0{
+                return true
+            }
+            if !isFiltering && myFoodiesList.count > 0{
+                return true
+            }
+            else{
+                return false
+            }
+        default: return false
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Segue
         switch segue.identifier {
@@ -213,18 +235,30 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             return cell
         }
             // Start] Empty table
-        else if emptyListFlag,
-            let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
-            cell.titleLabel.text = "You are not following any foodies yet!"
-            cell.bodyLabel.text = "Use the search bar to find your friends."
-            cell.cellImage.sd_setImage(
-                with: URL(string: ""),
-                placeholderImage: UIImage(named: "userdefault"),
-                options: [],
-                completed: nil)
-            cell.dateLabel.text = ""
+            /*
+             // Foodz.guru stuff
+             else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
+                 
+             
+             cell.dateLabel.text = ""
+             cell.titleLabel.text = "You are not following any foodies yet!"
+             cell.bodyLabel.text =  "Use the search bar to find your friends."
+             cell.iconLabel.text = "💬"
+                 
+                 return postCell
+             }
+             */
             
-            return cell
+            
+            
+        else if emptyListFlag,
+            let postCell = myFoodies.dequeueReusableCell(withIdentifier: self.timelineCellIdentifier, for: indexPath) as? TimelineCell{
+            postCell.dateLabel.text = ""
+            postCell.titleLabel.text = "You are not following anyone yet!"
+            postCell.bodyLabel.text =  "Use the search bar to find foodies."
+            postCell.iconLabel.text = "💬"
+            
+            return postCell
         }// [End] Empty table
         
             // [Start] Normal table

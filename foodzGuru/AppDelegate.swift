@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navigationBarAppearace.barTintColor = .white //Background color
         navigationBarAppearace.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
-            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline)]
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body)]
         
         // Location stuff
         locationManagerT.requestWhenInUseAuthorization()

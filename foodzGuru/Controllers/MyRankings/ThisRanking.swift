@@ -804,18 +804,18 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         // [START] Like/Dislike buttons and labels
                         if thisRankingReviewsLiked[indexPath.row] {
-                            cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+                            cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                             cell.likeButton.setTitle("Yum!", for: .normal)
                             cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
                             
                         }else{
                             cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                             cell.likeButton.setTitle("Yum!", for: .normal)
-                            cell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                            cell.likeButton.setTitleColor(.darkGray, for: .normal)
                         }
 
                         // NbLikes label
-                        cell.nbLikesButton.setTitleColor(.black, for: .normal)
+                        cell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
                         cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
                         
                         // [START] If it's not the first comment, then we can add some actions

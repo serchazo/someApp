@@ -163,11 +163,10 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             cell.layer.cornerRadius = cell.frame.width / 2
             cell.clipsToBounds = true
             
-            let iconText = NSAttributedString(string: foodList[indexPath.row].icon , attributes: [.strokeColor: SomeApp.themeColor, .font: iconFont])
-            cell.cellIcon.attributedText = iconText
+            cell.cellIcon.text = foodList[indexPath.row].icon
             
-            let foodTitleText = NSAttributedString(string: foodList[indexPath.row].name , attributes: [.strokeColor: SomeApp.themeColor, .font: cellTitleFont])
-            cell.cellLabel.attributedText = foodTitleText
+            cell.cellLabel.textColor = SomeApp.themeColor
+            cell.cellLabel.text = foodList[indexPath.row].name
             
             
             return cell
@@ -187,22 +186,6 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             cell.transform = .identity
         }, completion: nil)
         
-    }
-    
-}
-
-// MARK: Fonts
-extension SearchViewController{
-    private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50.0))
-    }
-    
-    private var cellTitleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(18.0))
-    }
-    
-    private var titleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(23.0))
     }
     
 }
