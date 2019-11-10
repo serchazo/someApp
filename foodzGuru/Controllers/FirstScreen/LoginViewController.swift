@@ -25,9 +25,14 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var textFieldLoginEmail: UITextField!{
         didSet{
             textFieldLoginEmail.keyboardType = .emailAddress
+            textFieldLoginEmail.delegate = self
         }
     }
-    @IBOutlet weak var textFieldLoginPassword: UITextField!
+    @IBOutlet weak var textFieldLoginPassword: UITextField!{
+        didSet{
+            textFieldLoginPassword.delegate = self
+        }
+    }
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var forgotPasswordButton: UIButton!
     @IBOutlet weak var signUpButton: UIButton!
@@ -293,7 +298,9 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: UITextFieldDelegate {
     
-    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.becomeFirstResponder()
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == textFieldLoginEmail {
@@ -339,3 +346,4 @@ extension LoginViewController{
     // Coming back from segue when logoff
     @IBAction func unwindToLoginScreen(segue: UIStoryboardSegue){}
 }
+

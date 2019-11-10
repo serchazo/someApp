@@ -24,29 +24,10 @@ class MyRanks: UIViewController {
     private let segueMyProfile = "showMyProfile"
     
     // Handles
-    private var userDataHandle:UInt!{
-        didSet{
-            print("1: \(userDataHandle)")
-        }
-    }
-    private var followersHandle:UInt!{
-        didSet{
-            print("2: \(followersHandle)")
-            //print(followersHandle)
-        }
-    }
-    private var followingHandle:UInt!{
-        didSet{
-            print("3: \(followingHandle)")
-            //print(followingHandle)
-        }
-    }
-    private var rankingRefHandle:[UInt] = []{
-        didSet{
-            print("4: \(rankingRefHandle)")
-            //print(rankingRefHandle)
-        }
-    }
+    private var userDataHandle:UInt!
+    private var followersHandle:UInt!
+    private var followingHandle:UInt!
+    private var rankingRefHandle:[UInt] = []
     
     // Instance variables
     private var user:User!

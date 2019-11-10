@@ -501,6 +501,8 @@ extension HomeViewController: GADBannerViewDelegate{
                                options: [options])
         adLoader.delegate = self
         adLoader.load(GADRequest())
+        
+        
     }
     
     // delegate funcs

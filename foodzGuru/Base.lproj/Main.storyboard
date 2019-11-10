@@ -1988,12 +1988,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3hP-r7-mrg">
-                                <rect key="frame" x="20" y="56" width="374" height="703"/>
+                                <rect key="frame" x="0.0" y="56" width="414" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3R-2i-Aw8">
-                                    <rect key="frame" x="0.0" y="621" width="374" height="90"/>
+                                    <rect key="frame" x="0.0" y="621" width="414" height="90"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="22U-AQ-FLU">
                                             <rect key="frame" x="-160" y="20" width="320" height="50"/>
@@ -2013,10 +2013,10 @@
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserRanking" rowHeight="113" id="Sg5-93-7Bg" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="28" width="414" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sg5-93-7Bg" id="yZt-6w-LI7">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ixU-Mv-GhP">
@@ -2037,13 +2037,13 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XCJ-jD-wGM">
-                                                    <rect key="frame" x="104" y="50" width="250" height="43"/>
+                                                    <rect key="frame" x="104" y="50" width="290" height="43"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Oz-QF-pYP">
-                                                    <rect key="frame" x="296" y="26" width="50" height="16"/>
+                                                    <rect key="frame" x="336" y="26" width="50" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="qRh-0h-IMb"/>
                                                     </constraints>
@@ -2074,10 +2074,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFollowing" rowHeight="113" id="Kct-ND-SrU" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="141" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="141" width="414" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Kct-ND-SrU" id="9K3-Nz-yFl">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j0Q-3B-4Sm">
@@ -2098,7 +2098,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ei5-AL-Qf2">
-                                                    <rect key="frame" x="304" y="26" width="50" height="16"/>
+                                                    <rect key="frame" x="344" y="26" width="50" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="tpZ-fY-evV"/>
                                                     </constraints>
@@ -2107,7 +2107,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ldU-eq-yTu">
-                                                    <rect key="frame" x="104" y="50" width="250" height="43"/>
+                                                    <rect key="frame" x="104" y="50" width="290" height="43"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -2135,10 +2135,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserNewReview" rowHeight="113" id="PYE-e6-KR0" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="254" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="254" width="414" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PYE-e6-KR0" id="ALN-Q2-6FN">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JeB-bj-e8R">
@@ -2159,7 +2159,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8yH-hG-5Dj">
-                                                    <rect key="frame" x="304" y="26" width="50" height="16"/>
+                                                    <rect key="frame" x="344" y="26" width="50" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="pzy-g4-0Wp"/>
                                                     </constraints>
@@ -2168,7 +2168,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bcx-rW-ecS">
-                                                    <rect key="frame" x="104" y="50" width="250" height="43"/>
+                                                    <rect key="frame" x="104" y="50" width="290" height="43"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -2196,10 +2196,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineUserFavorite" rowHeight="113" id="MsN-2l-fW5" customClass="HomeCellWithImage" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="367" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="367" width="414" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MsN-2l-fW5" id="VlB-0e-jIa">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JQD-2j-JaF">
@@ -2220,7 +2220,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dvn-Xh-onK">
-                                                    <rect key="frame" x="304" y="26" width="50" height="16"/>
+                                                    <rect key="frame" x="344" y="26" width="50" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="smd-kH-Lpg"/>
                                                     </constraints>
@@ -2229,7 +2229,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3V8-Qz-ew4">
-                                                    <rect key="frame" x="104" y="50" width="250" height="43"/>
+                                                    <rect key="frame" x="104" y="50" width="290" height="43"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -2257,10 +2257,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="timelineRankingInfoCell" rowHeight="113" id="9N3-Mq-itK" customClass="HomeCellWithIcon" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="480" width="374" height="113"/>
+                                        <rect key="frame" x="0.0" y="480" width="414" height="113"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9N3-Mq-itK" id="3Sj-QP-hDg">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="113"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Ef-7S-Rve">
@@ -2274,7 +2274,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEw-wj-iHG">
-                                                    <rect key="frame" x="304" y="26" width="50" height="16"/>
+                                                    <rect key="frame" x="344" y="26" width="50" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Jhn-CG-yL1"/>
                                                     </constraints>
@@ -2283,7 +2283,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6h3-Ii-Mkz">
-                                                    <rect key="frame" x="104" y="50" width="270" height="43"/>
+                                                    <rect key="frame" x="104" y="50" width="310" height="43"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -2325,9 +2325,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="3hP-r7-mrg" firstAttribute="leading" secondItem="5ld-W0-qRp" secondAttribute="leadingMargin" id="56w-qX-mZb"/>
+                            <constraint firstItem="3hP-r7-mrg" firstAttribute="leading" secondItem="5ld-W0-qRp" secondAttribute="leadingMargin" constant="-20" id="56w-qX-mZb"/>
                             <constraint firstItem="Bvh-zG-bYu" firstAttribute="top" secondItem="3hP-r7-mrg" secondAttribute="bottom" id="5kW-2E-1qq"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="3hP-r7-mrg" secondAttribute="trailing" id="Iux-9K-ZIE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="3hP-r7-mrg" secondAttribute="trailing" constant="-20" id="Iux-9K-ZIE"/>
                             <constraint firstItem="3hP-r7-mrg" firstAttribute="top" secondItem="4Sc-11-t2I" secondAttribute="bottom" id="yy7-yh-OWK"/>
                         </constraints>
                     </view>
