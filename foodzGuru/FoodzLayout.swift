@@ -50,8 +50,6 @@ class FoodzLayout{
         
         // Title label
         cell.titleLabel.textColor = SomeApp.themeColor
-        cell.titleLabel.font = SomeApp.titleFont
-        cell.titleLabel.textAlignment = .center
         
         // The textview
         cell.editReviewTextView.textColor = UIColor.gray
@@ -103,6 +101,9 @@ class FoodzLayout{
             width: FoodzLayout.screenSize.width,
             height: FoodzLayout.screenSize.height * 0.9)
         window?.addSubview(tableView)
+        
+        tableView.layer.cornerRadius = 20
+        tableView.clipsToBounds = true
         
         // Cool "slide-up" animation when appearing
         transparentView.alpha = 0

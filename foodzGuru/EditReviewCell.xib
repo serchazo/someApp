@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -17,30 +17,30 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="yJz-Nm-9Bf">
-                        <rect key="frame" x="0.0" y="62" width="414" height="238"/>
+                        <rect key="frame" x="0.0" y="82" width="414" height="218"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                         <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                     </textView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uoe-Kq-djg">
-                        <rect key="frame" x="20" y="38" width="374" height="16"/>
+                        <rect key="frame" x="20" y="58" width="374" height="16"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Review" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ni-r7-1rB">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="30"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Review" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ni-r7-1rB">
+                        <rect key="frame" x="0.0" y="20" width="414" height="30"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="33h-fh-Qm1"/>
                         </constraints>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w2a-2v-Srg">
-                        <rect key="frame" x="324" y="204" width="70" height="70"/>
+                        <rect key="frame" x="324" y="224" width="70" height="70"/>
                         <color key="backgroundColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="70" id="gMm-Cj-cUg"/>
@@ -63,7 +63,7 @@
                     <constraint firstItem="w2a-2v-Srg" firstAttribute="top" secondItem="Uoe-Kq-djg" secondAttribute="bottom" constant="150" id="AQ6-hJ-tOx"/>
                     <constraint firstAttribute="trailing" secondItem="1Ni-r7-1rB" secondAttribute="trailing" id="E5v-Aq-ak5"/>
                     <constraint firstAttribute="bottom" secondItem="yJz-Nm-9Bf" secondAttribute="bottom" id="YFj-7N-KMB"/>
-                    <constraint firstItem="1Ni-r7-1rB" firstAttribute="top" secondItem="x8H-qM-SIE" secondAttribute="top" id="ctv-TC-Dzk"/>
+                    <constraint firstItem="1Ni-r7-1rB" firstAttribute="top" secondItem="x8H-qM-SIE" secondAttribute="top" constant="20" symbolic="YES" id="ctv-TC-Dzk"/>
                     <constraint firstItem="yJz-Nm-9Bf" firstAttribute="leading" secondItem="x8H-qM-SIE" secondAttribute="leading" id="dC6-n9-DRG"/>
                     <constraint firstAttribute="trailing" secondItem="yJz-Nm-9Bf" secondAttribute="trailing" id="dNh-xe-caU"/>
                     <constraint firstItem="Uoe-Kq-djg" firstAttribute="top" secondItem="1Ni-r7-1rB" secondAttribute="bottom" constant="8" symbolic="YES" id="tA1-DB-77h"/>

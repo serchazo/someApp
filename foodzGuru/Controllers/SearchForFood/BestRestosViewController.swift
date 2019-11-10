@@ -58,6 +58,8 @@ class BestRestosViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        
+        
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
@@ -210,6 +212,7 @@ class BestRestosViewController: UIViewController {
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                     seguedToResto.currentCity = currentCity
                     seguedToResto.currentFood = currentFood
+                    seguedToResto.seguer = MyRestoDetail.MyRestoSeguer.BestRestos
                 }
             default: break
             }

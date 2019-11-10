@@ -234,9 +234,9 @@ class SomeApp{
         
         // A. Check if the resto exists in the resto list
         dbResto.child(dbPath).child(resto.key).observeSingleEvent(of: .value, with: {snapshot in
+            
             // If the restorant doesn't exist, we need to create it and add it
-
-            if (!snapshot.exists()){
+            if !snapshot.exists(){
                 // Add resto details
                 if mapItem.url != nil{ resto.url = mapItem.url! }
                 if mapItem.phoneNumber != nil {resto.phoneNumber = mapItem.phoneNumber!}
@@ -257,11 +257,22 @@ class SomeApp{
     // Add resto to ranking
     private static func addRestoUserRanking(userid: String, resto: Resto, city: City, foodId: String){
         let dbPath = userid + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
-        // Get current number of items in the ranking
+        
+        // Verify if resto exists in ranking
         dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
-            let position = snapshot.childrenCount + 1
-            // Then, add to the ranking
-            dbUserRankingDetails.child(dbPath).child(resto.key).child("position").setValue(position)
+            //Ranking doesn't exist, create the path with position 1
+            if !snapshot.exists(){
+                dbUserRankingDetails.child(dbPath).child(resto.key).child("position").setValue(1)
+            }
+                
+            //Ranking exists, verify if resto is there
+            else if let value = snapshot.value as? [String: Any]{
+                if value[resto.key] == nil {
+                    let position = snapshot.childrenCount + 1
+                    // Then, add to the ranking
+                    dbUserRankingDetails.child(dbPath).child(resto.key).child("position").setValue(position)
+                }
+            }
         })
     }
     

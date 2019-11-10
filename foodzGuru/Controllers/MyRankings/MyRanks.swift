@@ -24,10 +24,29 @@ class MyRanks: UIViewController {
     private let segueMyProfile = "showMyProfile"
     
     // Handles
-    private var userDataHandle:UInt!
-    private var followersHandle:UInt!
-    private var followingHandle:UInt!
-    private var rankingRefHandle:UInt!
+    private var userDataHandle:UInt!{
+        didSet{
+            print("1: \(userDataHandle)")
+        }
+    }
+    private var followersHandle:UInt!{
+        didSet{
+            print("2: \(followersHandle)")
+            //print(followersHandle)
+        }
+    }
+    private var followingHandle:UInt!{
+        didSet{
+            print("3: \(followingHandle)")
+            //print(followingHandle)
+        }
+    }
+    private var rankingRefHandle:[UInt] = []{
+        didSet{
+            print("4: \(rankingRefHandle)")
+            //print(rankingRefHandle)
+        }
+    }
     
     // Instance variables
     private var user:User!
@@ -84,6 +103,7 @@ class MyRanks: UIViewController {
     // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        rankingRefHandle.removeAll()
         
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -123,12 +143,25 @@ class MyRanks: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        print("disappear")
         
         //Remove handlers
-        SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
-        SomeApp.dbUserNbFollowers.removeObserver(withHandle: followersHandle)
-        SomeApp.dbUserNbFollowing.removeObserver(withHandle: followingHandle)
-        SomeApp.dbUserRankings.removeObserver(withHandle: rankingRefHandle)
+        if calledUser == nil {
+            SomeApp.dbUserData.child(user.uid).removeObserver(withHandle: userDataHandle)
+            SomeApp.dbUserNbFollowers.child(user.uid).removeObserver(withHandle: followersHandle)
+            SomeApp.dbUserNbFollowing.child(user.uid).removeObserver(withHandle: followersHandle)
+        }else{
+            SomeApp.dbUserData.child(calledUser!.key).removeObserver(withHandle: userDataHandle)
+            SomeApp.dbUserNbFollowers.child(calledUser!.key).removeObserver(withHandle: followersHandle)
+            SomeApp.dbUserNbFollowing.child(calledUser!.key).removeObserver(withHandle: followersHandle)
+        }
+        
+        //SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        //SomeApp.dbUserNbFollowers.removeObserver(withHandle: followersHandle)
+        //SomeApp.dbUserNbFollowing.removeObserver(withHandle: followingHandle)
+        for handle in rankingRefHandle{
+            SomeApp.dbUserRankings.removeObserver(withHandle: handle)
+        }
     }
     
     // MARK: get city
@@ -255,7 +288,7 @@ class MyRanks: UIViewController {
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
         
-        rankingRefHandle = SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
+        rankingRefHandle.append(SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
             var tmpFoodType: [FoodType] = []
@@ -288,7 +321,7 @@ class MyRanks: UIViewController {
                     }
                 }
             }
-        })
+        }))
     }
     
     // MARK: Navigation

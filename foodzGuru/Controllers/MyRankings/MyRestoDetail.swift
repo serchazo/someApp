@@ -22,6 +22,7 @@ class MyRestoDetail: UIViewController {
     
     private let commentCell = "CommentCell"
     private let commentCellNibId = "CommentCell"
+    private let editReviewCell = "EditReviewCell"
     
     private var user:User!
     private var dbRestoReviews:DatabaseReference!
@@ -34,11 +35,19 @@ class MyRestoDetail: UIViewController {
     // MARK: Broadcast messages
     weak var delegate: MyRestoDelegate?
     
+    // Get segue-r
+    enum MyRestoSeguer {
+        case ThisRankingMy
+        case ThisRankingVisitor
+        case BestRestos
+    }
+    
     // We get this var from the preceding ViewController 
     var currentResto: Resto!
     var currentCity: City!
     var currentFood: FoodType!
     var dbMapReference: DatabaseReference!
+    var seguer:MyRestoSeguer!
     
     // Variable to pass to map Segue
     private var currentRestoMapItem : MKMapItem!
@@ -47,6 +56,11 @@ class MyRestoDetail: UIViewController {
     //Handles
     private var restoReviewsLikesHandle:UInt!
     private var restoReviewsLikesNbHandle:UInt!
+    private var userRankingDetailsHandle:UInt!
+    
+    //For Edit Review swipe-up
+    private var editReviewTransparentView = UIView()
+    private var editReviewTableView = UITableView()
     
     // MARK: Ad stuff
     private let adsToLoad = 5 //The number of native ads to load
@@ -108,8 +122,15 @@ class MyRestoDetail: UIViewController {
             guard let user = user else {return}
             self.user = user
             
-            // 2. Once we have the user we configure the header
-            self.configureHeader()
+            // 2. Verify if the current resto is in the users ranking
+            let dbPath = user.uid + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + self.currentResto.key
+            
+            self.userRankingDetailsHandle = SomeApp.dbUserRankingDetails.child(dbPath).observe(.value, with: {snapshot in
+                self.restoInRankingFlag = snapshot.exists()
+                // Configure the header
+                self.configureHeader()
+            })
+            
             // Get the comments from the DB
             self.getReviewsFromDB()
         }
@@ -152,6 +173,11 @@ class MyRestoDetail: UIViewController {
         // Configure the banner ad
         configureBannerAd()
         
+        // The editReviewTableView needs to be loaded only if it's my data
+        editReviewTableView.delegate = self
+        editReviewTableView.dataSource = self
+        editReviewTableView.register(UINib(nibName: editReviewCell, bundle: nil), forCellReuseIdentifier: editReviewCell)
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -163,6 +189,9 @@ class MyRestoDetail: UIViewController {
         }
         if restoReviewsLikesNbHandle != nil{
             SomeApp.dbRestoReviewsLikesNb.removeObserver(withHandle: restoReviewsLikesNbHandle)
+        }
+        if userRankingDetailsHandle != nil {
+            SomeApp.dbUserRankingDetails.removeObserver(withHandle: userRankingDetailsHandle)
         }
     }
     
@@ -210,21 +239,17 @@ class MyRestoDetail: UIViewController {
         foodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
         foodIcon.text = currentFood.icon
         
-        let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
-        // Check if the user has this resto in his/her ranking already
-        SomeApp.dbUserRankingDetails.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
-            if snapshot.exists(){
-                self.addToRankButton.isEnabled = false
-                self.addToRankButton.isHidden = true
-                self.addToRankButton = nil
-                self.restoInRankingFlag = true
-            }else{
-                self.addToRankButton.isEnabled = true
-                self.addToRankButton.isHidden = false
-                FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
-                self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
-            }
-        })
+        // Add to my foodz button
+        if restoInRankingFlag {
+            self.addToRankButton.isEnabled = false
+            self.addToRankButton.isHidden = true
+        }else{
+            self.addToRankButton.isEnabled = true
+            self.addToRankButton.isHidden = false
+            FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
+            self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
+        }
+        
     }
     
     // MARK: - Navigation
@@ -251,23 +276,41 @@ class MyRestoDetail: UIViewController {
 extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
         // test if the table is the Add Comment pop-up
-        return 2
+        if tableView == self.editReviewTableView{
+            return 1
+        }else{
+            return 2
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Edit review pop-up
+        if tableView == editReviewTableView{
+            return 1
+        }
         // the normal table
-        switch(section){
-        case 0: return 4
-        case 1:
-            guard commentArray.count > 0 else {return 1}
-            return commentArray.count
-        default: return 0
+        else{
+            switch(section){
+                   case 0: return 4
+                   case 1:
+                       guard commentArray.count > 0 else {return 1}
+                       return commentArray.count
+                   default: return 0
+                   }
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Edit Review pop-up
+        if tableView == editReviewTableView,
+            let editReviewCell = editReviewTableView.dequeueReusableCell(withIdentifier: editReviewCell) as? EditReviewCell{
+            configureEditReviewCell(cell: editReviewCell)
+            
+            return editReviewCell
+        }
+        
         // The normal table
-        if indexPath.section == 0 {
+        else if indexPath.section == 0 {
             if indexPath.row == 0{
                 let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
                 cell!.textLabel?.textColor = .black
@@ -362,8 +405,11 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 postCell.stackView.layer.cornerRadius = 10
                 postCell.stackView.layer.masksToBounds = true
                 
-                // If it is the firstComment, we don't activate the buttons
+                // If it is the firstComment, we do a different processing
                 guard !firstCommentFlag else{
+                    
+                    postCell.stackView.isHidden = true
+                    
                     postCell.likeButton.isEnabled = false
                     postCell.nbLikesButton.setTitle("Get Yums!", for: .normal)
                     postCell.nbLikesButton.isEnabled = true
@@ -374,12 +420,26 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                         postCell.moreAction = {_ in
                             self.addRestoToRanking()
                         }
-                    }else{
-                        postCell.moreAction = {_ in
-                            self.delegate?.myRestoReceiveResto(currentResto: self.currentResto!)
-                            self.navigationController?.popViewController(animated: true)
+                    }else if seguer != nil{
+                        switch seguer! {
+                        // From ThisRanking when I'm the caller I pop back
+                        case MyRestoSeguer.ThisRankingMy:
+                            postCell.moreAction = {_ in
+                                self.delegate?.myRestoReceiveResto(currentResto: self.currentResto!)
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                        case MyRestoSeguer.ThisRankingVisitor:
+                            postCell.moreAction = {_ in
+                                self.editReview()
+                            }
+                        // From Best Restos
+                        case MyRestoSeguer.BestRestos:
+                            postCell.moreAction = {_ in
+                                self.editReview()
+                            }
                         }
                     }
+                    
                     
                     postCell.selectionStyle = .none
                     return postCell
@@ -488,6 +548,16 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView == editReviewTableView{
+            return 450
+        }
+        //
+        else{
+            return UITableView.automaticDimension
+        }
+    }
+    
     // MARK: Actions
      func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
          if indexPath.section == 0{
@@ -530,6 +600,28 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
          }
      }
     
+    // MARK: Edit review cell
+    func configureEditReviewCell(cell: EditReviewCell){
+        FoodzLayout.configureEditTextCell(cell: cell)
+        
+        //title
+        cell.titleLabel.text = "My review for \(currentResto.name)"
+        cell.warningLabel.text = "Tell the world your honest opinion."
+        
+        cell.editReviewTextView.text = "Write your Review here."
+        
+        cell.editReviewTextView.becomeFirstResponder()
+        cell.editReviewTextView.tag = 200
+        cell.editReviewTextView.delegate = self
+        
+        
+        // Done Button
+        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.updateReviewAction = { (cell) in
+            self.doneUpdating(resto: self.currentResto,
+                              commentText: cell.editReviewTextView.text)
+        }
+    }
 }
 
 // MARK: Get reviews from DB
@@ -539,15 +631,14 @@ extension MyRestoDetail{
         var tmpCommentArray:[Comment] = []
         var count = 0
         
-       
         // Get from database
         dbRestoReviews.observeSingleEvent(of: .value, with: {snapshot in
             // If there are no comments for the restaurant, create a dummy comment
             guard snapshot.exists() else{
                 let tmpTimestamp = NSDate().timeIntervalSince1970 * 1000
                 self.firstCommentFlag = true
-                let tmpText = "Be the first to add a comment of \(self.currentResto.name)!"
-                tmpCommentArray.append(Comment(username: "This could be you!", restoname: self.currentResto.name, text: tmpText, timestamp:  tmpTimestamp, title: "No comments yet"))
+                let tmpText = "Be the first to add a comment of \(self.currentResto.name)! Go to your \(self.currentFood.name) ranking and start being an influencer."
+                tmpCommentArray.append(Comment(username: "There are no reviews!", restoname: self.currentResto.name, text: tmpText, timestamp:  tmpTimestamp, title: "No comments yet"))
                 self.commentArray = tmpCommentArray
                 self.restoDetailTable.reloadData()
                 return
@@ -659,6 +750,55 @@ extension MyRestoDetail {
         return tmpArray
     }
     
+    // Done Writing Review
+    func doneUpdating(resto: Resto, commentText: String){
+        // Write to model
+        if ![""," ","Write your Review here","Write your Review here."].contains(commentText){
+            SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, foodId: currentFood.key ,text: commentText)
+        }
+        //Close the view
+        onClickEditReviewTransparentView()
+        self.getReviewsFromDB()
+    }
+    
+    //Disappear!
+    @objc func onClickEditReviewTransparentView(){
+        // Animation when disapearing
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       usingSpringWithDamping: 1.0,
+                       initialSpringVelocity: 1.0,
+                       options: .curveEaseInOut,
+                       animations: {
+                        self.editReviewTransparentView.alpha = 0 //Start at value above, go to 0
+                        self.editReviewTableView.frame = CGRect(
+                            x: 0,
+                            y: FoodzLayout.screenSize.height ,
+                            width: FoodzLayout.screenSize.width,
+                            height: FoodzLayout.screenSize.height * 0.9)
+                        self.editReviewTableView.endEditing(true)
+        },
+                       completion: nil)
+    }
+    
+    // MARK: Popup the Edit Review table
+    @objc func editReview(){
+        editReviewTableView.reloadData()
+        
+        FoodzLayout.popupTable(viewController: self,
+                               transparentView: editReviewTransparentView,
+                               tableView: editReviewTableView)
+        
+        // Set the first responder
+        if let cell = editReviewTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
+            cell.editReviewTextView.becomeFirstResponder()
+        }
+        
+        // Go back to "normal" if we tap
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickEditReviewTransparentView))
+        editReviewTransparentView.addGestureRecognizer(tapGesture)
+    }
+    
     //Add resto to Ranking
     func addRestoToRanking(){
         // Check if the user has this food already
@@ -667,13 +807,14 @@ extension MyRestoDetail {
         SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             // Le ranking doesn't exist
             if !snapshot.exists(){
-                print("so?")
                 let alert = UIAlertController(title: "Create ranking",
-                                              message: "You don't have this ranking, create and add restorant?",
+                                              message: "You don't have a \(self.currentFood.name), create and add restorant?",
                                               preferredStyle: .alert)
                 let createAction = UIAlertAction(title: "Create", style: .default){ _ in
                     // If we don't have the ranking, we add it to Firebase
+                    
                     SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
+                    
                     // then add to ranking
                     SomeApp.addRestoToRanking(userId: self.user.uid,
                                               resto: self.currentResto,
@@ -681,6 +822,10 @@ extension MyRestoDetail {
                                               forFood: self.currentFood,
                                               foodId: self.currentFood.key,
                                               city: self.currentCity)
+                    // Need to update cell and header
+                    //asdfasf
+                    
+                    
                     // Show confirmation banner
                     self.bannerStuff()
                 }
@@ -691,9 +836,8 @@ extension MyRestoDetail {
                 self.present(alert, animated: true, completion: nil)
                 
             }
-            // The ranking exists
+            // The ranking exists: add resto sans autre
             else{
-                // Add to ranking sans autre
                 SomeApp.addRestoToRanking(userId: self.user.uid,
                                           resto: self.currentResto,
                                           mapItem: self.currentRestoMapItem,
@@ -701,6 +845,12 @@ extension MyRestoDetail {
                                           foodId: self.currentFood.key,
                                           city: self.currentCity)
                 self.bannerStuff()
+            }
+            
+            // If it's the first comment, reload the row
+            if self.firstCommentFlag{
+                self.restoInRankingFlag = true // the observer might be too slow
+                self.restoDetailTable.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
             }
         })
     }

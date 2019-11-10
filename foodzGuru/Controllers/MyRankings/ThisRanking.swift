@@ -61,7 +61,7 @@ class ThisRanking: UIViewController {
     //For Edit the description swipe-up
     private var transparentView = UIView()
     private var editDescriptionTableView = UITableView()
-    private var editTextField = UITextView()
+    //private var editTextField = UITextView()
     private let editDescriptionCellId = "EditReviewCell"
     private let editDescriptionCellXib = "EditReviewCell"
     
@@ -70,6 +70,8 @@ class ThisRanking: UIViewController {
     private var editRankTableView = UITableView()
     private var navBar = UINavigationBar()
     private var operations:[RankingOperation] = []
+    private let editRankTitleCellId = "EditRankingTitleCell"
+    private let editRankTitleCellXib = "EditRankingTitleCell"
     
     // Header outlets
     @IBOutlet weak var headerView: UIView!
@@ -100,69 +102,13 @@ class ThisRanking: UIViewController {
     ///
     // MARK: Edit table
     @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
-        // Create the Edit TableView
-        let windowEditRank = UIApplication.shared.keyWindow
-        editRankTransparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        editRankTransparentView.frame = self.view.frame
-        windowEditRank?.addSubview(editRankTransparentView)
-        
-        // Add a navigation bar - hidden first
-        let navBarHeight =  self.navigationController!.navigationBar.frame.size.height
-        navBar.frame = CGRect(
-            x: ThisRanking.screenSize.width,
-            y: ThisRanking.screenSize.height * 0.1,
-            width: ThisRanking.screenSize.width,
-            height: navBarHeight)
-        navBar.barTintColor = UIColor.white
-        navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
-        
-        
-        let navItem = UINavigationItem(title: "Edit ranking")
-        let doneItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(performUpdate))
-        navItem.rightBarButtonItem = doneItem
-        let cancelItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.cancel, target: self, action: #selector(onClickEditRankTransparentView))
-        cancelItem.tintColor = SomeApp.themeColor
-        doneItem.tintColor = SomeApp.themeColor
-        
-        navItem.leftBarButtonItem = cancelItem
-        navBar.setItems([navItem], animated: false)
-        windowEditRank?.addSubview(navBar)
-        
-        // Add the table
-        editRankTableView.frame = CGRect(
-            x: ThisRanking.screenSize.width,
-            y: ThisRanking.screenSize.height * 0.1 + navBarHeight,
-            width: ThisRanking.screenSize.width,
-            height: ThisRanking.screenSize.height * 0.9 - navBarHeight)
-        windowEditRank?.addSubview(editRankTableView)
+        FoodzLayout.popupTable(viewController: self,
+        transparentView: editRankTransparentView,
+        tableView: editRankTableView)
         
         // Go back to "normal" if we tap
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickEditRankTransparentView))
         editRankTransparentView.addGestureRecognizer(tapGesture)
-        
-        // Cool "slide-up" animation when appearing
-        editRankTransparentView.alpha = 0
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.editRankTransparentView.alpha = 0.7 //Start at 0, go to 0.5
-                        self.navBar.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height * 0.1,
-                            width: ThisRanking.screenSize.width,
-                            height: navBarHeight)
-                        self.editRankTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height * 0.1 + navBarHeight,
-                            width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
-                        //self.editTextField.becomeFirstResponder()
-        },
-                       completion: nil)
-        
         
     }
     
@@ -226,11 +172,16 @@ class ThisRanking: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         // Remove handles
-        userRankingsRef.removeObserver(withHandle: userRankingHandle)
-        userRankingDetailRef.removeObserver(withHandle: userRankingDetailHandle)
-        userReviewsRef.removeObserver(withHandle: userReviewsHandle)
+        if userRankingHandle != nil{
+            userRankingsRef.removeObserver(withHandle: userRankingHandle)
+        }
+        if userRankingDetailHandle != nil {
+            userRankingDetailRef.removeObserver(withHandle: userRankingDetailHandle)
+        }
+        if userReviewsHandle != nil{
+            userReviewsRef.removeObserver(withHandle: userReviewsHandle)
+        }
         if userLikedReviewsHandle != nil {
             SomeApp.dbUserLikedReviews.removeObserver(withHandle: userLikedReviewsHandle)
         }
@@ -278,7 +229,6 @@ class ThisRanking: UIViewController {
         editDescriptionTableView.delegate = self
         editDescriptionTableView.dataSource = self
         editDescriptionTableView.register(UINib(nibName: editDescriptionCellXib, bundle: nil), forCellReuseIdentifier: editDescriptionCellId)
-        editTextField.delegate = self
         
         // The editRankingTableView needs to be loaded only if it's my data
         editRankTableView.delegate = self
@@ -287,6 +237,9 @@ class ThisRanking: UIViewController {
         editRankTableView.dragInteractionEnabled = true
         editRankTableView.dropDelegate = self
         editRankTableView.register(UINib(nibName: "EditableRestoCell", bundle: nil), forCellReuseIdentifier: ThisRanking.delRestoCell)
+        editRankTableView.register(UINib(nibName: self.editRankTitleCellId, bundle: nil), forCellReuseIdentifier: self.editRankTitleCellXib)
+        editRankTableView.estimatedRowHeight = 100
+        editRankTableView.rowHeight = UITableView.automaticDimension
         
         // The editReviewTableView needs to be loaded only if it's my data
         editReviewTableView.delegate = self
@@ -532,6 +485,12 @@ class ThisRanking: UIViewController {
                     seguedToResto.currentCity = currentCity
                     seguedToResto.currentFood = currentFood
                     seguedToResto.delegate = self
+                    if calledUser == nil {
+                        seguedToResto.seguer = MyRestoDetail.MyRestoSeguer.ThisRankingMy
+                    }else{
+                        seguedToResto.seguer = MyRestoDetail.MyRestoSeguer.ThisRankingVisitor
+                    }
+                    
                 }
             case ThisRanking.addResto:
                 if let seguedMVC = segue.destination as? MapSearchViewController{
@@ -555,7 +514,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             // test if the table is the EditDescription pop-up
             return 1
         }else if tableView == self.editRankTableView{
-            return 1
+            return 2
         }else{
             // the normal table
             // I'm asking for my data
@@ -576,7 +535,15 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         else if tableView == self.editDescriptionTableView{
             return 1
         }else if tableView == self.editRankTableView{
-            return thisEditableRanking.count
+            if section == 0{
+                return 1
+            }
+            else if section == 1 {
+                return thisEditableRanking.count
+            }
+            else{
+                return 0
+            }
         }else{
             // The normal table
             switch(section){
@@ -606,13 +573,30 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: editDescriptionCellId, for: indexPath) as? EditReviewCell{
             configureEditDescriptionCell(cell: cell)
             return cell
+        }
+        // [START] The Editable Ranking Table
+        else if tableView == self.editRankTableView{
             
-        // The Editable Ranking Table
-        }else if tableView == self.editRankTableView{
-            
-            if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
+            if indexPath.section == 0,
+                let titleCell = editRankTableView.dequeueReusableCell(withIdentifier: self.editRankTitleCellId, for: indexPath) as? EditRankingTitleCell{
+                
+                titleCell.titleLabel.textColor = SomeApp.themeColor
+                
+                titleCell.doneButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                titleCell.cancelButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                titleCell.cancelAction = {(cell) in
+                    self.onClickEditRankTransparentView()
+                }
+                titleCell.doneAction = {(cell) in
+                    self.performUpdate()
+                }
+                
+                return titleCell
+                
+            }
+            // Editable Cellds
+            else if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
                 // Text
-                //let tmpPosition = indexPath.row + 1
                 editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
                 
                 editRestoCell.tapAction = { (cell) in
@@ -640,6 +624,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 }
                 return editRestoCell
             }else{fatalError() }
+            // [END] The Editable Ranking Table
         }
         // [START] The "normal" table
         else{
@@ -741,7 +726,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         // [START] Edit review button
                         if calledUser == nil{
                             cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-                            cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
+                            cell.editReviewButton.setTitleColor(.darkGray, for: .normal)
                             cell.editReviewButton.setTitle("Edit Review", for: .normal)
                             cell.editReviewButton.isHidden = false
                             cell.editReviewButton.isEnabled = true
@@ -752,7 +737,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         }else{
                             // The Edit review button becomes a "report" button
                             cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title2)
-                            cell.editReviewButton.setTitleColor(.lightGray, for: .normal)
+                            cell.editReviewButton.setTitleColor(.darkGray, for: .normal)
                             cell.editReviewButton.setTitle("...", for: .normal)
                             cell.editReviewButton.isHidden = false
                             cell.editReviewButton.isEnabled = true
@@ -936,7 +921,6 @@ extension ThisRanking{
         // Warning Label
         cell.warningLabel.text = "(Max 250 characters)"
         
-        
         // set up the TextField
         if thisRankingDescription != "" {
             cell.editReviewTextView.text = thisRankingDescription
@@ -944,13 +928,13 @@ extension ThisRanking{
             cell.editReviewTextView.text = "Enter a description for your ranking."
         }
         cell.editReviewTextView.becomeFirstResponder()
+        cell.editReviewTextView.tag = 100
+        cell.editReviewTextView.delegate = self
         
         // Button
         cell.doneButton.setTitle("Done!", for: .normal)
         cell.updateReviewAction = { (cell) in
-            self.doneUpdatingDescription()
-            
-            
+            self.doneUpdatingDescription(newDescription: cell.editReviewTextView.text)
         }
     }
     
@@ -960,6 +944,7 @@ extension ThisRanking{
         
         //title
         cell.titleLabel.text = "My review for \(thisRanking[forIndex].name)"
+        cell.warningLabel.text = "Tell the world your honest opinion."
         
         // set up the TextField placeholder
         if thisRankingReviews[forIndex].text.count < 5{
@@ -968,6 +953,9 @@ extension ThisRanking{
             cell.editReviewTextView.text = thisRankingReviews[forIndex].text
         }
         cell.editReviewTextView.becomeFirstResponder()
+        cell.editReviewTextView.tag = 200
+        cell.editReviewTextView.delegate = self
+        
         
         // Done Button
         cell.doneButton.setTitle("Done!", for: .normal)
@@ -983,9 +971,9 @@ extension ThisRanking{
 
 extension ThisRanking{
     // Update the description when the button is pressed
-    @objc func doneUpdatingDescription(){
+    @objc func doneUpdatingDescription(newDescription: String){
         let descriptionDBRef = userRankingsRef.child("description")
-        descriptionDBRef.setValue(editTextField.text)
+        descriptionDBRef.setValue(newDescription)
         
         //Update view
         onClickTransparentView()
@@ -996,7 +984,7 @@ extension ThisRanking{
     @objc func performUpdate(){
         if operations.count > 0{
             let delOperations = operations.filter({$0.operationType == .Delete})
-            delOperations.map({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: $0.restoIdentifier) })
+            delOperations.forEach({SomeApp.deleteRestoFromRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, restoId: $0.restoIdentifier) })
             
             // Update the ranking
             SomeApp.updateRanking(userId: user.uid, city: currentCity, foodId: currentFood.key, ranking: thisEditableRanking)
@@ -1083,16 +1071,11 @@ extension ThisRanking{
                        options: .curveEaseInOut,
                        animations: {
                         self.editRankTransparentView.alpha = 0 //Start at value above, go to 0
-                        self.navBar.frame = CGRect(
-                            x: ThisRanking.screenSize.width,
-                            y: ThisRanking.screenSize.height * 0.1,
-                            width: ThisRanking.screenSize.width,
-                            height: navBarHeight)
                         self.editRankTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height ,
+                            x: ThisRanking.screenSize.width,
+                            y: ThisRanking.screenSize.height * 0.1 + navBarHeight ,
                             width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
+                            height: ThisRanking.screenSize.height * 0.9 - navBarHeight)
                         //self.editTextField.resignFirstResponder()
         },
                        completion: nil)
@@ -1177,31 +1160,10 @@ extension ThisRanking: MyRanksMapSearchViewDelegate{
     
 }
 
-
-// MARK: The fonts
-extension ThisRanking{
-    private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
-    }
-    
-    private var restorantNameFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
-    }
-    
-    private var restorantAddressFont:UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
-    }
-}
-
-
-///////////////////////
-// Drag & Drop stuff
-//////////////////////
-
 // MARK: Extension for Drag
 extension ThisRanking: UITableViewDragDelegate{
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        if tableView == editRankTableView{
+        if tableView == editRankTableView, indexPath.section == 1{
             session.localContext = editRankTableView
             return dragItems(at: indexPath)
         }else{
@@ -1230,7 +1192,7 @@ extension ThisRanking : UITableViewDropDelegate {
      func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
         // Only for the editable Table view, and for section 0
         if tableView == editRankTableView,
-            let indexPath = destinationIndexPath, indexPath.section == 0{
+            let indexPath = destinationIndexPath, indexPath.section == 1{
             
             let isSelf = (session.localDragSession?.localContext as? UITableView) == editRankTableView
             return UITableViewDropProposal(operation: isSelf ? .move : .cancel, intent: .insertAtDestinationIndexPath)
@@ -1273,10 +1235,20 @@ extension ThisRanking : UITableViewDropDelegate {
 // MARK: UITextView Delegate
 extension ThisRanking:UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let currentText = textView.text ?? ""
-        guard let stringRange = Range(range, in: currentText) else {return false}
-        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
-        return changedText.count <= 250
+        if textView.tag == 100{
+            let currentText = textView.text ?? ""
+            guard let stringRange = Range(range, in: currentText) else {return false}
+            let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+            return changedText.count <= 250
+        }else if textView.tag == 200{
+            let currentText = textView.text ?? ""
+            guard let stringRange = Range(range, in: currentText) else {return false}
+            let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+            return changedText.count <= 1500
+        }else{
+            return false
+        }
+        
     }
 }
 

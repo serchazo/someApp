@@ -34,6 +34,8 @@
 		34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */; };
 		34574A84232DD8B300CE09A7 /* UnifiedNativeAdCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */; };
 		3465E53F2315033C00166699 /* MapSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3465E53E2315033B00166699 /* MapSearchViewController.swift */; };
+		346F8D2A2376563600AD7D29 /* EditRankingTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346F8D292376563600AD7D29 /* EditRankingTitleCell.xib */; };
+		346F8D2C237657D500AD7D29 /* EditRankingTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */; };
 		346FE0DF230E7D07000556EB /* RestoRankTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */; };
 		346FE0E3230E8008000556EB /* BasicSomeAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */; };
 		346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E6230F70E9000556EB /* BestRestosViewController.swift */; };
@@ -101,6 +103,8 @@
 		34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReviewCell.swift; sourceTree = "<group>"; };
 		34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UnifiedNativeAdCell.xib; sourceTree = "<group>"; };
 		3465E53E2315033B00166699 /* MapSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchViewController.swift; sourceTree = "<group>"; };
+		346F8D292376563600AD7D29 /* EditRankingTitleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditRankingTitleCell.xib; sourceTree = "<group>"; };
+		346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRankingTitleCell.swift; sourceTree = "<group>"; };
 		346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoRankTableViewCell.swift; sourceTree = "<group>"; };
 		346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSomeAppModel.swift; sourceTree = "<group>"; };
 		346FE0E6230F70E9000556EB /* BestRestosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestRestosViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +217,7 @@
 				34A76E2B232113EF005951A2 /* Controllers */,
 				34F197AC2320D658007D556F /* Model */,
 				348EBFD6230E3E8C008026A0 /* LaunchScreen.storyboard */,
+				346F8D292376563600AD7D29 /* EditRankingTitleCell.xib */,
 				34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */,
 				34873A872332066900463AFE /* EditableRestoCell.xib */,
 				3491B9362341E99700CECF80 /* CommentCell.xib */,
@@ -276,6 +281,7 @@
 				34FEE9D32312B52300FE0590 /* ThisRankingCell.swift */,
 				34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */,
 				34873A8B2332071B00463AFE /* EditableRestoCell.swift */,
+				346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */,
 				34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */,
 				34DA7EB4234AEF4900EBD360 /* AddRanking.swift */,
 				34FEE9CF23126F8500FE0590 /* MyRanksAddRankingViewController.swift */,
@@ -398,6 +404,7 @@
 				34507DFE2345AB4A00BD7B3C /* EditReviewCell.xib in Resources */,
 				3435198E235458B000A01CAA /* ChangeProfilePicCell.xib in Resources */,
 				3491B9372341E99700CECF80 /* CommentCell.xib in Resources */,
+				346F8D2A2376563600AD7D29 /* EditRankingTitleCell.xib in Resources */,
 				348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */,
 				348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */,
 			);
@@ -465,6 +472,7 @@
 				341DD15C232895E300102472 /* MyRestoDetail.swift in Sources */,
 				341705C1235009B4006123A7 /* FirstLoginSecondScreen.swift in Sources */,
 				341C7552231684F200BA26D9 /* MKPlacemark+Extension.swift in Sources */,
+				346F8D2C237657D500AD7D29 /* EditRankingTitleCell.swift in Sources */,
 				34FEE9CE231229C000FE0590 /* MyRanksTableViewCell.swift in Sources */,
 				348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */,
 				34A76E3423225615005951A2 /* Resto.swift in Sources */,

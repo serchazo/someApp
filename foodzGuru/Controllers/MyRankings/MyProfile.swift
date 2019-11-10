@@ -469,7 +469,7 @@ extension MyProfile{
     @objc func popupMoreMenu(){
         let alert = UIAlertController(
             title: "More actions",
-            message: "Some text",
+            message: nil,
             preferredStyle: .actionSheet)
         
         let feedbackAction = UIAlertAction(title: "Send Feedback", style: .default, handler: { _ in

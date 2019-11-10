@@ -50,8 +50,6 @@ class Foodies: UIViewController {
     @IBOutlet weak var adView: UIView!
     private var bannerView: GADBannerView!
     
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         

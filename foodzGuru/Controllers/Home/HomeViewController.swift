@@ -84,6 +84,10 @@ class HomeViewController: UIViewController {
             self.updateTimelinefromDB()
         }
         
+        // Configure the Ads
+        configureBannerAd()
+        configureNativeAds()
+        
         if let indexPath = newsFeedTable.indexPathForSelectedRow {
             newsFeedTable.deselectRow(at: indexPath, animated: true)
         }
@@ -94,11 +98,6 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "Foodz.guru"
-        
-        
-        // Configure the Ads
-        configureBannerAd()
-        configureNativeAds()
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)

@@ -1,25 +1,28 @@
 //
-//  EditReviewCell.swift
+//  EditRankingTitleCell.swift
 //  foodzGuru
 //
-//  Created by Sergio Ortiz on 03.10.19.
+//  Created by Sergio Ortiz on 09.11.19.
 //  Copyright © 2019 sergioortiz.com. All rights reserved.
 //
 
 import UIKit
 
-class EditReviewCell: UITableViewCell {
-    var updateReviewAction: ((EditReviewCell) -> Void)?
+class EditRankingTitleCell: UITableViewCell {
+    var doneAction: ((UITableViewCell) -> Void)?
+    var cancelAction: ((UITableViewCell) -> Void)?
     
-    @IBOutlet weak var warningLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var editReviewTextView: UITextView!
+    @IBOutlet weak var instructionsLabel: UILabel!
     @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
     
     @IBAction func doneButtonPressed(_ sender: Any) {
-        updateReviewAction?(self)
+        doneAction?(self)
     }
-    
+    @IBAction func cancelButtonPressed(_ sender: Any) {
+        cancelAction?(self)
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
