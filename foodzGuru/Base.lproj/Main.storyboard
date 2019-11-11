@@ -664,8 +664,8 @@
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kKX-sF-dPx">
                                                                     <rect key="frame" x="0.0" y="0.0" width="119.5" height="30"/>
-                                                                    <state key="normal" title="Like">
-                                                                        <color key="titleColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    <state key="normal" title="Yum!">
+                                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     </state>
                                                                     <connections>
                                                                         <action selector="likeButtonPressed:" destination="fm1-f0-tGY" eventType="touchUpInside" id="ZZP-Qf-609"/>
@@ -2394,7 +2394,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="1Yi-jY-eDW"/>
-        <segue reference="YoF-pa-6fi"/>
+        <segue reference="B4g-Yk-vFu"/>
         <segue reference="EfA-b9-uGt"/>
         <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
