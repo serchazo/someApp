@@ -43,6 +43,7 @@ class BestRestosViewController: UIViewController {
             restoRankTableView.refreshControl = refreshControl
             restoRankTableView.rowHeight = UITableView.automaticDimension
             restoRankTableView.estimatedRowHeight = 110
+            restoRankTableView.tableFooterView = UIView()
         }
     }
     

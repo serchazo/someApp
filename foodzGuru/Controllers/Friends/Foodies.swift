@@ -41,6 +41,8 @@ class Foodies: UIViewController {
             myFoodies.dataSource = self
             // register cells
             myFoodies.register(UINib(nibName: self.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: self.timelineCellNibIdentifier)
+            // For avoiding drawing the extra lines
+            myFoodies.tableFooterView = UIView()
         }
     }
     

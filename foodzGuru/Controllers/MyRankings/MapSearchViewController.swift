@@ -61,6 +61,8 @@ class MapSearchViewController: UIViewController {
         didSet{
             searchResultsTable.dataSource = self
             searchResultsTable.delegate = self
+            // For avoiding drawing the extra lines
+            searchResultsTable.tableFooterView = UIView()
         }
     }
     @IBOutlet weak var coolMap: MKMapView!
@@ -185,11 +187,13 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Warning: all changes in logic need to be accompanied by a verification on the actions!
         //If we are waiting^^
         if !isLocationAuthorized && !isFiltering && !hasSearched{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
             cell.textLabel?.text = "Location Services Disabled"
             cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
+            cell.isUserInteractionEnabled = false
             
             return cell
         }
@@ -214,13 +218,14 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
             else{
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
                 cell.textLabel?.text = "Search for your fav' places!"
-                
+                cell.selectionStyle = .none
+                cell.isUserInteractionEnabled = false
                 return cell
             }
         }else{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
             cell.textLabel?.text = "Search for your fav' places!"
-            
+            cell.isUserInteractionEnabled = false
             return cell
         }
         
@@ -229,10 +234,6 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        /*
-        guard isFiltering else{
-            return
-        }*/
         
         if tableView == suggestionController.tableView, let suggestion = suggestionController.completerResults?[indexPath.row] {
             resultSearchController.isActive = false

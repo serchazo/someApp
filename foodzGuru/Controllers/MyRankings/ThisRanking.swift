@@ -96,6 +96,8 @@ class ThisRanking: UIViewController {
         didSet{
             myRankingTable.dataSource = self
             myRankingTable.delegate = self
+            // For avoiding drawing the extra lines
+            myRankingTable.tableFooterView = UIView()
         }
     }
     
@@ -341,8 +343,13 @@ class ThisRanking: UIViewController {
                 for child in snapshot.children{
                     if let testChild = child as? DataSnapshot,
                         let value = testChild.value as? [String:AnyObject],
-                        let position = value["position"] as? Int {
+                        var position = value["position"] as? Int {
                         let restoId = testChild.key
+                        
+                        // Garde-fous
+                        if position >= snapshot.childrenCount{
+                            position = Int(snapshot.childrenCount)
+                        }
                         
                         tmpPositions[position-1] = restoId
                         
@@ -705,23 +712,32 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         // [START] Guard first comment
                         guard thisRankingReviews[indexPath.row].text.count > 0 else{
-                            cell.likeButton.isHidden = true
-                            cell.likeButton.isEnabled = false
-                            cell.nbLikesButton.setTitle("Get Yums!", for: .normal)
-                            cell.editReviewAction = {(cell) in
-                                self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
-                                self.editReview()
+                            
+                            if calledUser != nil{
+                                cell.borderStack.isHidden = true
                             }
-                            cell.nbLikesButton.isEnabled = true
-                            cell.editReviewButton.isHidden = true
-                            cell.editReviewButton.isEnabled = false
+                            
+                            else{
+                                cell.likeButton.isHidden = true
+                                cell.likeButton.isEnabled = false
+                                cell.nbLikesButton.setTitle("Get Yums!", for: .normal)
+                                cell.editReviewAction = {(cell) in
+                                    self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
+                                    self.editReview()
+                                }
+                                cell.nbLikesButton.isEnabled = true
+                                cell.editReviewButton.isHidden = true
+                                cell.editReviewButton.isEnabled = false
+                            }
                             
                             cell.selectionStyle = .none
                             return cell
                         }
-                        
-                        
                         // [END] Guard first comment
+                        
+                        cell.likeButton.isHidden = false
+                        cell.likeButton.isEnabled = true
+                        cell.nbLikesButton.isEnabled = false
                         
                         // [START] Edit review button
                         if calledUser == nil{
@@ -789,6 +805,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         // [START] Like/Dislike buttons and labels
                         if thisRankingReviewsLiked[indexPath.row] {
+                            cell.nbLikesButton.isEnabled = false
                             cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                             cell.likeButton.setTitle("Yum!", for: .normal)
                             cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
@@ -945,23 +962,26 @@ extension ThisRanking{
         //title
         cell.titleLabel.text = "My review for \(thisRanking[forIndex].name)"
         cell.warningLabel.text = "Tell the world your honest opinion."
-        
-        // set up the TextField placeholder
-        if thisRankingReviews[forIndex].text.count < 5{
-            cell.editReviewTextView.text = "Write your Review here."
-        }else{
-            cell.editReviewTextView.text = thisRankingReviews[forIndex].text
-        }
-        cell.editReviewTextView.becomeFirstResponder()
-        cell.editReviewTextView.tag = 200
         cell.editReviewTextView.delegate = self
         
+        // set up the TextField placeholder
+        if thisRankingReviews[forIndex].text.count < 3{
+            cell.editReviewTextView.textColor = .lightGray
+            cell.editReviewTextView.text = "Write your Review here."
+            
+        }else{
+            cell.editReviewTextView.textColor = .black
+            cell.editReviewTextView.text = thisRankingReviews[forIndex].text
+        }
+        //cell.editReviewTextView.becomeFirstResponder()
+        cell.editReviewTextView.tag = 200
         
         // Done Button
         cell.doneButton.setTitle("Done!", for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
                               commentText: cell.editReviewTextView.text)
+            
         }
     }
 }
@@ -1107,7 +1127,7 @@ extension ThisRanking{
         
         // Set the first responder
         if let cell = editReviewTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
-            cell.editReviewTextView.becomeFirstResponder()
+            //cell.editReviewTextView.becomeFirstResponder()
         }
         
         // Go back to "normal" if we tap
@@ -1248,7 +1268,17 @@ extension ThisRanking:UITextViewDelegate {
         }else{
             return false
         }
-        
+    }
+    
+    // Act like placeholder
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.lightGray{
+            textView.text = nil
+            textView.textColor = UIColor.black
+        }
+        else{
+            textView.textColor = UIColor.black
+        }
     }
 }
 

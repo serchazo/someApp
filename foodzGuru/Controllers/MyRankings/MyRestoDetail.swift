@@ -313,12 +313,14 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         else if indexPath.section == 0 {
             if indexPath.row == 0{
                 let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
+                cell!.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell!.textLabel?.textColor = .black
                 cell!.textLabel?.text = "Address"
                 cell!.detailTextLabel?.text = currentResto.address
                 return cell!
             }else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.textColor = .black
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Phone"
@@ -326,6 +328,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 return cell
             }else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.textColor = .black
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "URL"
