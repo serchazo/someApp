@@ -51,7 +51,7 @@ class ThisRanking: UIViewController {
     private var userRankingDetailHandle:UInt!
     private var userReviewsHandle:UInt!
     private var userLikedReviewsHandle:UInt!
-    private var userReviewsLikesNbHandle:UInt!
+    private var userReviewsLikesNbHandle:[UInt] = []
     
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
@@ -117,6 +117,7 @@ class ThisRanking: UIViewController {
     // MARK: timeline funcs
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        userReviewsLikesNbHandle.removeAll()
         
         // Get the current user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -187,8 +188,9 @@ class ThisRanking: UIViewController {
         if userLikedReviewsHandle != nil {
             SomeApp.dbUserLikedReviews.removeObserver(withHandle: userLikedReviewsHandle)
         }
-        if userReviewsLikesNbHandle != nil {
-            SomeApp.dbUserReviewsLikesNb.removeObserver(withHandle: userReviewsLikesNbHandle)
+        
+        for handle in userReviewsLikesNbHandle{
+            SomeApp.dbUserReviewsLikesNb.removeObserver(withHandle: handle)
         }
     }
     
@@ -403,7 +405,7 @@ class ThisRanking: UIViewController {
                     self.userLikedReviewsHandle = SomeApp.dbUserReviewsLikes.child(likedDBPath).observe( .value, with: {likeSnap in
                         self.thisRankingReviewsLiked[i] = likeSnap.exists()
                         //4. Get nb of likes
-                        self.userReviewsLikesNbHandle = SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                        self.userReviewsLikesNbHandle.append( SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
                             
                             if likesNbSnap.exists(),
                                 let nbLikes = likesNbSnap.value as? Int{
@@ -415,8 +417,7 @@ class ThisRanking: UIViewController {
                             self.myRankingTable.reloadRows(
                                 at: [IndexPath(row: i, section: 0)],
                                 with: .none)
-                        })// [End] 4.
-                        
+                        }))// [End] 4.
                     })
                 }
             })

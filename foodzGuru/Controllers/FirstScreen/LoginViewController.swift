@@ -88,8 +88,6 @@ class LoginViewController: UIViewController {
         textFieldLoginPassword.layer.cornerRadius = cornerRadious
         textFieldLoginPassword.layer.masksToBounds = true
         
-        
-        
         FoodzLayout.configureButton(button: loginButton)
         
         FoodzLayout.configureButton(button: signUpButton)
@@ -188,16 +186,27 @@ class LoginViewController: UIViewController {
             //Get e-mail and password from the alert
             let emailField = alert.textFields![0]
             let passwordField = alert.textFields![1]
+            let confirmPasswordField = alert.textFields![2]
             
-            self.hideAndSeek(hide: true)
-            
-            // Call create user
-            Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!){ user, error in
-                // If there is an error
-                if let error = error, user == nil {
-                    let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    self.present(alert,animated: true, completion: nil)
+            // Passwords don't match
+            if passwordField.text != confirmPasswordField.text {
+                let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                notMatchAlert.addAction(okAction)
+                self.present(notMatchAlert, animated: true, completion: nil)
+            }
+            // Call Firebase for an upgrade
+            else{
+                self.hideAndSeek(hide: true)
+                
+                // Call create user
+                Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!){ user, error in
+                    // If there is an error
+                    if let error = error, user == nil {
+                        let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        self.present(alert,animated: true, completion: nil)
+                    }
                 }
             }
         }
@@ -211,6 +220,11 @@ class LoginViewController: UIViewController {
         alert.addTextField { textPassword in
             textPassword.isSecureTextEntry = true
             textPassword.placeholder = "Enter your password"
+        }
+        
+        alert.addTextField { textConfirmPassword in
+            textConfirmPassword.isSecureTextEntry = true
+            textConfirmPassword.placeholder = "Confirm password"
         }
         
         alert.addAction(saveAction)

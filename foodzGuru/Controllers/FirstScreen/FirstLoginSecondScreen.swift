@@ -121,6 +121,7 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
         
         spinner.startAnimating()
         goButton.isHidden = true
+        uploadImageButton.isHidden = true
         
         profilePicture.image = nil
         DispatchQueue.main.async {
@@ -154,6 +155,7 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
                                 self.photoURL = downloadURL
                                 self.spinner.stopAnimating()
                                 self.goButton.isHidden = false
+                                self.uploadImageButton.isHidden = false
                             }
                         }
                     }
