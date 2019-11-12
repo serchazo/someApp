@@ -37,6 +37,7 @@ class FirstLoginViewController: UIViewController {
         userNameField.delegate = self
         userNameField.keyboardType = .default
         userNameField.autocorrectionType = .no
+        userNameField.placeholder = "Create a username"
         
         // Get user
         Auth.auth().addStateDidChangeListener {auth, user in

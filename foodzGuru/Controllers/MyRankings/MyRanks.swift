@@ -105,11 +105,13 @@ class MyRanks: UIViewController {
             self.foodDBReference = SomeApp.dbFoodTypeRoot
         }
         
+        // Configure the banner ad
+        configureBannerAd()
+        
         // Deselect the rows to go back to normal
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
         if let indexPath = myRanksTable.indexPathForSelectedRow {
             myRanksTable.deselectRow(at: indexPath, animated: true)
         }
@@ -117,9 +119,6 @@ class MyRanks: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Configure the banner ad
-        configureBannerAd()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -135,13 +134,12 @@ class MyRanks: UIViewController {
             SomeApp.dbUserNbFollowers.child(calledUser!.key).removeObserver(withHandle: followersHandle)
             SomeApp.dbUserNbFollowing.child(calledUser!.key).removeObserver(withHandle: followersHandle)
         }
-        
-        //SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
-        //SomeApp.dbUserNbFollowers.removeObserver(withHandle: followersHandle)
-        //SomeApp.dbUserNbFollowing.removeObserver(withHandle: followingHandle)
         for handle in rankingRefHandle{
             SomeApp.dbUserRankings.removeObserver(withHandle: handle)
         }
+        //Remove banner delegate
+        // Configure the banner ad
+        bannerView.delegate = nil
     }
     
     // MARK: get city

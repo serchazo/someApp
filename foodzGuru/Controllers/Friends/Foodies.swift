@@ -62,6 +62,9 @@ class Foodies: UIViewController {
             self.getFriends()
         }
         
+        // Configure the banner ad
+        configureBannerAd()
+        
         if let indexPath = myFoodies.indexPathForSelectedRow {
             myFoodies.deselectRow(at: indexPath, animated: true)
         }        
@@ -82,15 +85,15 @@ class Foodies: UIViewController {
         definesPresentationContext = true
 
         myFoodies.separatorColor = SomeApp.themeColor
-        
-        // Configure the banner ad
-        configureBannerAd()
-
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         SomeApp.dbUserFollowing.removeObserver(withHandle: userFollowingHandle)
+        
+        // Destroy banner
+        bannerView.delegate = nil
+        
         if userDataHandle != nil {
             SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
         }

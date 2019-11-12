@@ -70,6 +70,10 @@ class BestRestosViewController: UIViewController {
             self.updateTableFromDatabase()
         }
         
+        // Configure ads
+        configureNativeAds()
+        configureBannerAd()
+        
         // Deselect the row when segued pops
         if let indexPath = restoRankTableView.indexPathForSelectedRow {
             restoRankTableView.deselectRow(at: indexPath, animated: true)
@@ -79,11 +83,7 @@ class BestRestosViewController: UIViewController {
     //
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Configure ads
-        configureNativeAds()
-        configureBannerAd()
-        
+
         //Some setup
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
@@ -97,6 +97,8 @@ class BestRestosViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         SomeApp.dbRankingFollowers.removeObserver(withHandle: rankingFollowersHandle)
+        
+        bannerView.delegate = nil
     }
     
     // MARK: configure header

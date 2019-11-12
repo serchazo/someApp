@@ -49,8 +49,8 @@ class HomeViewController: UIViewController {
     private let adsToLoad = 5 //The number of native ads to load
     private var adsLoadedIndex = 0 // to count the ads we are loading
     
-    private var nativeAds = [GADUnifiedNativeAd]() /// The native ads.
-    private var adLoader: GADAdLoader!  /// The ad loader that loads the native ads.
+    private var nativeAds = [GADUnifiedNativeAd]() // The native ads.
+    private var adLoader: GADAdLoader!  // The ad loader that loads the native ads.
     private let adFrequency = 7
     
     private let refreshControl = UIRefreshControl()
@@ -109,6 +109,8 @@ class HomeViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         SomeApp.dbUserTimeline.child(user.uid).removeObserver(withHandle: timelineHandle)
+        
+        bannerView.delegate = nil
     }
     
     // MARK: update from DB

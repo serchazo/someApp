@@ -149,6 +149,9 @@ class ThisRanking: UIViewController {
             self.updateTableFromDatabase()
         }
         
+        // Configure the banner ad
+        configureBannerAd()
+        
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -171,9 +174,6 @@ class ThisRanking: UIViewController {
         
         myRankingTable.separatorColor = SomeApp.themeColor
         myRankingTable.separatorInset = .zero
-        
-        // Configure the banner ad
-        configureBannerAd()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -195,6 +195,9 @@ class ThisRanking: UIViewController {
         for handle in userReviewsLikesNbHandle{
             SomeApp.dbUserReviewsLikesNb.removeObserver(withHandle: handle)
         }
+        
+        // Remove banner view
+        bannerView.delegate = nil 
     }
     
     //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
