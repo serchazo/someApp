@@ -321,9 +321,11 @@ extension Foodies: GADBannerViewDelegate{
         adView.addSubview(bannerView)
     }
     
-    /// Tells the delegate an ad request loaded an ad.
+    // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        print("adViewDidReceiveAd")
+        //print("adViewDidReceiveAd")
+        
+        FoodzLayout.removeDefaultAd(adView: adView)
         
         //small animation
         bannerView.alpha = 0
@@ -332,7 +334,7 @@ extension Foodies: GADBannerViewDelegate{
         })
     }
     
-    /// Tells the delegate an ad request failed.
+    // Tells the delegate an ad request failed.
     func adView(_ bannerView: GADBannerView,
                 didFailToReceiveAdWithError error: GADRequestError) {
         print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
@@ -341,25 +343,25 @@ extension Foodies: GADBannerViewDelegate{
         FoodzLayout.defaultAd(adView: adView)
     }
     
-    /// Tells the delegate that a full-screen view will be presented in response
-    /// to the user clicking on an ad.
+    // Tells the delegate that a full-screen view will be presented in response
+    // to the user clicking on an ad.
     func adViewWillPresentScreen(_ bannerView: GADBannerView) {
-        print("adViewWillPresentScreen")
+        //print("adViewWillPresentScreen")
     }
     
-    /// Tells the delegate that the full-screen view will be dismissed.
+    // Tells the delegate that the full-screen view will be dismissed.
     func adViewWillDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewWillDismissScreen")
+        //print("adViewWillDismissScreen")
     }
     
-    /// Tells the delegate that the full-screen view has been dismissed.
+    // Tells the delegate that the full-screen view has been dismissed.
     func adViewDidDismissScreen(_ bannerView: GADBannerView) {
-        print("adViewDidDismissScreen")
+        //print("adViewDidDismissScreen")
     }
     
-    /// Tells the delegate that a user click will open another app (such as
-    /// the App Store), backgrounding the current app.
+    // Tells the delegate that a user click will open another app (such as
+    // the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
-        print("adViewWillLeaveApplication")
+        //print("adViewWillLeaveApplication")
     }
 }

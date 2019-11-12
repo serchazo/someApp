@@ -124,7 +124,6 @@ class MyRanks: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        print("disappear")
         
         //Remove handlers
         if calledUser == nil {

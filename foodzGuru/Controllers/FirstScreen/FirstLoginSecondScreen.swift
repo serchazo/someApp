@@ -85,6 +85,7 @@ class FirstLoginSecondScreen: UIViewController {
         FoodzLayout.configureButton(button: goButton)
         FoodzLayout.configureButtonNoBorder(button: uploadImageButton)
         goButton.setTitle("Go", for: .normal)
+        
         uploadImageButton.setTitle("Upload", for: .normal)
         uploadImageButton.addTarget(self, action: #selector(uploadPhoto), for: .touchUpInside)
     }
@@ -111,8 +112,6 @@ extension FirstLoginSecondScreen{
         photoPickerController.sourceType =  UIImagePickerController.SourceType.photoLibrary
         self.present(photoPickerController, animated: true, completion: nil)
     }
-    
-    
 }
 
 // MARK: photo picker extension

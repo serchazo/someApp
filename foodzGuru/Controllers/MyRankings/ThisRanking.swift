@@ -104,6 +104,9 @@ class ThisRanking: UIViewController {
     ///
     // MARK: Edit table
     @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
+        thisEditableRanking = thisRanking
+        editRankTableView.reloadData()
+        
         FoodzLayout.popupTable(viewController: self,
         transparentView: editRankTransparentView,
         tableView: editRankTableView)
@@ -365,12 +368,10 @@ class ThisRanking: UIViewController {
                             count += 1
                             if count == snapshot.childrenCount{
                                 self.thisRanking = tmpRanking
-                                self.thisEditableRanking = tmpRanking
                                 self.myRankingTable.reloadData()
                                 
                                 // Then get the Reviews.  Update by row
                                 self.getReviews()
-                                //
                             }
                         })
                         
@@ -394,32 +395,36 @@ class ThisRanking: UIViewController {
             let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
             
             userReviewsHandle = userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
-                if let reviewValue = reviewSnap.value as? [String: AnyObject],
+                if reviewSnap.exists(),
+                    let reviewValue = reviewSnap.value as? [String: AnyObject],
                     let reviewText = reviewValue["text"] as? String,
                     let timestamp = reviewValue["timestamp"] as? Double{
-                    
-                    //let thisReviewPosition = tmpPositions.firstIndex(of: reviewSnap.key)
                     self.thisRankingReviews[i] = (text: reviewText, timestamp: timestamp)
-                    
-                    // 3. Get if liked
-                    self.userLikedReviewsHandle = SomeApp.dbUserReviewsLikes.child(likedDBPath).observe( .value, with: {likeSnap in
-                        self.thisRankingReviewsLiked[i] = likeSnap.exists()
-                        //4. Get nb of likes
-                        self.userReviewsLikesNbHandle.append( SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
-                            
-                            if likesNbSnap.exists(),
-                                let nbLikes = likesNbSnap.value as? Int{
-                                self.thisRankingReviewsLikes[i] = nbLikes
-                            }else{
-                                self.thisRankingReviewsLikes[i] = 0
-                            }
-                            // Update per row
-                            self.myRankingTable.reloadRows(
-                                at: [IndexPath(row: i, section: 0)],
-                                with: .none)
-                        }))// [End] 4.
-                    })
                 }
+                    
+                else{
+                    self.thisRankingReviews[i] = (text: "", timestamp: 0.0)
+                }
+                
+                // 3. Get if liked
+                self.userLikedReviewsHandle = SomeApp.dbUserReviewsLikes.child(likedDBPath).observe( .value, with: {likeSnap in
+                    self.thisRankingReviewsLiked[i] = likeSnap.exists()
+                    
+                    //4. Get nb of likes
+                    self.userReviewsLikesNbHandle.append( SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                        
+                        if likesNbSnap.exists(),
+                            let nbLikes = likesNbSnap.value as? Int{
+                            self.thisRankingReviewsLikes[i] = nbLikes
+                        }else{
+                            self.thisRankingReviewsLikes[i] = 0
+                        }
+                        // Update per row
+                        self.myRankingTable.reloadRows(
+                            at: [IndexPath(row: i, section: 0)],
+                            with: .none)
+                    }))// [End] 4.
+                })
             })
             
         }
@@ -595,11 +600,12 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 titleCell.doneAction = {(cell) in
                     self.performUpdate()
                 }
+                titleCell.selectionStyle = .none
                 
                 return titleCell
                 
             }
-            // Editable Cellds
+            // Editable Cells
             else if let editRestoCell = editRankTableView.dequeueReusableCell(withIdentifier: ThisRanking.delRestoCell, for: indexPath) as? EditableRestoCell{
                 // Text
                 editRestoCell.restoLabel.text = thisEditableRanking[indexPath.row].name
@@ -659,148 +665,117 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 
                 // [START] Restaurant cells
                 else if let cell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath) as? ThisRankingCell {
-                        // Position label
-                        let position = indexPath.row + 1
-                        cell.positionLabel.text = String(position)
-                        cell.positionLabel.textColor = .black
-                        cell.positionLabel.layer.cornerRadius = 0.5 * cell.positionLabel.bounds.width
-                        cell.positionLabel.layer.borderColor = SomeApp.themeColor.cgColor
-                        cell.positionLabel.layer.borderWidth = 1.0
-                        cell.positionLabel.layer.masksToBounds = true
-                        
-                        // Name
-                        cell.restoName.text = thisRanking[indexPath.row].name
-                        
-                        
-                        // Points
-                        var positionMultiple = 10 - indexPath.row
-                        // Correct for the positions higher than 10
-                        if (positionMultiple < 0) {positionMultiple = 1}
-                        //write points
-                        let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
-                        cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
-                        
-                        // Address
-                        cell.addressLabel.text = thisRanking[indexPath.row].address
-                        
-                        // Review text
-                        if !(thisRankingReviews.count > 0) {
-                            cell.reviewLabel.text = " " // the space is important
-                            let spinner = UIActivityIndicatorView(style: .gray)
-                            spinner.startAnimating()
-                            cell.reviewLabel.addSubview(spinner)
-                        }else{ // We already downloaded the reviews
-                            cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
+                    // Position label
+                    let position = indexPath.row + 1
+                    cell.positionLabel.text = String(position)
+                    cell.positionLabel.textColor = .black
+                    cell.positionLabel.layer.cornerRadius = 0.5 * cell.positionLabel.bounds.width
+                    cell.positionLabel.layer.borderColor = SomeApp.themeColor.cgColor
+                    cell.positionLabel.layer.borderWidth = 1.0
+                    cell.positionLabel.layer.masksToBounds = true
+                    
+                    // Name
+                    cell.restoName.text = thisRanking[indexPath.row].name
+                    
+                    // Points
+                    var positionMultiple = 10 - indexPath.row
+                    // Correct for the positions higher than 10
+                    if (positionMultiple < 0) {positionMultiple = 1}
+                    //write points
+                    let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
+                    cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
+                    
+                    // Address
+                    cell.addressLabel.text = thisRanking[indexPath.row].address
+                    
+                    // Review text
+                    if !(thisRankingReviews.count > 0) {
+                        cell.reviewLabel.text = " " // the space is important
+                        let spinner = UIActivityIndicatorView(style: .gray)
+                        spinner.startAnimating()
+                        cell.reviewLabel.addSubview(spinner)
+                    }else{ // We already downloaded the reviews
+                        cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
+                    }
+                    
+                    // Details button
+                    cell.showRestoDetailAction = {(cell) in
+                        self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
+                    }
+                    
+                    // [Below part]
+                    
+                    // Stack View border: only invisible in one option
+                    cell.borderStack.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
+                    cell.borderStack.layer.borderWidth = 0.8
+                    cell.borderStack.layer.cornerRadius = 10
+                    cell.borderStack.layer.masksToBounds = true
+                    
+                    //
+                    var currentUser = user.uid
+                    if calledUser != nil {currentUser = calledUser.key}
+                    
+                    // show the border stack
+                    cell.borderStack.isHidden = false
+                    
+                    // [START] Like button
+                    cell.likeButton.setTitle("Yum!", for: .normal)
+                    cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                    cell.likeButton.isHidden = false
+                    cell.likeButton.isEnabled = true
+                    
+                    // Action and color depending if the comment is liked
+                    if thisRankingReviewsLiked[indexPath.row] {
+                        cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                        cell.likeAction = {(cell) in
+                            let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                            SomeApp.dislikeReview(userid: self.user.uid,
+                                                  resto: self.thisRanking[tmpIndexPath!.row],
+                                                  city: self.currentCity,
+                                                  foodId: self.currentFood.key,
+                                                  reviewerId: currentUser)
                         }
-                        
-                        // Details button
-                        cell.showRestoDetailAction = {(cell) in
-                            self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
+                    }
+                        // If it's not yet liked
+                    else{
+                        cell.likeButton.setTitleColor(.darkGray, for: .normal)
+                        cell.likeAction = {(cell) in
+                            let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
+                            SomeApp.likeReview(userid: self.user.uid,
+                                               resto: self.thisRanking[tmpIndexPath!.row],
+                                               city: self.currentCity,
+                                               foodId: self.currentFood.key,
+                                               reviewerId: currentUser)
                         }
+                    }
+                    // [END] Like button
+                    
+                    // [START] Nb yums
+                    cell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
+                    cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
+                    cell.nbLikesButton.isEnabled = false
+                    // [END] Nb yums button when there is a comment
+                    
+                    // [START] Edit Review / Report button
+                    if calledUser == nil {
                         
-                        // [Below part]
-                        
-                        // Stack View border: only invisible in one option
-                        cell.borderStack.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
-                        cell.borderStack.layer.borderWidth = 0.8
-                        cell.borderStack.layer.cornerRadius = 10
-                        cell.borderStack.layer.masksToBounds = true
-                        
-                        // Is there a comment
-                        if thisRankingReviews[indexPath.row].text.count > 0{
-                            var currentUser = user.uid
-                            if calledUser != nil {currentUser = calledUser.key}
-                            
-                            // show the border stack
-                            cell.borderStack.isHidden = false
-                            
-                            // [START] Like button
-                            cell.likeButton.setTitle("Yum!", for: .normal)
-                            cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-                            cell.likeButton.isHidden = false
-                            cell.likeButton.isEnabled = true
-                            
-                            // Action and color depending if the comment is liked
-                            if thisRankingReviewsLiked[indexPath.row] {
-                                cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                                
-                                cell.likeAction = {(cell) in
-                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                    SomeApp.dislikeReview(userid: self.user.uid,
-                                                          resto: self.thisRanking[tmpIndexPath!.row],
-                                                          city: self.currentCity,
-                                                          foodId: self.currentFood.key,
-                                                          reviewerId: currentUser)
-                                }
-                            }
-                            // If it's not yet liked
-                            else{
-                                cell.likeButton.setTitleColor(.darkGray, for: .normal)
-                                cell.likeButton.isHidden = false
-                                cell.likeAction = {(cell) in
-                                    let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
-                                    SomeApp.likeReview(userid: self.user.uid,
-                                                       resto: self.thisRanking[tmpIndexPath!.row],
-                                                       city: self.currentCity,
-                                                       foodId: self.currentFood.key,
-                                                       reviewerId: currentUser)
-                                }
-                            }
-                            // [END] Like button
-                            
-                            // [START] Get yums button when there is a comment
-                            
-                            cell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
-                            cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
-                            cell.nbLikesButton.isEnabled = false
-                            
-                            // [END] Get yums button when there is a comment
-                            
-                            // [START] Edit Review / Report button
-                            if calledUser == nil {
-                                
-                                // Edit Review part
-                                cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-                                cell.editReviewButton.setTitleColor(.darkGray, for: .normal)
-                                cell.editReviewButton.setTitle("Edit Review", for: .normal)
-                                cell.editReviewButton.isHidden = false
-                                cell.editReviewButton.isEnabled = true
-                                cell.editReviewAction = {(cell) in
-                                    self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
-                                    self.editReview()
-                                }
-                            }
-                                // Visiting: report
-                            else{
-                                setupReportMenu(cell: cell)
-                            }
-                            // [END] Edit Review / Report button
-                            
+                        // Edit Review part
+                        cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+                        cell.editReviewButton.setTitleColor(.darkGray, for: .normal)
+                        cell.editReviewButton.setTitle("Edit Review", for: .normal)
+                        cell.editReviewButton.isHidden = false
+                        cell.editReviewButton.isEnabled = true
+                        cell.editReviewAction = {(cell) in
+                            self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
+                            self.editReview()
                         }
-                        // else: there are no comments
-                        else{
-                            // I'm visiting and no comments: hide borderStack view
-                            if calledUser != nil{
-                                cell.borderStack.isHidden = true
-                            }
-                                // My own
-                            else{
-                                // [START] No comments and my own
-                                cell.likeButton.isHidden = true
-                                cell.likeButton.isEnabled = false
-                                
-                                cell.nbLikesButton.setTitle("Get Yums!", for: .normal)
-                                cell.editReviewAction = {(cell) in
-                                    self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
-                                    self.editReview()
-                                }
-                                cell.nbLikesButton.isEnabled = true
-                                
-                                cell.editReviewButton.isHidden = true
-                                cell.editReviewButton.isEnabled = false
-                                // [END] No comments and my own
-                            }
-                        }
+                    }
+                        // Visiting: report
+                    else{
+                        setupReportMenu(cell: cell)
+                    }
+                    // [END] Edit Review / Report button
+                    
                       return cell
                 }else{
                     fatalError("Can't return restaurant cell")
@@ -1024,6 +999,7 @@ extension ThisRanking{
         thisRankingReviews.removeAll()
         thisRankingReviewsLiked.removeAll()
         thisRankingReviewsLikes.removeAll()
+        
         //Update view
         onClickEditRankTransparentView()
     }

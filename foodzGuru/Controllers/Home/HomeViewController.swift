@@ -41,6 +41,9 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var adView: UIView!
     
+    //Handles
+    private var timelineHandle:UInt!
+    
     // Ad stuff
     private var bannerView: GADBannerView!
     private let adsToLoad = 5 //The number of native ads to load
@@ -103,15 +106,20 @@ class HomeViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        SomeApp.dbUserTimeline.child(user.uid).removeObserver(withHandle: timelineHandle)
+    }
+    
     // MARK: update from DB
     @objc private func refreshData(_ sender: Any) {
         // If pull down the table, then refresh data
-        updateTimelinefromDB()
+        newsFeedTable.reloadData()
         self.refreshControl.endRefreshing()
     }
     
     func updateTimelinefromDB(){
-        userTimelineReference.queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: {snapshot in
+        timelineHandle = userTimelineReference.queryOrdered(byChild: "timestamp").queryLimited(toLast: 30).observe(.value, with: {snapshot in
             var count = 0
             var tmpPosts:[(key: String, type:String, timestamp:Double, payload: String, initiator:String, target: String, targetName: String)] = []
         
