@@ -42,6 +42,9 @@ class LoginViewController: UIViewController {
     
     @IBOutlet weak var spinner: UIActivityIndicatorView!{
         didSet{
+            if #available(iOS 13, *){
+                spinner.style = .large
+            }
             spinner.isHidden = true
         }
     }

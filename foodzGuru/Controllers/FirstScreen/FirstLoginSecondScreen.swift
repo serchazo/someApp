@@ -42,9 +42,13 @@ class FirstLoginSecondScreen: UIViewController {
     @IBOutlet weak var profilePicture: UIImageView!
     @IBOutlet weak var spinner: UIActivityIndicatorView!{
         didSet{
+            if #available(iOS 13, *){
+                spinner.style = .large
+            }
             spinner.hidesWhenStopped = true
         }
     }
+    
     @IBOutlet weak var uploadImageButton: UIButton!
     @IBOutlet weak var goButton: UIButton!
     

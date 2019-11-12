@@ -27,7 +27,13 @@ class FirstLoginViewController: UIViewController {
     }
     @IBOutlet weak var userNameField: UITextField!
     @IBOutlet weak var userNameTakenLabel: UILabel!
-    @IBOutlet weak var verifyNameSpinner: UIActivityIndicatorView!
+    @IBOutlet weak var verifyNameSpinner: UIActivityIndicatorView!{
+        didSet{
+            if #available(iOS 13, *){
+                verifyNameSpinner.style = .large
+            }
+        }
+    }
     @IBOutlet weak var goButton: UIButton!
     
     // MARK: Timeline funcs
