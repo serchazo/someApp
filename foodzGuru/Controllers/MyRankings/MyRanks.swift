@@ -123,7 +123,6 @@ class MyRanks: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        print("here")
         var userId = user.uid
         if calledUser != nil{
             userId = calledUser!.key
@@ -140,7 +139,6 @@ class MyRanks: UIViewController {
         //Remove banner delegate
         // Configure the banner ad
         bannerView.delegate = nil
-        print("here2")
     }
     
     // MARK: get city
