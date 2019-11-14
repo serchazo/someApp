@@ -54,9 +54,9 @@ class MyRestoDetail: UIViewController {
     private var OKtoPerformSegue = true
     
     //Handles
-    private var restoReviewsLikesHandle:UInt!
-    private var restoReviewsLikesNbHandle:UInt!
-    private var userRankingDetailsHandle:UInt!
+    private var restoReviewsLikesHandle:[(handle: UInt, dbPath:String)] = []
+    private var restoReviewsLikesNbHandle:[(handle: UInt, dbPath:String)]  = []
+    private var userRankingDetailsHandle:[(handle: UInt, dbPath:String)]  = []
     
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
@@ -125,11 +125,11 @@ class MyRestoDetail: UIViewController {
             // 2. Verify if the current resto is in the users ranking
             let dbPath = user.uid + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + self.currentResto.key
             
-            self.userRankingDetailsHandle = SomeApp.dbUserRankingDetails.child(dbPath).observe(.value, with: {snapshot in
+            self.userRankingDetailsHandle.append((handle: SomeApp.dbUserRankingDetails.child(dbPath).observe(.value, with: {snapshot in
                 self.restoInRankingFlag = snapshot.exists()
                 // Configure the header
                 self.configureHeader()
-            })
+            }),dbPath: dbPath))
             
             // Get the comments from the DB
             self.getReviewsFromDB()
@@ -183,15 +183,15 @@ class MyRestoDetail: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
+        for (handle,dbPath) in restoReviewsLikesHandle{
+            SomeApp.dbRestoReviewsLikes.child(dbPath).removeObserver(withHandle: handle)
+        }
         // Remove handles
-        if restoReviewsLikesHandle != nil{
-            SomeApp.dbRestoReviewsLikes.removeObserver(withHandle: restoReviewsLikesHandle)
+        for (handle,dbPath) in restoReviewsLikesNbHandle{
+            SomeApp.dbRestoReviewsLikesNb.child(dbPath).removeObserver(withHandle: handle)
         }
-        if restoReviewsLikesNbHandle != nil{
-            SomeApp.dbRestoReviewsLikesNb.removeObserver(withHandle: restoReviewsLikesNbHandle)
-        }
-        if userRankingDetailsHandle != nil {
-            SomeApp.dbUserRankingDetails.removeObserver(withHandle: userRankingDetailsHandle)
+        for (handle,dbPath) in userRankingDetailsHandle{
+            SomeApp.dbUserRankingDetails.child(dbPath).removeObserver(withHandle: handle)
         }
     }
     
@@ -694,13 +694,13 @@ extension MyRestoDetail{
         let restoLikesDBPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
         
         for i in 0 ..< commentArray.count{
-            let dbPath = restoLikesDBPath + "/" + commentArray[i].key
+            let dbPath = restoLikesDBPath + "/" + commentArray[i].key + "/" + user.uid
             // 1. Verify if the user has liked
-            restoReviewsLikesHandle = SomeApp.dbRestoReviewsLikes.child(dbPath + "/" + user.uid).observe(.value, with: {snapshot in
+            restoReviewsLikesHandle.append((handle: SomeApp.dbRestoReviewsLikes.child(dbPath ).observe(.value, with: {snapshot in
                 self.restoReviewLiked[i] = snapshot.exists()
                 
                 //2. Get the numb of likes
-                self.restoReviewsLikesNbHandle = SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
+                self.restoReviewsLikesNbHandle.append((handle: SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
                     if likesNbSnap.exists(),
                         let nbLikes = likesNbSnap.value as? Int{
                         self.restoReviewsLikeNb[i] = nbLikes
@@ -712,10 +712,8 @@ extension MyRestoDetail{
                     at: [IndexPath(row: i, section: 1)],
                     with: .none)
                     
-                })
-            })
-            
-            
+                }),dbPath:dbPath))
+            }), dbPath:dbPath))
         }
         
     }

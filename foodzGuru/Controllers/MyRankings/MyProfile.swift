@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import Firebase
 import MessageUI
+import SafariServices
 
 class MyProfile: UIViewController {
     
@@ -196,7 +197,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 helpButton.setTitleColor(SomeApp.themeColor, for: .normal)
                 helpButton.setTitle("Help & Support", for: .normal)
-                helpButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
+                helpButton.addTarget(self, action: #selector(showHelp), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(helpButton)
                 
@@ -275,6 +276,19 @@ extension MyProfile{
                 SomeApp.updateProfilePic(userId: self.user.uid, photoURL: self.photoURL.absoluteString)
             }
         })
+    }
+    // show help
+    @objc func showHelp(){
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = true
+        
+        let vc = SFSafariViewController(url: URL(string: "http://foodz.guru")!, configuration: config)
+        vc.navigationController?.navigationBar.titleTextAttributes = [
+        NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+        vc.preferredControlTintColor = SomeApp.themeColor
+        vc.preferredBarTintColor = UIColor.white
+        
+        present(vc, animated: true)
     }
     
     // MARK: Change password
@@ -458,6 +472,7 @@ extension MyProfile{
     // MARK: logout
     @objc func logout(){
         do {
+            SomeApp.dbUserData.removeAllObservers()
             try Auth.auth().signOut()
         } catch let error as NSError {
             print("Auth sign out failed: \(error.localizedDescription)")

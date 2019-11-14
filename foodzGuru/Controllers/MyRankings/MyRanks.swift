@@ -27,7 +27,7 @@ class MyRanks: UIViewController {
     private var userDataHandle:UInt!
     private var followersHandle:UInt!
     private var followingHandle:UInt!
-    private var rankingRefHandle:[UInt] = []
+    private var rankingRefHandle:[(handle: UInt, dbPath:String)] = []
     
     // Instance variables
     private var user:User!
@@ -123,23 +123,24 @@ class MyRanks: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
-        //Remove handlers
-        if calledUser == nil {
-            SomeApp.dbUserData.child(user.uid).removeObserver(withHandle: userDataHandle)
-            SomeApp.dbUserNbFollowers.child(user.uid).removeObserver(withHandle: followersHandle)
-            SomeApp.dbUserNbFollowing.child(user.uid).removeObserver(withHandle: followersHandle)
-        }else{
-            SomeApp.dbUserData.child(calledUser!.key).removeObserver(withHandle: userDataHandle)
-            SomeApp.dbUserNbFollowers.child(calledUser!.key).removeObserver(withHandle: followersHandle)
-            SomeApp.dbUserNbFollowing.child(calledUser!.key).removeObserver(withHandle: followersHandle)
+        print("here")
+        var userId = user.uid
+        if calledUser != nil{
+            userId = calledUser!.key
         }
-        for handle in rankingRefHandle{
-            SomeApp.dbUserRankings.removeObserver(withHandle: handle)
+        DispatchQueue.global(qos: .utility).async{
+            SomeApp.dbUserData.child(userId).removeObserver(withHandle: self.userDataHandle)
+            SomeApp.dbUserNbFollowers.child(userId).removeObserver(withHandle: self.followersHandle)
+            SomeApp.dbUserNbFollowing.child(userId).removeObserver(withHandle: self.followingHandle)
+            
+            for (handle,dbPath) in self.rankingRefHandle{
+                SomeApp.dbUserRankings.child(dbPath).removeObserver(withHandle: handle)
+            }
         }
         //Remove banner delegate
         // Configure the banner ad
         bannerView.delegate = nil
+        print("here2")
     }
     
     // MARK: get city
@@ -266,7 +267,7 @@ class MyRanks: UIViewController {
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
         
-        rankingRefHandle.append(SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
+        rankingRefHandle.append((handle: SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
             var tmpFoodType: [FoodType] = []
@@ -299,7 +300,7 @@ class MyRanks: UIViewController {
                     }
                 }
             }
-        }))
+        }), dbPath: pathId))
     }
     
     // MARK: Navigation

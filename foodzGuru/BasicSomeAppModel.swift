@@ -201,8 +201,8 @@ class SomeApp{
         for index in 0..<ranking.count{
             let tmpResto = ranking[index]
             let tmpPosition = index + 1
-            let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + tmpResto.key + "/position"
-            updateObject[dbPath] = tmpPosition
+            let dbPositionPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + tmpResto.key + "/position"
+            updateObject[dbPositionPath] = tmpPosition
         }
         // Then write!
         dbUserRankingDetails.updateChildValues(updateObject)

@@ -12,7 +12,13 @@ class MyProfileChangePicCellTableViewCell: UITableViewCell {
     
     
     @IBOutlet weak var profilePicture: UIImageView!
-    @IBOutlet weak var picSpinner: UIActivityIndicatorView!
+    @IBOutlet weak var picSpinner: UIActivityIndicatorView!{
+        didSet{
+            if #available(iOS 13, *){
+                picSpinner.style = .large
+            }
+        }
+    }
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -759,22 +759,22 @@
                                             <segue destination="xkY-9F-qMX" kind="show" identifier="ShowResto" id="B4g-Yk-vFu"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AddRestoToRankingCell" textLabel="AeJ-OR-Etb" detailTextLabel="uWr-KC-akO" rowHeight="100" style="IBUITableViewCellStyleValue1" id="fau-Zj-G4h" customClass="ThisRankingCell" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="562" width="414" height="100"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AddRestoToRankingCell" textLabel="AeJ-OR-Etb" detailTextLabel="uWr-KC-akO" rowHeight="120" style="IBUITableViewCellStyleValue1" id="fau-Zj-G4h">
+                                        <rect key="frame" x="0.0" y="562" width="414" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fau-Zj-G4h" id="UJb-Bs-zsW">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Add new restaurant" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AeJ-OR-Etb">
-                                                    <rect key="frame" x="20" y="44" width="149.5" height="20.5"/>
+                                                    <rect key="frame" x="20" y="54" width="149.5" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="+" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uWr-KC-akO">
-                                                    <rect key="frame" x="375" y="32" width="19" height="36"/>
+                                                    <rect key="frame" x="375" y="42" width="19" height="36"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                                     <color key="textColor" red="0.016804177310000001" green="0.19835099580000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

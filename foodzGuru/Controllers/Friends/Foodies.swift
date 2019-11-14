@@ -89,7 +89,7 @@ class Foodies: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        SomeApp.dbUserFollowing.removeObserver(withHandle: userFollowingHandle)
+        SomeApp.dbUserFollowing.child(user.uid).removeObserver(withHandle: userFollowingHandle)
         
         // Destroy banner
         bannerView.delegate = nil

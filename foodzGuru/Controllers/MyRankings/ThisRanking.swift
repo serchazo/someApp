@@ -49,9 +49,9 @@ class ThisRanking: UIViewController {
     //Handles
     private var userRankingHandle:UInt!
     private var userRankingDetailHandle:UInt!
-    private var userReviewsHandle:UInt!
-    private var userLikedReviewsHandle:UInt!
-    private var userReviewsLikesNbHandle:[UInt] = []
+    private var userLikedReviewsHandle:[(handle: UInt, dbPath: String)] = []
+    private var userReviewsHandle:[(handle: UInt, dbPath: String)] = []
+    private var userReviewsLikesNbHandle:[(handle: UInt, dbPath:String)] = []
     
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
@@ -178,24 +178,28 @@ class ThisRanking: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        
         // Remove handles
-        if userRankingHandle != nil{
-            userRankingsRef.removeObserver(withHandle: userRankingHandle)
+        DispatchQueue.global(qos: .utility).async{
+            
+            if self.userRankingHandle != nil{
+                self.userRankingsRef.removeObserver(withHandle: self.userRankingHandle)
+            }
+            if self.userRankingDetailHandle != nil {
+                self.userRankingDetailRef.removeObserver(withHandle: self.userRankingDetailHandle)
+            }
+            
+            for (handle, dbPath) in self.userLikedReviewsHandle{
+                SomeApp.dbUserReviewsLikes.child(dbPath).removeObserver(withHandle: handle)
+            }
+            for (handle,dbPath) in self.userReviewsHandle{
+                self.userReviewsRef.child(dbPath).removeObserver(withHandle: handle)
+            }
+            for (handle,dbPath) in self.userReviewsLikesNbHandle{
+                SomeApp.dbUserReviewsLikesNb.child(dbPath).removeObserver(withHandle: handle)
+            }
         }
-        if userRankingDetailHandle != nil {
-            userRankingDetailRef.removeObserver(withHandle: userRankingDetailHandle)
-        }
-        if userReviewsHandle != nil{
-            userReviewsRef.removeObserver(withHandle: userReviewsHandle)
-        }
-        if userLikedReviewsHandle != nil {
-            SomeApp.dbUserLikedReviews.removeObserver(withHandle: userLikedReviewsHandle)
-        }
-        
-        for handle in userReviewsLikesNbHandle{
-            SomeApp.dbUserReviewsLikesNb.removeObserver(withHandle: handle)
-        }
-        
+  
         // Remove banner view
         bannerView.delegate = nil 
     }
@@ -397,7 +401,7 @@ class ThisRanking: UIViewController {
             let likedDBPath = currentUser + "/" + self.currentCity.country + "/" + self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/" + self.user.uid
             let reviewsLikeNb = currentUser + "/" + self.currentCity.country+"/"+self.currentCity.state + "/" + self.currentCity.key + "/" + self.currentFood.key + "/" + tmpRestoId + "/"
             
-            userReviewsHandle = userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
+            userReviewsHandle.append((handle: userReviewsRef.child(tmpRestoId).observe(.value, with:{ reviewSnap in
                 if reviewSnap.exists(),
                     let reviewValue = reviewSnap.value as? [String: AnyObject],
                     let reviewText = reviewValue["text"] as? String,
@@ -410,11 +414,12 @@ class ThisRanking: UIViewController {
                 }
                 
                 // 3. Get if liked
-                self.userLikedReviewsHandle = SomeApp.dbUserReviewsLikes.child(likedDBPath).observe( .value, with: {likeSnap in
+                self.userLikedReviewsHandle.append((
+                    handle: SomeApp.dbUserReviewsLikes.child(likedDBPath).observe( .value, with: {likeSnap in
                     self.thisRankingReviewsLiked[i] = likeSnap.exists()
                     
                     //4. Get nb of likes
-                    self.userReviewsLikesNbHandle.append( SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
+                    self.userReviewsLikesNbHandle.append((handle:  SomeApp.dbUserReviewsLikesNb.child(reviewsLikeNb).observe(.value, with: {likesNbSnap in
                         
                         if likesNbSnap.exists(),
                             let nbLikes = likesNbSnap.value as? Int{
@@ -426,9 +431,11 @@ class ThisRanking: UIViewController {
                         self.myRankingTable.reloadRows(
                             at: [IndexPath(row: i, section: 0)],
                             with: .none)
-                    }))// [End] 4.
-                })
-            })
+                    }),dbPath:reviewsLikeNb))
+                    // [End] 4.
+                    }), dbPath:likedDBPath))
+                // [End] 3.
+            }), dbPath: tmpRestoId))
             
         }
         

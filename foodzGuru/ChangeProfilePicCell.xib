@@ -23,7 +23,7 @@
                             <constraint firstAttribute="width" secondItem="9xP-Az-WdK" secondAttribute="height" multiplier="1:1" id="niU-he-lI0"/>
                         </constraints>
                     </imageView>
-                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="I1r-A2-voi">
+                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="I1r-A2-voi">
                         <rect key="frame" x="167" y="20" width="80" height="80"/>
                     </activityIndicatorView>
                 </subviews>

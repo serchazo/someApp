@@ -25,7 +25,7 @@ class BestRestosViewController: UIViewController {
     private var user:User!
     
     //Handlers
-    private var rankingFollowersHandle:UInt!
+    private var rankingFollowersHandle:[(handle:UInt, dbPath:String)]=[]
 
     // Ad stuff
     private var bannerView: GADBannerView!
@@ -96,7 +96,10 @@ class BestRestosViewController: UIViewController {
     //
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        SomeApp.dbRankingFollowers.removeObserver(withHandle: rankingFollowersHandle)
+        for (handle,dbPath) in rankingFollowersHandle{
+            SomeApp.dbRankingFollowers.child(dbPath).removeObserver(withHandle: handle)
+        }
+        
         
         bannerView.delegate = nil
     }
@@ -129,8 +132,8 @@ class BestRestosViewController: UIViewController {
         followButton.layer.masksToBounds = true
         
         // We need to verify if the user is already following the ranking
-        let dbPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
-        rankingFollowersHandle = SomeApp.dbRankingFollowers.child(dbPath).child(user.uid).observe(.value, with: {snapshot in
+        let dbPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + user.uid
+        rankingFollowersHandle.append((handle: SomeApp.dbRankingFollowers.child(dbPath).observe(.value, with: {snapshot in
             
             if snapshot.exists() {
                 self.followButton.setTitle("Unfollow", for: .normal)
@@ -141,7 +144,7 @@ class BestRestosViewController: UIViewController {
             }
             self.followButton.isHidden = false
             self.followButton.isEnabled = true
-        })
+        }), dbPath:dbPath))
     }
     
     // MARK: update from database
