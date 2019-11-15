@@ -41,8 +41,14 @@ class Foodies: UIViewController {
             myFoodies.dataSource = self
             // register cells
             myFoodies.register(UINib(nibName: self.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: self.timelineCellNibIdentifier)
+            
+            myFoodies.rowHeight = UITableView.automaticDimension
+            myFoodies.estimatedRowHeight = 150
+            
             // For avoiding drawing the extra lines
             myFoodies.tableFooterView = UIView()
+            
+            
         }
     }
     
@@ -96,6 +102,38 @@ class Foodies: UIViewController {
         
         if userDataHandle != nil {
             SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        }
+    }
+    
+    //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard let headerView = myFoodies.tableHeaderView else {
+            return
+        }
+
+        // The table view header is created with the frame size set in
+        // the Storyboard. Calculate the new size and reset the header
+        // view to trigger the layout.
+        // Calculate the minimum height of the header view that allows
+        // the text label to fit its preferred width.
+        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+
+            // Need to set the header view property of the table view
+            // to trigger the new layout. Be careful to only do this
+            // once when the height changes or we get stuck in a layout loop.
+            myFoodies.tableHeaderView = headerView
+
+            // Now that the table view header is sized correctly have
+            // the table view redo its layout so that the cells are
+            // correcly positioned for the new header size.
+            // This only seems to be necessary on iOS 9.
+            myFoodies.layoutIfNeeded()
         }
     }
     
@@ -238,21 +276,6 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             return cell
         }
             // Start] Empty table
-            /*
-             // Foodz.guru stuff
-             else if let postCell = newsFeedTable.dequeueReusableCell(withIdentifier: HomeViewController.timelineCellIdentifier, for: indexPath) as? TimelineCell{
-                 
-             
-             cell.dateLabel.text = ""
-             cell.titleLabel.text = "You are not following any foodies yet!"
-             cell.bodyLabel.text =  "Use the search bar to find your friends."
-             cell.iconLabel.text = "💬"
-                 
-                 return postCell
-             }
-             */
-            
-            
             
         else if emptyListFlag,
             let postCell = myFoodies.dequeueReusableCell(withIdentifier: self.timelineCellIdentifier, for: indexPath) as? TimelineCell{

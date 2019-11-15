@@ -1087,8 +1087,8 @@ extension ThisRanking{
                        animations: {
                         self.editRankTransparentView.alpha = 0 //Start at value above, go to 0
                         self.editRankTableView.frame = CGRect(
-                            x: ThisRanking.screenSize.width,
-                            y: ThisRanking.screenSize.height * 0.1 + navBarHeight ,
+                            x: 0,
+                            y: ThisRanking.screenSize.height,
                             width: ThisRanking.screenSize.width,
                             height: ThisRanking.screenSize.height * 0.9 - navBarHeight)
                         //self.editTextField.resignFirstResponder()
