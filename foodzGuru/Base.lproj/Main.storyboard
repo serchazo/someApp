@@ -371,6 +371,14 @@
                                                 <segue destination="pOh-wS-b3s" kind="show" identifier="changeCity" id="U7G-ou-Tgm"/>
                                             </connections>
                                         </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sGd-bV-jpI">
+                                            <rect key="frame" x="282" y="20" width="112" height="33"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                            <state key="normal" title="..."/>
+                                            <connections>
+                                                <action selector="reportButtonPressed:" destination="bUE-hb-C5b" eventType="touchUpInside" id="8pK-h5-IJk"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <constraints>
@@ -383,10 +391,13 @@
                                         <constraint firstItem="BSG-e2-ccf" firstAttribute="bottom" secondItem="CRZ-U8-Kbq" secondAttribute="bottom" id="Lq4-77-qVN"/>
                                         <constraint firstAttribute="bottom" secondItem="CvV-TH-0um" secondAttribute="bottom" id="M2a-4o-hvg"/>
                                         <constraint firstItem="fjZ-48-PJh" firstAttribute="centerX" secondItem="cSZ-Bf-CFd" secondAttribute="centerX" id="NKz-JD-bX6"/>
+                                        <constraint firstItem="sGd-bV-jpI" firstAttribute="top" secondItem="BSG-e2-ccf" secondAttribute="top" id="SdG-8o-ad3"/>
                                         <constraint firstItem="5M6-Qw-f5s" firstAttribute="leading" secondItem="BSG-e2-ccf" secondAttribute="trailing" multiplier="1.02" constant="8" symbolic="YES" id="W6N-GA-8k0"/>
+                                        <constraint firstItem="sGd-bV-jpI" firstAttribute="leading" secondItem="BSG-e2-ccf" secondAttribute="trailing" constant="8" symbolic="YES" id="YDW-Mc-vIf"/>
                                         <constraint firstItem="CRZ-U8-Kbq" firstAttribute="leading" secondItem="cSZ-Bf-CFd" secondAttribute="leading" constant="20" symbolic="YES" id="cjN-W9-wSj"/>
                                         <constraint firstItem="hKx-Oc-Bvs" firstAttribute="top" secondItem="BSG-e2-ccf" secondAttribute="bottom" constant="8" symbolic="YES" id="e8Q-FU-djf"/>
                                         <constraint firstItem="hKx-Oc-Bvs" firstAttribute="centerX" secondItem="cSZ-Bf-CFd" secondAttribute="centerX" id="gAd-C4-NVl"/>
+                                        <constraint firstAttribute="trailing" secondItem="sGd-bV-jpI" secondAttribute="trailing" constant="20" symbolic="YES" id="h7P-Qa-gCk"/>
                                         <constraint firstAttribute="trailing" secondItem="5M6-Qw-f5s" secondAttribute="trailing" multiplier="1.02" constant="20" symbolic="YES" id="j13-RS-1Lc"/>
                                         <constraint firstItem="fjZ-48-PJh" firstAttribute="top" secondItem="hKx-Oc-Bvs" secondAttribute="bottom" constant="8" symbolic="YES" id="l5Q-I7-KmG"/>
                                         <constraint firstItem="BSG-e2-ccf" firstAttribute="leading" secondItem="CRZ-U8-Kbq" secondAttribute="trailing" constant="8" symbolic="YES" id="oTU-Bl-VXK"/>
@@ -502,6 +513,7 @@
                         <outlet property="headerView" destination="cSZ-Bf-CFd" id="otK-gg-ysu"/>
                         <outlet property="myRanksTable" destination="N1f-Jn-B4e" id="4ls-Qo-Js4"/>
                         <outlet property="profilePictureImage" destination="BSG-e2-ccf" id="081-e8-EOf"/>
+                        <outlet property="reportButton" destination="sGd-bV-jpI" id="Ab8-Fn-jDw"/>
                         <outlet property="tableView" destination="N1f-Jn-B4e" id="dTB-0U-Yyv"/>
                         <segue destination="kNq-x7-Sai" kind="unwind" identifier="logoffSegue" unwindAction="unwindToLoginScreenWithSegue:" id="3rc-3f-8iU"/>
                     </connections>

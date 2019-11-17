@@ -34,6 +34,7 @@ class SomeApp{
     static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReportedReviews: DatabaseReference = dbRootRef.child("user-reported-reviews")
+    static let dbReportedUsers: DatabaseReference = dbRootRef.child("reported-users")
     
     // Reviews and likes
     static let dbUserReviews:DatabaseReference = dbRootRef.child("user-reviews")
@@ -179,6 +180,17 @@ class SomeApp{
                                                  "name": city.name]
         let dbRef = SomeApp.dbUserRankingGeography.child(dbPath)
         dbRef.setValue(objectToWrite)
+    }
+    
+    // Report User
+    static func reportUser(userId:String, reportedId: String, reason: ReportActions){
+        let timestamp = NSDate().timeIntervalSince1970 * 1000
+        let objectToWrite:[String:Any] = ["reportedId" : reportedId,
+                                         "reason": reason.rawValue,
+                                        "timestamp": timestamp]
+        let dbRef = SomeApp.dbReportedUsers.child(userId)
+        dbRef.setValue(objectToWrite)
+        
     }
     
     // MARK: ranking functions
@@ -381,6 +393,14 @@ enum TimelineEvents:String{
     case NewUserReview = "newUserReview"
     case NativeAd = "nativeAd" 
     case FoodzGuruPost = "systemNotification"
+}
+
+enum ReportActions:String,CaseIterable{
+    case FakeAccount = "Fake Account or Spam"
+    case ViolentBehavior = "Violence and Criminal Behavior"
+    case HatefulContent = "Harassment, Abusive or Hateful Content"
+    case Pornography = "Pornographic or Abusive Material"
+    case Disrespectul = "Disrespectful or Offensive"
 }
 
 

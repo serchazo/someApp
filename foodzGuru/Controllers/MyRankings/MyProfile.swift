@@ -495,6 +495,40 @@ extension MyProfile{
                 print("Can't send email")
             }
         })
+        
+        // See EULA
+        let eulaAction = UIAlertAction(title: "Licence Agreement", style: .default, handler: {_ in
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+            
+            let eulaURL = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+            
+            let vc = SFSafariViewController(url: URL(string: eulaURL)!, configuration: config)
+            vc.navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+            vc.preferredControlTintColor = SomeApp.themeColor
+            vc.preferredBarTintColor = UIColor.white
+            
+            self.present(vc, animated: true)
+        })
+        
+        // See Privacy Policy
+        let privacyPolicyAction = UIAlertAction(title: "Privay Policy", style: .default, handler: {
+            _ in
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+            
+            let privacyURL = "https://foodzdotguru.wordpress.com/privacy-policy/"
+            
+            let vc = SFSafariViewController(url: URL(string: privacyURL)!, configuration: config)
+            vc.navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+            vc.preferredControlTintColor = SomeApp.themeColor
+            vc.preferredBarTintColor = UIColor.white
+            
+            self.present(vc, animated: true)
+        })
+        
         // Delete Action
         let deleteProfileAction = UIAlertAction(title: "Delete profile", style: .destructive, handler: {  _ in
             let deleteAlert = UIAlertController(
@@ -514,6 +548,8 @@ extension MyProfile{
             print("Cancel")
         })
         alert.addAction(feedbackAction)
+        alert.addAction(privacyPolicyAction)
+        alert.addAction(eulaAction)
         alert.addAction(deleteProfileAction)
         alert.addAction(cancelAction)
         

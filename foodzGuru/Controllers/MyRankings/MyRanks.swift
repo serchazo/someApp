@@ -73,6 +73,8 @@ class MyRanks: UIViewController {
         }
     }
     
+    @IBOutlet weak var reportButton: UIButton!
+    
     @IBOutlet weak var changeCityButton: UIButton!
     
     // MARK: Ad stuff
@@ -165,6 +167,8 @@ class MyRanks: UIViewController {
             navigationItem.rightBarButtonItem = nil
             navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
+        
+        
         FoodzLayout.configureButton(button: changeCityButton)
         
         // First, go get some data from the DB
@@ -214,7 +218,18 @@ class MyRanks: UIViewController {
             }
         })
         
-        
+        // Report button
+        if calledUser == nil {
+            reportButton.isHidden = true
+            reportButton.isEnabled = false
+        }else{
+            reportButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            reportButton.setTitle("...", for: .normal)
+            reportButton.contentHorizontalAlignment = .right
+            reportButton.isHidden = false
+            reportButton.isEnabled = true
+        }
+
         // Follow button
         if calledUser != nil {
             followButton.backgroundColor = .white
@@ -299,6 +314,46 @@ class MyRanks: UIViewController {
                 }
             }
         }), dbPath: pathId))
+    }
+    
+    // MARK: Report Action
+    
+    
+    @IBAction func reportButtonPressed(_ sender: Any) {
+        let alert = UIAlertController(
+        title: nil,
+        message: nil,
+        preferredStyle: .actionSheet)
+        
+        // [START] Report Profile Action
+        let reportProfileAction = UIAlertAction(title: "Report profile", style: .destructive, handler: {  _ in
+            let reasonForReporting = UIAlertController(
+                title: "Report Profile", message: "Why do you want to report the profile", preferredStyle: .actionSheet)
+            // Choose your decision
+            
+            
+            for content in ReportActions.allCases {
+                let reportAction = UIAlertAction(title: content.rawValue, style: .default, handler: { _ in
+                    SomeApp.reportUser(userId: self.user.uid, reportedId: self.calledUser!.key, reason: content)
+                    // Warn the user
+                    let thanks = UIAlertController(title: "User Reported", message: "We will analyze and take some action in 24 hours. Don't hesitate to contact us for more information.", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    thanks.addAction(okAction)
+                    self.present(thanks,animated: true)
+                    //
+                })
+                reasonForReporting.addAction(reportAction)
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            reasonForReporting.addAction(cancelAction)
+            
+            self.present(reasonForReporting,animated: true)
+        })
+        // [END] Report Profile Action
+        alert.addAction(reportProfileAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
+        self.present(alert,animated: true)
     }
     
     // MARK: Navigation
