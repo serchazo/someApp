@@ -67,8 +67,9 @@ class LoginViewController: UIViewController {
                 // Some cleanup before the Segue
                 self.textFieldLoginEmail.text = nil
                 self.textFieldLoginPassword.text = nil
+                
                 // For testing the first screen
-                //self.firstTimeFlag = true
+                //self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
                 
                 SomeApp.dbUserData.child(user!.uid).observeSingleEvent(of: .value, with: {snapshot in
                     // User data is already created

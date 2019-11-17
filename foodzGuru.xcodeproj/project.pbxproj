@@ -55,6 +55,7 @@
 		34A76E2E2321EAE9005951A2 /* SpinnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */; };
 		34A76E312322063B005951A2 /* Ranking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E302322063B005951A2 /* Ranking.swift */; };
 		34A76E3423225615005951A2 /* Resto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E3323225615005951A2 /* Resto.swift */; };
+		34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */; };
 		34D2B4B3233AF336007C4B8F /* FirstLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */; };
 		34DA7EB3234AC2DF00EBD360 /* HomeCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */; };
 		34DA7EB5234AEF4900EBD360 /* AddRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB4234AEF4900EBD360 /* AddRanking.swift */; };
@@ -127,6 +128,7 @@
 		34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerCollectionViewCell.swift; sourceTree = "<group>"; };
 		34A76E302322063B005951A2 /* Ranking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranking.swift; sourceTree = "<group>"; };
 		34A76E3323225615005951A2 /* Resto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resto.swift; sourceTree = "<group>"; };
+		34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginAcceptEULA.swift; sourceTree = "<group>"; };
 		34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginViewController.swift; sourceTree = "<group>"; };
 		34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithImage.swift; sourceTree = "<group>"; };
 		34DA7EB4234AEF4900EBD360 /* AddRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRanking.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 		342CF376233A12EC005EBD57 /* FirstScreen */ = {
 			isa = PBXGroup;
 			children = (
+				34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */,
 				34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */,
 				341705C0235009B4006123A7 /* FirstLoginSecondScreen.swift */,
 				341705C2235017D8006123A7 /* FirstLoginThirdScreen.swift */,
@@ -492,6 +495,7 @@
 				34FEE9D22312B3BB00FE0590 /* ThisRanking.swift in Sources */,
 				3491B9392341ED1E00CECF80 /* CommentCell.swift in Sources */,
 				341DD162232A282200102472 /* UserDetails.swift in Sources */,
+				34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */,
 				34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */,
 				3465E53F2315033C00166699 /* MapSearchViewController.swift in Sources */,
 				34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */,
@@ -656,7 +660,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -666,7 +670,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sergioortiz.foodzguru;
 				PRODUCT_NAME = foodz.Guru;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -677,7 +681,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -687,7 +691,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sergioortiz.foodzguru;
 				PRODUCT_NAME = foodz.Guru;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

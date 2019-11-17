@@ -1434,7 +1434,7 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="signUpPressed:" destination="hac-Z3-rKb" eventType="touchUpInside" id="kBA-NN-N74"/>
-                                    <segue destination="RhB-dK-8Bx" kind="show" identifier="firstTime" id="Cf7-l7-k7K"/>
+                                    <segue destination="Qbh-mn-V9H" kind="show" identifier="firstTime" id="fl2-o8-fyT"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CXF-z6-4H9">
@@ -1540,7 +1540,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xLt-ax-d5R" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3814.4927536231885" y="-867.1875"/>
+            <point key="canvasLocation" x="-4726" y="-883"/>
         </scene>
         <!--First Login View Controller-->
         <scene sceneID="O2D-fV-Apw">
@@ -2385,6 +2385,130 @@
             </objects>
             <point key="canvasLocation" x="1369.5652173913045" y="-2916.2946428571427"/>
         </scene>
+        <!--First Login AcceptEULA-->
+        <scene sceneID="3cX-06-x5r">
+            <objects>
+                <viewController id="Qbh-mn-V9H" customClass="FirstLoginAcceptEULA" customModule="foodz_Guru" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="gyT-t4-Usg"/>
+                        <viewControllerLayoutGuide type="bottom" id="q0g-KV-H6C"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="j1E-NH-Iq8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tPY-zY-Wye">
+                                <rect key="frame" x="20" y="102.5" width="374" height="304.5"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="zJM-Gb-UvJ">
+                                        <rect key="frame" x="20" y="80.5" width="334" height="143"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="By using our app you accept the" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yy9-II-mdp">
+                                                <rect key="frame" x="44" y="0.0" width="246.5" height="20.5"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b2K-sY-9GH">
+                                                <rect key="frame" x="55.5" y="32.5" width="223" height="33"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <state key="normal" title="End User Licence Agreement">
+                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="eulaButtonPressed:" destination="Qbh-mn-V9H" eventType="touchUpInside" id="8Id-K7-lOc"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and the" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lVg-R2-q6f">
+                                                <rect key="frame" x="138" y="77.5" width="58" height="20.5"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="00x-eR-VXm">
+                                                <rect key="frame" x="112" y="110" width="110" height="33"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <state key="normal" title="Privacy Policy.">
+                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="privacyButtonPressed:" destination="Qbh-mn-V9H" eventType="touchUpInside" id="HgU-Q4-r76"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="zJM-Gb-UvJ" secondAttribute="trailing" constant="20" symbolic="YES" id="BqR-4G-3r2"/>
+                                    <constraint firstItem="zJM-Gb-UvJ" firstAttribute="centerY" secondItem="tPY-zY-Wye" secondAttribute="centerY" id="emg-Ty-Xde"/>
+                                    <constraint firstItem="zJM-Gb-UvJ" firstAttribute="leading" secondItem="tPY-zY-Wye" secondAttribute="leading" constant="20" symbolic="YES" id="wmT-Py-Edh"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Configure 0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GF5-I1-6Dy">
+                                <rect key="frame" x="136" y="8" width="142.5" height="33.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your promise to be wise" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j15-9i-ZkC">
+                                <rect key="frame" x="115.5" y="58" width="183" height="20.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose wisely" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YrG-4P-xSm">
+                                <rect key="frame" x="163.5" y="86.5" width="87.5" height="16"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m9z-hc-Jl5">
+                                <rect key="frame" x="132" y="407" width="150" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="BEB-w4-wnN"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                <state key="normal" title="Next">
+                                    <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="goButtonPressed:" destination="Qbh-mn-V9H" eventType="touchUpInside" id="fhw-44-yLi"/>
+                                    <segue destination="RhB-dK-8Bx" kind="show" identifier="eulaAccepted" id="aJ8-fT-Wg6"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="GF5-I1-6Dy" firstAttribute="top" secondItem="gyT-t4-Usg" secondAttribute="bottom" constant="8" symbolic="YES" id="2GL-ze-sCn"/>
+                            <constraint firstItem="m9z-hc-Jl5" firstAttribute="top" secondItem="tPY-zY-Wye" secondAttribute="bottom" id="2vz-KZ-EqH"/>
+                            <constraint firstItem="j15-9i-ZkC" firstAttribute="centerX" secondItem="j1E-NH-Iq8" secondAttribute="centerX" id="4ki-E6-thT"/>
+                            <constraint firstItem="YrG-4P-xSm" firstAttribute="centerX" secondItem="j1E-NH-Iq8" secondAttribute="centerX" id="IcV-dp-UCa"/>
+                            <constraint firstItem="tPY-zY-Wye" firstAttribute="top" secondItem="YrG-4P-xSm" secondAttribute="bottom" id="Igw-bx-d7q"/>
+                            <constraint firstItem="tPY-zY-Wye" firstAttribute="leading" secondItem="j1E-NH-Iq8" secondAttribute="leadingMargin" id="Vv7-NY-kR8"/>
+                            <constraint firstItem="m9z-hc-Jl5" firstAttribute="centerY" secondItem="j1E-NH-Iq8" secondAttribute="centerY" id="YLe-cm-9J4"/>
+                            <constraint firstItem="YrG-4P-xSm" firstAttribute="top" secondItem="j15-9i-ZkC" secondAttribute="bottom" constant="8" symbolic="YES" id="eNp-T1-Etg"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="tPY-zY-Wye" secondAttribute="trailing" id="nqm-Q0-MNu"/>
+                            <constraint firstItem="m9z-hc-Jl5" firstAttribute="centerX" secondItem="j1E-NH-Iq8" secondAttribute="centerX" id="s8j-JF-pBd"/>
+                            <constraint firstItem="GF5-I1-6Dy" firstAttribute="centerX" secondItem="j1E-NH-Iq8" secondAttribute="centerX" id="wdU-7z-EIY"/>
+                            <constraint firstItem="j15-9i-ZkC" firstAttribute="top" secondItem="GF5-I1-6Dy" secondAttribute="bottom" multiplier="1.2" constant="8" symbolic="YES" id="xFG-vC-aTX"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="2mC-69-zcp"/>
+                    <connections>
+                        <outlet property="byUsingLabel" destination="yy9-II-mdp" id="rbJ-QX-uno"/>
+                        <outlet property="eulaButton" destination="b2K-sY-9GH" id="zJw-Mj-uSg"/>
+                        <outlet property="goButton" destination="m9z-hc-Jl5" id="tR1-Dg-Ha7"/>
+                        <outlet property="instructionLabel" destination="j15-9i-ZkC" id="bgM-Ob-nFc"/>
+                        <outlet property="privacyButton" destination="00x-eR-VXm" id="i94-1Z-IXn"/>
+                        <outlet property="titleLabel" destination="GF5-I1-6Dy" id="wdn-tV-OUz"/>
+                        <outlet property="warningLabel" destination="YrG-4P-xSm" id="SeB-wJ-9Sz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9Uo-zr-h1z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-3671.0144927536235" y="-1556.25"/>
+        </scene>
     </scenes>
     <resources>
         <image name="icon_food" width="25" height="25"/>
@@ -2395,7 +2519,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="1Yi-jY-eDW"/>
         <segue reference="B4g-Yk-vFu"/>
-        <segue reference="EfA-b9-uGt"/>
+        <segue reference="ou3-RT-r6a"/>
         <segue reference="7KI-8z-099"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
