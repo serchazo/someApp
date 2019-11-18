@@ -49,12 +49,22 @@ class LoginViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var warningTextView: UITextView!
+    
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // The warning UITextView
+        let testText = prepareText()
+        warningTextView.attributedText = testText
+        warningTextView.delegate = self
+        warningTextView.textAlignment = .center
+        warningTextView.linkTextAttributes = [ .foregroundColor: SomeApp.themeColor ]
         
         // Authentication observer
         Auth.auth().addStateDidChangeListener(){ auth,user in
@@ -364,7 +374,41 @@ extension LoginViewController{
         view.endEditing(true)
     }
     
+    func prepareText() -> NSMutableAttributedString{
+        let result = NSMutableAttributedString()
+        
+        //Terms of service
+        let eulaTextToSee:String = "Terms of Service"
+        let eulaAttributedText = NSMutableAttributedString(string: eulaTextToSee)
+        let eulaLink = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+        eulaAttributedText.addAttribute(NSAttributedString.Key.link, value: eulaLink, range: NSMakeRange(0, eulaTextToSee.count))
+        
+        //Privacy Policy
+        let privacyTextToSee:String = "Privacy Policy"
+        let privacyAttributedText = NSMutableAttributedString(string: privacyTextToSee)
+        let privacyLink = "https://foodzdotguru.wordpress.com/privacy-policy/"
+        privacyAttributedText.addAttribute(NSAttributedString.Key.link, value: privacyLink, range: NSMakeRange(0, privacyTextToSee.count))
+        
+        result.append(NSMutableAttributedString(string: "By using our app you agree to our "))
+        result.append(eulaAttributedText)
+        result.append(NSMutableAttributedString(string: " and our "))
+        result.append(privacyAttributedText)
+        result.append(NSMutableAttributedString(string: "."))
+        
+        return result
+    }
+    
     // Coming back from segue when logoff
     @IBAction func unwindToLoginScreen(segue: UIStoryboardSegue){}
 }
 
+// MARK: warning UITextView stuff
+extension LoginViewController: UITextViewDelegate{
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        return false
+    }
+    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        return true
+    }
+}

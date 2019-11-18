@@ -1511,6 +1511,16 @@
                                     <constraint firstAttribute="width" constant="200" id="s1A-s2-uwM"/>
                                 </constraints>
                             </activityIndicatorView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="By using our app, you confirm that you agree to our Terms of Service and Privacy Policy." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="gmH-ai-pcp">
+                                <rect key="frame" x="30" y="570" width="354" height="70"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" id="VOJ-Xb-DJx"/>
+                                </constraints>
+                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -1520,6 +1530,7 @@
                             <constraint firstItem="Bhh-7q-iSy" firstAttribute="top" secondItem="U8Z-9X-Pn6" secondAttribute="bottom" constant="8" symbolic="YES" id="6OJ-Mu-LoM"/>
                             <constraint firstItem="e4E-du-wH3" firstAttribute="centerX" secondItem="qoY-Fm-vrU" secondAttribute="centerX" id="8Fo-VZ-wzI"/>
                             <constraint firstItem="Ccp-LX-41A" firstAttribute="top" secondItem="CXF-z6-4H9" secondAttribute="bottom" constant="8" symbolic="YES" id="8Fx-sP-Wsc"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gmH-ai-pcp" secondAttribute="trailing" constant="10" id="BPq-kg-fUv"/>
                             <constraint firstItem="Bhh-7q-iSy" firstAttribute="width" secondItem="U8Z-9X-Pn6" secondAttribute="width" id="D8c-CX-F4u"/>
                             <constraint firstItem="Cqz-Bx-i9O" firstAttribute="width" secondItem="U8Z-9X-Pn6" secondAttribute="width" id="DVN-Db-Aco"/>
                             <constraint firstItem="CXF-z6-4H9" firstAttribute="centerX" secondItem="qoY-Fm-vrU" secondAttribute="centerX" id="E64-Zi-yDp"/>
@@ -1537,6 +1548,8 @@
                             <constraint firstItem="4vL-ux-LET" firstAttribute="centerX" secondItem="qoY-Fm-vrU" secondAttribute="centerX" id="fnL-UX-H9F"/>
                             <constraint firstItem="CXF-z6-4H9" firstAttribute="width" secondItem="U8Z-9X-Pn6" secondAttribute="width" id="jus-b9-czL"/>
                             <constraint firstAttribute="centerX" secondItem="zuL-pu-Ihp" secondAttribute="centerX" id="mv0-SY-aw9"/>
+                            <constraint firstItem="gmH-ai-pcp" firstAttribute="leading" secondItem="qoY-Fm-vrU" secondAttribute="leadingMargin" constant="10" id="sIw-cT-iMq"/>
+                            <constraint firstItem="gmH-ai-pcp" firstAttribute="top" secondItem="Cqz-Bx-i9O" secondAttribute="bottom" constant="8" symbolic="YES" id="wbs-Rb-bjg"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1548,6 +1561,7 @@
                         <outlet property="spinner" destination="e4E-du-wH3" id="PLb-bb-P4V"/>
                         <outlet property="textFieldLoginEmail" destination="U8Z-9X-Pn6" id="AwC-t8-qOQ"/>
                         <outlet property="textFieldLoginPassword" destination="Bhh-7q-iSy" id="r2M-o7-4gf"/>
+                        <outlet property="warningTextView" destination="gmH-ai-pcp" id="FYf-Ju-Fy7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xLt-ax-d5R" sceneMemberID="firstResponder"/>
@@ -2415,8 +2429,8 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="zJM-Gb-UvJ">
                                         <rect key="frame" x="20" y="80.5" width="334" height="143"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="By using our app you accept the" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yy9-II-mdp">
-                                                <rect key="frame" x="44" y="0.0" width="246.5" height="20.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="By using our app you agree to our" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yy9-II-mdp">
+                                                <rect key="frame" x="38" y="0.0" width="258" height="20.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -2431,8 +2445,8 @@
                                                     <action selector="eulaButtonPressed:" destination="Qbh-mn-V9H" eventType="touchUpInside" id="8Id-K7-lOc"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and the" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lVg-R2-q6f">
-                                                <rect key="frame" x="138" y="77.5" width="58" height="20.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lVg-R2-q6f">
+                                                <rect key="frame" x="152.5" y="77.5" width="29" height="20.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>

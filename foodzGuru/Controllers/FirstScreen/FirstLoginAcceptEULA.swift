@@ -75,11 +75,17 @@ class FirstLoginAcceptEULA: UIViewController {
     @IBOutlet weak var goButton: UIButton!
     
     @IBAction func goButtonPressed(_ sender: Any) {
-        let alert = UIAlertController(title: "Accept conditions", message: "You accept the Licence Agreement and the Privacy Policy.", preferredStyle: .alert)
-        let OKAction = UIAlertAction(title: "Accept Conditions", style: .default){_ in
+        let alert = UIAlertController(title: "Accept conditions", message: "I agree to foodz.guru Terms of Service and Privacy Policy.", preferredStyle: .alert)
+        let OKAction = UIAlertAction(title: "I agree", style: .default){_ in
             self.performSegue(withIdentifier: self.segueName, sender: nil)
         }
-        let notOKAction = UIAlertAction(title: "I don't accept", style: .destructive, handler: nil)
+        let notOKAction = UIAlertAction(title: "I don't agree", style: .destructive, handler: { _ in
+            //Alert
+            let dontAgreeAlert = UIAlertController(title: "Can't go further", message: "If you don't accept the conditions you can't use the app.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            dontAgreeAlert.addAction(okAction)
+            self.present(dontAgreeAlert,animated:true)
+        })
         alert.addAction(OKAction)
         alert.addAction(notOKAction)
         
