@@ -666,10 +666,8 @@ extension MyRestoDetail{
 
                     tmpCommentArray.append(Comment(username: username, restoname: self.currentResto.name, text: body, timestamp: timestamp, title: tmpTitle,key: userId))
                     
-                    
                     //Use the trick
                     count += 1
-                    
                     if count == snapshot.childrenCount{
                         // Then, add the Ads at adFrequency positions
                         for i in 0 ..< tmpCommentArray.count{
@@ -683,8 +681,6 @@ extension MyRestoDetail{
                         self.restoDetailTable.reloadData()
                         self.getLikes()
                     }
-                    
-                    
                 }
             }
         })

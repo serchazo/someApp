@@ -76,8 +76,6 @@ class MyRanks: UIViewController {
         }
     }
     
-    @IBOutlet weak var reportButton: UIButton!
-    
     @IBOutlet weak var changeCityButton: UIButton!
     
     // MARK: Ad stuff
@@ -217,7 +215,8 @@ class MyRanks: UIViewController {
     func readFromDB(userId: String){
         // Navbar
         if calledUser != nil{
-            navigationItem.rightBarButtonItem = nil
+            let reportButton = UIBarButtonItem(title: "...", style: .done, target: self, action: #selector(reportActions))
+            navigationItem.rightBarButtonItem = reportButton
             navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
         
@@ -271,18 +270,6 @@ class MyRanks: UIViewController {
         // Change city button
         FoodzLayout.configureButton(button: changeCityButton)
         
-        // Report button
-        if calledUser == nil {
-            reportButton.isHidden = true
-            reportButton.isEnabled = false
-        }else{
-            reportButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            reportButton.setTitle("...", for: .normal)
-            reportButton.contentHorizontalAlignment = .left
-            reportButton.isHidden = false
-            reportButton.isEnabled = true
-        }
-
         // Follow button
         if calledUser != nil {
             followButton.backgroundColor = .white
@@ -373,9 +360,7 @@ class MyRanks: UIViewController {
     }
     
     // MARK: Report Action
-    
-    
-    @IBAction func reportButtonPressed(_ sender: Any) {
+    @objc func reportActions(){
         let alert = UIAlertController(
         title: nil,
         message: nil,
