@@ -28,13 +28,16 @@ class MyRanks: UIViewController {
     private var followersHandle:UInt!
     private var followingHandle:UInt!
     private var rankingRefHandle:[(handle: UInt, dbPath:String)] = []
+    private var userBlockedHandle:UInt!
+    private var innerUserBlockedHandle: UInt!
     
     // Instance variables
     private var user:User!
     private var rankings:[Ranking] = []
     private var foodItems:[FoodType] = []
     private var emptyListFlag = false
-    private var foodDBReference: DatabaseReference!
+    private var blockedFlag = false
+    private var innerBlockedFlag = false
     private let defaults = UserDefaults.standard
     private var photoURL: URL!{
         didSet{
@@ -99,12 +102,8 @@ class MyRanks: UIViewController {
             }else{
                 thisUserId = self.calledUser!.key
             }
-            self.configureHeader(userId: thisUserId)
-            
-            if self.currentCity != nil{
-                self.updateTablewithRanking(userId: thisUserId)
-            }
-            self.foodDBReference = SomeApp.dbFoodTypeRoot
+            // II. Go ninja Go
+            self.goNinjago(userId: thisUserId)
         }
         
         // Configure the banner ad
@@ -130,10 +129,23 @@ class MyRanks: UIViewController {
             userId = calledUser!.key
         }
         DispatchQueue.global(qos: .utility).async{
-            SomeApp.dbUserData.child(userId).removeObserver(withHandle: self.userDataHandle)
-            SomeApp.dbUserNbFollowers.child(userId).removeObserver(withHandle: self.followersHandle)
-            SomeApp.dbUserNbFollowing.child(userId).removeObserver(withHandle: self.followingHandle)
-            
+            if self.userDataHandle != nil{
+                SomeApp.dbUserData.child(userId).removeObserver(withHandle: self.userDataHandle)
+            }
+            if self.followersHandle != nil {
+                SomeApp.dbUserNbFollowers.child(userId).removeObserver(withHandle: self.followersHandle)
+            }
+            if self.followingHandle != nil {
+                SomeApp.dbUserNbFollowing.child(userId).removeObserver(withHandle: self.followingHandle)
+            }
+            if self.userBlockedHandle != nil {
+                let dbPath = self.calledUser!.key + "/" + self.user.uid
+                SomeApp.dbUserBlocked.child(dbPath).removeObserver(withHandle: self.userBlockedHandle)
+            }
+            if self.innerUserBlockedHandle != nil {
+                let dbPath = self.user.uid + "/" + self.calledUser!.key
+                SomeApp.dbUserBlocked.child(dbPath).removeObserver(withHandle: self.innerUserBlockedHandle)
+            }
             for (handle,dbPath) in self.rankingRefHandle{
                 SomeApp.dbUserRankings.child(dbPath).removeObserver(withHandle: handle)
             }
@@ -160,16 +172,54 @@ class MyRanks: UIViewController {
         completed: nil)
     }
     
-    // MARK: Configure header
-    func configureHeader(userId: String){
+    private func goNinjago(userId:String){
+        // First, verify if the user is not blocked
+        if calledUser != nil {
+            let dbPath = calledUser!.key + "/" + user.uid
+            userBlockedHandle = SomeApp.dbUserBlocked.child(dbPath).observe(.value, with: {snapshot in
+                if snapshot.exists() {
+                    self.blockedFlag = true
+                    self.blockedUserHeader()
+                }
+                // If the user is not blocked
+                else{
+                    self.readFromDB(userId: userId)
+                }
+            })
+            // The "inner" handle: verify if I'm the blocker
+            let innerDBPath = self.user.uid + "/" + self.calledUser!.key
+            innerUserBlockedHandle = SomeApp.dbUserBlocked.child(innerDBPath).observe(.value, with: { innerSnap in
+                    self.innerBlockedFlag = innerSnap.exists()
+            })
+        }
+        // My own info
+        else{
+            readFromDB(userId: userId)
+        }
+        
+    }
+    
+    // MARK: blocked User Header
+    func blockedUserHeader(){
+        navigationItem.rightBarButtonItem = nil
+        navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
+        navigationItem.title = "Not found"
+        changeCityButton.isHidden = true
+        changeCityButton.isEnabled = false
+        bioLabel.text = "User not found"
+        
+        //
+        
+        
+    }
+    
+    // MARK: Read from DB
+    func readFromDB(userId: String){
         // Navbar
         if calledUser != nil{
             navigationItem.rightBarButtonItem = nil
             navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
-        
-        
-        FoodzLayout.configureButton(button: changeCityButton)
         
         // First, go get some data from the DB
         userDataHandle = SomeApp.dbUserData.child(userId).observe(.value, with: {snapshot in
@@ -218,6 +268,9 @@ class MyRanks: UIViewController {
             }
         })
         
+        // Change city button
+        FoodzLayout.configureButton(button: changeCityButton)
+        
         // Report button
         if calledUser == nil {
             reportButton.isHidden = true
@@ -225,7 +278,7 @@ class MyRanks: UIViewController {
         }else{
             reportButton.setTitleColor(SomeApp.themeColor, for: .normal)
             reportButton.setTitle("...", for: .normal)
-            reportButton.contentHorizontalAlignment = .right
+            reportButton.contentHorizontalAlignment = .left
             reportButton.isHidden = false
             reportButton.isEnabled = true
         }
@@ -280,6 +333,7 @@ class MyRanks: UIViewController {
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
         
+        
         rankingRefHandle.append((handle: SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
@@ -298,7 +352,7 @@ class MyRanks: UIViewController {
                         tmpRankings.append(rankingItem)
                         
                         //Get food type per country
-                        self.foodDBReference.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
+                    SomeApp.dbFoodTypeRoot.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
                             let foodItem = FoodType(snapshot: foodSnapshot)
                             tmpFoodType.append(foodItem!)
                             
@@ -314,6 +368,8 @@ class MyRanks: UIViewController {
                 }
             }
         }), dbPath: pathId))
+        
+        
     }
     
     // MARK: Report Action
@@ -330,8 +386,6 @@ class MyRanks: UIViewController {
             let reasonForReporting = UIAlertController(
                 title: "Report Profile", message: "Why do you want to report the profile", preferredStyle: .actionSheet)
             // Choose your decision
-            
-            
             for content in ReportActions.allCases {
                 let reportAction = UIAlertAction(title: content.rawValue, style: .default, handler: { _ in
                     SomeApp.reportUser(userId: self.user.uid, reportedId: self.calledUser!.key, reason: content)
@@ -350,6 +404,50 @@ class MyRanks: UIViewController {
             self.present(reasonForReporting,animated: true)
         })
         // [END] Report Profile Action
+        
+        // [START] Block user action
+        var tmpTitle = "Block user"
+        if innerBlockedFlag {tmpTitle = "Unblock user"}
+        
+        let blockProfileAction = UIAlertAction(title: tmpTitle, style: .destructive, handler: { _ in
+            // [START] If haven't blocked yet : ask to block
+            if !self.innerBlockedFlag{
+                let confirmAlert = UIAlertController(title: "Block \(self.calledUser!.nickName) ?", message: "They won't be able to find your profile or reviews.  foodz.guru won't let them know that you've blocked them.", preferredStyle: .alert)
+                let blockAction = UIAlertAction(title: "Block", style: .destructive, handler: { _ in
+                    SomeApp.blockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
+                    // Alert the user
+                    let thanks = UIAlertController(title: "User Blocked", message: nil, preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    thanks.addAction(okAction)
+                    self.present(thanks,animated: true)
+                })
+                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                confirmAlert.addAction(blockAction)
+                confirmAlert.addAction(cancelAction)
+                self.present(confirmAlert,animated: true)
+            }// [END] If haven't blocked yet : ask to block
+            
+            // [START] If I have blocked : ask to unblock
+            else{
+                let confirmAlert = UIAlertController(title: "Unblock \(self.calledUser!.nickName) ?", message: "They will be able to see your profile and reviews.  foodz.guru won't let them know that you've blocked them.", preferredStyle: .alert)
+                let blockAction = UIAlertAction(title: "Unblock", style: .destructive, handler: { _ in
+                    SomeApp.unblockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
+                    // Alert the user
+                    let thanks = UIAlertController(title: "User Unblocked", message: nil, preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    thanks.addAction(okAction)
+                    self.present(thanks,animated: true)
+                })
+                let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                confirmAlert.addAction(blockAction)
+                confirmAlert.addAction(cancelAction)
+                self.present(confirmAlert,animated: true)
+            } // [END] If I have blocked : ask to unblock
+            
+        })
+        // [END] Block user action
+        
+        alert.addAction(blockProfileAction)
         alert.addAction(reportProfileAction)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(cancelAction)
@@ -399,7 +497,7 @@ class MyRanks: UIViewController {
     // MARK: objc functions
     @objc func follow(){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
-        configureHeader(userId: calledUser!.key)
+        readFromDB(userId: calledUser!.key)
         followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
     }
     
@@ -424,7 +522,7 @@ class MyRanks: UIViewController {
                 (action: UIAlertAction)->Void in
                 // Unfollow
                 SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
-                self.configureHeader(userId: self.calledUser!.key)
+                self.readFromDB(userId: self.calledUser!.key)
                 self.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
         }))
         present(alert, animated: false, completion: nil)

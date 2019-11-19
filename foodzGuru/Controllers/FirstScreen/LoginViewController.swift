@@ -361,6 +361,7 @@ extension LoginViewController{
         self.signUpButton.isHidden = hide
         self.orLabel.isHidden = hide
         self.forgotPasswordButton.isHidden = hide
+        self.warningTextView.isHidden = hide
         
     }
     

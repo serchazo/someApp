@@ -23,7 +23,7 @@ class Foodies: UIViewController {
     
     // Handles
     private var userFollowingHandle: UInt!
-    private var userDataHandle: UInt!
+    private var userDataHandle:[(handle: UInt, dbPath:String)] = []
     
     var isSearchBarEmpty: Bool {
       return friendsSearchController.searchBar.text?.isEmpty ?? true
@@ -100,9 +100,10 @@ class Foodies: UIViewController {
         // Destroy banner
         bannerView.delegate = nil
         
-        if userDataHandle != nil {
-            SomeApp.dbUserData.removeObserver(withHandle: userDataHandle)
+        for (handle,dbPath) in userDataHandle{
+            SomeApp.dbUserData.child(dbPath).removeObserver(withHandle: handle)
         }
+        
     }
     
     //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
@@ -145,7 +146,7 @@ class Foodies: UIViewController {
             var count = 0
             
             if !snapshot.exists(){
-                // If we don't have a ranking, mark the empty list flag
+                // If we don't have friends, mark the empty list flag
                 self.emptyListFlag = true
                 self.myFoodies.reloadData()
             }else{
@@ -153,7 +154,8 @@ class Foodies: UIViewController {
                 self.emptyListFlag = false
                 for child in snapshot.children{
                     if let childSnapshot = child as? DataSnapshot{
-                        self.userDataHandle = SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
+                        self.userDataHandle.append((handle:
+                            SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
                             tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
                             
                             // Use the trick
@@ -162,7 +164,7 @@ class Foodies: UIViewController {
                                 self.myFoodiesList = tmpUserDetails
                                 self.myFoodies.reloadData()
                             }
-                        })
+                            }), dbPath:childSnapshot.key))
                     }
                 }
                 // [End] if the snapshot exists, then read!

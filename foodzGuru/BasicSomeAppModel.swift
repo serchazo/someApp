@@ -34,6 +34,7 @@ class SomeApp{
     static let dbUserRankingGeography: DatabaseReference = dbRootRef.child("user-ranking-geography")
     static let dbUserRankingDetails:DatabaseReference = dbRootRef.child("user-ranking-detail")
     static let dbUserReportedReviews: DatabaseReference = dbRootRef.child("user-reported-reviews")
+    static let dbUserBlocked: DatabaseReference = dbRootRef.child("user-blocked")
     static let dbReportedUsers: DatabaseReference = dbRootRef.child("reported-users")
     
     // Reviews and likes
@@ -190,7 +191,18 @@ class SomeApp{
                                         "timestamp": timestamp]
         let dbRef = SomeApp.dbReportedUsers.child(userId)
         dbRef.setValue(objectToWrite)
-        
+    }
+    
+    // Block user
+    static func blockUser(userId:String, blockedUserId: String){
+        let dbRef = SomeApp.dbUserBlocked.child(userId)
+        dbRef.child(blockedUserId).setValue(true)
+    }
+    
+    // Unblock user
+    static func unblockUser(userId:String, blockedUserId: String){
+        let dbRef = SomeApp.dbUserBlocked.child(userId)
+        dbRef.child(blockedUserId).setValue(NSNull())
     }
     
     // MARK: ranking functions
