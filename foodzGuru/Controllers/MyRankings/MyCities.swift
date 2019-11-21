@@ -216,6 +216,28 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
             self.navigationController?.popViewController(animated: true)
         }
     }
+    
+    // MARK: Delete city on swipe
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        if tableView == myCitiesTableView && indexPath.section == 0 && calledUser == nil && !emptyListFlag{
+            return UITableViewCell.EditingStyle.delete
+        }else{
+            return UITableViewCell.EditingStyle.none
+            
+        }
+    }
+    
+    // then
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete && !emptyListFlag{
+            // Delete from model
+            SomeApp.deleteUserCity(userId: user.uid, city: cityList[indexPath.row].city)
+            
+            // Delete the row (only for smothness, we will download again)
+            cityList.remove(at: indexPath.row)
+            myCitiesTableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
 }
 
 // MARK: city choser extension

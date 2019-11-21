@@ -108,6 +108,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="sSG-S1-Kb7">
                                 <rect key="frame" x="0.0" y="56" width="414" height="786"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="dXF-jJ-etd">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="291"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -307,6 +308,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="N1f-Jn-B4e">
                                 <rect key="frame" x="0.0" y="56" width="414" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="cSZ-Bf-CFd">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="279"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -526,6 +528,33 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="D5G-xa-qoz">
                                 <rect key="frame" x="20" y="56" width="374" height="703"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="jYe-E1-fn6">
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="130"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nSp-y7-qpy">
+                                            <rect key="frame" x="137" y="15" width="100" height="100"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="100" id="kfK-hl-wI5"/>
+                                                <constraint firstAttribute="width" secondItem="nSp-y7-qpy" secondAttribute="height" multiplier="1:1" id="xv6-XX-2aQ"/>
+                                            </constraints>
+                                        </imageView>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="RCt-pe-9lr">
+                                            <rect key="frame" x="137" y="15" width="100" height="100"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <constraints>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="leading" secondItem="nSp-y7-qpy" secondAttribute="leading" id="49X-W2-hVw"/>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="centerX" secondItem="nSp-y7-qpy" secondAttribute="centerX" id="7So-C6-dnw"/>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="trailing" secondItem="nSp-y7-qpy" secondAttribute="trailing" id="F7Q-nf-GDZ"/>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="bottom" secondItem="nSp-y7-qpy" secondAttribute="bottom" id="HPY-BH-0e9"/>
+                                        <constraint firstItem="nSp-y7-qpy" firstAttribute="centerY" secondItem="jYe-E1-fn6" secondAttribute="centerY" id="Yvg-u7-tRa"/>
+                                        <constraint firstItem="nSp-y7-qpy" firstAttribute="centerX" secondItem="jYe-E1-fn6" secondAttribute="centerX" id="jPd-nG-clk"/>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="centerY" secondItem="nSp-y7-qpy" secondAttribute="centerY" id="onp-fA-zar"/>
+                                        <constraint firstItem="RCt-pe-9lr" firstAttribute="top" secondItem="nSp-y7-qpy" secondAttribute="top" id="wyr-Fb-N0X"/>
+                                    </constraints>
+                                </view>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -538,14 +567,17 @@
                     </view>
                     <navigationItem key="navigationItem" id="1lo-gP-Vlh"/>
                     <connections>
+                        <outlet property="imageSpinner" destination="RCt-pe-9lr" id="U4h-dJ-iwv"/>
                         <outlet property="myProfileTable" destination="D5G-xa-qoz" id="vPo-Vk-cPf"/>
+                        <outlet property="profileImageView" destination="nSp-y7-qpy" id="RNJ-z0-2QO"/>
+                        <outlet property="tableHeaderView" destination="jYe-E1-fn6" id="6Mj-ky-vCt"/>
                         <segue destination="OSO-BJ-p3T" kind="unwind" identifier="logoffSegue" unwindAction="unwindToLoginScreenWithSegue:" id="xWL-QA-B9V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="axQ-B7-LeZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="OSO-BJ-p3T" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1741" y="1397"/>
+            <point key="canvasLocation" x="1740.5797101449277" y="1396.875"/>
         </scene>
         <!--This Ranking-->
         <scene sceneID="ead-kz-coi">
@@ -562,6 +594,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ljf-mn-kdL">
                                 <rect key="frame" x="0.0" y="56" width="414" height="786"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="cOd-KI-OFW" userLabel="EditRankingTableHeader">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="309"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -859,6 +892,7 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -1079,6 +1113,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="I4M-ji-k9d">
                                 <rect key="frame" x="0.0" y="56" width="414" height="703"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="OJi-gv-pfH">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="86"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2534,7 +2569,7 @@
         <segue reference="1Yi-jY-eDW"/>
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="ou3-RT-r6a"/>
-        <segue reference="7KI-8z-099"/>
+        <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
         <segue reference="tG7-IG-o9k"/>
     </inferredMetricsTieBreakers>

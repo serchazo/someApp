@@ -11,19 +11,22 @@ import SDWebImage
 import Firebase
 import MessageUI
 import SafariServices
+import SDWebImage
 
 class MyProfile: UIViewController {
-    
     
     // Get from segue-r
     var profileImage: UIImage!
     var bioString: String!
     
-    
     // Instance variables
     private var user:User!
-    private var photoURL: URL!
-    private var profileMenu = ["Profile Pic", "Button", "Bio","bioButton","changePassButton", "Help & Support", "More","Log out"]
+    private var photoURL: URL!{
+        didSet{
+            fetchImage()
+        }
+    }
+    private var profileMenu = ["Button", "Bio","bioButton","changePassButton", "Help & Support", "More","Log out"]
     private let photoPickerController = UIImagePickerController()
     private let logoffSegue = "logoffSegue"
     private let changePicCellId = "changePicCellId"
@@ -41,6 +44,9 @@ class MyProfile: UIViewController {
     private let supportSubject = "Feedback on Foodz.guru"
     private let supportBody = "My feedback: "
     
+    // handles
+    private var userDataHandle:UInt!
+    
     //For Edit the Bio swipe-up
     private var bioTransparentView = UIView()
     private var bioTableView = UITableView()
@@ -55,19 +61,51 @@ class MyProfile: UIViewController {
         }
     }
     
+    @IBOutlet weak var tableHeaderView: UIView!
+    @IBOutlet weak var profileImageView: UIImageView!
+    
+    @IBOutlet weak var imageSpinner: UIActivityIndicatorView!
+    
     // MARK: timeline funcs
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.navigationItem.title = "My Profile"
-        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         // I. Get the logged in user
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
             self.user = user
+            
+            // First, go get some data from the DB
+            self.userDataHandle = SomeApp.dbUserData.child(user.uid).observe(.value, with: {snapshot in
+                //
+                if let value = snapshot.value as? [String: AnyObject]{
+                    if let photoURL = value["photourl"] as? String {
+                        self.photoURL = URL(string: photoURL)
+                    }else{
+                        self.photoURL = URL(string: "")
+                    }
+                }
+            })
         }
+        
+    }
+    
+    
+    //
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationItem.title = "My Profile"
+        
         setUpTables()
         
+    }
+    
+    //
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if userDataHandle != nil {
+            SomeApp.dbUserData.child(user.uid).removeObserver(withHandle: userDataHandle)
+        }
     }
     
     // Set up the tables
@@ -116,29 +154,8 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
         }
         // [Start] The normal Table
         else if tableView == self.myProfileTable{
-            // Picture cell
-            if indexPath.row == 0,
-                let cell = myProfileTable.dequeueReusableCell(withIdentifier: changePicCellId, for: indexPath) as? MyProfileChangePicCellTableViewCell{
-                
-                FoodzLayout.configureProfilePicture(imageView: cell.profilePicture)
-                
-                if isUploadingPic{
-                    cell.profilePicture.isHidden = true
-                    cell.picSpinner.startAnimating()
-                    cell.picSpinner.isHidden = false
-                }else{
-                    cell.profilePicture.image = self.profileImage
-                    cell.profilePicture.isHidden = false
-                    cell.picSpinner.stopAnimating()
-                    cell.picSpinner.isHidden = true
-                }
-                
-                cell.selectionStyle = .none
-                
-                return cell
-            }
-                // Change picture button
-            else if indexPath.row == 1{
+            // Change picture button
+            if indexPath.row == 0{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let changePicButton = UIButton(type: .custom)
                 changePicButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -152,7 +169,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 
             }
                 // Change bio cell
-            else if indexPath.row == 2,
+            else if indexPath.row == 1,
                 let cell = myProfileTable.dequeueReusableCell(withIdentifier: changeBioCellId, for: indexPath) as? MyProfileBioCell{
                 cell.titleLabel.text = "Bio"
                 
@@ -165,7 +182,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // Change bio button
-            else if indexPath.row == 3{
+            else if indexPath.row == 2{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let changeBioButton = UIButton(type: .custom)
                 changeBioButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -178,7 +195,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // Change password button
-            else if indexPath.row == 4{
+            else if indexPath.row == 3{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let changePasswordButton = UIButton(type: .custom)
                 changePasswordButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -191,7 +208,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // Help button
-            else if indexPath.row == 5 {
+            else if indexPath.row == 4 {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let helpButton = UIButton(type: .custom)
                 helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -204,7 +221,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // More button
-            else if indexPath.row == 6 {
+            else if indexPath.row == 5 {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let moreButton = UIButton(type: .custom)
                 moreButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
@@ -217,7 +234,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 return cell
             }
                 // Log out
-            else if indexPath.row == 7 {
+            else if indexPath.row == 6 {
                 // Logout row
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 let logoutButton = UIButton(type: .custom)
@@ -568,13 +585,14 @@ extension MyProfile{
     
 }
 
+
+
 // MARK: photo picker extension
 extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        isUploadingPic = true
-        //profileImage = nil
-        
-        myProfileTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        imageSpinner.isHidden = false
+        imageSpinner.startAnimating()
+        profileImageView.image = nil
         
         DispatchQueue.main.async {
             if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -608,11 +626,9 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
                                 }
                                 // Update the current photo
                                 self.photoURL = downloadURL
+                                
                                 // Update the user
                                 self.updateUserProfile()
-                                // Update the table
-                                self.isUploadingPic = false
-                                self.myProfileTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
                                 
                             }
                         }
@@ -621,6 +637,21 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
             }
         }
         
+    }
+    
+    // MARK: Fetch image from URL
+    private func fetchImage(){
+        FoodzLayout.configureProfilePicture(imageView: profileImageView)
+        
+        profileImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        profileImageView.sd_setImage(
+        with: photoURL,
+        placeholderImage: UIImage(named: "userdefault"),
+        options: [],
+            completed: nil)
+        imageSpinner.isHidden = true
+        imageSpinner.stopAnimating()
+
     }
     
     // MARK: Resize the image

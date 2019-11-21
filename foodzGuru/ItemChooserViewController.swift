@@ -64,7 +64,7 @@ class ItemChooserViewController: UIViewController {
                     tmpCountries.append((key: countryKey,name:countryName))
                     count += 1
                     if count == snapshot.childrenCount{
-                        self.countryList = tmpCountries
+                        self.countryList = tmpCountries.sorted(by: {$0.name < $1.name})
                         self.countryTable.reloadData()
                     }
                 }

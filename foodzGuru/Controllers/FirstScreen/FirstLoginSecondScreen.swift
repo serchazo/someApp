@@ -170,6 +170,7 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
     
     // MARK: Fetch image from URL
     private func fetchImage(){
+        profilePicture.sd_imageIndicator = SDWebImageActivityIndicator.gray
         profilePicture.sd_setImage(
         with: photoURL,
         placeholderImage: UIImage(named: "userdefault"),

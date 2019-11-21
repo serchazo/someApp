@@ -320,7 +320,7 @@ class MyRanks: UIViewController {
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
         
-        
+        print(pathId)
         rankingRefHandle.append((handle: SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
@@ -339,9 +339,11 @@ class MyRanks: UIViewController {
                         tmpRankings.append(rankingItem)
                         
                         //Get food type per country
-                    SomeApp.dbFoodTypeRoot.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
+                        SomeApp.dbFoodTypeRoot.child(self.currentCity.country).child(rankingItem.key).observeSingleEvent(of: .value, with: { foodSnapshot in
                             let foodItem = FoodType(snapshot: foodSnapshot)
-                            tmpFoodType.append(foodItem!)
+                            if foodItem != nil{
+                                tmpFoodType.append(foodItem!)
+                            }
                             
                             // Apply the trick when using Joins
                             count += 1
@@ -568,7 +570,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     // Delete ranking on swipe
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        if tableView == myRanksTable && indexPath.section == 0 && calledUser == nil {
+        if tableView == myRanksTable && indexPath.section == 0 && calledUser == nil && !emptyListFlag{
             return UITableViewCell.EditingStyle.delete
         }else{
             return UITableViewCell.EditingStyle.none
@@ -578,7 +580,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
     
     // then
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete{
+        if editingStyle == .delete && !emptyListFlag{
             // Delete from model
             SomeApp.deleteUserRanking(userId: user.uid, city: currentCity, foodId: rankings[indexPath.row].key)
             

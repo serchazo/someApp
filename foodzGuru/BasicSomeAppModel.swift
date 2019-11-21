@@ -183,6 +183,20 @@ class SomeApp{
         dbRef.setValue(objectToWrite)
     }
     
+    // Delete a city
+    static func deleteUserCity(userId: String, city: City){
+        var updateObject:[String:Any] = [:]
+
+        // Get the (ev) rankings in that city
+        let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key
+        updateObject["user-rankings/" + dbPath] = NSNull()
+        updateObject["user-ranking-geography/" + dbPath] = NSNull()
+        updateObject["user-ranking-detail/" + dbPath] = NSNull()
+        updateObject["user-ranking-points/" + dbPath] = NSNull()
+        
+        SomeApp.dbRootRef.updateChildValues(updateObject)
+    }
+    
     // Report User
     static func reportUser(userId:String, reportedId: String, reason: ReportActions){
         let timestamp = NSDate().timeIntervalSince1970 * 1000
@@ -247,9 +261,15 @@ class SomeApp{
     
     // Delete ranking
     static func deleteUserRanking(userId: String, city: City, foodId: String){
+        var updateObject:[String:Any] = [:]
         let dbPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
-        SomeApp.dbUserRankings.child(dbPath).removeValue()
-        SomeApp.dbUserRankingDetails.child(dbPath).removeValue()
+        
+        updateObject["user-rankings/" + dbPath] = NSNull()
+        updateObject["user-ranking-geography/" + dbPath] = NSNull()
+        updateObject["user-ranking-detail/" + dbPath] = NSNull()
+        updateObject["user-ranking-points/" + dbPath] = NSNull()
+        
+        SomeApp.dbRootRef.updateChildValues(updateObject)
     }
     
     // Add resto to Ranking : we need to check the model first
