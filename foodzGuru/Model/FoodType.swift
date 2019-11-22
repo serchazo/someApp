@@ -14,13 +14,15 @@ class FoodType{
     let key: String
     let name: String
     let icon: String
+    let imageURL:String
     
     
-    init(icon: String, name: String, key: String = "") {
+    init(icon: String, name: String, key: String = "", imageURL:String = "") {
         self.ref = nil
         self.key = key
         self.icon = icon
         self.name = name
+        self.imageURL = imageURL
     }
     
     init?(snapshot: DataSnapshot){
@@ -34,6 +36,11 @@ class FoodType{
         self.key = snapshot.key
         self.name = name
         self.icon = icon
+        
+        if let image = value["img"] as? String{
+            self.imageURL = image
+        }else{self.imageURL = ""}
+        
     }
     
     // Turn FoodType to a Dictionary

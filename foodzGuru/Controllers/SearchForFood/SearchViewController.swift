@@ -154,14 +154,36 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
                 fatalError("No cell")
             }
         }
-        // then go
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+        
+        // Image cells
+        if foodList[indexPath.row].imageURL != "",
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCellImage", for: indexPath) as? SearchFoodImageCell{
             
             // Decorate first
-            cell.layer.borderColor = SomeApp.themeColor.cgColor
-            cell.layer.borderWidth = 1.0
-            cell.layer.cornerRadius = cell.frame.width / 2
-            cell.clipsToBounds = true
+            FoodzLayout.configureProfilePicture(imageView: cell.foodImage)
+            
+            cell.foodImage.sd_setImage(
+            with: URL(string: foodList[indexPath.row].imageURL),
+            placeholderImage: UIImage(named: "userdefault"),
+            options: [],
+            completed: nil)
+            
+            //cell.cellIcon.text = foodList[indexPath.row].icon
+            cell.foodNameLabel.textColor = SomeApp.themeColor
+            cell.foodNameLabel.text = foodList[indexPath.row].name
+            
+            return cell
+            
+        }
+        
+        // Icon cells
+        else if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+            
+            // Decorate first
+            cell.cellIcon.layer.borderColor = SomeApp.themeColor.cgColor
+            cell.cellIcon.layer.borderWidth = 1.0
+            cell.cellIcon.layer.cornerRadius = cell.cellIcon.layer.frame.width / 2
+            cell.cellIcon.clipsToBounds = true
             
             cell.cellIcon.text = foodList[indexPath.row].icon
             

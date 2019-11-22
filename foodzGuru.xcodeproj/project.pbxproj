@@ -45,6 +45,7 @@
 		34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8B2332071B00463AFE /* EditableRestoCell.swift */; };
 		34873A8E2333157900463AFE /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8D2333157900463AFE /* City.swift */; };
 		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
+		348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348919A02387D2520020934F /* SearchFoodImageCell.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
 		348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD1230E3E8A008026A0 /* Main.storyboard */; };
 		348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD4230E3E8C008026A0 /* Assets.xcassets */; };
@@ -116,6 +117,7 @@
 		34873A8B2332071B00463AFE /* EditableRestoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableRestoCell.swift; sourceTree = "<group>"; };
 		34873A8D2333157900463AFE /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
+		348919A02387D2520020934F /* SearchFoodImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodImageCell.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		348EBFCD230E3E8A008026A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		348EBFD2230E3E8A008026A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 		34A76E2C232113FF005951A2 /* SearchForFood */ = {
 			isa = PBXGroup;
 			children = (
+				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				34FEE9C12311207C00FE0590 /* SearchViewController.swift */,
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
 				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
@@ -510,6 +513,7 @@
 				3489199F23878EA60020934F /* FollowersViewController.swift in Sources */,
 				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
 				341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */,
+				348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */,
 				341C7550231651E200BA26D9 /* LocationManager.swift in Sources */,
 				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,

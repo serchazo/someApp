@@ -20,7 +20,7 @@ extension CustomCollectionViewDelegate {
 
 class CustomCollectionViewLayout: UICollectionViewLayout {
     fileprivate let numberOfColumns = 2
-    fileprivate let cellPadding: CGFloat = 30
+    fileprivate let cellPadding: CGFloat = 15
     fileprivate let cellHeight: CGFloat = 110
     
     weak var delegate: CustomCollectionViewDelegate?
@@ -79,9 +79,11 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
             for column in 0..<numberOfColumns {
                 switch column {
                 case 0:
-                    yOffset.append(cellPadding)
+                    yOffset.append(0)
+                    //yOffset.append(cellPadding)
                 case 1:
-                    yOffset.append(cellPadding + cellHeight * 0.5)
+                    yOffset.append(0)
+                    //yOffset.append(cellPadding + cellHeight * 0.5)
                 //case 2: yOffset.append(cellPadding + cellHeight)
                 default:
                     break
@@ -98,10 +100,11 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
             cache.append(attributes)
             
             //We increase the max height of the content as we get more items
-            contentHeight = max(collectionView.frame.height + 10, frame.maxY)
+            contentHeight = max(collectionView.frame.height, frame.maxY)
             
             //We increase the yOffset, too
-            yOffset[column] = yOffset[column] + 1.25 * (height - cellPadding)
+            yOffset[column] = yOffset[column] + 1.30 * (height)
+            //yOffset[column] = yOffset[column] + 1.25 * (height - cellPadding)
             
             let numberOfItems = delegate?.theNumberOfItemsInCollectionView()
             
