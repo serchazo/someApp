@@ -24,6 +24,7 @@ class HomeViewController: UIViewController {
     private let timelineNewUserReview = "timelineUserNewReview"
     private let timelineNewFavorite = "timelineUserFavorite"
     private let timelineRankingInfo = "timelineRankingInfoCell"
+    private let timelineNewYum = "timelineNewYum"
     
     // Segue identifiers
     private let segueIDShowUserFromNewRanking = "showUserFromNewRanking"
@@ -31,6 +32,7 @@ class HomeViewController: UIViewController {
     private let segueIDShowUserReview = "showUserReview"
     private let segueIDShowUserFavorite = "showUserFavorite"
     private let segueIDShowTopRestos = "showTopRestos"
+    private let segueIDShowYum = "showYum"
     
     // Instance variables
     private var user: User!
@@ -220,6 +222,19 @@ class HomeViewController: UIViewController {
             thisRankingVC.currentCity = parseResult.city
             thisRankingVC.currentFood = parseResult.food
         }
+        // Show ThisRanking for new Yum!
+        else if segue.identifier == self.segueIDShowYum,
+            let cell = sender as? HomeCellWithImage,
+            let indexPath = newsFeedTable.indexPath(for: cell),
+            let thisRankingVC = segue.destination as? ThisRanking{
+            
+            // Setup the stuff
+            let parseResult = parseNewReview(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            
+            thisRankingVC.calledUser = nil
+            thisRankingVC.currentCity = parseResult.city
+            thisRankingVC.currentFood = parseResult.food
+        }
         // Show ThisRanking for new favorite
         else if segue.identifier == self.segueIDShowUserFavorite,
             let cell = sender as? HomeCellWithImage,
@@ -280,6 +295,13 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
+        // New Yum!
+        else if somePost[indexPath.row].type == TimelineEvents.NewYum.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
+                cell.titleLabel.text = "Yum!"
+                setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+                return cell
+            }
         // New review
         else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
@@ -308,7 +330,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
-            // If it is an Ad, we have two options: load one or placeholder
+        // If it is an Ad, we have two options: load one or placeholder
         else if somePost[indexPath.row].type == TimelineEvents.NativeAd.rawValue{
             // If we have loaded Ads
             if nativeAds.count > 0{
@@ -348,16 +370,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             fatalError("Unable to create cell")
         }
     }
-    
-    /*
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if nativeAds.count > 0 && ( indexPath.row % self.adFrequency == (self.adFrequency - 1)){
-            return 120
-        }else{
-            return UITableView.automaticDimension
-        }
-    }*/
-    
 }
 
 // MARK: Home cells

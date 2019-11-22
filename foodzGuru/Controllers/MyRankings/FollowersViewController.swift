@@ -207,8 +207,6 @@ class FollowersViewController: UIViewController {
         default: break
         }
     }
-    
-
 }
 
 // MARK: Table stuff
