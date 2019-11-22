@@ -22,6 +22,8 @@ class MyRanks: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private let segueChangeCoty = "changeCity"
     private let segueMyProfile = "showMyProfile"
+    private let segueFollowers = "followersSegue"
+    private let segueFollowing = "followingSegue"
     
     // Handles
     private var userDataHandle:UInt!
@@ -57,16 +59,17 @@ class MyRanks: UIViewController {
     
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var profilePictureImage: UIImageView!
-    
     @IBOutlet weak var bioLabel: UILabel!
-    @IBOutlet weak var followersLabel: UILabel!{
+    @IBOutlet weak var followersButton: UIButton!{
         didSet{
-            followersLabel.text = "Followers: - "
+            followersButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            followersButton.setTitle("Followers: -", for: .normal)
         }
     }
-    @IBOutlet weak var followingLabel: UILabel!{
+    @IBOutlet weak var followingButton: UIButton!{
         didSet{
-            followingLabel.text = "Following: - "
+            followingButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            followingButton.setTitle("Following: -", for: .normal)
         }
     }
     @IBOutlet weak var followButton: UIButton!{
@@ -298,18 +301,18 @@ class MyRanks: UIViewController {
         followersHandle = SomeApp.dbUserNbFollowers.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let followers = snapshot.value as? Int {
-                self.followersLabel.text = "Followers: \(followers)"
+                self.followersButton.setTitle("Followers: \(followers)", for: .normal)
             }else{
-                self.followersLabel.text = "Followers: 0"
+                self.followersButton.setTitle("Followers: 0", for: .normal)
             }
         })
         // Following button
         followingHandle = SomeApp.dbUserNbFollowing.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let following = snapshot.value as? Int {
-                self.followingLabel.text = "Following: \(following)"
+                self.followingButton.setTitle("Following: \(following)", for: .normal)
             }else{
-                self.followingLabel.text = "Following: 0"
+                self.followingButton.setTitle("Following: 0", for: .normal)
             }
         })
         
@@ -476,6 +479,17 @@ class MyRanks: UIViewController {
                 myProfileVC.bioString = bioString
                 myProfileVC.profileImage = profilePictureImage.image
             }
+        case self.segueFollowers:
+            if let followsVC = segue.destination as? FollowersViewController{
+                followsVC.calledUser = self.calledUser
+                followsVC.whatList = .Followers
+            }
+        case self.segueFollowing:
+            if let followsVC = segue.destination as? FollowersViewController{
+                followsVC.calledUser = self.calledUser
+                followsVC.whatList = .Following
+            }
+            
         default: 
             break
         }

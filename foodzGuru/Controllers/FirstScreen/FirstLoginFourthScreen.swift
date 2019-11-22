@@ -111,7 +111,7 @@ extension FirstLoginFourthScreen{
         // Create the user details
         SomeApp.createUserFirstLogin(
             userId: user.uid,
-            username: userName!,
+            username: (userName!).lowercased(),
             bio: bio!,
             defaultCity: tmpCityString,
             photoURL: urlString)

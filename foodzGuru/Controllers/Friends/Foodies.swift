@@ -267,7 +267,7 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
         if isFiltering,
             let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = filteredFoodies[indexPath.row].nickName
-            cell.bodyLabel.text = filteredFoodies[indexPath.row].bio
+            cell.bodyLabel.text = filteredFoodies[indexPath.row].bio + " " //The space is important
             cell.cellImage.sd_setImage(
                 with: URL(string: filteredFoodies[indexPath.row].photoURLString),
                 placeholderImage: UIImage(named: "userdefault"),
@@ -289,10 +289,10 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             return postCell
         }// [End] Empty table
         
-            // [Start] Normal table
+        // [Start] Normal table
         else if let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = myFoodiesList[indexPath.row].nickName
-            cell.bodyLabel.text = myFoodiesList[indexPath.row].bio
+            cell.bodyLabel.text = myFoodiesList[indexPath.row].bio + " " // the extra space is important!
             cell.cellImage.sd_setImage(
                 with: URL(string: myFoodiesList[indexPath.row].photoURLString),
                 placeholderImage: UIImage(named: "userdefault"),

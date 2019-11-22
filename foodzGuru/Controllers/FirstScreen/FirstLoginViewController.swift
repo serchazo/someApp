@@ -89,7 +89,8 @@ class FirstLoginViewController: UIViewController {
         verifyNameSpinner.isHidden = false
         verifyNameSpinner.startAnimating()
         let pattern = "[^A-Za-z0-9]+"
-        self.userName = nickname.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
+        let tmpUserName = nickname.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
+        self.userName = tmpUserName.lowercased()
         
         SomeApp.dbUserData.queryOrdered(byChild: "nickname").queryEqual(toValue: userName).observeSingleEvent(of: .value, with: {snapshot in
             if snapshot.exists(){

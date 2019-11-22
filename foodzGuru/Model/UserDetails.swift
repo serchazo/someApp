@@ -17,7 +17,7 @@ class UserDetails{
     var photoURLString: String
     var defaultCity:String
     
-    init(nickName: String, bio: String = "", key: String = "", photoURL:String = "", defaultCity:String = "") {
+    init(nickName: String, bio: String = " ", key: String = "", photoURL:String = "", defaultCity:String = "") {
         self.ref = nil
         self.key = key
         self.nickName = nickName
@@ -36,7 +36,8 @@ class UserDetails{
         self.key = snapshot.key
         self.nickName = name
         
-        if let bio = value["bio"] as? String {self.bio = bio} else {self.bio = ""}
+        if let bio = value["bio"] as? String {self.bio = bio}
+        else {self.bio = " "}
         if let tmpURL = value["photourl"] as? String {self.photoURLString = tmpURL} else {self.photoURLString = ""}
         if let tmpCity = value["default"] as? String {self.defaultCity = tmpCity} else {self.defaultCity = "sg/sg/sin/Singapore"}
     }

@@ -58,6 +58,9 @@ class MyProfile: UIViewController {
             myProfileTable.dataSource = self
             myProfileTable.rowHeight = UITableView.automaticDimension
             myProfileTable.estimatedRowHeight = 80
+            
+            // For avoiding drawing the extra lines
+            myProfileTable.tableFooterView = UIView()
         }
     }
     

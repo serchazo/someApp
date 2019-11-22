@@ -26,6 +26,7 @@ class BestRestosViewController: UIViewController {
     
     //Handlers
     private var rankingFollowersHandle:[(handle:UInt, dbPath:String)]=[]
+    private var restoPointsHandle:[(handle:UInt, dbPath:String)]=[]
 
     // Ad stuff
     private var bannerView: GADBannerView!
@@ -58,7 +59,8 @@ class BestRestosViewController: UIViewController {
     // MARK: Timeline stuff
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
+        let cityDBPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/"  + currentFood.key
         
         
         // I. Get the logged in user
@@ -67,7 +69,7 @@ class BestRestosViewController: UIViewController {
             self.user = user
             // the user is needed in the header
             self.configureHeader()
-            self.updateTableFromDatabase()
+            self.updateTableFromDatabase(cityDBPath: cityDBPath)
         }
         
         // Configure ads
@@ -148,10 +150,8 @@ class BestRestosViewController: UIViewController {
     }
     
     // MARK: update from database
-    func updateTableFromDatabase(){
-        let cityDBPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/"  + currentFood.key
-        
-        SomeApp.dbRestoPoints.child(cityDBPath).observeSingleEvent(of: .value, with: { snapshot in
+    func updateTableFromDatabase(cityDBPath: String){
+        restoPointsHandle.append((handle: SomeApp.dbRestoPoints.child(cityDBPath).observe(.value, with: { snapshot in
             // What to do if the list is empty
             guard snapshot.exists() else {
                 self.thisRanking.append(Resto(name: "placeholder", city: "placeholder"))
@@ -194,14 +194,14 @@ class BestRestosViewController: UIViewController {
                 
             }
             //
-        })
+        }), dbPath: cityDBPath))
     }
     
     
     // MARK: Navigation
     @objc private func refreshData(_ sender: Any) {
         // If pull down the table, then refresh data
-        updateTableFromDatabase()
+        restoRankTableView.reloadData()
         self.refreshControl.endRefreshing()
     }
     

@@ -44,6 +44,7 @@
 		34873A882332066900463AFE /* EditableRestoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34873A872332066900463AFE /* EditableRestoCell.xib */; };
 		34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8B2332071B00463AFE /* EditableRestoCell.swift */; };
 		34873A8E2333157900463AFE /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8D2333157900463AFE /* City.swift */; };
+		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
 		348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD1230E3E8A008026A0 /* Main.storyboard */; };
 		348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD4230E3E8C008026A0 /* Assets.xcassets */; };
@@ -114,6 +115,7 @@
 		34873A872332066900463AFE /* EditableRestoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditableRestoCell.xib; sourceTree = "<group>"; };
 		34873A8B2332071B00463AFE /* EditableRestoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableRestoCell.swift; sourceTree = "<group>"; };
 		34873A8D2333157900463AFE /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		348EBFCD230E3E8A008026A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		348EBFD2230E3E8A008026A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				34FEE9CB23120F6300FE0590 /* MyRanks.swift */,
+				3489199E23878EA60020934F /* FollowersViewController.swift */,
 				34FEE9CD231229C000FE0590 /* MyRanksTableViewCell.swift */,
 				34DA7EB6234B29D400EBD360 /* MyCities.swift */,
 				34FEE9D12312B3BB00FE0590 /* ThisRanking.swift */,
@@ -504,6 +507,7 @@
 				34351990235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift in Sources */,
 				34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */,
 				34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */,
+				3489199F23878EA60020934F /* FollowersViewController.swift in Sources */,
 				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
 				341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */,
 				341C7550231651E200BA26D9 /* LocationManager.swift in Sources */,
