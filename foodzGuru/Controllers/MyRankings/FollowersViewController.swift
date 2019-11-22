@@ -24,6 +24,7 @@ class FollowersViewController: UIViewController {
     private let timelineCellIdentifier = "TimelineCell"
     private let timelineCellNibIdentifier = "TimelineCell"
     private let foodieCell = "foodieCell"
+    private let segueFoodie = "segueShowFoodie"
     
     private var user:User!
     private var follows: [UserDetails] = []
@@ -48,7 +49,7 @@ class FollowersViewController: UIViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var titleLabel: UILabel!{
         didSet{
-            titleLabel.text = nil 
+            titleLabel.text = nil
         }
     }
     
@@ -189,15 +190,24 @@ class FollowersViewController: UIViewController {
     }
     
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        //Segue
+        switch segue.identifier {
+        case self.segueFoodie:
+            if let seguedController = segue.destination as? MyRanks,
+                let senderCell = sender as? HomeCellWithImage,
+                let indexNumber = followTableView.indexPath(for: senderCell){
+                seguedController.calledUser = follows[indexNumber.row]
+            }
+        default: break
+        }
     }
-    */
+    
 
 }
 
