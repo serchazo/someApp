@@ -34,7 +34,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Food Type" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bd6-i1-k96">
-                                                    <rect key="frame" x="22.5" y="110.5" width="76.5" height="19.5"/>
+                                                    <rect key="frame" x="22.5" y="130" width="76.5" height="19.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                                                     <color key="textColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -52,9 +52,9 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Gq6-KD-w1j" firstAttribute="top" secondItem="QwM-nv-nr1" secondAttribute="top" id="9U0-mp-v6V"/>
+                                                <constraint firstItem="bd6-i1-k96" firstAttribute="top" secondItem="Gq6-KD-w1j" secondAttribute="bottom" id="9mR-FZ-2qX"/>
                                                 <constraint firstItem="Gq6-KD-w1j" firstAttribute="centerX" secondItem="QwM-nv-nr1" secondAttribute="centerX" id="KMq-I4-tTT"/>
                                                 <constraint firstItem="bd6-i1-k96" firstAttribute="centerX" secondItem="QwM-nv-nr1" secondAttribute="centerX" id="V7h-wo-grk"/>
-                                                <constraint firstAttribute="bottom" secondItem="bd6-i1-k96" secondAttribute="bottom" constant="20" symbolic="YES" id="YC6-q4-wOW"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <size key="customSize" width="121" height="150"/>

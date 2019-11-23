@@ -267,9 +267,9 @@
 		34A76E2C232113FF005951A2 /* SearchForFood */ = {
 			isa = PBXGroup;
 			children = (
-				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				34FEE9C12311207C00FE0590 /* SearchViewController.swift */,
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
+				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
 				344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */,
 				34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */,

@@ -20,8 +20,8 @@ extension CustomCollectionViewDelegate {
 
 class CustomCollectionViewLayout: UICollectionViewLayout {
     fileprivate let numberOfColumns = 2
-    fileprivate let cellPadding: CGFloat = 30
-    fileprivate let cellHeight: CGFloat = 110
+    fileprivate let cellPadding: CGFloat = 15
+    fileprivate let cellHeight: CGFloat = 130
     
     weak var delegate: CustomCollectionViewDelegate?
     
