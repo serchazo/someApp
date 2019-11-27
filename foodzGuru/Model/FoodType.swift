@@ -37,8 +37,6 @@ class FoodType{
         self.name = name
         self.icon = icon
         
-        print(snapshot)
-        
         if let image = value["img"] as? String{
             self.imageURL = image
         }else{self.imageURL = ""}

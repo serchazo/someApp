@@ -49,6 +49,7 @@ class SomeApp{
     
     //rankings
     static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
+    static let dbRankingFollowersDevices:DatabaseReference = dbRootRef.child("rankings-followers-devices")
     static let dbRankingFollowersNb:DatabaseReference = dbRootRef.child("rankings-followers-nb")
     
     //geography
@@ -134,7 +135,42 @@ class SomeApp{
     // Update device token
     static func updateDeviceToken(userId: String, deviceToken: String){
         let deviceModel = SomeApp.getDeviceModel()
-        dbUserDevices.child(userId).child(deviceModel).setValue(deviceToken)
+        let tmpPath = userId + "/" + deviceModel
+        
+        dbUserDevices.child(tmpPath).setValue(deviceToken)
+        var updateObject:[String:Any] = [:]
+        
+        // Verify if the user is following rankings
+        SomeApp.dbUserFollowingRankings.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+            for child in snapshot.children{
+                if let countrySnap = child as? DataSnapshot{
+                    let countryId = countrySnap.key
+                    // States
+                    for stateChild in countrySnap.children{
+                        if let stateSnap = stateChild as? DataSnapshot{
+                            let stateId = stateSnap.key
+                            // Cities
+                            for cityChild in stateSnap.children{
+                                if let citySnap = cityChild as? DataSnapshot{
+                                    let cityId = citySnap.key
+                                    // Foodz
+                                    for foodChild in citySnap.children{
+                                        if let foodSnap = foodChild as? DataSnapshot{
+                                            let foodId = foodSnap.key
+                                            
+                                            let dbPath = countryId + "/" + stateId + "/" + cityId + "/" + foodId + "/" + userId + "/" + deviceModel
+                                            updateObject["rankings-followers-devices/" + dbPath] = deviceToken
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }// states
+                }
+            }
+            dbRootRef.updateChildValues(updateObject)
+        })
     }
     
     // Delete user
@@ -172,22 +208,37 @@ class SomeApp{
     
     // Follow and unfollow rankings
     static func followRanking(userId: String, city: City, foodId: String){
+        // Get my devices
+        var updateObject:[String:Any] = [:]
         let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
         let userFollowingPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
-        let userFollowingRankingRef = SomeApp.dbUserFollowingRankings.child(userFollowingPath)
-        let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
-        userFollowingRankingRef.setValue(true)
-        followingRankingDBReference.setValue(true)
+        updateObject["user-following-rankings/" + userFollowingPath] = true
+        updateObject["rankings-followers/" + dbPath] = true
         
-        
+        // Add the devices (if any)
+        SomeApp.dbUserDevices.child(userId).observeSingleEvent(of: .value, with: {deviceSnap in
+            if deviceSnap.exists(){
+                for child in deviceSnap.children{
+                    if let device = child as? DataSnapshot{
+                        updateObject["rankings-followers-devices/" + dbPath + "/" + device.key] = device.value
+                    }
+                }
+            }
+            // Atomic comit
+            dbRootRef.updateChildValues(updateObject)
+        })
     }
+    
+    
     static func unfollowRanking(userId: String, city: City, foodId: String){
+        var updateObject:[String:Any] = [:]
         let dbPath = city.country + "/" + city.state + "/" + city.key + "/" + foodId + "/" + userId
         let userFollowingPath = userId + "/" + city.country + "/" + city.state + "/" + city.key + "/" + foodId
-        let followingRankingDBReference = SomeApp.dbRankingFollowers.child(dbPath)
-        let userFollowingRankingRef = SomeApp.dbUserFollowingRankings.child(userFollowingPath)
-        followingRankingDBReference.removeValue()
-        userFollowingRankingRef.removeValue()
+        updateObject["user-following-rankings/" + userFollowingPath] = NSNull()
+        updateObject["rankings-followers/" + dbPath] = NSNull()
+        updateObject["rankings-followers-devices/" + dbPath] = NSNull()
+        
+        dbRootRef.updateChildValues(updateObject)
     }
     
     // Add a new city to user (country name and state name will be added with functions)

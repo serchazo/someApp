@@ -323,7 +323,6 @@ class MyRanks: UIViewController {
     func updateTablewithRanking(userId: String){
         let pathId = userId + "/"+self.currentCity.country+"/"+self.currentCity.state+"/"+self.currentCity.key
         
-        print(pathId)
         rankingRefHandle.append((handle: SomeApp.dbUserRankings.child(pathId).observe(.value, with: {snapshot in
             //
             var tmpRankings: [Ranking] = []
