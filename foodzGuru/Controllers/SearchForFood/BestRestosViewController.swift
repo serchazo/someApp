@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 class BestRestosViewController: UIViewController {
     private static var showRestoDetailSegue = "showRestoDetail"
@@ -27,6 +28,7 @@ class BestRestosViewController: UIViewController {
     //Handlers
     private var rankingFollowersHandle:[(handle:UInt, dbPath:String)]=[]
     private var restoPointsHandle:[(handle:UInt, dbPath:String)]=[]
+    private var restoFollowersNbHandle:[(handle:UInt, dbPath:String)]=[]
 
     // Ad stuff
     private var bannerView: GADBannerView!
@@ -49,10 +51,17 @@ class BestRestosViewController: UIViewController {
     }
     
     @IBOutlet weak var restoRankTableHeader: UIView!
-    @IBOutlet weak var tableHeaderFoodIcon: UILabel!
+    private var photoURL: URL!{
+        didSet{
+            fetchImage()
+        }
+    }
+    @IBOutlet weak var foodImageView: UIImageView!
     @IBOutlet weak var tableHeaderFoodName: UILabel!
     @IBOutlet weak var tableHeaderDescription: UILabel!
     @IBOutlet weak var followButton: UIButton!
+    @IBOutlet weak var followersButton: UIButton!
+    
     @IBOutlet weak var adView: UIView!
     
     
@@ -101,6 +110,10 @@ class BestRestosViewController: UIViewController {
         for (handle,dbPath) in rankingFollowersHandle{
             SomeApp.dbRankingFollowers.child(dbPath).removeObserver(withHandle: handle)
         }
+        //restoFollowersHandle
+        for (handle,dbPath) in restoFollowersNbHandle{
+            SomeApp.dbRankingFollowersNb.child(dbPath).removeObserver(withHandle: handle)
+        }
         
         
         bannerView.delegate = nil
@@ -113,25 +126,27 @@ class BestRestosViewController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         // Title and description
+        tableHeaderFoodName.font = UIFont.preferredFont(forTextStyle: .title1)
         tableHeaderFoodName.text = "Best \(currentFood.name) places in \(currentCity.name)"
         tableHeaderDescription.font = UIFont.preferredFont(forTextStyle: .footnote)
         tableHeaderDescription.text = SomeApp.getPhrase()
         
-        // Food Icon
-        tableHeaderFoodIcon.layer.cornerRadius = 0.5 * tableHeaderFoodIcon.frame.width
-        tableHeaderFoodIcon.layer.borderColor = SomeApp.themeColor.cgColor
-        tableHeaderFoodIcon.layer.borderWidth = 1.0
-        tableHeaderFoodIcon.layer.masksToBounds = true
-        tableHeaderFoodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
-        tableHeaderFoodIcon.text = currentFood.icon
+        // Prepare the file first
+        let storagePath = currentCity.country + "/" + currentFood.key + ".png"
+        let imageRef = SomeApp.storageFoodRef.child(storagePath)
+        // Fetch the download URL
+        imageRef.downloadURL { url, error in
+          if let error = error {
+            self.foodImageView.image = UIImage(named: "defaultBest")
+            print(error.localizedDescription)
+          } else {
+            self.photoURL = url
+          }
+        }
         
         // Configure follow button
         followButton.backgroundColor = .white
         followButton.setTitleColor(SomeApp.themeColor, for: .normal)
-        followButton.layer.cornerRadius = 15
-        followButton.layer.borderColor = SomeApp.themeColor.cgColor
-        followButton.layer.borderWidth = 1.0
-        followButton.layer.masksToBounds = true
         
         // We need to verify if the user is already following the ranking
         let dbPath = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + user.uid
@@ -147,6 +162,28 @@ class BestRestosViewController: UIViewController {
             self.followButton.isHidden = false
             self.followButton.isEnabled = true
         }), dbPath:dbPath))
+        
+        // Followers button
+        let dbPathNb = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
+        restoFollowersNbHandle.append((handle: SomeApp.dbRankingFollowersNb.child(dbPathNb).observe(.value, with: {snapshot in
+            if snapshot.exists(),
+                let followers = snapshot.value as? Int {
+                self.followersButton.setTitle("Followers: \(followers)", for: .normal)
+            }else{
+                self.followersButton.setTitle("Followers: 0", for: .normal)
+            }
+        }),dbPath: dbPathNb))
+    }
+    
+    // MARK: Fetch image from URL
+    private func fetchImage(){
+        foodImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+        foodImageView.sd_setImage(
+        with: photoURL,
+        placeholderImage: nil,//UIImage(named: "defaultBest"),
+        options: [],
+            completed: nil)
+
     }
     
     // MARK: update from database

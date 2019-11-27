@@ -145,72 +145,76 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="dXF-jJ-etd">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="291"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="434"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NF0-4v-tkI">
-                                            <rect key="frame" x="265" y="161" width="129" height="30"/>
-                                            <state key="normal" title="Follow">
-                                                <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            </state>
-                                        </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Best restos in City" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0GL-Y1-tFt">
-                                            <rect key="frame" x="121.5" y="20" width="171" height="30"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="30" id="LCL-2C-tcL"/>
-                                            </constraints>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Best restos in City" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0GL-Y1-tFt">
+                                            <rect key="frame" x="20" y="20" width="374" height="26.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0y-zN-cPY">
-                                            <rect key="frame" x="186" y="58" width="42" height="25"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="25" id="g2q-11-scM"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Something funny..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k0y-zN-cPY">
+                                            <rect key="frame" x="20" y="54.5" width="374" height="24.5"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="🍽" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SL4-ed-zj0">
-                                            <rect key="frame" x="157" y="91" width="100" height="100"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="100" id="5Cv-aX-wtP"/>
-                                                <constraint firstAttribute="width" secondItem="SL4-ed-zj0" secondAttribute="height" multiplier="1:1" id="6P1-yJ-flk"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Sml-Bj-hcO">
+                                            <rect key="frame" x="132" y="87" width="150" height="28"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RBV-uH-zZt">
+                                                    <rect key="frame" x="0.0" y="0.0" width="71" height="28"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <state key="normal" title="Followers: -">
+                                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    </state>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NF0-4v-tkI">
+                                                    <rect key="frame" x="79" y="0.0" width="71" height="28"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <state key="normal" title="Follow">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </state>
+                                                </button>
+                                            </subviews>
+                                        </stackView>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="api-MA-1vh">
-                                            <rect key="frame" x="47" y="218" width="320" height="50"/>
+                                            <rect key="frame" x="47" y="364" width="320" height="50"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="320" id="2Ob-R5-af0"/>
                                                 <constraint firstAttribute="height" constant="50" id="nG5-ro-cno"/>
                                             </constraints>
                                         </view>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ecb-UU-kid">
+                                            <rect key="frame" x="0.0" y="123" width="414" height="233"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="Ecb-UU-kid" secondAttribute="height" multiplier="16:9" id="OyA-qa-lqa"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstItem="NF0-4v-tkI" firstAttribute="bottom" secondItem="SL4-ed-zj0" secondAttribute="bottom" id="01F-lY-Tpe"/>
-                                        <constraint firstAttribute="trailing" secondItem="NF0-4v-tkI" secondAttribute="trailing" constant="20" symbolic="YES" id="JdB-EX-XgG"/>
-                                        <constraint firstItem="k0y-zN-cPY" firstAttribute="top" secondItem="0GL-Y1-tFt" secondAttribute="bottom" constant="8" symbolic="YES" id="Ncv-uP-Bwe"/>
-                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="api-MA-1vh" secondAttribute="bottom" constant="20" symbolic="YES" id="bAA-kX-Nff"/>
-                                        <constraint firstItem="k0y-zN-cPY" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="fqT-dQ-IQV"/>
-                                        <constraint firstItem="SL4-ed-zj0" firstAttribute="top" secondItem="k0y-zN-cPY" secondAttribute="bottom" constant="8" symbolic="YES" id="kah-zH-61z"/>
-                                        <constraint firstItem="0GL-Y1-tFt" firstAttribute="top" secondItem="dXF-jJ-etd" secondAttribute="top" constant="20" symbolic="YES" id="sCS-Oh-MXx"/>
-                                        <constraint firstItem="0GL-Y1-tFt" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="sSN-xj-eqr"/>
-                                        <constraint firstItem="NF0-4v-tkI" firstAttribute="leading" secondItem="SL4-ed-zj0" secondAttribute="trailing" constant="8" symbolic="YES" id="t0q-bL-jiZ"/>
-                                        <constraint firstItem="SL4-ed-zj0" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="tJ1-Si-tRT"/>
-                                        <constraint firstItem="SL4-ed-zj0" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="tPe-Wy-tZa"/>
-                                        <constraint firstItem="api-MA-1vh" firstAttribute="top" secondItem="SL4-ed-zj0" secondAttribute="bottom" multiplier="1.1" constant="8" symbolic="YES" id="xim-iW-Jbe"/>
-                                        <constraint firstItem="api-MA-1vh" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="xpg-Rl-QtE"/>
+                                        <constraint firstAttribute="trailing" secondItem="k0y-zN-cPY" secondAttribute="trailing" constant="20" symbolic="YES" id="2oO-Cg-AhI"/>
+                                        <constraint firstItem="api-MA-1vh" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="366-vQ-ZVl"/>
+                                        <constraint firstItem="0GL-Y1-tFt" firstAttribute="top" secondItem="dXF-jJ-etd" secondAttribute="top" constant="20" symbolic="YES" id="AT6-xN-Df3"/>
+                                        <constraint firstAttribute="trailing" secondItem="0GL-Y1-tFt" secondAttribute="trailing" constant="20" symbolic="YES" id="F0q-ZK-KQ3"/>
+                                        <constraint firstItem="0GL-Y1-tFt" firstAttribute="leading" secondItem="dXF-jJ-etd" secondAttribute="leading" constant="20" symbolic="YES" id="GGH-j8-y3A"/>
+                                        <constraint firstAttribute="trailing" secondItem="Ecb-UU-kid" secondAttribute="trailing" id="MK4-hK-TaS"/>
+                                        <constraint firstItem="Sml-Bj-hcO" firstAttribute="top" secondItem="k0y-zN-cPY" secondAttribute="bottom" constant="8" symbolic="YES" id="NRC-wq-gsF"/>
+                                        <constraint firstItem="k0y-zN-cPY" firstAttribute="top" secondItem="0GL-Y1-tFt" secondAttribute="bottom" constant="8" symbolic="YES" id="dJM-Wo-9Xf"/>
+                                        <constraint firstItem="Ecb-UU-kid" firstAttribute="top" secondItem="Sml-Bj-hcO" secondAttribute="bottom" constant="8" symbolic="YES" id="lD2-gb-Ogl"/>
+                                        <constraint firstItem="Sml-Bj-hcO" firstAttribute="centerX" secondItem="dXF-jJ-etd" secondAttribute="centerX" id="lql-eh-rIu"/>
+                                        <constraint firstItem="api-MA-1vh" firstAttribute="top" secondItem="Ecb-UU-kid" secondAttribute="bottom" constant="8" symbolic="YES" id="o2r-Oa-hob"/>
+                                        <constraint firstAttribute="bottom" secondItem="api-MA-1vh" secondAttribute="bottom" constant="20" symbolic="YES" id="pXS-Id-Oti"/>
+                                        <constraint firstItem="Ecb-UU-kid" firstAttribute="leading" secondItem="dXF-jJ-etd" secondAttribute="leading" id="tsl-R8-llc"/>
+                                        <constraint firstItem="k0y-zN-cPY" firstAttribute="leading" secondItem="dXF-jJ-etd" secondAttribute="leading" constant="20" symbolic="YES" id="yLn-S9-joR"/>
                                     </constraints>
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RestoRankCell" id="KAr-qW-bOI" customClass="RestoRankTableViewCell" customModule="foodz_Guru" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="319" width="414" height="134.5"/>
+                                        <rect key="frame" x="0.0" y="462" width="414" height="134.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KAr-qW-bOI" id="Rm7-VE-ZFW">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="134.5"/>
@@ -294,10 +298,11 @@
                     <connections>
                         <outlet property="adView" destination="api-MA-1vh" id="Ffw-9l-j0w"/>
                         <outlet property="followButton" destination="NF0-4v-tkI" id="Yxe-CR-sOQ"/>
+                        <outlet property="followersButton" destination="RBV-uH-zZt" id="KxN-Fl-3SU"/>
+                        <outlet property="foodImageView" destination="Ecb-UU-kid" id="yAM-BI-MHT"/>
                         <outlet property="restoRankTableHeader" destination="dXF-jJ-etd" id="7Nu-KQ-AE6"/>
                         <outlet property="restoRankTableView" destination="sSG-S1-Kb7" id="xV6-r1-yo8"/>
                         <outlet property="tableHeaderDescription" destination="k0y-zN-cPY" id="v4p-u4-1EY"/>
-                        <outlet property="tableHeaderFoodIcon" destination="SL4-ed-zj0" id="BSY-fh-87Y"/>
                         <outlet property="tableHeaderFoodName" destination="0GL-Y1-tFt" id="0PU-eq-EhG"/>
                         <outlet property="tableView" destination="sSG-S1-Kb7" id="D5O-IA-50e"/>
                     </connections>
@@ -2787,7 +2792,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="K5s-9q-z2E"/>
         <segue reference="1Yi-jY-eDW"/>
-        <segue reference="B4g-Yk-vFu"/>
+        <segue reference="YoF-pa-6fi"/>
         <segue reference="6ci-Z0-cEd"/>
         <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>

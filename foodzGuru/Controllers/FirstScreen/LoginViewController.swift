@@ -84,6 +84,10 @@ class LoginViewController: UIViewController {
                 SomeApp.dbUserData.child(user!.uid).observeSingleEvent(of: .value, with: {snapshot in
                     // User data is already created
                     if snapshot.exists(){
+                        // Verify if APN Token was changed
+                        if SomeApp.tokenChangedFlag{
+                            SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: SomeApp.deviceToken)
+                        }
                         self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
                     }else{
                         self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)

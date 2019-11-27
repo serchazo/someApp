@@ -30,6 +30,7 @@
 		34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34387AFC2335AFF600B4CC5B /* TimelineCell.swift */; };
 		344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */; };
 		344EA299232E4092001F1FBC /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EA298232E4092001F1FBC /* HomeViewController.swift */; };
+		344FAFB0238D1DE80029F5C3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 344FAFAF238D1DE80029F5C3 /* GoogleService-Info.plist */; };
 		34507DFE2345AB4A00BD7B3C /* EditReviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */; };
 		34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */; };
 		34574A84232DD8B300CE09A7 /* UnifiedNativeAdCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */; };
@@ -62,7 +63,6 @@
 		34DA7EB3234AC2DF00EBD360 /* HomeCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */; };
 		34DA7EB5234AEF4900EBD360 /* AddRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB4234AEF4900EBD360 /* AddRanking.swift */; };
 		34DA7EB7234B29D400EBD360 /* MyCities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB6234B29D400EBD360 /* MyCities.swift */; };
-		34DC9D342367056F0035EE48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34DC9D332367056F0035EE48 /* GoogleService-Info.plist */; };
 		34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */; };
 		34F197AB2320BB38007D556F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F197AA2320BB38007D556F /* LoginViewController.swift */; };
 		34F197B22320DB91007D556F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 34F197B12320DB91007D556F /* Podfile */; };
@@ -102,6 +102,7 @@
 		34387AFC2335AFF600B4CC5B /* TimelineCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimelineCell.swift; path = foodzGuru/Controllers/Home/TimelineCell.swift; sourceTree = SOURCE_ROOT; };
 		344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSelectorHeader.swift; sourceTree = "<group>"; };
 		344EA298232E4092001F1FBC /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		344FAFAF238D1DE80029F5C3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditReviewCell.xib; sourceTree = "<group>"; };
 		34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReviewCell.swift; sourceTree = "<group>"; };
 		34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UnifiedNativeAdCell.xib; sourceTree = "<group>"; };
@@ -137,7 +138,6 @@
 		34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithImage.swift; sourceTree = "<group>"; };
 		34DA7EB4234AEF4900EBD360 /* AddRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRanking.swift; sourceTree = "<group>"; };
 		34DA7EB6234B29D400EBD360 /* MyCities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCities.swift; sourceTree = "<group>"; };
-		34DC9D332367056F0035EE48 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRanksEditDescriptionCell.swift; sourceTree = "<group>"; };
 		34F197AA2320BB38007D556F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		34F197B12320DB91007D556F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -236,7 +236,7 @@
 				341C754F231651E200BA26D9 /* LocationManager.swift */,
 				341C7551231684F200BA26D9 /* MKPlacemark+Extension.swift */,
 				346FE0E8230FC632000556EB /* ItemChooserViewController.swift */,
-				34DC9D332367056F0035EE48 /* GoogleService-Info.plist */,
+				344FAFAF238D1DE80029F5C3 /* GoogleService-Info.plist */,
 				348EBFD9230E3E8C008026A0 /* Info.plist */,
 				348EBFDF230E4080008026A0 /* Supporting Files */,
 			);
@@ -402,7 +402,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34DC9D342367056F0035EE48 /* GoogleService-Info.plist in Resources */,
 				34574A84232DD8B300CE09A7 /* UnifiedNativeAdCell.xib in Resources */,
 				34F197B22320DB91007D556F /* Podfile in Resources */,
 				34387AFB2335ADE800B4CC5B /* TimelineCell.xib in Resources */,
@@ -416,6 +415,7 @@
 				346F8D2A2376563600AD7D29 /* EditRankingTitleCell.xib in Resources */,
 				348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */,
 				348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */,
+				344FAFB0238D1DE80029F5C3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,14 +668,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sergioortiz.foodzguru;
 				PRODUCT_NAME = foodz.Guru;
 				SWIFT_VERSION = 5.0;
@@ -690,14 +690,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sergioortiz.foodzguru;
 				PRODUCT_NAME = foodz.Guru;
 				SWIFT_VERSION = 5.0;

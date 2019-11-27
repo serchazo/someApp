@@ -155,29 +155,8 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             }
         }
         
-        // Image cells
-        if foodList[indexPath.row].imageURL != "",
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCellImage", for: indexPath) as? SearchFoodImageCell{
-            
-            // Decorate first
-            FoodzLayout.configureProfilePicture(imageView: cell.foodImage)
-            
-            cell.foodImage.sd_setImage(
-            with: URL(string: foodList[indexPath.row].imageURL),
-            placeholderImage: UIImage(named: "userdefault"),
-            options: [],
-            completed: nil)
-            
-            //cell.cellIcon.text = foodList[indexPath.row].icon
-            cell.foodNameLabel.textColor = SomeApp.themeColor
-            cell.foodNameLabel.text = foodList[indexPath.row].name
-            
-            return cell
-            
-        }
-        
         // Icon cells
-        else if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
             
             // Decorate first
             cell.cellIcon.layer.borderColor = SomeApp.themeColor.cgColor

@@ -23,6 +23,7 @@ class SomeApp{
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
+    static let dbUserDevices:DatabaseReference = dbRootRef.child("user-devices")
     static let dbUserPointsMultiplier:DatabaseReference = dbRootRef.child("user-pointsmultiplier")
     static let dbUserFollowers:DatabaseReference = dbRootRef.child("user-followers")
     static let dbUserFollowing:DatabaseReference = dbRootRef.child("user-following")
@@ -48,6 +49,7 @@ class SomeApp{
     
     //rankings
     static let dbRankingFollowers:DatabaseReference = dbRootRef.child("rankings-followers")
+    static let dbRankingFollowersNb:DatabaseReference = dbRootRef.child("rankings-followers-nb")
     
     //geography
     static let dbGeography:DatabaseReference = dbRootRef.child("geography")
@@ -57,6 +59,7 @@ class SomeApp{
     // MARK: storage
     static let storageRef = Storage.storage().reference()
     static let storageUsersRef = storageRef.child("users")
+    static let storageFoodRef = storageRef.child("food")
     
     // Hex code: #614051, RGB: (82,27,146)
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
@@ -67,6 +70,10 @@ class SomeApp{
     // Test ads
     //static let adNativeUnitID = "ca-app-pub-3940256099942544/3986624511"
     //static let adBAnnerUnitID = "ca-app-pub-3940256099942544/2934735716"
+    
+    // APN stuff
+    static var deviceToken:String!
+    static var tokenChangedFlag:Bool = false
     
     // Prod ads
     static let adBAnnerUnitID = "ca-app-pub-5723552712049473/6238131752"
@@ -89,11 +96,15 @@ class SomeApp{
     }
     
     // MARK: User timeline
-    static func createUserFirstLogin(userId: String, username: String, bio: String, defaultCity:String, photoURL: String = ""){
+    static func createUserFirstLogin(userId: String, username: String, bio: String, defaultCity:String, photoURL: String = "", deviceToken:String = ""){
         let userDataDBRef = dbUserData.child(userId)
         // Transform the data to AnyObject
         let dataToWrite = [ "nickname" : username, "bio" : bio, "default" : defaultCity, "photourl": photoURL]
         userDataDBRef.setValue(dataToWrite)
+        
+        // Create the token ID
+        let deviceModel = SomeApp.getDeviceModel()
+        dbUserDevices.child(userId).child(deviceModel).setValue(deviceToken)
         
         // Create the first timeline post
         let timestamp = NSDate().timeIntervalSince1970 * 1000
@@ -118,6 +129,12 @@ class SomeApp{
     static func updateBio(userId: String, bio: String){
         let userDataDBRef = dbUserData.child(userId).child("bio")
         userDataDBRef.setValue(bio)
+    }
+    
+    // Update device token
+    static func updateDeviceToken(userId: String, deviceToken: String){
+        let deviceModel = SomeApp.getDeviceModel()
+        dbUserDevices.child(userId).child(deviceModel).setValue(deviceToken)
     }
     
     // Delete user
@@ -217,6 +234,17 @@ class SomeApp{
     static func unblockUser(userId:String, blockedUserId: String){
         let dbRef = SomeApp.dbUserBlocked.child(userId)
         dbRef.child(blockedUserId).setValue(NSNull())
+    }
+    
+    // MARK: helper funcs
+    static func getDeviceModel() -> String{
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        return machineMirror.children.reduce("") { identifier, element in
+          guard let value = element.value as? Int8, value != 0 else { return identifier }
+          return identifier + String(UnicodeScalar(UInt8(value)))
+        }
     }
     
     // MARK: ranking functions

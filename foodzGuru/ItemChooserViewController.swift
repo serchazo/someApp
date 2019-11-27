@@ -42,6 +42,8 @@ class ItemChooserViewController: UIViewController {
         // Do any additional setup after loading the view.
         cityTable.delegate = self
         cityTable.dataSource = self
+        // For avoiding drawing the extra lines
+        cityTable.tableFooterView = UIView()
         
         getCountryListFromDB()
         if firstLoginFlag{
