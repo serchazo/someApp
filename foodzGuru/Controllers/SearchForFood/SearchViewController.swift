@@ -8,14 +8,19 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 class SearchViewController: UIViewController {
-    // TODO : to change later on.  Current city should be read from properties
+    
+    
     private var currentCity:City!
     
     private static let screenSize = UIScreen.main.bounds.size
     private let cityChooserSegueID = "cityChooser"
     private let foodChosen = "GoNinjaGo"
+    private let goNinjaGoImage = "GoNinjaGoImage"
+    
+    private let cellImageIdentifier = "FoodCellImage"
     
     private let defaults = UserDefaults.standard
     //Instance vars
@@ -27,26 +32,22 @@ class SearchViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Get the logged in user
+        Auth.auth().addStateDidChangeListener {auth, user in
+            guard let user = user else {return}
+            self.user = user
+            
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Get the logged in user
-        Auth.auth().addStateDidChangeListener {auth, user in
-            guard let user = user else {return}
-            self.user = user
-        }
-        
-        currentCity = self.getCurrentCityFromDefaults()
+        self.currentCity = self.getCurrentCityFromDefaults()
+        self.loadFoodTypesFromDB()
         
         cityNavBarButton.title = currentCity.name
-        
-        // Do any additional setup after loading the view.
-        let layout = foodSelectorCollection.collectionViewLayout as? CustomCollectionViewLayout
-        layout?.delegate = self
-        
-        loadFoodTypesFromDB()
+        foodSelectorCollection.collectionViewLayout = generateLayout()
     }
 
     //
@@ -59,6 +60,7 @@ class SearchViewController: UIViewController {
         }
     }
 
+    // MARK: get stuff from Database
     func loadFoodTypesFromDB(){
         // Get the list from the Database (an observer)
         SomeApp.dbFoodTypeRoot.child(currentCity.country).observeSingleEvent(of: .value, with: {snapshot in
@@ -68,12 +70,14 @@ class SearchViewController: UIViewController {
             for child in snapshot.children{
                 if let childSnapshot = child as? DataSnapshot,
                     let foodItem = FoodType(snapshot: childSnapshot){
+                    
                     tmpFoodList.append(foodItem)
                 }
                 // Use the trick
                 count += 1
                 if count == snapshot.childrenCount{
                     self.foodList = tmpFoodList
+                    self.getImages()
                     self.foodSelectorCollection.reloadData()
                     self.foodSelectorCollection.collectionViewLayout.invalidateLayout()
                     
@@ -81,6 +85,29 @@ class SearchViewController: UIViewController {
             }
             
         })
+    }
+    
+    private func getImages(){
+        guard foodList.count > 0 else{return}
+        
+        for food in foodList{
+            // [START] Get the image
+            let storagePath = self.currentCity.country + "/" + food.key + ".png"
+            let imageRef = SomeApp.storageFoodRef.child(storagePath)
+            // Fetch the download URL
+            imageRef.downloadURL { url, error in
+              if let error = error {
+                print(error.localizedDescription)
+              } else {
+                food.imageURL = url!
+                let index = self.foodList.firstIndex(where: {$0.key == food.key})
+                self.foodSelectorCollection.reloadItems(at: [IndexPath(item: index!, section: 0)])
+              }
+            }
+            // [END] Get the image
+            
+        }
+        
     }
     
     
@@ -105,6 +132,16 @@ class SearchViewController: UIViewController {
             switch(identifier){
             case foodChosen:
                 if let cell = sender as? SearchFoodCell,
+                    //Don't forget the outlet colllectionView to avoid the ambiguous ref
+                    let indexPath = collectionView.indexPath(for: cell),
+                    let seguedDestinationVC = segue.destination as? BestRestosViewController{
+                    seguedDestinationVC.currentFood = foodList[indexPath.row]
+                    seguedDestinationVC.currentCity = currentCity!
+                }
+            // with image
+            case goNinjaGoImage:
+                // with image
+                if let cell = sender as? SearchFoodImageCell,
                     //Don't forget the outlet colllectionView to avoid the ambiguous ref
                     let indexPath = collectionView.indexPath(for: cell),
                     let seguedDestinationVC = segue.destination as? BestRestosViewController{
@@ -154,23 +191,41 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             }
         }
         
-        // Icon cells
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+        // Image cells
+        if foodList[indexPath.row].imageURL != nil,
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellImageIdentifier, for: indexPath) as? SearchFoodImageCell {
             
-            // Decorate first
-            cell.cellIcon.layer.borderColor = SomeApp.themeColor.cgColor
-            cell.cellIcon.layer.borderWidth = 1.0
-            cell.cellIcon.layer.cornerRadius = cell.cellIcon.layer.frame.width / 2
-            cell.cellIcon.clipsToBounds = true
+            // Image
+            cell.foodImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+            cell.foodImage!.sd_setImage(
+                with: foodList[indexPath.row].imageURL,
+                placeholderImage: nil,//UIImage(named: "defaultBest"),
+                options: [],
+                completed: nil)
             
-            cell.cellIcon.text = foodList[indexPath.row].icon
-            
-            cell.cellLabel.textColor = SomeApp.themeColor
-            cell.cellLabel.text = foodList[indexPath.row].name
-            
+            // Label
+            cell.foodNameLabel.textColor = .black
+            cell.foodNameLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            cell.foodNameLabel.text = foodList[indexPath.row].name
             
             return cell
-        }else{
+        }
+        // Icon cells
+        else if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+            
+            // Decorate first
+            cell.cellIcon.backgroundColor = .white
+            cell.cellIcon.text = foodList[indexPath.row].icon
+            
+            cell.cellLabel.textColor = .black
+            cell.cellLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            cell.cellLabel.text = foodList[indexPath.row].name
+            
+            return cell
+        }
+        
+        // Cannot
+        else{
             fatalError("No cell")
         }
     }
@@ -190,13 +245,102 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
     
 }
 
-//MARK: Layout Delegate
-extension SearchViewController: CustomCollectionViewDelegate {
-    func theNumberOfItemsInCollectionView() -> Int {
-        guard foodList.count > 0 else {
-            return 1
-        }
-        return foodList.count
+// MARK: Layout stuff
+extension SearchViewController{
+    // snippet from : https://www.raywenderlich.com/5436806-modern-collection-views-with-compositional-layouts
+    func generateLayout() -> UICollectionViewLayout {
+        
+        // Insets
+        let insets = NSDirectionalEdgeInsets(
+            top: 2,
+            leading: 2,
+            bottom: 2,
+            trailing: 2)
+      
+        // We have three row styles
+        // Style 1: 'Full': A full width photo
+        // Style 2: 'Main with pair': A 2/3 width photo with two 1/3 width photos stacked vertically
+        // Style 3: 'Triplet': Three 1/3 width photos stacked horizontally
+        
+        // I. First type. Full
+        let fullPhotoItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(3/4)))
+        
+        fullPhotoItem.contentInsets = insets
+      
+        // II. Second type: Main with pair
+        let mainItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(2/3),
+                heightDimension: .fractionalHeight(1.0)))
+        
+        mainItem.contentInsets = insets
+      
+        // Pair items are inside a group
+        let pairItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalHeight(0.5)))
+        
+        pairItem.contentInsets = insets
+      
+        let trailingGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1/3),
+                heightDimension: .fractionalHeight(1.0)),
+            subitem: pairItem,
+            count: 2)
+      
+        // Then the group
+        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(4/8)),
+                //heightDimension: .fractionalWidth(4/9)),
+            subitems: [mainItem, trailingGroup])
+      
+        // III. Third type. Twins
+        let twinItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(4/8),
+                heightDimension: .fractionalHeight(1.0)))
+        
+        twinItem.contentInsets = insets
+        
+        let twinGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(3/8)),
+            subitems: [twinItem, twinItem])
+      
+        // IV. Fourth type. Reversed main with pair
+        /*
+        let mainWithPairReversedGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(4/9)),
+            subitems: [trailingGroup, mainItem])
+       */
+        
+        // V. Finally
+        let nestedGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                //heightDimension: .fractionalWidth(16/9)),
+            heightDimension: .fractionalWidth(13/8)),
+            subitems: [
+                twinGroup,
+                fullPhotoItem,
+                mainWithPairGroup
+            ]
+        )
+
+        let section = NSCollectionLayoutSection(group: nestedGroup)
+        // Return the layout
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        
+        return layout
     }
-    
 }

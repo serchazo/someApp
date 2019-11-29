@@ -47,6 +47,7 @@
 		34873A8E2333157900463AFE /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8D2333157900463AFE /* City.swift */; };
 		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
 		348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348919A02387D2520020934F /* SearchFoodImageCell.swift */; };
+		348B168C238FB71400FBF31A /* SearchFoodLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B168B238FB71400FBF31A /* SearchFoodLayout.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
 		348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD1230E3E8A008026A0 /* Main.storyboard */; };
 		348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD4230E3E8C008026A0 /* Assets.xcassets */; };
@@ -119,6 +120,7 @@
 		34873A8D2333157900463AFE /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		348919A02387D2520020934F /* SearchFoodImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodImageCell.swift; sourceTree = "<group>"; };
+		348B168B238FB71400FBF31A /* SearchFoodLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodLayout.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		348EBFCD230E3E8A008026A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		348EBFD2230E3E8A008026A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
 				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
+				348B168B238FB71400FBF31A /* SearchFoodLayout.swift */,
 				344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */,
 				34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */,
 				346FE0E6230F70E9000556EB /* BestRestosViewController.swift */,
@@ -518,6 +521,7 @@
 				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,
 				341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */,
+				348B168C238FB71400FBF31A /* SearchFoodLayout.swift in Sources */,
 				344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */,
 				34942D87234DCFAF001DA068 /* HomeCellWithIcon.swift in Sources */,
 			);
@@ -668,9 +672,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -690,9 +695,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

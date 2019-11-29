@@ -14,15 +14,14 @@ class FoodType{
     let key: String
     let name: String
     let icon: String
-    let imageURL:String
+    var imageURL:URL! //This is a helper value, don't put in the -> Any
     
     
-    init(icon: String, name: String, key: String = "", imageURL:String = "") {
+    init(icon: String, name: String, key: String = "") {
         self.ref = nil
         self.key = key
         self.icon = icon
         self.name = name
-        self.imageURL = imageURL
     }
     
     init?(snapshot: DataSnapshot){
@@ -36,10 +35,6 @@ class FoodType{
         self.key = snapshot.key
         self.name = name
         self.icon = icon
-        
-        if let image = value["img"] as? String{
-            self.imageURL = image
-        }else{self.imageURL = ""}
         
     }
     

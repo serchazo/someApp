@@ -84,6 +84,21 @@ class LoginViewController: UIViewController {
                 SomeApp.dbUserData.child(user!.uid).observeSingleEvent(of: .value, with: {snapshot in
                     // User data is already created
                     if snapshot.exists(){
+                        // [START] temp code, upload device token
+                        SomeApp.dbUserDevices.child(user!.uid).observeSingleEvent(of: .value, with: {snap in
+                            if !snap.exists(){
+                                InstanceID.instanceID().instanceID { (result, error) in
+                                    if let error = error {
+                                        print("Error fetching remote instance ID: \(error)")
+                                    } else if let result = result {
+                                        SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: result.token)
+                                        //print("Remote instance ID token: \(result.token)")
+                                    }
+                                }
+                            }
+                        })
+                        // [END] temp code, upload device token
+                        
                         // Verify if APN Token was changed
                         if SomeApp.tokenChangedFlag{
                             SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: SomeApp.deviceToken)

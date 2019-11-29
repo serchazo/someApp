@@ -39,12 +39,12 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
         return collectionView.bounds.width - (insets.left + insets.right)
     }
     
-    //Setting the content size
+    // 2. Use the collectionViewContentSize method to return the overall size of the entire content area based on your initial calculations.
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
     }
     
-    //we override the prepare() method. This is where all our measurements take place.
+    // 1. se the prepareLayout method to perform the up-front calculations needed to provide layout information.  We override the prepare() method. This is where all our measurements take place.
     // called periodically, whenever we need to perform layout operations
     override func prepare() {
         // Calculate only if the cache is empty
@@ -130,6 +130,7 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
         
     }
     
+    // 3. Use the layoutAttributesForElementsInRect: method to return the attributes for cells and views that are in the specified rectangle.
     //Is called  to determine which items are visible in the given rect
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var visibleLayoutAttributes = [UICollectionViewLayoutAttributes]()
