@@ -117,7 +117,7 @@
                     <navigationItem key="navigationItem" title="Any cravings?" id="Wjm-Un-4Du">
                         <barButtonItem key="rightBarButtonItem" title="Singapore" id="QOc-vp-ZUY">
                             <connections>
-                                <segue destination="ktD-De-Nbc" kind="show" identifier="cityChooser" id="1Yi-jY-eDW"/>
+                                <segue destination="rRR-6u-4ST" kind="show" identifier="cityChooser" id="q3R-AJ-I6f"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -130,6 +130,85 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ix5-3i-Itx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2282.608695652174" y="-882.58928571428567"/>
+        </scene>
+        <!--Country Choser-->
+        <scene sceneID="eEf-yC-u35">
+            <objects>
+                <viewController id="rRR-6u-4ST" customClass="CountryChoser" customModule="foodz_Guru" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="odH-g8-uJp"/>
+                        <viewControllerLayoutGuide type="bottom" id="NNX-XE-b33"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4hf-Ah-Q1j">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ump-Gf-Sdv">
+                                <rect key="frame" x="20" y="56" width="374" height="703"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Qac-SC-xvb">
+                                    <size key="itemSize" width="265" height="257"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="countryCell" id="1nH-L2-61N" customClass="CountryChoserCell" customModule="foodz_Guru" customModuleProvider="target">
+                                        <rect key="frame" x="54.5" y="0.0" width="265" height="257"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="efB-MF-Oyd">
+                                            <rect key="frame" x="0.0" y="0.0" width="265" height="257"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lK8-ol-IWw">
+                                                    <rect key="frame" x="0.0" y="0.0" width="265" height="257"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="lK8-ol-IWw" secondAttribute="height" multiplier="4:3" id="nJl-2o-IWx"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nBp-Kz-OuN">
+                                                    <rect key="frame" x="0.0" y="0.0" width="265" height="257"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="nBp-Kz-OuN" firstAttribute="top" secondItem="efB-MF-Oyd" secondAttribute="top" id="0DQ-hq-p2S"/>
+                                                <constraint firstItem="lK8-ol-IWw" firstAttribute="top" secondItem="efB-MF-Oyd" secondAttribute="top" id="5Gt-J1-kYK"/>
+                                                <constraint firstAttribute="trailing" secondItem="nBp-Kz-OuN" secondAttribute="trailing" id="ApS-dA-JE6"/>
+                                                <constraint firstItem="nBp-Kz-OuN" firstAttribute="leading" secondItem="efB-MF-Oyd" secondAttribute="leading" id="OiM-VZ-O8U"/>
+                                                <constraint firstAttribute="trailing" secondItem="lK8-ol-IWw" secondAttribute="trailing" id="dYH-2Z-0gd"/>
+                                                <constraint firstItem="lK8-ol-IWw" firstAttribute="leading" secondItem="efB-MF-Oyd" secondAttribute="leading" id="kyN-FD-9bz"/>
+                                                <constraint firstAttribute="bottom" secondItem="nBp-Kz-OuN" secondAttribute="bottom" id="tkC-fa-lXG"/>
+                                                <constraint firstAttribute="bottom" secondItem="lK8-ol-IWw" secondAttribute="bottom" id="vWN-cx-r0C"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="265" height="257"/>
+                                        <connections>
+                                            <outlet property="countryImage" destination="lK8-ol-IWw" id="lYw-6s-yGu"/>
+                                            <outlet property="countryNameLabel" destination="nBp-Kz-OuN" id="JjY-6z-d0S"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="ump-Gf-Sdv" firstAttribute="leading" secondItem="4hf-Ah-Q1j" secondAttribute="leadingMargin" id="2HN-dU-sf8"/>
+                            <constraint firstItem="NNX-XE-b33" firstAttribute="top" secondItem="ump-Gf-Sdv" secondAttribute="bottom" id="6rG-UH-iUD"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ump-Gf-Sdv" secondAttribute="trailing" id="Gsi-1V-OXw"/>
+                            <constraint firstItem="ump-Gf-Sdv" firstAttribute="top" secondItem="odH-g8-uJp" secondAttribute="bottom" id="sia-EE-KhY"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="JDG-93-81C"/>
+                    <connections>
+                        <outlet property="countryChoserCollectionView" destination="ump-Gf-Sdv" id="76s-Pq-OU0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yKD-X1-owz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3786.9565217391309" y="-1049.3303571428571"/>
         </scene>
         <!--Best Restos View Controller-->
         <scene sceneID="jcc-Fz-1xY">
@@ -151,7 +230,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="434"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Best restos in City" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0GL-Y1-tFt">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Best restos in City" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0GL-Y1-tFt">
                                             <rect key="frame" x="20" y="20" width="374" height="26.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                                             <nil key="textColor"/>
@@ -312,7 +391,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3pv-qh-6SB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4498.5507246376819" y="-703.125"/>
+            <point key="canvasLocation" x="5257" y="-868"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="AT2-Sn-a71">
@@ -2794,7 +2873,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="K5s-9q-z2E"/>
-        <segue reference="1Yi-jY-eDW"/>
+        <segue reference="sT7-BS-49X"/>
         <segue reference="YoF-pa-6fi"/>
         <segue reference="6ci-Z0-cEd"/>
         <segue reference="sfx-Yu-7uu"/>

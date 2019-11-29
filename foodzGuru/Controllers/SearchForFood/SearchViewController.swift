@@ -149,7 +149,7 @@ class SearchViewController: UIViewController {
                     seguedDestinationVC.currentCity = currentCity!
                 }
             case cityChooserSegueID :
-                if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
+                if let seguedToCityChooser = segue.destination as? CountryChoser{
                     seguedToCityChooser.delegate = self
                     seguedToCityChooser.firstLoginFlag = false
                 }
@@ -159,9 +159,8 @@ class SearchViewController: UIViewController {
     }
 }
 
-
-// MARK: Extension for the property observer
-extension SearchViewController: ItemChooserViewDelegate{
+// MARK: get city from chose
+extension SearchViewController: CountryChooserViewDelegate{
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
         cityNavBarButton.title = city.name
@@ -197,6 +196,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             
             // Image
             cell.foodImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+            cell.foodImage.sd_imageTransition = .curlUp
             cell.foodImage!.sd_setImage(
                 with: foodList[indexPath.row].imageURL,
                 placeholderImage: nil,//UIImage(named: "defaultBest"),
@@ -211,16 +211,21 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             return cell
         }
         // Icon cells
-        else if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
+        else if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellImageIdentifier, for: indexPath) as? SearchFoodImageCell {
             
             // Decorate first
-            cell.cellIcon.backgroundColor = .white
-            cell.cellIcon.text = foodList[indexPath.row].icon
+            // Image
+            cell.foodImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
+            cell.foodImage!.sd_setImage(
+                with: foodList[indexPath.row].imageURL,
+                placeholderImage: UIImage(named: "defaultBest"),
+                options: [],
+                completed: nil)
             
-            cell.cellLabel.textColor = .black
-            cell.cellLabel.font = UIFont.preferredFont(forTextStyle: .body)
-            cell.cellLabel.text = foodList[indexPath.row].name
-            
+            // Label
+            cell.foodNameLabel.textColor = .black
+            cell.foodNameLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            cell.foodNameLabel.text = foodList[indexPath.row].name
             return cell
         }
         

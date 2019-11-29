@@ -61,6 +61,7 @@ class SomeApp{
     static let storageRef = Storage.storage().reference()
     static let storageUsersRef = storageRef.child("users")
     static let storageFoodRef = storageRef.child("food")
+    static let storageContryPicRef = storageRef.child("countries")
     
     // Hex code: #614051, RGB: (82,27,146)
     static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)

@@ -14,7 +14,6 @@
 		341705C723506210006123A7 /* FoodzLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341705C623506210006123A7 /* FoodzLayout.swift */; };
 		341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */; };
 		341C754C231622EA00BA26D9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 341C754B231622EA00BA26D9 /* Localizable.strings */; };
-		341C7550231651E200BA26D9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C754F231651E200BA26D9 /* LocationManager.swift */; };
 		341C7552231684F200BA26D9 /* MKPlacemark+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341C7551231684F200BA26D9 /* MKPlacemark+Extension.swift */; };
 		341DD15C232895E300102472 /* MyRestoDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD15B232895E300102472 /* MyRestoDetail.swift */; };
 		341DD15E2328EAD500102472 /* MyRestoMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD15D2328EAD500102472 /* MyRestoMap.swift */; };
@@ -48,6 +47,8 @@
 		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
 		348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348919A02387D2520020934F /* SearchFoodImageCell.swift */; };
 		348B168C238FB71400FBF31A /* SearchFoodLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B168B238FB71400FBF31A /* SearchFoodLayout.swift */; };
+		348B16922390FAE700FBF31A /* CountryChoser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16912390FAE700FBF31A /* CountryChoser.swift */; };
+		348B16942391030500FBF31A /* CountryChoserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16932391030500FBF31A /* CountryChoserCell.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
 		348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD1230E3E8A008026A0 /* Main.storyboard */; };
 		348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD4230E3E8C008026A0 /* Assets.xcassets */; };
@@ -87,7 +88,6 @@
 		341705C623506210006123A7 /* FoodzLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodzLayout.swift; sourceTree = "<group>"; };
 		341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsTableTableViewController.swift; sourceTree = "<group>"; };
 		341C754B231622EA00BA26D9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		341C754F231651E200BA26D9 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		341C7551231684F200BA26D9 /* MKPlacemark+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MKPlacemark+Extension.swift"; sourceTree = "<group>"; };
 		341DD15B232895E300102472 /* MyRestoDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRestoDetail.swift; sourceTree = "<group>"; };
 		341DD15D2328EAD500102472 /* MyRestoMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRestoMap.swift; sourceTree = "<group>"; };
@@ -121,6 +121,8 @@
 		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		348919A02387D2520020934F /* SearchFoodImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodImageCell.swift; sourceTree = "<group>"; };
 		348B168B238FB71400FBF31A /* SearchFoodLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodLayout.swift; sourceTree = "<group>"; };
+		348B16912390FAE700FBF31A /* CountryChoser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoser.swift; sourceTree = "<group>"; };
+		348B16932391030500FBF31A /* CountryChoserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoserCell.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		348EBFCD230E3E8A008026A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		348EBFD2230E3E8A008026A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -235,9 +237,10 @@
 				34351991235460F400A01CAA /* ChangeBioCell.xib */,
 				34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */,
 				348EBFD1230E3E8A008026A0 /* Main.storyboard */,
-				341C754F231651E200BA26D9 /* LocationManager.swift */,
 				341C7551231684F200BA26D9 /* MKPlacemark+Extension.swift */,
 				346FE0E8230FC632000556EB /* ItemChooserViewController.swift */,
+				348B16912390FAE700FBF31A /* CountryChoser.swift */,
+				348B16932391030500FBF31A /* CountryChoserCell.swift */,
 				344FAFAF238D1DE80029F5C3 /* GoogleService-Info.plist */,
 				348EBFD9230E3E8C008026A0 /* Info.plist */,
 				348EBFDF230E4080008026A0 /* Supporting Files */,
@@ -506,8 +509,10 @@
 				341DD162232A282200102472 /* UserDetails.swift in Sources */,
 				34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */,
 				34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */,
+				348B16922390FAE700FBF31A /* CountryChoser.swift in Sources */,
 				3465E53F2315033C00166699 /* MapSearchViewController.swift in Sources */,
 				34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */,
+				348B16942391030500FBF31A /* CountryChoserCell.swift in Sources */,
 				341705C723506210006123A7 /* FoodzLayout.swift in Sources */,
 				341DD1602329DF2200102472 /* Comment.swift in Sources */,
 				34351990235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift in Sources */,
@@ -517,7 +522,6 @@
 				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
 				341C754A23161F5E00BA26D9 /* SuggestionsTableTableViewController.swift in Sources */,
 				348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */,
-				341C7550231651E200BA26D9 /* LocationManager.swift in Sources */,
 				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,
 				341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */,
@@ -672,7 +676,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -695,7 +699,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
