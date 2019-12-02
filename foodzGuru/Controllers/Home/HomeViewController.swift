@@ -274,7 +274,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         guard somePost.count > 0 else {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Waiting for services"
-            let spinner = UIActivityIndicatorView(style: .gray)
+            let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
             

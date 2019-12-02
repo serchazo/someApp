@@ -109,7 +109,7 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
         guard foodList.count > 0 else {
             let tmpCell = collectionView.dequeueReusableCell(withReuseIdentifier: "Spinner", for: indexPath)
             if let cell = tmpCell as? SpinnerCollectionViewCell{
-                cell.spinner.style = .gray
+                cell.spinner.style = .medium
                 cell.spinner.startAnimating()
                 return cell
             }else{

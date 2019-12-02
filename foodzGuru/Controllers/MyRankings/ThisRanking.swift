@@ -654,7 +654,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 guard thisRanking.count > 0 || emptyListFlag else{
                     let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                     cell.textLabel?.text = "Waiting for services"
-                    let spinner = UIActivityIndicatorView(style: .gray)
+                    let spinner = UIActivityIndicatorView(style: .medium)
                     spinner.startAnimating()
                     cell.accessoryView = spinner
                     return cell
@@ -701,7 +701,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // Review text
                     if !(thisRankingReviews.count > 0) {
                         cell.reviewLabel.text = " " // the space is important
-                        let spinner = UIActivityIndicatorView(style: .gray)
+                        let spinner = UIActivityIndicatorView(style: .medium)
                         spinner.startAnimating()
                         cell.reviewLabel.addSubview(spinner)
                     }else{ // We already downloaded the reviews

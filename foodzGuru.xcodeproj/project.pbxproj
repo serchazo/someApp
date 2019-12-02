@@ -33,6 +33,7 @@
 		34507DFE2345AB4A00BD7B3C /* EditReviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */; };
 		34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */; };
 		34574A84232DD8B300CE09A7 /* UnifiedNativeAdCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */; };
+		345FB2FA2394BFA2006B462F /* SearchFoodHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345FB2F92394BFA2006B462F /* SearchFoodHeader.swift */; };
 		3465E53F2315033C00166699 /* MapSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3465E53E2315033B00166699 /* MapSearchViewController.swift */; };
 		346F8D2A2376563600AD7D29 /* EditRankingTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346F8D292376563600AD7D29 /* EditRankingTitleCell.xib */; };
 		346F8D2C237657D500AD7D29 /* EditRankingTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */; };
@@ -107,6 +108,7 @@
 		34507DFD2345AB4A00BD7B3C /* EditReviewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditReviewCell.xib; sourceTree = "<group>"; };
 		34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReviewCell.swift; sourceTree = "<group>"; };
 		34574A83232DD8B300CE09A7 /* UnifiedNativeAdCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UnifiedNativeAdCell.xib; sourceTree = "<group>"; };
+		345FB2F92394BFA2006B462F /* SearchFoodHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodHeader.swift; sourceTree = "<group>"; };
 		3465E53E2315033B00166699 /* MapSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSearchViewController.swift; sourceTree = "<group>"; };
 		346F8D292376563600AD7D29 /* EditRankingTitleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditRankingTitleCell.xib; sourceTree = "<group>"; };
 		346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRankingTitleCell.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				34FEE9C12311207C00FE0590 /* SearchViewController.swift */,
+				345FB2F92394BFA2006B462F /* SearchFoodHeader.swift */,
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
 				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
@@ -515,6 +518,7 @@
 				348B16942391030500FBF31A /* CountryChoserCell.swift in Sources */,
 				341705C723506210006123A7 /* FoodzLayout.swift in Sources */,
 				341DD1602329DF2200102472 /* Comment.swift in Sources */,
+				345FB2FA2394BFA2006B462F /* SearchFoodHeader.swift in Sources */,
 				34351990235459D300A01CAA /* MyProfileChangePicCellTableViewCell.swift in Sources */,
 				34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */,
 				34387AFD2335AFF600B4CC5B /* TimelineCell.swift in Sources */,

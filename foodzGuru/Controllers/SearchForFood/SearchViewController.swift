@@ -45,6 +45,7 @@ class SearchViewController: UIViewController {
         
         self.currentCity = self.getCurrentCityFromDefaults()
         self.loadFoodTypesFromDB()
+
         
         cityNavBarButton.title = currentCity.name
         foodSelectorCollection.collectionViewLayout = generateLayout()
@@ -234,6 +235,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             fatalError("No cell")
         }
     }
+    
     
     // Animation for appearing
     func collectionView(_ collectionView: UICollectionView,

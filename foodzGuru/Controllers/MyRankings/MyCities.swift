@@ -182,7 +182,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
             guard cityList.count > 0 || emptyListFlag else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Getting cities for user"
-                let spinner = UIActivityIndicatorView(style: .gray)
+                let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
                 

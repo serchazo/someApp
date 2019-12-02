@@ -125,7 +125,7 @@ extension AddRanking: UITableViewDelegate, UITableViewDataSource{
         guard foodList.count > 0 else {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Loading food types for \(currentCity.country)"
-            let spinner = UIActivityIndicatorView(style: .gray)
+            let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
             return cell

@@ -142,7 +142,7 @@ class MapSearchViewController: UIViewController {
         }
         
         // Use the network activity indicator as a hint to the user that a search is in progress.
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        //UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         localSearch = MKLocalSearch(request: searchRequest)
         localSearch?.start { [weak self] (response, error) in
@@ -202,7 +202,7 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
             guard (SomeApp.currentLocation != nil)  else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
-                let spinner = UIActivityIndicatorView(style: .gray)
+                let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
                 

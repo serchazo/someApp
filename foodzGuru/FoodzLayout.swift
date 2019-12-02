@@ -89,7 +89,8 @@ class FoodzLayout{
     // Pop-up table
     static func popupTable(viewController: UIViewController, transparentView: UIView, tableView: UITableView){
         // Window
-        let window = UIApplication.shared.keyWindow
+        let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+        //let window = UIApplication.shared.keyWindow
         transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         transparentView.frame = viewController.view.frame
         window?.addSubview(transparentView)

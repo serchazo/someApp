@@ -610,7 +610,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Waiting for services"
-            let spinner = UIActivityIndicatorView(style: .gray)
+            let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
             

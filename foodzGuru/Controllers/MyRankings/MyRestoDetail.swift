@@ -353,7 +353,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             guard commentArray.count > 0 else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Loading comments"
-                let spinner = UIActivityIndicatorView(style: .gray)
+                let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
                 

@@ -192,7 +192,8 @@ extension CountryChoser{
     // Set the city view
     func showCityTable(){
         // Create the frame
-        let window = UIApplication.shared.keyWindow
+        let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+        //let window = UIApplication.shared.keyWindow
         transparentView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         transparentView.frame = self.view.frame
         window?.addSubview(transparentView)
@@ -377,7 +378,7 @@ extension CountryChoser: UITableViewDelegate,UITableViewDataSource{
             guard cityList.count > 0 else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Loading cities"
-                let spinner = UIActivityIndicatorView(style: .gray)
+                let spinner = UIActivityIndicatorView(style: .medium)
                 
                 spinner.startAnimating()
                 cell.accessoryView = spinner
