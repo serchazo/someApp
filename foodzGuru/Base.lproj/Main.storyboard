@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Any cravings?-->
+        <!--foodz.guru-->
         <scene sceneID="S38-nv-nKB">
             <objects>
                 <viewController id="Xec-Jm-mJN" customClass="SearchViewController" customModule="foodz_Guru" customModuleProvider="target" sceneMemberID="viewController">
@@ -113,8 +113,8 @@
                             <constraint firstAttribute="trailing" secondItem="P7S-wv-BcI" secondAttribute="trailing" id="tzE-ak-jjS"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Any cravings?" id="Wjm-Un-4Du">
-                        <barButtonItem key="rightBarButtonItem" title="Singapore" id="QOc-vp-ZUY">
+                    <navigationItem key="navigationItem" title="foodz.guru" id="Wjm-Un-4Du">
+                        <barButtonItem key="rightBarButtonItem" title="Change City" id="QOc-vp-ZUY">
                             <connections>
                                 <segue destination="rRR-6u-4ST" kind="show" identifier="cityChooser" id="q3R-AJ-I6f"/>
                             </connections>
@@ -1361,7 +1361,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TfY-8W-Fz0">
-                                <rect key="frame" x="20" y="56" width="374" height="703"/>
+                                <rect key="frame" x="20" y="0.0" width="374" height="808"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
                         </subviews>
@@ -1431,7 +1431,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="ktD-De-Nbc" kind="show" identifier="addCity" id="sT7-BS-49X"/>
+                                            <segue destination="rRR-6u-4ST" kind="show" identifier="addCity" id="1ed-PL-d8B"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1856,11 +1856,12 @@
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Insert username" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ynZ-eM-qWC">
                                         <rect key="frame" x="87" y="135" width="200" height="34"/>
+                                        <color key="tintColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="200" id="mBt-oQ-Vgm"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                        <textInputTraits key="textInputTraits" spellCheckingType="no" returnKeyType="done" textContentType="nickname"/>
                                     </textField>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-qk-Zry">
                                         <rect key="frame" x="177" y="264" width="20" height="20"/>
@@ -2175,8 +2176,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You can change your bio later." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INn-9X-JKc">
-                                <rect key="frame" x="116" y="87" width="182.5" height="16"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You can change your bio later (max 150 chars)." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INn-9X-JKc">
+                                <rect key="frame" x="65" y="87" width="284.5" height="16"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -2184,10 +2185,11 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OzM-DY-MaJ">
                                 <rect key="frame" x="20" y="103" width="374" height="304"/>
                                 <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7AN-av-7tR">
-                                        <rect key="frame" x="87" y="135" width="200" height="34"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7AN-av-7tR">
+                                        <rect key="frame" x="20" y="117" width="334" height="70"/>
+                                        <color key="tintColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="200" id="Plz-3n-y5j"/>
+                                            <constraint firstAttribute="height" constant="70" id="LCS-qw-k97"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <textInputTraits key="textInputTraits"/>
@@ -2195,6 +2197,8 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="7AN-av-7tR" secondAttribute="trailing" constant="20" symbolic="YES" id="16w-6t-8sK"/>
+                                    <constraint firstItem="7AN-av-7tR" firstAttribute="leading" secondItem="OzM-DY-MaJ" secondAttribute="leading" constant="20" symbolic="YES" id="EcW-o6-H7p"/>
                                     <constraint firstItem="7AN-av-7tR" firstAttribute="centerY" secondItem="OzM-DY-MaJ" secondAttribute="centerY" id="SH4-Ux-xH3"/>
                                     <constraint firstItem="7AN-av-7tR" firstAttribute="centerX" secondItem="OzM-DY-MaJ" secondAttribute="centerX" id="YT8-lz-dGY"/>
                                 </constraints>
@@ -2876,12 +2880,12 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="K5s-9q-z2E"/>
-        <segue reference="sT7-BS-49X"/>
         <segue reference="YoF-pa-6fi"/>
         <segue reference="6ci-Z0-cEd"/>
         <segue reference="sfx-Yu-7uu"/>
         <segue reference="j96-5r-UVn"/>
-        <segue reference="joi-8R-J0w"/>
+        <segue reference="tG7-IG-o9k"/>
+        <segue reference="1ed-PL-d8B"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>

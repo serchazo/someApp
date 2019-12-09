@@ -79,9 +79,11 @@ class MyCities: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        
         if segue.identifier == segueAddCityId,
-            let seguedCityChooser = segue.destination as? ItemChooserViewController{
+            let seguedCityChooser = segue.destination as? CountryChoser{
             seguedCityChooser.delegate = self
+            seguedCityChooser.firstLoginFlag = false
         }
     }
 }
@@ -241,7 +243,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
 }
 
 // MARK: city choser extension
-extension MyCities: ItemChooserViewDelegate{
+extension MyCities: CountryChooserViewDelegate{
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         if (cityList.filter {$0.city.key == city.key}).count == 0{
             // Add to user ranking

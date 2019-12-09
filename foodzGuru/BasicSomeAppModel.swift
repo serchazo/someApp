@@ -105,8 +105,14 @@ class SomeApp{
         userDataDBRef.setValue(dataToWrite)
         
         // Create the token ID
-        let deviceModel = SomeApp.getDeviceModel()
-        dbUserDevices.child(userId).child(deviceModel).setValue(deviceToken)
+        InstanceID.instanceID().instanceID { (result, error) in
+            if let error = error {
+                print("Error fetching remote instance ID: \(error)")
+            } else if let result = result {
+                let deviceModel = SomeApp.getDeviceModel()
+                dbUserDevices.child(userId).child(deviceModel).setValue(result.token)
+            }
+        }
         
         // Create the first timeline post
         let timestamp = NSDate().timeIntervalSince1970 * 1000

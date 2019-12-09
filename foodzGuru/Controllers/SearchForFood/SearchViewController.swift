@@ -19,6 +19,7 @@ class SearchViewController: UIViewController {
     private let cityChooserSegueID = "cityChooser"
     private let foodChosen = "GoNinjaGo"
     private let goNinjaGoImage = "GoNinjaGoImage"
+    private let headerKind = "headerKind"
     
     private let cellImageIdentifier = "FoodCellImage"
     
@@ -44,10 +45,20 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         
         self.currentCity = self.getCurrentCityFromDefaults()
-        self.loadFoodTypesFromDB()
-
         
-        cityNavBarButton.title = currentCity.name
+        foodSelectorCollection.register(
+            SearchFoodHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: SearchFoodHeaderView.reuseIdentifier)
+        
+        foodSelectorCollection.register(
+            SearchFoodHeaderView.self,
+            forSupplementaryViewOfKind: self.headerKind,
+            withReuseIdentifier: SearchFoodHeaderView.reuseIdentifier)
+        
+        self.loadFoodTypesFromDB()
+        
+        //cityNavBarButton.title = "Change city"
         foodSelectorCollection.collectionViewLayout = generateLayout()
     }
 
@@ -123,7 +134,16 @@ class SearchViewController: UIViewController {
     
     // MARK: - Navigation
 
-    @IBOutlet weak var cityNavBarButton: UIBarButtonItem!
+    @IBOutlet weak var cityNavBarButton: UIBarButtonItem!{
+        didSet{
+            //
+            
+            cityNavBarButton.setTitleTextAttributes([
+            NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .footnote)], for: .normal)
+            cityNavBarButton.title = "Change City"
+        }
+    }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -236,6 +256,25 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
         }
     }
     
+    // Header
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var reusableView = UICollectionReusableView()
+        
+        if kind == self.headerKind,
+            let view = foodSelectorCollection.dequeueReusableSupplementaryView(
+                ofKind:self.headerKind,
+            //ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: SearchFoodHeaderView.reuseIdentifier,
+            for: indexPath) as? SearchFoodHeaderView{
+            view.label.font = UIFont.preferredFont(forTextStyle: .title1)
+            let tmpText = currentCity.name + "."
+            view.label.text = tmpText
+            reusableView =  view
+        }
+        
+        return reusableView
+    }
+    
     
     // Animation for appearing
     func collectionView(_ collectionView: UICollectionView,
@@ -256,7 +295,6 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
 extension SearchViewController{
     // snippet from : https://www.raywenderlich.com/5436806-modern-collection-views-with-compositional-layouts
     func generateLayout() -> UICollectionViewLayout {
-        
         // Insets
         let insets = NSDirectionalEdgeInsets(
             top: 2,
@@ -273,11 +311,13 @@ extension SearchViewController{
         let fullPhotoItem = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(3/4)))
+                //heightDimension: .fractionalWidth(3/4)))
+                heightDimension: .fractionalWidth(5.2/8))) // slightly smaller than 3/4 for the label not to be too big
         
         fullPhotoItem.contentInsets = insets
       
         // II. Second type: Main with pair
+        /* Reserve
         let mainItem = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(2/3),
@@ -301,13 +341,15 @@ extension SearchViewController{
             count: 2)
       
         // Then the group
+        
         let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .fractionalWidth(4/8)),
                 //heightDimension: .fractionalWidth(4/9)),
             subitems: [mainItem, trailingGroup])
-      
+         */
+        
         // III. Third type. Twins
         let twinItem = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
@@ -335,16 +377,23 @@ extension SearchViewController{
         let nestedGroup = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                //heightDimension: .fractionalWidth(16/9)),
-            heightDimension: .fractionalWidth(13/8)),
-            subitems: [
-                twinGroup,
-                fullPhotoItem,
-                mainWithPairGroup
-            ]
+                //heightDimension: .fractionalWidth(13/8)),
+                heightDimension: .fractionalWidth(8.2/8)),
+            //subitems: [ twinGroup, fullPhotoItem, mainWithPairGroup]
+            subitems: [ twinGroup, fullPhotoItem]
         )
+        
+        // Header
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(44))
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: self.headerKind,
+            alignment: .top)
 
         let section = NSCollectionLayoutSection(group: nestedGroup)
+        section.boundarySupplementaryItems = [sectionHeader]
         // Return the layout
         let layout = UICollectionViewCompositionalLayout(section: section)
         

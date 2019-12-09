@@ -102,7 +102,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "Foodz.guru"
+        self.navigationItem.title = "foodz.guru"
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)

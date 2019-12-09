@@ -161,7 +161,7 @@ class Foodies: UIViewController {
                             // Use the trick
                             count += 1
                             if count == snapshot.childrenCount {
-                                self.myFoodiesList = tmpUserDetails
+                                self.myFoodiesList = tmpUserDetails.sorted(by: {$0.nickName < $1.nickName})
                                 self.myFoodies.reloadData()
                             }
                             }), dbPath:childSnapshot.key))
