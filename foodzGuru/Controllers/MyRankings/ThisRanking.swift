@@ -878,8 +878,10 @@ extension ThisRanking{
         
         // set up the TextField
         if thisRankingDescription != "" {
+            cell.editReviewTextView.textColor = .label
             cell.editReviewTextView.text = thisRankingDescription
         }else{
+            cell.editReviewTextView.textColor = .systemGray
             cell.editReviewTextView.text = "Enter a description for your ranking."
         }
         cell.editReviewTextView.becomeFirstResponder()
@@ -904,10 +906,11 @@ extension ThisRanking{
         
         // set up the TextField placeholder
         if thisRankingReviews[forIndex].text.count < 3{
-            cell.editReviewTextView.textColor = .lightGray
+            cell.editReviewTextView.textColor = .systemGray
             cell.editReviewTextView.text = "Write your Review here."
             
         }else{
+            cell.editReviewTextView.textColor = .label
             cell.editReviewTextView.text = thisRankingReviews[forIndex].text
         }
         //cell.editReviewTextView.becomeFirstResponder()
@@ -1260,12 +1263,12 @@ extension ThisRanking:UITextViewDelegate {
     
     // Act like placeholder
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.lightGray{
+        if textView.textColor == UIColor.systemGray{
             textView.text = nil
-            textView.textColor = UIColor.black
+            textView.textColor = UIColor.label
         }
         else{
-            textView.textColor = UIColor.black
+            textView.textColor = UIColor.label
         }
     }
 }

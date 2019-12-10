@@ -47,7 +47,7 @@ class FoodzLayout{
         cell.titleLabel.textColor = SomeApp.themeColor
         
         // The textview
-        cell.editReviewTextView.textColor = UIColor.gray
+        cell.editReviewTextView.textColor = UIColor.label
         cell.editReviewTextView.font = UIFont.preferredFont(forTextStyle: .body)
         cell.editReviewTextView.isScrollEnabled = true
         cell.editReviewTextView.keyboardType = UIKeyboardType.default
