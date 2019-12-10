@@ -160,7 +160,7 @@ class FollowersViewController: UIViewController {
                         // Use the trick
                         count += 1
                         if count == snapshot.childrenCount {
-                            self.follows = tmpUserDetails
+                            self.follows = tmpUserDetails.sorted(by: {$0.nickName < $1.nickName})
                             self.followTableView.reloadData()
                         }
                     })

@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -64,6 +63,7 @@
                     <constraint firstItem="Ryh-70-8w6" firstAttribute="top" secondItem="aE9-YV-sP9" secondAttribute="bottom" constant="8" symbolic="YES" id="yYS-7l-3Fn"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <connections>
                 <outlet property="bodyLabel" destination="Ryh-70-8w6" id="yRt-Bq-gr4"/>
                 <outlet property="dateLabel" destination="zfq-1C-T6b" id="v0J-99-oWz"/>

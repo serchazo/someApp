@@ -14,7 +14,8 @@ class HomeCellWithImage: UITableViewCell {
         didSet{
             cellImage.layer.cornerRadius = 0.5 * cellImage.bounds.size.height
             cellImage.layer.masksToBounds = true
-            cellImage.layer.borderColor = SomeApp.themeColor.cgColor;
+            //cellImage.layer.borderColor = SomeApp.themeColor.cgColor;
+            cellImage.layer.borderColor = UIColor.systemGray.cgColor
             cellImage.layer.borderWidth = 1.0;
         }
     }
@@ -42,7 +43,7 @@ class HomeCellWithImage: UITableViewCell {
         if selected {
             self.contentView.backgroundColor = SomeApp.themeColorOpaque
         }else{
-            self.contentView.backgroundColor = .white
+            self.contentView.backgroundColor = .systemBackground
         }
     }
 

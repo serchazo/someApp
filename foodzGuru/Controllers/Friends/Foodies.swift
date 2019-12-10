@@ -89,8 +89,6 @@ class Foodies: UIViewController {
         friendsSearchController.searchBar.autocapitalizationType = .none
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
-
-        myFoodies.separatorColor = SomeApp.themeColor
     }
     
     override func viewDidDisappear(_ animated: Bool) {

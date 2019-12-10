@@ -58,7 +58,6 @@ class SearchViewController: UIViewController {
         
         self.loadFoodTypesFromDB()
         
-        //cityNavBarButton.title = "Change city"
         foodSelectorCollection.collectionViewLayout = generateLayout()
     }
 
@@ -137,9 +136,7 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var cityNavBarButton: UIBarButtonItem!{
         didSet{
             //
-            
             cityNavBarButton.setTitleTextAttributes([
-            NSAttributedString.Key.foregroundColor: SomeApp.themeColor,
             NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .footnote)], for: .normal)
             cityNavBarButton.title = "Change City"
         }
@@ -225,7 +222,6 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
                 completed: nil)
             
             // Label
-            cell.foodNameLabel.textColor = .black
             cell.foodNameLabel.font = UIFont.preferredFont(forTextStyle: .headline)
             cell.foodNameLabel.text = foodList[indexPath.row].name
             
@@ -244,7 +240,6 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
                 completed: nil)
             
             // Label
-            cell.foodNameLabel.textColor = .black
             cell.foodNameLabel.font = UIFont.preferredFont(forTextStyle: .headline)
             cell.foodNameLabel.text = foodList[indexPath.row].name
             return cell
@@ -266,7 +261,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             //ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: SearchFoodHeaderView.reuseIdentifier,
             for: indexPath) as? SearchFoodHeaderView{
-            view.label.font = UIFont.preferredFont(forTextStyle: .title1)
+            view.label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
             let tmpText = currentCity.name + "."
             view.label.text = tmpText
             reusableView =  view

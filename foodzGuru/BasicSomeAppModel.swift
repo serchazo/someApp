@@ -64,10 +64,13 @@ class SomeApp{
     static let storageContryPicRef = storageRef.child("countries")
     
     // Hex code: #614051, RGB: (82,27,146)
-    static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
+    //static let themeColor:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 1)
+    static let themeColor = UIColor.systemIndigo
     static let themeColorOpaque:UIColor = #colorLiteral(red: 0.3236978054, green: 0.1063579395, blue: 0.574860394, alpha: 0.5116117295)
-    static let selectionColor:UIColor = #colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1)
+    //static let selectionColor:UIColor = #colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1)
+    static let selectionColor:UIColor = UIColor.systemGray
 
+    
     // The ads
     // Test ads
     //static let adNativeUnitID = "ca-app-pub-3940256099942544/3986624511"

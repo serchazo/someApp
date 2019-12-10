@@ -172,7 +172,6 @@ class ThisRanking: UIViewController {
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
         
-        myRankingTable.separatorColor = SomeApp.themeColor
         myRankingTable.separatorInset = .zero
     }
     
@@ -678,7 +677,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // Position label
                     let position = indexPath.row + 1
                     cell.positionLabel.text = String(position)
-                    cell.positionLabel.textColor = .black
                     cell.positionLabel.layer.cornerRadius = 0.5 * cell.positionLabel.bounds.width
                     cell.positionLabel.layer.borderColor = SomeApp.themeColor.cgColor
                     cell.positionLabel.layer.borderWidth = 1.0
@@ -737,6 +735,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // Action and color depending if the comment is liked
                     if thisRankingReviewsLiked[indexPath.row] {
                         cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
+                        cell.likeButton.setTitle("Yummed", for: .normal)
                         cell.likeAction = {(cell) in
                             let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
                             SomeApp.dislikeReview(userid: self.user.uid,
@@ -748,7 +747,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     }
                         // If it's not yet liked
                     else{
-                        cell.likeButton.setTitleColor(.darkGray, for: .normal)
+                        cell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
                         cell.likeAction = {(cell) in
                             let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
                             SomeApp.likeReview(userid: self.user.uid,
@@ -761,7 +760,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // [END] Like button
                     
                     // [START] Nb yums
-                    cell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
+                    cell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
                     cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
                     cell.nbLikesButton.isEnabled = false
                     // [END] Nb yums button when there is a comment
@@ -771,7 +770,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         
                         // Edit Review part
                         cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-                        cell.editReviewButton.setTitleColor(.darkGray, for: .normal)
+                        cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
                         cell.editReviewButton.setTitle("Edit Review", for: .normal)
                         cell.editReviewButton.isHidden = false
                         cell.editReviewButton.isEnabled = true
@@ -909,7 +908,6 @@ extension ThisRanking{
             cell.editReviewTextView.text = "Write your Review here."
             
         }else{
-            cell.editReviewTextView.textColor = .black
             cell.editReviewTextView.text = thisRankingReviews[forIndex].text
         }
         //cell.editReviewTextView.becomeFirstResponder()

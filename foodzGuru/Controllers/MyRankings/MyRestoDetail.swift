@@ -454,12 +454,13 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 if restoReviewLiked[indexPath.row]{
                     postCell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                     postCell.likeButton.setTitleColor(SomeApp.selectionColor , for: .normal)
+                    postCell.likeButton.setTitle("Yummed", for: .normal)
                 }else{
-                    postCell.likeButton.setTitleColor(.darkGray, for: .normal)
+                    postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
                 }
                 
                 // NbLikes label
-                postCell.nbLikesButton.setTitleColor(.lightGray, for: .normal)
+                postCell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
                 postCell.nbLikesButton.setTitle("Yums! (\(restoReviewsLikeNb[indexPath.row]))", for: .normal)
                 
                 // Report button

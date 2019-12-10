@@ -98,7 +98,6 @@ class BestRestosViewController: UIViewController {
         //Some setup
         restoRankTableView.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
                                     forCellReuseIdentifier: "UnifiedNativeAdCell")
-        restoRankTableView.separatorColor = SomeApp.themeColor
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -145,7 +144,6 @@ class BestRestosViewController: UIViewController {
         }
         
         // Configure follow button
-        followButton.backgroundColor = .white
         followButton.setTitleColor(SomeApp.themeColor, for: .normal)
         
         // We need to verify if the user is already following the ranking
@@ -341,22 +339,22 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 let thisResto = thisRanking[indexPath.row]
                 let tmpPosition = indexPath.row + 1
                 
-                
                 // The position label
-                cell.restoPositionLabel.textColor = .black
                 cell.restoPositionLabel.layer.cornerRadius = 0.5 * cell.restoPositionLabel.bounds.width
                 cell.restoPositionLabel.layer.borderColor = SomeApp.themeColor.cgColor
                 cell.restoPositionLabel.layer.borderWidth = 1.0
                 cell.restoPositionLabel.layer.masksToBounds = true
                 cell.restoPositionLabel.text = String(tmpPosition)
                 
-                cell.restoNameLabel.attributedText = NSAttributedString(string: thisResto.name, attributes: [.font : restorantNameFont])
-                cell.restoAddressLabel.textColor = .lightGray
-                cell.restoAddressLabel.text = thisResto.address
+                cell.restoNameLabel.text = thisResto.name
                 
-                cell.restoPointsLabel.attributedText = NSAttributedString(string: "Points: \(thisResto.nbPoints)", attributes: [.font : restorantPointsFont])
-                cell.restoOtherInfoLabel.attributedText = NSAttributedString(string: "Reviews: \(thisResto.nbReviews)", attributes: [.font : restorantAddressFont])
-
+                //cell.restoAddressLabel.textColor = .systemGray2
+                cell.restoAddressLabel.text = thisResto.address
+                let tmpPointsString = "Points: \(thisResto.nbPoints)"
+                cell.restoPointsLabel.text = tmpPointsString
+                let tmpReviewsString = "Reviews: \(thisResto.nbReviews)"
+                cell.restoOtherInfoLabel.text = tmpReviewsString
+                
                 return cell
             }else{
                 fatalError("no cell")
@@ -364,9 +362,10 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
         }else if indexPath.section == 1{
                 guard nativeAds.count > 0 else{
                     let spinnerCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                    
                     spinnerCell.textLabel?.text = "Advertise here!"
                     spinnerCell.detailTextLabel?.text = "Contact support@foodz.guru"
-                    spinnerCell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+                    //spinnerCell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
                     spinnerCell.imageView?.image = UIImage(named: "idea")
                     spinnerCell.selectionStyle = .none
                     return spinnerCell

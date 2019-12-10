@@ -29,7 +29,7 @@ class RestoRankTableViewCell: UITableViewCell {
         if selected {
             self.contentView.backgroundColor = SomeApp.themeColorOpaque
         }else{
-            self.contentView.backgroundColor = .white
+            self.contentView.backgroundColor = .systemBackground
         }
     }
     

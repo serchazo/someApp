@@ -210,8 +210,6 @@ class MyRanks: UIViewController {
         bioLabel.text = "User not found"
         
         //
-        
-        
     }
     
     // MARK: Read from DB
@@ -261,7 +259,7 @@ class MyRanks: UIViewController {
                     self.bioString = userBio
                 }else{
                     if self.calledUser == nil{
-                        self.bioLabel.textColor = .lightGray
+                        self.bioLabel.textColor = .systemGray2
                         self.bioLabel.text = "Click on Profile to add a bio."}
                 }
                 
@@ -271,16 +269,12 @@ class MyRanks: UIViewController {
         })
         
         // Change city button
-        FoodzLayout.configureButton(button: changeCityButton)
+        //FoodzLayout.configureButton(button: changeCityButton)
+        FoodzLayout.configureButtonNoBorder(button: changeCityButton)
         
         // Follow button
         if calledUser != nil {
-            followButton.backgroundColor = .white
-            followButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            followButton.layer.cornerRadius = 15
-            followButton.layer.borderColor = SomeApp.themeColor.cgColor
-            followButton.layer.borderWidth = 1.0
-            followButton.layer.masksToBounds = true
+            FoodzLayout.configureButtonNoBorder(button: followButton)
             
             // We need to verify if the user is already following the target
             let tmpRef = SomeApp.dbUserFollowing.child(user.uid)

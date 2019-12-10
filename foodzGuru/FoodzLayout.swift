@@ -14,7 +14,6 @@ class FoodzLayout{
     
     // Configure Button
     static func configureButton(button: UIButton){
-        button.backgroundColor = .white
         button.layer.cornerRadius = 15
         button.layer.borderColor = SomeApp.themeColor.cgColor
         button.layer.borderWidth = 1.0
@@ -24,11 +23,6 @@ class FoodzLayout{
     }
     
     static func configureButtonNoBorder(button: UIButton){
-        button.backgroundColor = .white
-        //button.layer.cornerRadius = 15
-        //button.layer.borderColor = SomeApp.themeColor.cgColor
-        //button.layer.borderWidth = 1.0
-        //button.layer.masksToBounds = true
         button.titleLabel?.textAlignment = .center
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
         button.setTitleColor(SomeApp.themeColor, for: .normal)
@@ -37,7 +31,8 @@ class FoodzLayout{
     // Configure profile picture
     static func configureProfilePicture(imageView: UIImageView){
         imageView.layer.cornerRadius = 0.5 * imageView.bounds.size.width
-        imageView.layer.borderColor = SomeApp.themeColorOpaque.cgColor
+        //imageView.layer.borderColor = SomeApp.themeColor.cgColor
+        imageView.layer.borderColor = UIColor.systemGray.cgColor
         imageView.layer.borderWidth = 2.0
         imageView.layoutMargins = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
         imageView.clipsToBounds = true
