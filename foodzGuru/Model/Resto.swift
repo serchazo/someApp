@@ -49,7 +49,12 @@ class Resto{
         self.name = name
         self.city = city
         
-        if let url = value["url"] as? String {self.url = URL(string: url) } else {self.url = nil}
+        // URL
+        if let url = value["url"] as? String,
+            url.lowercased().hasPrefix("http"){
+            self.url = URL(string: url)
+        } else {self.url = nil}
+        // Phone number
         if let phone = value["phoneNumber"] as? String {self.phoneNumber = phone } else {self.phoneNumber = ""}
         if let address = value["address"] as? String {self.address = address} else {self.address = ""}
     }

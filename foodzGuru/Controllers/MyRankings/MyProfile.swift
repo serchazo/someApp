@@ -317,7 +317,9 @@ extension MyProfile{
         message: nil,
         preferredStyle: .alert)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelAction = UIAlertAction(
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            style: .cancel)
         
         let saveAction = UIAlertAction(title: "Change", style: .default) { _ in
             //Get e-mail and password from the alert
@@ -328,7 +330,9 @@ extension MyProfile{
             // Passwords don't match
             if newPassword != confirmPassword {
                 let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let okAction = UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    style: .default, handler: nil)
                 notMatchAlert.addAction(okAction)
                 self.present(notMatchAlert, animated: true, completion: nil)
             }
@@ -337,12 +341,16 @@ extension MyProfile{
                 self.changePassword(email: self.user.email!, currentPassword: oldPassword, newPassword: newPassword) { (error) in
                     if error != nil {
                         let alert = UIAlertController(title: "Sign In Failed", message: error!.localizedDescription, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        alert.addAction(UIAlertAction(
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            style: .default))
                         self.present(alert,animated: true, completion: nil)
                     }
                     else {
                         let alert = UIAlertController(title: "Success", message: "Password change successfully.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        alert.addAction(UIAlertAction(
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            style: .default))
                         self.present(alert,animated: true, completion: nil)
                     }
                 }
@@ -458,7 +466,9 @@ extension MyProfile{
                     let alert = UIAlertController(title: "Bio too long",
                                                   message: "Your bio shouldn't exceed 500 characters.",
                                                   preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    alert.addAction(UIAlertAction(
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        style: .default))
                     self.present(alert,animated:true) {
                         cell.editReviewTextView.becomeFirstResponder()
                     }
@@ -479,7 +489,9 @@ extension MyProfile{
                 let alert = UIAlertController(title: "Empty Bio",
                                               message: "Your bio is empty.",
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                alert.addAction(UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    style: .default))
                 self.present(alert,animated:true) {
                     cell.editReviewTextView.becomeFirstResponder()
                 }
@@ -507,6 +519,26 @@ extension MyProfile{
             message: nil,
             preferredStyle: .actionSheet)
         
+        // About
+        let aboutAction = UIAlertAction(title: "About", style: .default, handler: {_ in
+            var version = "n/a"
+            if let versionOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String{
+                version = versionOp
+            }
+            var build = "n/a"
+            if let buildOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String{
+                build = buildOp
+            }
+            
+            let aboutPopUp = UIAlertController(title: "About", message: "Version: \(version) Build: \(build)", preferredStyle: .alert)
+            let OKAbout = UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                style: .default, handler: nil)
+            aboutPopUp.addAction(OKAbout)
+            self.present(aboutPopUp, animated: true)
+        })
+        
+        // Send feedback
         let feedbackAction = UIAlertAction(title: "Send Feedback", style: .default, handler: { _ in
             let mailComposeViewController = self.configureMailComposer()
             if MFMailComposeViewController.canSendMail(){
@@ -557,16 +589,19 @@ extension MyProfile{
                 SomeApp.deleteUser(userId: self.user.uid)
                 self.logout()
             })
-            let cancelDelete = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let cancelDelete = UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                style: .cancel, handler: nil)
             
             deleteAlert.addAction(cancelDelete)
             deleteAlert.addAction(deleteAction)
             self.present(deleteAlert,animated: true)
             
         })
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
-            print("Cancel")
-        })
+        let cancelAction = UIAlertAction(
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            style: .cancel, handler: nil)
+        alert.addAction(aboutAction)
         alert.addAction(feedbackAction)
         alert.addAction(privacyPolicyAction)
         alert.addAction(eulaAction)

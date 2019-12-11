@@ -124,15 +124,15 @@ class LoginViewController: UIViewController {
         FoodzLayout.configureButton(button: loginButton)
         
         FoodzLayout.configureButton(button: signUpButton)
-        signUpButton.setTitle("Create account", for: .normal)
+        signUpButton.setTitle(MyStrings.createAccount.localized, for: .normal)
         
-        forgotPasswordButton.setTitle("- Forgot password -", for: .normal)
-        
+        forgotPasswordButton.setTitleColor(SomeApp.themeColor, for: .normal)
+        forgotPasswordButton.setTitle(MyStrings.forgotPassword.localized, for: .normal)
         
         // Configure the Login with Facebook button
         facebookButton.layer.cornerRadius = cornerRadious
         facebookButton.layer.masksToBounds = true
-        facebookButton.setTitle("Facebook Login", for: .normal)
+        facebookButton.setTitle(MyStrings.facebookLogin.localized, for: .normal)
         facebookButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
         facebookButton.setTitleColor(.white, for: .normal)
         facebookButton.backgroundColor = #colorLiteral(red: 0.2585989833, green: 0.4022747874, blue: 0.6941830516, alpha: 1)
@@ -152,22 +152,20 @@ class LoginViewController: UIViewController {
             let password = textFieldLoginPassword.text,
             email.count > 0,
             password.count > 0 else {
-                FoodzLayout.showWarning(vc: self, title: "Empty information", text: "Your e-mail or password can't be empty.")
-                /*
-                let alert = UIAlertController(title: "Empty information",
-                                              message: "Your e-mail or password can't be empty.",
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                present(alert,animated: true, completion: nil)
-                */
+                FoodzLayout.showWarning(vc: self, title: MyStrings.emptyInfo.localized, text: MyStrings.emptyInfoDetail.localized)
                 return
         }
         
         // Perform the authorization
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {
-                let alert = UIAlertController(title: "Sign In Failed", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                let alert = UIAlertController(
+                    title: MyStrings.loginFailed.localized,
+                    message: error.localizedDescription,
+                    preferredStyle: .alert)
+                alert.addAction(UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    style: .default))
                 self.present(alert,animated: true, completion: nil)
             }
         }
@@ -175,11 +173,14 @@ class LoginViewController: UIViewController {
     
     // MARK: forgot password
     @IBAction func forgotPasswordPressed(_ sender: Any) {
-        let alert = UIAlertController(title: "Password reset",
-        message: "Enter your e-mail and we will send you the instructions.",
-        preferredStyle: .alert)
-        
-        let passwordResetAction = UIAlertAction(title: "Reset", style: .default){ _ in
+        let alert = UIAlertController(
+            title: MyStrings.psswdResetTitle.localized,
+            message: MyStrings.psswdResetMsg.localized,
+            preferredStyle: .alert)
+        // [START] Password reset action
+        let passwordResetAction = UIAlertAction(title: MyStrings.psswdResetButton.localized,
+                                                style: .default)
+        { _ in
             //Get e-mail from the alert
             let emailField = alert.textFields![0]
             
@@ -187,17 +188,21 @@ class LoginViewController: UIViewController {
             Auth.auth().sendPasswordReset(withEmail: emailField.text!) { error in
                 // There is an error
                 if let error = error{
-                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    let alert = UIAlertController(title: FoodzLayout.FoodzStrings.msgError.localized,
+                                                  message: error.localizedDescription,
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                                                  style: .default))
                     self.present(alert,animated: true, completion: nil)
                 }
             }
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        }// [END] Password reset action
+        
+        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized, style: .cancel)
         
         alert.addTextField { textEmail in
             textEmail.keyboardType = .emailAddress
-            textEmail.placeholder = "Enter your email"
+            textEmail.placeholder = MyStrings.enterEmail.localized
         }
         
         alert.addAction(passwordResetAction)
@@ -224,7 +229,7 @@ class LoginViewController: UIViewController {
             // Passwords don't match
             if passwordField.text != confirmPasswordField.text {
                 let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default, handler: nil)
                 notMatchAlert.addAction(okAction)
                 self.present(notMatchAlert, animated: true, completion: nil)
             }
@@ -238,7 +243,9 @@ class LoginViewController: UIViewController {
                     if let error = error, user == nil {
                         // Pop-up
                         let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        alert.addAction(UIAlertAction(
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            style: .default))
                         self.present(alert,animated: true, completion: nil)
                         // Show the buttons
                         self.hideAndSeek(hide: false)
@@ -247,20 +254,20 @@ class LoginViewController: UIViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized, style: .cancel)
         
         alert.addTextField { textEmail in
             textEmail.keyboardType = .emailAddress
-            textEmail.placeholder = "Enter your email"}
+            textEmail.placeholder = MyStrings.enterEmail.localized}
         
         alert.addTextField { textPassword in
             textPassword.isSecureTextEntry = true
-            textPassword.placeholder = "Enter your password"
+            textPassword.placeholder = MyStrings.psswdCreate.localized
         }
         
         alert.addTextField { textConfirmPassword in
             textConfirmPassword.isSecureTextEntry = true
-            textConfirmPassword.placeholder = "Confirm password"
+            textConfirmPassword.placeholder = MyStrings.psswdConfirm.localized
         }
         
         alert.addAction(saveAction)
@@ -292,18 +299,18 @@ class LoginViewController: UIViewController {
                 message: "User cancelled login.",
                 preferredStyle: .alert
             )
-            let okAction = UIAlertAction(title: "OK", style: .default)
+            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default)
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
             
         case .failed(let error):
             alertController = UIAlertController(
-                title: "Login Fail",
+                title: "Login Failed",
                 message: "Login failed with error \(error)",
                 preferredStyle: .alert
             )
-            let okAction = UIAlertAction(title: "OK", style: .default)
+            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default)
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
@@ -430,5 +437,55 @@ extension LoginViewController: UITextViewDelegate{
     
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         return true
+    }
+}
+
+
+//
+extension LoginViewController{
+    private enum MyStrings {
+        case enterEmail
+        case createAccount
+        case forgotPassword
+        case facebookLogin
+        case emptyInfo
+        case emptyInfoDetail
+        case loginFailed
+        case psswdResetTitle
+        case psswdResetMsg
+        case psswdResetButton
+        case psswdCreate
+        case psswdConfirm
+        
+        var localized: String{
+            switch self{
+            case .enterEmail:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMAIL", comment: "Enter"))
+            case .createAccount:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_ACCOUNT", comment: "Create account"))
+            case .forgotPassword:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FORGOT_PSSWD", comment: "Forgot password"))
+            case .facebookLogin:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK", comment: "Facebook login"))
+            case .emptyInfo:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMPTY", comment: "Empty"))
+            case .emptyInfoDetail:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMPTY_DETAIL", comment: "Empty"))
+            case .loginFailed:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FAILED", comment: "Failed"))
+            case .psswdResetTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_TITLE", comment: "Password Reset"))
+            case .psswdResetMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_MSG", comment: "Enter your e-mail"))
+            case .psswdResetButton:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_BUTTON", comment: "Reset"))
+            case .psswdCreate:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CREATE", comment: "To create"))
+            case .psswdConfirm:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CONFIRM", comment: "To confirm"))
+            }
+        }
+        
+        
     }
 }

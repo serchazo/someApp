@@ -5,13 +5,25 @@ Abstract:
 Localized strings.
 */
 
-"LOCATION_SERVICES_ALERT_TITLE" = "Location Services";
-"LOCATION_SERVICES_DISABLED" = "Location services are not enabled on this device. Please enable location services in Settings.";
-"LOCATION_SERVICES_DENIED" = "Location services were previously denied by the user. Please enable location services for this app in Settings.";
-"LOCATION_SERVICES_WAITING" = "Acquiring current location…";
+
 
 "BUTTON_OK" = "OK";
 "BUTTON_CANCEL" = "Cancel";
-"BUTTON_SETTINGS" = "Settings";
 
-"TITLE_ALL_PLACES" = "All Places";
+"LOG" = "foodz.guru: %d";
+"MSG_ERROR" = "Error";
+
+"HOME_FIRST_POST" = "Hello %u! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
+
+"LOGIN_EMAIL" = "Enter your e-mail";
+"LOGIN_CREATE_ACCOUNT" = "Create account";
+"LOGIN_FORGOT_PSSWD" = "- Forgot Password -";
+"LOGIN_FACEBOOK" = "Facebook login";
+"LOGIN_EMPTY" = "Empty information";
+"LOGIN_EMPTY_DETAIL" = "Your e-mail and/or password can't be empty.";
+"LOGIN_FAILED" = "Sign-in failed";
+"LOGIN_PSSWD_RESET_TITLE" = "Password Reset";
+"LOGIN_PSSWD_RESET_MSG" = "Enter your e-mail and we will send you the instructions.";
+"LOGIN_PSSWD_RESET_BUTTON" = "Reset";
+"LOGIN_PSSWD_CREATE" = "Create a password";
+"LOGIN_PSSWD_CONFIRM" = "Confirm password";

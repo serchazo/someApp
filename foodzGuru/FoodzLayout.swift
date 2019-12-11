@@ -131,7 +131,9 @@ extension FoodzLayout{
         let alert = UIAlertController(title: title,
                                       message: text,
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(
+            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+            style: .default))
         vc.present(alert,animated: true, completion: nil)
     }
 }
@@ -143,4 +145,24 @@ extension FoodzLayout{
     }
     
     
+}
+
+// MARK: General Strings
+extension FoodzLayout{
+    enum FoodzStrings{
+        case buttonOK
+        case buttonCancel
+        case msgError
+        
+        var localized: String{
+            switch self{
+            case .buttonOK:
+                return String.localizedStringWithFormat(NSLocalizedString("BUTTON_OK", comment: "OK"))
+            case .buttonCancel:
+                return String.localizedStringWithFormat(NSLocalizedString("BUTTON_CANCEL", comment: "Cancel"))
+            case .msgError:
+                return String.localizedStringWithFormat(NSLocalizedString("MSG_ERROR", comment: "Error"))
+            }
+        }
+    }
 }

@@ -80,7 +80,10 @@ class FirstLoginViewController: UIViewController {
         guard let nickname = userNameField.text,
             nickname.count >= 4 else {
             let alert = UIAlertController(title: "Invalid name", message: "Your user name should be at least 4 characters long.", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let okAction = UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                style: .default,
+                handler: nil)
             alert.addAction(okAction)
             self.present(alert,animated: true)
             return

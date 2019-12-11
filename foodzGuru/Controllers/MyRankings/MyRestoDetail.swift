@@ -527,14 +527,18 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                                 
                                 self.navigationController?.popViewController(animated: true)
                             })
-                            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                            let cancelAction = UIAlertAction(
+                                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                                style: .cancel, handler: nil)
                             innerAlert.addAction(inappropriateAction)
                             innerAlert.addAction(spamAction)
                             innerAlert.addAction(cancelAction)
                             self.present(innerAlert,animated: true)
                             // [END] Inner alert
                         })
-                        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                        let cancelAction = UIAlertAction(
+                            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                            style: .cancel, handler: nil)
                         
                         moreAlert.addAction(reportAction)
                         moreAlert.addAction(cancelAction)
@@ -577,7 +581,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                          preferredStyle: .alert)
                      
                      alert.addAction(UIAlertAction(
-                         title: "OK",
+                         title: FoodzLayout.FoodzStrings.buttonOK.localized,
                          style: .default,
                          handler: {
                              (action: UIAlertAction)->Void in
@@ -593,13 +597,24 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     config.entersReaderIfAvailable = true
                     
                     let vc = SFSafariViewController(url: currentResto.url, configuration: config)
-                    vc.navigationController?.navigationBar.titleTextAttributes = [
-                    NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
-                    vc.preferredControlTintColor = SomeApp.themeColor
-                    vc.preferredBarTintColor = UIColor.white
+                    vc.preferredBarTintColor = UIColor.systemBackground
                     
                     present(vc, animated: true)
-                 }
+                }
+                // No valid URL
+                else{
+                    let alert = UIAlertController(title: "Invalid URL", message: "This place has an invalid URL.", preferredStyle: .alert)
+                    let OKaction = UIAlertAction(
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        style: .default, handler:nil)
+                    alert.addAction(OKaction)
+                    self.present(alert, animated:true)
+                    // Deselect row
+                    if let indexPath = restoDetailTable.indexPathForSelectedRow {
+                        restoDetailTable.deselectRow(at: indexPath, animated: true)
+                    }
+                }
+                //
              }
          }
      }
@@ -827,7 +842,9 @@ extension MyRestoDetail {
                     // Show confirmation banner
                     self.bannerStuff()
                 }
-                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                let cancelAction = UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                    style: .cancel, handler: nil)
                 alert.addAction(createAction)
                 alert.addAction(cancelAction)
                 

@@ -161,15 +161,16 @@ class MapSearchViewController: UIViewController {
                 self?.coolMap.region = region!
                 self?.dropPinZoomIn(placemark: tmpPlacemark!)
             }
-            
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            //UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
     }
     
     private func displaySearchError(_ error: Error?) {
         if let error = error as NSError?, let errorString = error.userInfo[NSLocalizedDescriptionKey] as? String {
             let alertController = UIAlertController(title: "Could not find any places.", message: errorString, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            alertController.addAction(UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                style: .default, handler: nil))
             present(alertController, animated: true, completion: nil)
         }
     }
@@ -188,16 +189,27 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Warning: all changes in logic need to be accompanied by a verification on the actions!
-        //If we are waiting^^
-        if !isLocationAuthorized && !isFiltering && !hasSearched{
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            cell.textLabel?.text = "Location Services Disabled"
-            cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
-            cell.isUserInteractionEnabled = false
-            
-            return cell
+        
+        // [START] The location is not authorized
+        if !isLocationAuthorized{
+            if isFiltering || hasSearched {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell")!
+                let selectedItem = matchingMapItems?[indexPath.row].placemark
+                cell.textLabel?.text = selectedItem?.name
+                cell.detailTextLabel?.text = selectedItem!.formattedAddress
+                return cell
+            }
+            else{
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                cell.textLabel?.text = "Location Services Disabled"
+                cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
+                cell.isUserInteractionEnabled = false
+                return cell
+            }
         }
-        // guard location is authorizied but we don't have current location
+        // [END] The location is not authorized
+        
+        // [START] The location is authorized
         if isLocationAuthorized{
             guard (SomeApp.currentLocation != nil)  else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -205,7 +217,7 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
-                
+                cell.isUserInteractionEnabled = false
                 return cell
             }
             if isFiltering || hasSearched {

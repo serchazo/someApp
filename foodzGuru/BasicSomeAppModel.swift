@@ -11,7 +11,7 @@ import Firebase
 import MapKit
 
 class SomeApp{
-    // Constant
+    // Constants
     static let currentCityDefault = "currentCity"
     static var currentLocation:CLLocation!
     
@@ -119,7 +119,7 @@ class SomeApp{
         
         // Create the first timeline post
         let timestamp = NSDate().timeIntervalSince1970 * 1000
-        let payLoad = "Hello " + username + "! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates."
+        let payLoad = String.localizedStringWithFormat(NSLocalizedString("HOME_FIRST_POST", comment: "First Post"), username)
         let userTimelineDBRef = dbUserTimeline.child(userId).child("systemNotification:"+userId+":welcometofoodzguru")
         let firstTimelinePost:[String:Any] = ["timestamp": timestamp,
                                  "type" : "systemNotification",

@@ -624,7 +624,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     let alert = UIAlertController(title: "Delete Restaurant?",
                                                   message: "",
                                                   preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "Cancel",
+                    let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized,
                                                      style: .cancel)
                     
                     let delAction = UIAlertAction(title: "Delete", style: .destructive){ _ in
@@ -965,14 +965,18 @@ extension ThisRanking{
                     
                     self.navigationController?.popViewController(animated: true)
                 })
-                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                let cancelAction = UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                    style: .cancel, handler: nil)
                 innerAlert.addAction(inappropriateAction)
                 innerAlert.addAction(spamAction)
                 innerAlert.addAction(cancelAction)
                 self.present(innerAlert,animated: true)
                 // [END] Inner alert
             })
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let cancelAction = UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                style: .cancel, handler: nil)
             
             moreAlert.addAction(reportAction)
             moreAlert.addAction(cancelAction)
@@ -1156,7 +1160,7 @@ extension ThisRanking: MyRanksMapSearchViewDelegate{
             preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(
-            title: "OK",
+            title: FoodzLayout.FoodzStrings.buttonOK.localized,
             style: .default,
             handler: {
                 (action: UIAlertAction)->Void in
