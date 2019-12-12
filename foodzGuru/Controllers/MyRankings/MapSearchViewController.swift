@@ -169,7 +169,7 @@ class MapSearchViewController: UIViewController {
         if let error = error as NSError?, let errorString = error.userInfo[NSLocalizedDescriptionKey] as? String {
             let alertController = UIAlertController(title: "Could not find any places.", message: errorString, preferredStyle: .alert)
             alertController.addAction(UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default, handler: nil))
             present(alertController, animated: true, completion: nil)
         }

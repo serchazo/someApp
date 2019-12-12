@@ -89,10 +89,9 @@ class LoginViewController: UIViewController {
                             if !snap.exists(){
                                 InstanceID.instanceID().instanceID { (result, error) in
                                     if let error = error {
-                                        print("Error fetching remote instance ID: \(error)")
+                                        print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
                                     } else if let result = result {
                                         SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: result.token)
-                                        //print("Remote instance ID token: \(result.token)")
                                     }
                                 }
                             }
@@ -124,15 +123,15 @@ class LoginViewController: UIViewController {
         FoodzLayout.configureButton(button: loginButton)
         
         FoodzLayout.configureButton(button: signUpButton)
-        signUpButton.setTitle(MyStrings.createAccount.localized, for: .normal)
+        signUpButton.setTitle(MyStrings.createAccount.localized(), for: .normal)
         
         forgotPasswordButton.setTitleColor(SomeApp.themeColor, for: .normal)
-        forgotPasswordButton.setTitle(MyStrings.forgotPassword.localized, for: .normal)
+        forgotPasswordButton.setTitle(MyStrings.forgotPassword.localized(), for: .normal)
         
         // Configure the Login with Facebook button
         facebookButton.layer.cornerRadius = cornerRadious
         facebookButton.layer.masksToBounds = true
-        facebookButton.setTitle(MyStrings.facebookLogin.localized, for: .normal)
+        facebookButton.setTitle(MyStrings.facebookLogin.localized(), for: .normal)
         facebookButton.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
         facebookButton.setTitleColor(.white, for: .normal)
         facebookButton.backgroundColor = #colorLiteral(red: 0.2585989833, green: 0.4022747874, blue: 0.6941830516, alpha: 1)
@@ -152,7 +151,7 @@ class LoginViewController: UIViewController {
             let password = textFieldLoginPassword.text,
             email.count > 0,
             password.count > 0 else {
-                FoodzLayout.showWarning(vc: self, title: MyStrings.emptyInfo.localized, text: MyStrings.emptyInfoDetail.localized)
+                FoodzLayout.showWarning(vc: self, title: MyStrings.emptyInfo.localized(), text: MyStrings.emptyInfoDetail.localized())
                 return
         }
         
@@ -160,11 +159,11 @@ class LoginViewController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {
                 let alert = UIAlertController(
-                    title: MyStrings.loginFailed.localized,
+                    title: MyStrings.loginFailed.localized(),
                     message: error.localizedDescription,
                     preferredStyle: .alert)
                 alert.addAction(UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                     style: .default))
                 self.present(alert,animated: true, completion: nil)
             }
@@ -174,11 +173,11 @@ class LoginViewController: UIViewController {
     // MARK: forgot password
     @IBAction func forgotPasswordPressed(_ sender: Any) {
         let alert = UIAlertController(
-            title: MyStrings.psswdResetTitle.localized,
-            message: MyStrings.psswdResetMsg.localized,
+            title: MyStrings.psswdResetTitle.localized(),
+            message: MyStrings.psswdResetMsg.localized(),
             preferredStyle: .alert)
         // [START] Password reset action
-        let passwordResetAction = UIAlertAction(title: MyStrings.psswdResetButton.localized,
+        let passwordResetAction = UIAlertAction(title: MyStrings.psswdResetButton.localized(),
                                                 style: .default)
         { _ in
             //Get e-mail from the alert
@@ -188,21 +187,21 @@ class LoginViewController: UIViewController {
             Auth.auth().sendPasswordReset(withEmail: emailField.text!) { error in
                 // There is an error
                 if let error = error{
-                    let alert = UIAlertController(title: FoodzLayout.FoodzStrings.msgError.localized,
+                    let alert = UIAlertController(title: FoodzLayout.FoodzStrings.msgError.localized(),
                                                   message: error.localizedDescription,
                                                   preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    alert.addAction(UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                                                   style: .default))
                     self.present(alert,animated: true, completion: nil)
                 }
             }
         }// [END] Password reset action
         
-        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized, style: .cancel)
+        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized(), style: .cancel)
         
         alert.addTextField { textEmail in
             textEmail.keyboardType = .emailAddress
-            textEmail.placeholder = MyStrings.enterEmail.localized
+            textEmail.placeholder = MyStrings.enterEmail.localized()
         }
         
         alert.addAction(passwordResetAction)
@@ -216,11 +215,12 @@ class LoginViewController: UIViewController {
     
     // MARK: Sign up
     @IBAction func signUpPressed(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Register",
-                                      message: "Enter your e-mail and create a new password.",
-                                      preferredStyle: .alert)
-        
-        let saveAction = UIAlertAction(title: "Create", style: .default) { _ in
+        let alert = UIAlertController(
+            title: MyStrings.createAccount.localized(),
+            message: MyStrings.createAccountGuide.localized(),
+            preferredStyle: .alert)
+        let saveAction = UIAlertAction(title: MyStrings.createButton.localized(),
+                                       style: .default) { _ in
             //Get e-mail and password from the alert
             let emailField = alert.textFields![0]
             let passwordField = alert.textFields![1]
@@ -228,8 +228,11 @@ class LoginViewController: UIViewController {
             
             // Passwords don't match
             if passwordField.text != confirmPasswordField.text {
-                let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default, handler: nil)
+                let notMatchAlert = UIAlertController(
+                    title: MyStrings.psswdNotMatch.localized(),
+                    message: MyStrings.psswdNotMatchMsg.localized(),
+                    preferredStyle: .alert)
+                let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(), style: .default, handler: nil)
                 notMatchAlert.addAction(okAction)
                 self.present(notMatchAlert, animated: true, completion: nil)
             }
@@ -242,9 +245,12 @@ class LoginViewController: UIViewController {
                     // If there is an error
                     if let error = error, user == nil {
                         // Pop-up
-                        let alert = UIAlertController(title: "Sign up Failed", message: error.localizedDescription, preferredStyle: .alert)
+                        let alert = UIAlertController(
+                            title: MyStrings.createFailed.localized(),
+                            message: error.localizedDescription,
+                            preferredStyle: .alert)
                         alert.addAction(UIAlertAction(
-                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                             style: .default))
                         self.present(alert,animated: true, completion: nil)
                         // Show the buttons
@@ -254,20 +260,20 @@ class LoginViewController: UIViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized, style: .cancel)
+        let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized(), style: .cancel)
         
         alert.addTextField { textEmail in
             textEmail.keyboardType = .emailAddress
-            textEmail.placeholder = MyStrings.enterEmail.localized}
+            textEmail.placeholder = MyStrings.enterEmail.localized()}
         
         alert.addTextField { textPassword in
             textPassword.isSecureTextEntry = true
-            textPassword.placeholder = MyStrings.psswdCreate.localized
+            textPassword.placeholder = MyStrings.psswdCreate.localized()
         }
         
         alert.addTextField { textConfirmPassword in
             textConfirmPassword.isSecureTextEntry = true
-            textConfirmPassword.placeholder = MyStrings.psswdConfirm.localized
+            textConfirmPassword.placeholder = MyStrings.psswdConfirm.localized()
         }
         
         alert.addAction(saveAction)
@@ -295,22 +301,22 @@ class LoginViewController: UIViewController {
         case .cancelled:
             
             alertController = UIAlertController(
-                title: "Login Cancelled",
-                message: "User cancelled login.",
+                title: MyStrings.facebookCancelledTitle.localized(),
+                message: MyStrings.facebookCancelledMsg.localized(),
                 preferredStyle: .alert
             )
-            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default)
+            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(), style: .default)
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
             
         case .failed(let error):
             alertController = UIAlertController(
-                title: "Login Failed",
-                message: "Login failed with error \(error)",
+                title: MyStrings.loginFailed.localized(),
+                message: error.localizedDescription,
                 preferredStyle: .alert
             )
-            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default)
+            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(), style: .default)
             alertController.addAction(okAction)
             
             self.present(alertController, animated: true, completion: nil)
@@ -330,7 +336,7 @@ class LoginViewController: UIViewController {
         
         Auth.auth().signIn(with: credential) { (authResult, error) in
             if let error = error {
-                print("Some error: \(error.localizedDescription)")
+                print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
                 return
             }
             // User is signed in, verify if it's his first login
@@ -405,22 +411,28 @@ extension LoginViewController{
         let result = NSMutableAttributedString()
         
         //Terms of service
-        let eulaTextToSee:String = "Terms of Service"
+        let eulaTextToSee:String = FoodzLayout.FoodzStrings.eulaTermsOfService.localized()
         let eulaAttributedText = NSMutableAttributedString(string: eulaTextToSee)
-        let eulaLink = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+        let eulaLink = FoodzLayout.FoodzStrings.eulaTermsOfServiceURL.localized()
         eulaAttributedText.addAttribute(NSAttributedString.Key.link, value: eulaLink, range: NSMakeRange(0, eulaTextToSee.count))
         
         //Privacy Policy
-        let privacyTextToSee:String = "Privacy Policy"
+        let privacyTextToSee:String = FoodzLayout.FoodzStrings.eulaPrivacyPolicy.localized()
         let privacyAttributedText = NSMutableAttributedString(string: privacyTextToSee)
-        let privacyLink = "https://foodzdotguru.wordpress.com/privacy-policy/"
+        let privacyLink = FoodzLayout.FoodzStrings.eulaTermsOfServiceURL.localized()
         privacyAttributedText.addAttribute(NSAttributedString.Key.link, value: privacyLink, range: NSMakeRange(0, privacyTextToSee.count))
         
-        result.append(NSMutableAttributedString(string: "By using our app you agree to our "))
+        result.append(NSMutableAttributedString(
+            string: MyStrings.eulaText.localized(),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.label]))
         result.append(eulaAttributedText)
-        result.append(NSMutableAttributedString(string: " and our "))
+        result.append(NSMutableAttributedString(
+            string: MyStrings.eulaTextAppend.localized(),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.label]))
         result.append(privacyAttributedText)
-        result.append(NSMutableAttributedString(string: "."))
+        result.append(NSMutableAttributedString(
+            string: ".",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.label]))
         
         return result
     }
@@ -429,7 +441,7 @@ extension LoginViewController{
     @IBAction func unwindToLoginScreen(segue: UIStoryboardSegue){}
 }
 
-// MARK: warning UITextView stuff
+// MARK: UITextView stuff
 extension LoginViewController: UITextViewDelegate{
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         return false
@@ -441,13 +453,18 @@ extension LoginViewController: UITextViewDelegate{
 }
 
 
-//
+// MARK: Localized Strings
 extension LoginViewController{
     private enum MyStrings {
         case enterEmail
         case createAccount
+        case createAccountGuide
+        case createButton
+        case createFailed
         case forgotPassword
         case facebookLogin
+        case facebookCancelledTitle
+        case facebookCancelledMsg
         case emptyInfo
         case emptyInfoDetail
         case loginFailed
@@ -456,17 +473,31 @@ extension LoginViewController{
         case psswdResetButton
         case psswdCreate
         case psswdConfirm
+        case psswdNotMatch
+        case psswdNotMatchMsg
+        case eulaText
+        case eulaTextAppend
         
-        var localized: String{
+        func localized(arguments: [CVarArg] = []) -> String{
             switch self{
             case .enterEmail:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMAIL", comment: "Enter"))
             case .createAccount:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_ACCOUNT", comment: "Create account"))
+            case .createAccountGuide:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_GUIDE", comment: "Create"))
+            case .createButton:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_BUTTON", comment: "Create"))
+            case .createFailed:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_FAILED", comment: "Create failed"))
             case .forgotPassword:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FORGOT_PSSWD", comment: "Forgot password"))
             case .facebookLogin:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK", comment: "Facebook login"))
+            case .facebookCancelledTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_MSG", comment: "Cancel"))
+            case .facebookCancelledMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_TITLE", comment: "Cancel"))
             case .emptyInfo:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMPTY", comment: "Empty"))
             case .emptyInfoDetail:
@@ -483,6 +514,14 @@ extension LoginViewController{
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CREATE", comment: "To create"))
             case .psswdConfirm:
                 return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CONFIRM", comment: "To confirm"))
+            case .psswdNotMatch:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_NOTMATCH_TITLE", comment: "Not equal"))
+            case .psswdNotMatchMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_NOTMATCH_MSG", comment: "Not equal"))
+            case .eulaText:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EULA_TEXT", comment: "using"))
+            case .eulaTextAppend:
+                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EULA_TEXT_APPEND", comment: "and"))
             }
         }
         

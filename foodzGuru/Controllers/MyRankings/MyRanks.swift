@@ -375,7 +375,7 @@ class MyRanks: UIViewController {
                     // Warn the user
                     let thanks = UIAlertController(title: "User Reported", message: "We will analyze and take some action in 24 hours. Don't hesitate to contact us for more information.", preferredStyle: .alert)
                     let okAction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler: nil)
                     thanks.addAction(okAction)
                     self.present(thanks,animated: true)
@@ -384,7 +384,7 @@ class MyRanks: UIViewController {
                 reasonForReporting.addAction(reportAction)
             }
             let cancelAction = UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                 style: .cancel, handler: nil)
             reasonForReporting.addAction(cancelAction)
             
@@ -405,13 +405,13 @@ class MyRanks: UIViewController {
                     // Alert the user
                     let thanks = UIAlertController(title: "User Blocked", message: nil, preferredStyle: .alert)
                     let okAction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler: nil)
                     thanks.addAction(okAction)
                     self.present(thanks,animated: true)
                 })
                 let cancelAction = UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                    title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                     style: .default, handler: nil)
                 confirmAlert.addAction(blockAction)
                 confirmAlert.addAction(cancelAction)
@@ -426,13 +426,13 @@ class MyRanks: UIViewController {
                     // Alert the user
                     let thanks = UIAlertController(title: "User Unblocked", message: nil, preferredStyle: .alert)
                     let okAction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler: nil)
                     thanks.addAction(okAction)
                     self.present(thanks,animated: true)
                 })
                 let cancelAction = UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                    title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                     style: .default, handler: nil)
                 confirmAlert.addAction(blockAction)
                 confirmAlert.addAction(cancelAction)
@@ -445,7 +445,7 @@ class MyRanks: UIViewController {
         alert.addAction(blockProfileAction)
         alert.addAction(reportProfileAction)
         let cancelAction = UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .cancel, handler: nil)
         alert.addAction(cancelAction)
         self.present(alert,animated: true)
@@ -516,7 +516,7 @@ class MyRanks: UIViewController {
         preferredStyle: .alert)
         // OK
         alert.addAction(UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .default, handler: nil))
         // Unfollow
         alert.addAction(UIAlertAction(
@@ -554,7 +554,7 @@ extension MyRanks: AddRankingDelegate{
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default,
                 handler: {
                     (action: UIAlertAction)->Void in

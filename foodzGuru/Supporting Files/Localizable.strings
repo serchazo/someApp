@@ -6,19 +6,28 @@ Localized strings.
 */
 
 
-
 "BUTTON_OK" = "OK";
 "BUTTON_CANCEL" = "Cancel";
 
 "LOG" = "foodz.guru: %d";
 "MSG_ERROR" = "Error";
 
+"FOODZ_EULA_TERMSOFSERVICE" = "Terms of Service";
+"FOODZ_EULA_TERMS_URL" = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
+"FOODZ_EULA_PRIVACY_POLICY" = "Privacy Policy";
+"FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
+
 "HOME_FIRST_POST" = "Hello %u! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
 
 "LOGIN_EMAIL" = "Enter your e-mail";
 "LOGIN_CREATE_ACCOUNT" = "Create account";
+"LOGIN_CREATE_BUTTON" = "Create";
+"LOGIN_CREATE_GUIDE" = "Enter your e-mail and create a password.";
+"LOGIN_CREATE_FAILED" = "Creation failed";
 "LOGIN_FORGOT_PSSWD" = "- Forgot Password -";
 "LOGIN_FACEBOOK" = "Facebook login";
+"LOGIN_FACEBOOK_CANCELLED_TITLE" = "Login cancelled";
+"LOGIN_FACEBOOK_CANCELLED_MSG" = "User cancelled login.";
 "LOGIN_EMPTY" = "Empty information";
 "LOGIN_EMPTY_DETAIL" = "Your e-mail and/or password can't be empty.";
 "LOGIN_FAILED" = "Sign-in failed";
@@ -27,3 +36,18 @@ Localized strings.
 "LOGIN_PSSWD_RESET_BUTTON" = "Reset";
 "LOGIN_PSSWD_CREATE" = "Create a password";
 "LOGIN_PSSWD_CONFIRM" = "Confirm password";
+"LOGIN_PSSWD_NOTMATCH_TITLE" = "Passwords don't match";
+"LOGIN_PSSWD_NOTMATCH_MSG" = "New passwrd doesn't match the confirmation.";
+"LOGIN_EULA_TEXT" = "By using our app you agree to our ";
+"LOGIN_EULA_TEXT_APPEND" = " and our ";
+
+"FIRSTLOG_EULA_TITLE" = "Accept Licence Agreement";
+"FIRSTLOG_EULA_POPUP_TITLE" = "Accept conditions";
+"FIRSTLOG_EULA_POPUP_MSG" = "I agree to foodz.guru Terms of Service and Privacy Policy.";
+"FIRSTLOG_EULA_POPUP_AGREE" = "I Agree";
+"FIRSTLOG_EULA_POPUP_NOTAGREE" = "I Don't Agree";
+"FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE" = "Can't go further";
+"FIRSTLOG_EULA_POPUP_NOTAGREE_MSG" = "If you don't accept the conditions you can't use the app.";
+
+
+

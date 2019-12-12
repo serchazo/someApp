@@ -318,7 +318,7 @@ extension MyProfile{
         preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .cancel)
         
         let saveAction = UIAlertAction(title: "Change", style: .default) { _ in
@@ -331,7 +331,7 @@ extension MyProfile{
             if newPassword != confirmPassword {
                 let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
                 let okAction = UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                     style: .default, handler: nil)
                 notMatchAlert.addAction(okAction)
                 self.present(notMatchAlert, animated: true, completion: nil)
@@ -342,14 +342,14 @@ extension MyProfile{
                     if error != nil {
                         let alert = UIAlertController(title: "Sign In Failed", message: error!.localizedDescription, preferredStyle: .alert)
                         alert.addAction(UIAlertAction(
-                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                             style: .default))
                         self.present(alert,animated: true, completion: nil)
                     }
                     else {
                         let alert = UIAlertController(title: "Success", message: "Password change successfully.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(
-                            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                             style: .default))
                         self.present(alert,animated: true, completion: nil)
                     }
@@ -467,7 +467,7 @@ extension MyProfile{
                                                   message: "Your bio shouldn't exceed 500 characters.",
                                                   preferredStyle: .alert)
                     alert.addAction(UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default))
                     self.present(alert,animated:true) {
                         cell.editReviewTextView.becomeFirstResponder()
@@ -490,7 +490,7 @@ extension MyProfile{
                                               message: "Your bio is empty.",
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                     style: .default))
                 self.present(alert,animated:true) {
                     cell.editReviewTextView.becomeFirstResponder()
@@ -532,7 +532,7 @@ extension MyProfile{
             
             let aboutPopUp = UIAlertController(title: "About", message: "Version: \(version) Build: \(build)", preferredStyle: .alert)
             let OKAbout = UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default, handler: nil)
             aboutPopUp.addAction(OKAbout)
             self.present(aboutPopUp, animated: true)
@@ -590,7 +590,7 @@ extension MyProfile{
                 self.logout()
             })
             let cancelDelete = UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                 style: .cancel, handler: nil)
             
             deleteAlert.addAction(cancelDelete)
@@ -599,7 +599,7 @@ extension MyProfile{
             
         })
         let cancelAction = UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .cancel, handler: nil)
         alert.addAction(aboutAction)
         alert.addAction(feedbackAction)

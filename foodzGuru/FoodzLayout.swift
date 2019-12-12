@@ -132,7 +132,7 @@ extension FoodzLayout{
                                       message: text,
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonOK.localized,
+            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
             style: .default))
         vc.present(alert,animated: true, completion: nil)
     }
@@ -153,8 +153,13 @@ extension FoodzLayout{
         case buttonOK
         case buttonCancel
         case msgError
+        case log
+        case eulaTermsOfService
+        case eulaTermsOfServiceURL
+        case eulaPrivacyPolicy
+        case eulaPrivacyPolicyURL
         
-        var localized: String{
+        func localized(arguments:[CVarArg]=[]) -> String{
             switch self{
             case .buttonOK:
                 return String.localizedStringWithFormat(NSLocalizedString("BUTTON_OK", comment: "OK"))
@@ -162,6 +167,16 @@ extension FoodzLayout{
                 return String.localizedStringWithFormat(NSLocalizedString("BUTTON_CANCEL", comment: "Cancel"))
             case .msgError:
                 return String.localizedStringWithFormat(NSLocalizedString("MSG_ERROR", comment: "Error"))
+            case .log:
+                return String.localizedStringWithFormat(NSLocalizedString("LOG", comment: "Log"),arguments)
+            case .eulaTermsOfService:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_TERMSOFSERVICE", comment: "EULA"))
+            case .eulaTermsOfServiceURL:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_TERMS_URL", comment: "URL"))
+            case .eulaPrivacyPolicy:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY", comment: "Policy"))
+            case .eulaPrivacyPolicyURL:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY_URL", comment: "URL"))
             }
         }
     }

@@ -528,7 +528,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                                 self.navigationController?.popViewController(animated: true)
                             })
                             let cancelAction = UIAlertAction(
-                                title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                                title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                                 style: .cancel, handler: nil)
                             innerAlert.addAction(inappropriateAction)
                             innerAlert.addAction(spamAction)
@@ -537,7 +537,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                             // [END] Inner alert
                         })
                         let cancelAction = UIAlertAction(
-                            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                             style: .cancel, handler: nil)
                         
                         moreAlert.addAction(reportAction)
@@ -581,7 +581,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                          preferredStyle: .alert)
                      
                      alert.addAction(UIAlertAction(
-                         title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                          style: .default,
                          handler: {
                              (action: UIAlertAction)->Void in
@@ -605,7 +605,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 else{
                     let alert = UIAlertController(title: "Invalid URL", message: "This place has an invalid URL.", preferredStyle: .alert)
                     let OKaction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler:nil)
                     alert.addAction(OKaction)
                     self.present(alert, animated:true)
@@ -843,7 +843,7 @@ extension MyRestoDetail {
                     self.bannerStuff()
                 }
                 let cancelAction = UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+                    title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                     style: .cancel, handler: nil)
                 alert.addAction(createAction)
                 alert.addAction(cancelAction)

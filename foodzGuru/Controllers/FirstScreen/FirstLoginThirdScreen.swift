@@ -69,7 +69,7 @@ class FirstLoginThirdScreen: UIViewController {
             self.performSegue(withIdentifier: self.segueCityOK, sender: nil)
         }else{
             let alert = UIAlertController(title: "No city selected", message: "Press Select City. You can change this later.", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized, style: .default, handler: nil)
+            let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(), style: .default, handler: nil)
             alert.addAction(okAction)
             self.present(alert,animated: true)
         }

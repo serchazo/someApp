@@ -277,7 +277,7 @@ extension BestRestosViewController{
         preferredStyle: .alert)
         // OK
         alert.addAction(UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized,
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .default,
             handler: {
                 (action: UIAlertAction)->Void in

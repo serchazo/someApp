@@ -256,7 +256,7 @@ extension MyCities: CountryChooserViewDelegate{
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
-                title: FoodzLayout.FoodzStrings.buttonOK.localized,
+                title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default,
                 handler: {
                     (action: UIAlertAction)->Void in

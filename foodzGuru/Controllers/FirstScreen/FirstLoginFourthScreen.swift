@@ -114,7 +114,8 @@ extension FirstLoginFourthScreen{
             username: (userName!).lowercased(),
             bio: bio!,
             defaultCity: tmpCityString,
-            photoURL: urlString)
+            photoURL: urlString,
+            deviceToken: SomeApp.deviceToken)
         
         // Ad the first city
         SomeApp.addUserCity(userId: user.uid, city: currentCity, countryName: currentCountryName, stateName: currentStateName)
