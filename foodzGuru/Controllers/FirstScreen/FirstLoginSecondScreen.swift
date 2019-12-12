@@ -29,14 +29,14 @@ class FirstLoginSecondScreen: UIViewController {
         didSet{
             titleLabel.font = SomeApp.titleFont
             titleLabel.textColor = SomeApp.themeColor
-            titleLabel.text = "Configure your profile (2/4)"
+            titleLabel.text = MyStrings.title.localized()
         }
     }
     
     @IBOutlet weak var instructionLabel: UILabel!
     @IBOutlet weak var warningLabel: UILabel!{
         didSet{
-            warningLabel.text = "Don't worry, you can change the picture later."
+            warningLabel.text = MyStrings.warningLabel.localized()
         }
     }
     @IBOutlet weak var profilePicture: UIImageView!
@@ -88,13 +88,11 @@ class FirstLoginSecondScreen: UIViewController {
         // Upload image button
         FoodzLayout.configureButton(button: goButton)
         FoodzLayout.configureButtonNoBorder(button: uploadImageButton)
-        goButton.setTitle("Go", for: .normal)
+        goButton.setTitle(MyStrings.buttonGo.localized(), for: .normal)
         
-        uploadImageButton.setTitle("Upload", for: .normal)
+        uploadImageButton.setTitle(MyStrings.buttonUpload.localized(), for: .normal)
         uploadImageButton.addTarget(self, action: #selector(uploadPhoto), for: .touchUpInside)
     }
-    
-
     
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -145,13 +143,13 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
                     // Upload data and metadata
                     imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
                         if let error = error {
-                            print("Error uploading the image! \(error.localizedDescription)")
+                            print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
                         }else{
                             // Then get the download URL
                             imageRef.downloadURL { (url, error) in
                                 guard let downloadURL = url else {
                                     // Uh-oh, an error occurred!
-                                    print("Error getting the download URL")
+                                    print(FoodzLayout.FoodzStrings.log.localized(arguments: [error!.localizedDescription]))
                                     return
                                 }
                                 // Update the current photo
@@ -220,5 +218,28 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
         let imageRef = image.cgImage!.cropping(to: cropSquare)!;
         
         return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
+    }
+}
+
+// MARK: Localized Strings
+extension FirstLoginSecondScreen{
+    private enum MyStrings {
+        case title
+        case warningLabel
+        case buttonGo
+        case buttonUpload
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_TITLE", comment: "Configure"))
+            case .warningLabel:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_WARNING", comment: "can change"))
+            case .buttonGo:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_BUTTON_GO", comment: "Go"))
+            case .buttonUpload:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_BUTTON_UPLOAD", comment: "upload"))
+            }
+        }
     }
 }

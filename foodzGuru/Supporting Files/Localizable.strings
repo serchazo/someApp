@@ -49,5 +49,26 @@ Localized strings.
 "FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE" = "Can't go further";
 "FIRSTLOG_EULA_POPUP_NOTAGREE_MSG" = "If you don't accept the conditions you can't use the app.";
 
+"FIRSTLOG1_TITLE" = "Configure your profile (1/4)";
+"FIRSTLOG1_FIELD_PLACEHOLDER" = "Create a username";
+"FIRSTLOG1_INVALID_TITLE" = "Invalid name";
+"FIRSTLOG1_INVALID_MSG" = "Your user name should be at least 4 characters long.";
+"FIRSTLOG1_NICK_TAKEN" = "This username is already taken.";
+"FIRSTLOG1_NICK_OK" = "Good! This username is available.";
+"FIRSTLOG1_BUTTON_GO" = "Go";
+"FIRSTLOG1_BUTTON_WAIT" = "Verify username";
 
+"FIRSTLOG2_TITLE" = "Configure your profile (2/4)";
+"FIRSTLOG2_WARNING" = "Don't worry, you can change the picture later.";
+"FIRSTLOG2_BUTTON_GO" = "Go";
+"FIRSTLOG2_BUTTON_UPLOAD" = "Upload";
 
+"FIRSTLOG3_TITLE" = "Configure your profile (3/4)";
+"FIRSTLOG3_BUTTON_GO" = "Go";
+"FIRSTLOG3_BUTTON_SELECT" = "Select";
+"FIRSTLOG3_BUTTON_CHANGE" = "Select";
+"FIRSTLOG3_POPUP_TITLE" = "No city selected";
+"FIRSTLOG3_POPUP_MSG" = "Press Select City. You can change this later.";
+
+"FIRSTLOG4_TITLE" = "Configure your profile (3/4)";
+"FIRSTLOG4_BUTTON_GO" = "Go";

@@ -25,7 +25,7 @@ class FirstLoginThirdScreen: UIViewController {
         didSet{
             titleLabel.font = SomeApp.titleFont
             titleLabel.textColor = SomeApp.themeColor
-            titleLabel.text = "Configure your profile (3/4)"
+            titleLabel.text = MyStrings.title.localized()
         }
     }
     @IBOutlet weak var instructionLabel: UILabel!
@@ -52,13 +52,13 @@ class FirstLoginThirdScreen: UIViewController {
     private func configureButtons(){
         FoodzLayout.configureButtonNoBorder(button: selectCityButton)
         FoodzLayout.configureButton(button: goButton)
-        goButton.setTitle("Go", for: .normal)
+        goButton.setTitle(MyStrings.buttonGo.localized(), for: .normal)
         goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
         
         if !cityChosenFlag{
-            selectCityButton.setTitle("Select", for: .normal)
+            selectCityButton.setTitle(MyStrings.buttonSelect.localized(), for: .normal)
         }else{
-            selectCityButton.setTitle("Change", for: .normal)
+            selectCityButton.setTitle(MyStrings.buttonChange.localized(), for: .normal)
         }
     }
     
@@ -68,7 +68,10 @@ class FirstLoginThirdScreen: UIViewController {
         if cityChosenFlag{
             self.performSegue(withIdentifier: self.segueCityOK, sender: nil)
         }else{
-            let alert = UIAlertController(title: "No city selected", message: "Press Select City. You can change this later.", preferredStyle: .alert)
+            let alert = UIAlertController(
+                title: MyStrings.popupTitle.localized(),
+                message: MyStrings.popupMsg.localized(),
+                preferredStyle: .alert)
             let okAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonOK.localized(), style: .default, handler: nil)
             alert.addAction(okAction)
             self.present(alert,animated: true)
@@ -125,5 +128,35 @@ extension FirstLoginThirdScreen: ItemChooserViewDelegate {
         cityTextField.placeholder = city.name
         cityChosenFlag = true
         configureButtons()
+    }
+}
+
+
+// MARK: Localized Strings
+extension FirstLoginThirdScreen{
+    private enum MyStrings {
+        case title
+        case buttonGo
+        case buttonSelect
+        case buttonChange
+        case popupTitle
+        case popupMsg
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_TITLE", comment: "Configure"))
+            case .buttonGo:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_GO", comment: "OK"))
+            case .buttonSelect:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_SELECT", comment: "Select"))
+            case .buttonChange:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_CHANGE", comment: "Change"))
+            case .popupTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_POPUP_TITLE", comment: "Nothing"))
+            case .popupMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_POPUP_MSG", comment: "Can change"))
+            }
+        }
     }
 }

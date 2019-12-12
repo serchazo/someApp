@@ -1857,6 +1857,7 @@
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Insert username" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ynZ-eM-qWC">
                                         <rect key="frame" x="87" y="135" width="200" height="34"/>
+                                        <color key="backgroundColor" systemColor="secondarySystemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="200" id="mBt-oQ-Vgm"/>
@@ -2098,6 +2099,7 @@
                                     </button>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Select a city" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZV5-ds-mlt">
                                         <rect key="frame" x="107" y="135" width="200" height="34"/>
+                                        <color key="backgroundColor" systemColor="secondarySystemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="200" id="7cH-KL-LuT"/>
                                         </constraints>
@@ -2188,6 +2190,7 @@
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7AN-av-7tR">
                                         <rect key="frame" x="20" y="117" width="334" height="70"/>
+                                        <color key="backgroundColor" systemColor="secondarySystemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.32369780539999998" green="0.1063579395" blue="0.574860394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="70" id="LCS-qw-k97"/>
@@ -2884,7 +2887,7 @@
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="ou3-RT-r6a"/>
         <segue reference="PvU-qX-GjI"/>
-        <segue reference="j96-5r-UVn"/>
+        <segue reference="LmG-dI-q1d"/>
         <segue reference="ktI-CK-hAu"/>
         <segue reference="1ed-PL-d8B"/>
     </inferredMetricsTieBreakers>

@@ -29,7 +29,7 @@ class FirstLoginFourthScreen: UIViewController {
         didSet{
             titleLabel.font = SomeApp.titleFont
             titleLabel.textColor = SomeApp.themeColor
-            titleLabel.text = "One last step"
+            titleLabel.text = MyStrings.title.localized()
         }
     }
     @IBOutlet weak var instructionLabel: UILabel!
@@ -70,13 +70,12 @@ class FirstLoginFourthScreen: UIViewController {
 
 }
 
-
 // MARK: Go button
 extension FirstLoginFourthScreen{
     // Configure
     func configureButtons(){
         FoodzLayout.configureButton(button: goButton)
-        goButton.setTitle("Go", for: .normal)
+        goButton.setTitle(MyStrings.buttonGo.localized(), for: .normal)
         goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
         
     }
@@ -98,7 +97,7 @@ extension FirstLoginFourthScreen{
             changeRequest.photoURL = photoURL
             changeRequest.commitChanges(completion: {error in
                 if let error = error{
-                    print("There was an error updating the user profile: \(error.localizedDescription)")
+                    print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
                 }
             })
         }
@@ -151,5 +150,23 @@ extension FirstLoginFourthScreen: UITextFieldDelegate{
         guard let stringRange = Range(range, in: currentText) else {return false}
         let changedText = currentText.replacingCharacters(in: stringRange, with: string)
         return changedText.count <= 150
+    }
+}
+
+// MARK: Localized Strings
+extension FirstLoginFourthScreen{
+    private enum MyStrings {
+        case title
+        case buttonGo
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG4_TITLE", comment: "Configure"))
+            case .buttonGo:
+            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG4_BUTTON_GO", comment: "Go"))
+                
+            }
+        }
     }
 }

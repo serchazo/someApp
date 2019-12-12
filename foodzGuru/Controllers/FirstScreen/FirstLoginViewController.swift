@@ -22,16 +22,14 @@ class FirstLoginViewController: UIViewController {
         didSet{
             titleLabel.font = SomeApp.titleFont
             titleLabel.textColor = SomeApp.themeColor
-            titleLabel.text = "Configure your profile (1/4)"
+            titleLabel.text = MyStrings.title.localized()
         }
     }
     @IBOutlet weak var userNameField: UITextField!
     @IBOutlet weak var userNameTakenLabel: UILabel!
     @IBOutlet weak var verifyNameSpinner: UIActivityIndicatorView!{
         didSet{
-            if #available(iOS 13, *){
                 verifyNameSpinner.style = .large
-            }
         }
     }
     @IBOutlet weak var goButton: UIButton!
@@ -43,7 +41,7 @@ class FirstLoginViewController: UIViewController {
         userNameField.delegate = self
         userNameField.keyboardType = .default
         userNameField.autocorrectionType = .no
-        userNameField.placeholder = "Create a username"
+        userNameField.placeholder = MyStrings.fieldPlaceholder.localized()
         
         // Get user
         Auth.auth().addStateDidChangeListener {auth, user in
@@ -79,7 +77,10 @@ class FirstLoginViewController: UIViewController {
         // If the textfield is too short: alert and do nothing
         guard let nickname = userNameField.text,
             nickname.count >= 4 else {
-            let alert = UIAlertController(title: "Invalid name", message: "Your user name should be at least 4 characters long.", preferredStyle: .alert)
+            let alert = UIAlertController(
+                title: MyStrings.nickInvalidTitle.localized(),
+                message: MyStrings.nickInvalidMsg.localized(),
+                preferredStyle: .alert)
             let okAction = UIAlertAction(
                 title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default,
@@ -100,7 +101,7 @@ class FirstLoginViewController: UIViewController {
                 // The username exists
                 self.userNameField.text = self.userName
                 self.userNameTakenLabel.textColor = .systemRed
-                self.userNameTakenLabel.text = "This username is already taken."
+                self.userNameTakenLabel.text = MyStrings.nickTaken.localized()
                 self.userNameTakenLabel.isHidden = false
                 
             }else  {
@@ -108,7 +109,7 @@ class FirstLoginViewController: UIViewController {
                 self.userNameField.text = self.userName
                 self.userNameOKFlag = true
                 self.userNameTakenLabel.textColor = .darkText
-                self.userNameTakenLabel.text = "Good! This username is available."
+                self.userNameTakenLabel.text = MyStrings.nickOK.localized()
                 self.userNameTakenLabel.isHidden = false
             }
             self.configureGoButton()
@@ -126,13 +127,13 @@ class FirstLoginViewController: UIViewController {
         FoodzLayout.configureButton(button: goButton)
         
        if userNameOKFlag{
-            goButton.setTitle("Go!", for: .normal)
-            goButton.removeTarget(self, action: #selector(verifyUserName), for: .touchUpInside)
-            goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
-        }else{
-            goButton.setTitle("Verify username", for: .normal)
-            goButton.removeTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
-            goButton.addTarget(self, action: #selector(verifyUserName), for: .touchUpInside)
+        goButton.setTitle(MyStrings.buttonGo.localized(), for: .normal)
+        goButton.removeTarget(self, action: #selector(verifyUserName), for: .touchUpInside)
+        goButton.addTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
+       }else{
+        goButton.setTitle(MyStrings.buttonVerify.localized(), for: .normal)
+        goButton.removeTarget(self, action: #selector(goButtonPressed), for: .touchUpInside)
+        goButton.addTarget(self, action: #selector(verifyUserName), for: .touchUpInside)
         }
     }
 }
@@ -176,5 +177,40 @@ extension FirstLoginViewController: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         userNameField.resignFirstResponder()
         return true
+    }
+}
+
+// MARK: Localized Strings
+extension FirstLoginViewController{
+    private enum MyStrings {
+        case title
+        case fieldPlaceholder
+        case nickInvalidTitle
+        case nickInvalidMsg
+        case nickTaken
+        case nickOK
+        case buttonGo
+        case buttonVerify
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_TITLE", comment: "Configure"))
+            case .fieldPlaceholder:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_FIELD_PLACEHOLDER", comment: "username"))
+            case .nickInvalidTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_INVALID_TITLE", comment: "Invalid"))
+            case .nickInvalidMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_INVALID_MSG", comment: "Invalid"))
+            case .nickTaken:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_NICK_TAKEN", comment: "Taken"))
+            case .nickOK:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_NICK_OK", comment: "OK"))
+            case .buttonGo:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_BUTTON_GO", comment: "Go"))
+            case .buttonVerify:
+                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_BUTTON_WAIT", comment: "Wait"))
+            }
+        }
     }
 }
