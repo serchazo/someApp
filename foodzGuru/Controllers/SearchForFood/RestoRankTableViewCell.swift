@@ -17,7 +17,6 @@ class RestoRankTableViewCell: UITableViewCell {
     @IBOutlet weak var restoAddressLabel: UILabel!
     @IBOutlet weak var restoPositionLabel: UILabel!
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -151,6 +151,7 @@ extension FoodzLayout{
 extension FoodzLayout{
     enum FoodzStrings{
         case appName
+        case appURL
         case buttonOK
         case buttonCancel
         case msgError
@@ -168,6 +169,8 @@ extension FoodzLayout{
             switch self{
             case .appName:
                 return String.localizedStringWithFormat(NSLocalizedString("FOODZ_APP_NAME", comment: "name"))
+            case .appURL:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_URL", comment: "URL"))
             case .buttonOK:
                 return String.localizedStringWithFormat(NSLocalizedString("BUTTON_OK", comment: "OK"))
             case .buttonCancel:

@@ -40,9 +40,9 @@ class MyProfile: UIViewController {
     private var isUploadingPic:Bool = false
     
     // Suport stuff
-    private let supportAdress = "support@foodz.guru"
-    private let supportSubject = "Feedback on Foodz.guru"
-    private let supportBody = "My feedback: "
+    private let supportAdress = MyStrings.supportEmailAddress.localized()
+    private let supportSubject = MyStrings.supportEmailSubject.localized()
+    private let supportBody = MyStrings.supportEmailBody.localized()
     
     // handles
     private var userDataHandle:UInt!
@@ -96,10 +96,8 @@ class MyProfile: UIViewController {
     //
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "My Profile"
-        
+        self.navigationItem.title = MyStrings.navBarTitle.localized()
         setUpTables()
-        
     }
     
     //
@@ -163,23 +161,21 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let changePicButton = UIButton(type: .custom)
                 changePicButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 changePicButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                changePicButton.setTitle("Change Profile Picture", for: .normal)
+                changePicButton.setTitle(MyStrings.buttonChangeProfilePic.localized(), for: .normal)
                 changePicButton.addTarget(self, action: #selector(changeProfilePicture), for: .touchUpInside)
-                //cell.selectionStyle = .none
                 cell.addSubview(changePicButton)
                 
                 return cell
-                
             }
                 // Change bio cell
             else if indexPath.row == 1,
                 let cell = myProfileTable.dequeueReusableCell(withIdentifier: changeBioCellId, for: indexPath) as? MyProfileBioCell{
-                cell.titleLabel.text = "Bio"
+                cell.titleLabel.text = MyStrings.buttonBio.localized()
                 
                 if bioString != nil && bioString != ""{
                     cell.bioLabel.text = bioString!
                 }else{
-                    cell.bioLabel.text = "Enter a bio."
+                    cell.bioLabel.text = MyStrings.buttonBioEmpty.localized()
                 }
                 cell.selectionStyle = .none
                 return cell
@@ -190,7 +186,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let changeBioButton = UIButton(type: .custom)
                 changeBioButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 changeBioButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                changeBioButton.setTitle("Edit Bio", for: .normal)
+                changeBioButton.setTitle(MyStrings.buttonBioEdit.localized(), for: .normal)
                 changeBioButton.addTarget(self, action: #selector(changeBio), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(changeBioButton)
@@ -203,7 +199,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let changePasswordButton = UIButton(type: .custom)
                 changePasswordButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 changePasswordButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                changePasswordButton.setTitle("Change Password", for: .normal)
+                changePasswordButton.setTitle(MyStrings.buttonPsswd.localized(), for: .normal)
                 changePasswordButton.addTarget(self, action: #selector(changePasswordAction), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(changePasswordButton)
@@ -216,7 +212,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let helpButton = UIButton(type: .custom)
                 helpButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 helpButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                helpButton.setTitle("Help & Support", for: .normal)
+                helpButton.setTitle(MyStrings.buttonHelp.localized(), for: .normal)
                 helpButton.addTarget(self, action: #selector(showHelp), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(helpButton)
@@ -229,7 +225,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let moreButton = UIButton(type: .custom)
                 moreButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 moreButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                moreButton.setTitle("More", for: .normal)
+                moreButton.setTitle(MyStrings.buttonMore.localized(), for: .normal)
                 moreButton.addTarget(self, action: #selector(popupMoreMenu), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(moreButton)
@@ -243,7 +239,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
                 let logoutButton = UIButton(type: .custom)
                 logoutButton.frame = CGRect(x: 0, y: cell.frame.minY, width: myProfileTable.frame.width, height: cell.frame.height)
                 logoutButton.setTitleColor(.red, for: .normal)
-                logoutButton.setTitle("Log out", for: .normal)
+                logoutButton.setTitle(MyStrings.buttonSignOut.localized(), for: .normal)
                 logoutButton.addTarget(self, action: #selector(logout), for: .touchUpInside)
                 cell.selectionStyle = .none
                 cell.addSubview(logoutButton)
@@ -258,7 +254,7 @@ extension MyProfile: UITableViewDelegate, UITableViewDataSource{
         }
         // [END] Normal table
         else{
-            fatalError("Cannot")
+            fatalError("My Profile: Cannot create cell")
         }
     }
     
@@ -302,7 +298,7 @@ extension MyProfile{
         let config = SFSafariViewController.Configuration()
         config.entersReaderIfAvailable = true
         
-        let vc = SFSafariViewController(url: URL(string: "http://foodz.guru")!, configuration: config)
+        let vc = SFSafariViewController(url: URL(string: FoodzLayout.FoodzStrings.appURL.localized())!, configuration: config)
         vc.navigationController?.navigationBar.titleTextAttributes = [
         NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
         vc.preferredControlTintColor = SomeApp.themeColor
@@ -313,7 +309,7 @@ extension MyProfile{
     
     // MARK: Change password
        @objc func changePasswordAction(_ sender: UIButton){
-        let alert = UIAlertController(title: "Change password",
+        let alert = UIAlertController(title: MyStrings.buttonPsswd.localized(),
         message: nil,
         preferredStyle: .alert)
         
@@ -549,36 +545,37 @@ extension MyProfile{
         })
         
         // See EULA
-        let eulaAction = UIAlertAction(title: "Licence Agreement", style: .default, handler: {_ in
-            let config = SFSafariViewController.Configuration()
-            config.entersReaderIfAvailable = true
-            
-            let eulaURL = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
-            
-            let vc = SFSafariViewController(url: URL(string: eulaURL)!, configuration: config)
-            vc.navigationController?.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
-            vc.preferredControlTintColor = SomeApp.themeColor
-            vc.preferredBarTintColor = UIColor.white
-            
-            self.present(vc, animated: true)
+        let eulaAction = UIAlertAction(
+            title: FoodzLayout.FoodzStrings.eulaTermsOfService.localized(),
+            style: .default, handler: {_ in
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = true
+                let eulaURL = FoodzLayout.FoodzStrings.eulaTermsOfServiceURL.localized()
+                
+                let vc = SFSafariViewController(url: URL(string: eulaURL)!, configuration: config)
+                vc.navigationController?.navigationBar.titleTextAttributes = [
+                    NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+                vc.preferredControlTintColor = SomeApp.themeColor
+                vc.preferredBarTintColor = UIColor.white
+                
+                self.present(vc, animated: true)
         })
         
         // See Privacy Policy
-        let privacyPolicyAction = UIAlertAction(title: "Privay Policy", style: .default, handler: {
-            _ in
-            let config = SFSafariViewController.Configuration()
-            config.entersReaderIfAvailable = true
-            
-            let privacyURL = "https://foodzdotguru.wordpress.com/privacy-policy/"
-            
-            let vc = SFSafariViewController(url: URL(string: privacyURL)!, configuration: config)
-            vc.navigationController?.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
-            vc.preferredControlTintColor = SomeApp.themeColor
-            vc.preferredBarTintColor = UIColor.white
-            
-            self.present(vc, animated: true)
+        let privacyPolicyAction = UIAlertAction(
+            title: FoodzLayout.FoodzStrings.eulaPrivacyPolicy.localized(),
+            style: .default, handler: {_ in
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = true
+                let privacyURL = FoodzLayout.FoodzStrings.eulaPrivacyPolicyURL.localized()
+                
+                let vc = SFSafariViewController(url: URL(string: privacyURL)!, configuration: config)
+                vc.navigationController?.navigationBar.titleTextAttributes = [
+                    NSAttributedString.Key.foregroundColor: SomeApp.themeColor]
+                vc.preferredControlTintColor = SomeApp.themeColor
+                vc.preferredBarTintColor = UIColor.white
+                
+                self.present(vc, animated: true)
         })
         
         // Delete Action
@@ -653,13 +650,13 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
                     // Upload data and metadata
                     imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
                         if let error = error {
-                            print("Error uploading the image! \(error.localizedDescription)")
+                            print(print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription])))
                         }else{
                             // Then get the download URL
                             imageRef.downloadURL { (url, error) in
                                 guard let downloadURL = url else {
                                     // Uh-oh, an error occurred!
-                                    print("Error getting the download URL")
+                                    print(print(FoodzLayout.FoodzStrings.log.localized(arguments: [error!.localizedDescription])))
                                     return
                                 }
                                 // Update the current photo
@@ -752,5 +749,52 @@ extension MyProfile:UITextViewDelegate {
 extension MyProfile: MFMailComposeViewControllerDelegate{
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: Localized Strings
+extension MyProfile{
+    private enum MyStrings {
+        case supportEmailAddress
+        case supportEmailSubject
+        case supportEmailBody
+        case navBarTitle
+        case buttonChangeProfilePic
+        case buttonBio
+        case buttonBioEmpty
+        case buttonBioEdit
+        case buttonPsswd
+        case buttonHelp
+        case buttonMore
+        case buttonSignOut
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .supportEmailAddress:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_ADDRESS", comment: "email"))
+            case .supportEmailSubject:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_SUBJECT", comment: "Subject"))
+            case .supportEmailBody:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_BODY", comment: "Body"))
+            case .navBarTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_NAVBAR_TITLE", comment: "Title"))
+            case .buttonChangeProfilePic:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_CHANGEPIC", comment: "Title"))
+            case .buttonBio:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_NAME", comment: "Biography"))
+            case .buttonBioEmpty:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_EMPTY", comment: "Biography"))
+            case .buttonBioEdit:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_EDIT", comment: "Biography"))
+            case .buttonPsswd:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD", comment: "Password"))
+            case .buttonHelp:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_HELP", comment: "Help"))
+            case .buttonMore:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_MORE", comment: "More"))
+            case .buttonSignOut:
+                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_LOGOFF", comment: "Sign out"))
+            }
+        }
     }
 }

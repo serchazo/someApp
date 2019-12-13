@@ -349,23 +349,22 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 
                 cell.restoNameLabel.text = thisResto.name
                 
-                //cell.restoAddressLabel.textColor = .systemGray2
                 cell.restoAddressLabel.text = thisResto.address
-                let tmpPointsString = "Points: \(thisResto.nbPoints)"
+                let tmpPointsString = MyStrings.points.localized(arguments: [thisResto.nbPoints])
                 cell.restoPointsLabel.text = tmpPointsString
-                let tmpReviewsString = "Reviews: \(thisResto.nbReviews)"
+                let tmpReviewsString = MyStrings.reviews.localized(arguments: [thisResto.nbReviews])
                 cell.restoOtherInfoLabel.text = tmpReviewsString
                 
                 return cell
             }else{
-                fatalError("no cell")
+                fatalError("BestRestos: cannot create cell")
             }
         }else if indexPath.section == 1{
                 guard nativeAds.count > 0 else{
                     let spinnerCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
                     
-                    spinnerCell.textLabel?.text = "Advertise here!"
-                    spinnerCell.detailTextLabel?.text = "Contact support@foodz.guru"
+                    spinnerCell.textLabel?.text = FoodzLayout.FoodzStrings.adPlaceholderShortTitle.localized()
+                    spinnerCell.detailTextLabel?.text = FoodzLayout.FoodzStrings.adPlaceholderShortMsg.localized()
                     //spinnerCell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
                     spinnerCell.imageView?.image = UIImage(named: "idea")
                     spinnerCell.selectionStyle = .none
@@ -377,7 +376,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 configureAddCell(nativeAdCell: nativeAdCell)
                 return(nativeAdCell)
             }else{
-                fatalError("Marche pas.")
+                fatalError("Cannot create cell")
             }
         }
     
@@ -414,24 +413,6 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
             nativeAd.callToAction, for: UIControl.State.normal)
     }
 }
-
-
-
-// MARK: Fonts
-extension BestRestosViewController{
-    private var restorantNameFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .title3).withSize(23.0))
-    }
-    
-    private var restorantPointsFont:UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
-    }
-    
-    private var restorantAddressFont:UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(15.0))
-    }
-}
-
 
 // MARK: Ad stuff
 extension BestRestosViewController: GADBannerViewDelegate{
@@ -584,6 +565,8 @@ extension BestRestosViewController{
         case unfollowMsg
         case emptyTitle
         case emptyMsg
+        case points
+        case reviews
         
         func localized(arguments: [CVarArg] = []) -> String{
             switch self{
@@ -601,6 +584,10 @@ extension BestRestosViewController{
                 return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_TITLE", comment: "Empty"),arguments)
             case .emptyMsg:
                 return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_MSG", comment: "Can add"),arguments)
+            case .points:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_POINTS", comment: "Points"),arguments)
+            case .reviews:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_REVIEWS", comment: "Comments"),arguments)
             }
         }
     }

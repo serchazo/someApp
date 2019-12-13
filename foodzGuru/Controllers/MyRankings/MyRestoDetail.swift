@@ -20,6 +20,7 @@ class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private static let segueToMap = "showMap"
     
+    private let addressCellId = "AddressCell"
     private let commentCell = "CommentCell"
     private let commentCellNibId = "CommentCell"
     private let editReviewCell = "EditReviewCell"
@@ -90,7 +91,7 @@ class MyRestoDetail: UIViewController {
         tmpView.textAlignment = .center
         tmpView.textColor = SomeApp.themeColor
         tmpView.font = UIFont.preferredFont(forTextStyle: .headline)
-        tmpView.text = "\(self.currentFood.icon) \(self.currentResto.name) added to your \(self.currentFood.name) places!"
+        tmpView.text = MyStrings.bannerTitle.localized(arguments: [self.currentFood.icon, self.currentResto.name, self.currentFood.name])
         
         let banner = NotificationBanner(customView: tmpView)
         banner.show()
@@ -247,7 +248,7 @@ class MyRestoDetail: UIViewController {
             self.addToRankButton.isEnabled = true
             self.addToRankButton.isHidden = false
             FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
-            self.addToRankButton.setTitle("Add to my Foodz", for: .normal)
+            self.addToRankButton.setTitle(MyStrings.buttonAddResto.localized(), for: .normal)
         }
         
     }
@@ -312,26 +313,26 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         // The normal table
         else if indexPath.section == 0 {
             if indexPath.row == 0{
-                let cell = restoDetailTable.dequeueReusableCell(withIdentifier: "AddressCell")
+                let cell = restoDetailTable.dequeueReusableCell(withIdentifier: self.addressCellId)
                 cell!.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell!.textLabel?.textColor = .black
-                cell!.textLabel?.text = "Address"
+                cell!.textLabel?.textColor = .label
+                cell!.textLabel?.text = MyStrings.address.localized()
                 cell!.detailTextLabel?.text = currentResto.address
                 return cell!
             }else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.textColor = .black
+                cell.textLabel?.textColor = .label
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Phone"
+                cell.textLabel?.text = MyStrings.phone.localized()
                 cell.detailTextLabel?.text = currentResto.phoneNumber
                 return cell
             }else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.textColor = .black
+                cell.textLabel?.textColor = .label
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "URL"
+                cell.textLabel?.text = MyStrings.url.localized()
                 if currentResto.url != nil{
                     cell.detailTextLabel?.text = currentResto.url!.absoluteString
                 }else{
@@ -342,17 +343,18 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 // Title
                 cell.selectionStyle = .none
+                cell.isUserInteractionEnabled = false
                 cell.textLabel?.textAlignment = .center
                 cell.textLabel?.textColor = SomeApp.themeColor
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.text = "Reviews"
+                cell.textLabel?.text = MyStrings.reviews.localized()
                 
                 return cell
             }
         }else{
             guard commentArray.count > 0 else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Loading comments"
+                cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
@@ -414,7 +416,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     postCell.stackView.isHidden = true
                     
                     postCell.likeButton.isEnabled = false
-                    postCell.nbLikesButton.setTitle("Get Yums!", for: .normal)
+                    postCell.nbLikesButton.setTitle(MyStrings.buttonYumsEmpty.localized(), for: .normal)
                     postCell.nbLikesButton.isEnabled = true
                     postCell.moreButton.setTitle("", for: .normal)
                     postCell.moreButton.isEnabled = false
@@ -450,18 +452,18 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 
                 // Like button
-                postCell.likeButton.setTitle("Yum!", for: .normal)
+                postCell.likeButton.setTitle(MyStrings.buttonYum.localized(), for: .normal)
                 if restoReviewLiked[indexPath.row]{
                     postCell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                     postCell.likeButton.setTitleColor(SomeApp.selectionColor , for: .normal)
-                    postCell.likeButton.setTitle("Yummed", for: .normal)
+                    postCell.likeButton.setTitle(MyStrings.buttonYummed.localized(), for: .normal)
                 }else{
                     postCell.likeButton.setTitleColor(SomeApp.themeColor, for: .normal)
                 }
                 
                 // NbLikes label
                 postCell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
-                postCell.nbLikesButton.setTitle("Yums! (\(restoReviewsLikeNb[indexPath.row]))", for: .normal)
+                postCell.nbLikesButton.setTitle(MyStrings.buttonYum.localized(arguments: [restoReviewsLikeNb[indexPath.row]]),for: .normal)
                 
                 // Report button
                 // [START] If it's not the first comment, then we can add some actions
@@ -1017,5 +1019,46 @@ extension MyRestoDetail: GADBannerViewDelegate{
     // the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         //print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: Localized Strings
+extension MyRestoDetail{
+    private enum MyStrings {
+        case bannerTitle
+        case buttonAddResto
+        case address
+        case phone
+        case url
+        case reviews
+        case buttonYumsEmpty
+        case buttonYum
+        case buttonYummed
+        case buttonYumNb
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .bannerTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BANNER", comment: "Added"), arguments)
+            case .buttonAddResto:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESTO", comment: "Add"))
+            case .address:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESS", comment: "address"))
+            case .phone:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_PHONE", comment: "phone"))
+            case .url:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_URL", comment: "url"))
+            case .reviews:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_REVIEWS", comment: "reviews"))
+            case .buttonYumsEmpty:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMS_EMPTY", comment: "get more"))
+            case .buttonYum:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUM", comment: "yum"))
+            case .buttonYummed:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMMED", comment: "yum"))
+            case .buttonYumNb:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMNB", comment: "yum"), arguments)
+            }
+        }
     }
 }

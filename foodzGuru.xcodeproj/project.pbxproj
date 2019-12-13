@@ -64,6 +64,7 @@
 		34DA7EB3234AC2DF00EBD360 /* HomeCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */; };
 		34DA7EB5234AEF4900EBD360 /* AddRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB4234AEF4900EBD360 /* AddRanking.swift */; };
 		34DA7EB7234B29D400EBD360 /* MyCities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB6234B29D400EBD360 /* MyCities.swift */; };
+		34DFA20323A37B2A006E4175 /* SpinnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFA20223A37B2A006E4175 /* SpinnerCollectionViewCell.swift */; };
 		34E54DB92326428400D99B8A /* MyRanksEditDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */; };
 		34F197AB2320BB38007D556F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F197AA2320BB38007D556F /* LoginViewController.swift */; };
 		34F197B22320DB91007D556F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 34F197B12320DB91007D556F /* Podfile */; };
@@ -140,6 +141,7 @@
 		34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithImage.swift; sourceTree = "<group>"; };
 		34DA7EB4234AEF4900EBD360 /* AddRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRanking.swift; sourceTree = "<group>"; };
 		34DA7EB6234B29D400EBD360 /* MyCities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCities.swift; sourceTree = "<group>"; };
+		34DFA20223A37B2A006E4175 /* SpinnerCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpinnerCollectionViewCell.swift; sourceTree = "<group>"; };
 		34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRanksEditDescriptionCell.swift; sourceTree = "<group>"; };
 		34F197AA2320BB38007D556F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		34F197B12320DB91007D556F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -296,6 +298,7 @@
 				346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */,
 				34E54DB82326428400D99B8A /* MyRanksEditDescriptionCell.swift */,
 				34DA7EB4234AEF4900EBD360 /* AddRanking.swift */,
+				34DFA20223A37B2A006E4175 /* SpinnerCollectionViewCell.swift */,
 				34FEE9CF23126F8500FE0590 /* MyRanksAddRankingViewController.swift */,
 				3465E53E2315033B00166699 /* MapSearchViewController.swift */,
 				341C754923161F5E00BA26D9 /* SuggestionsTableTableViewController.swift */,
@@ -487,6 +490,7 @@
 				346F8D2C237657D500AD7D29 /* EditRankingTitleCell.swift in Sources */,
 				34FEE9CE231229C000FE0590 /* MyRanksTableViewCell.swift in Sources */,
 				348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */,
+				34DFA20323A37B2A006E4175 /* SpinnerCollectionViewCell.swift in Sources */,
 				34A76E3423225615005951A2 /* Resto.swift in Sources */,
 				34A76E312322063B005951A2 /* Ranking.swift in Sources */,
 				341DD15E2328EAD500102472 /* MyRestoMap.swift in Sources */,
