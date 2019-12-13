@@ -15,6 +15,7 @@ class HomeViewController: UIViewController {
     // Class variables
     private static let timelineCellIdentifier = "TimelineCell"
     private static let timelineCellNibIdentifier = "TimelineCell"
+    private let unifiedCellIdentifier = "UnifiedNativeAdCell"
     private let timelineCellWithImage = "TimelineCellWithImage"
     private let timelineCellWithImageNibId = "TimelineCellWithImage"
     
@@ -66,8 +67,8 @@ class HomeViewController: UIViewController {
             newsFeedTable.register(UINib(nibName: HomeViewController.timelineCellNibIdentifier, bundle: nil), forCellReuseIdentifier: HomeViewController.timelineCellIdentifier)
             newsFeedTable.register(UINib(nibName: timelineCellWithImageNibId, bundle: nil), forCellReuseIdentifier: timelineCellWithImage)
             
-            newsFeedTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
-            forCellReuseIdentifier: "UnifiedNativeAdCell")
+            newsFeedTable.register(UINib(nibName: self.unifiedCellIdentifier, bundle: nil),
+                                   forCellReuseIdentifier: self.unifiedCellIdentifier)
             
             newsFeedTable.rowHeight = UITableView.automaticDimension
             newsFeedTable.estimatedRowHeight = 150
@@ -102,7 +103,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "foodz.guru"
+        self.navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
         
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -179,8 +180,8 @@ class HomeViewController: UIViewController {
         let tmpKey = "nativeAd"
         let tmpType = TimelineEvents.NativeAd.rawValue
         let tmpTimestamp = NSDate().timeIntervalSince1970
-        let tmpPayoload = "Place your Advertisement here! Contact support@foodz.guru"
-        let tmpInitiator = "foodz.guru"
+        let tmpPayoload = FoodzLayout.FoodzStrings.adPlaceholderLong.localized()
+        let tmpInitiator = FoodzLayout.FoodzStrings.appName.localized()
         let target = "nil"
         let targetName = "nil"
         return (key: tmpKey, type:tmpType, timestamp:tmpTimestamp, payload: tmpPayoload, initiator: tmpInitiator, target: target, targetName: targetName)
@@ -273,60 +274,59 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         // If empty, turn spinner
         guard somePost.count > 0 else {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Waiting for services"
+            cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
             
             return cell
         }
-        
         // New ranking
         if somePost[indexPath.row].type == TimelineEvents.NewUserRanking.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserRanking, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = "New Ranking"
+            cell.titleLabel.text = MyStrings.postNewRanking.localized()
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
         // User following
         else if somePost[indexPath.row].type == TimelineEvents.NewFollower.rawValue,
         let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineUserFollowing, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = "Following"
+            cell.titleLabel.text = MyStrings.postNewFollower.localized()
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
         // New Yum!
         else if somePost[indexPath.row].type == TimelineEvents.NewYum.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
-                cell.titleLabel.text = "Yum!"
-                setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-                return cell
-            }
+            cell.titleLabel.text = MyStrings.postNewYum.localized()
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
         // New review
         else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = "New Review"
+            cell.titleLabel.text = MyStrings.postNewReview.localized()
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
         // New favorite
         else if somePost[indexPath.row].type == TimelineEvents.NewUserFavorite.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = "New Favorite!"
+            cell.titleLabel.text = MyStrings.postNewFavorite.localized()
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
         // New best in ranking
         else if somePost[indexPath.row].type == TimelineEvents.NewBestRestoInRanking.rawValue,
             let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
-            cell.titleLabel.text = "New Best!"
+            cell.titleLabel.text = MyStrings.postNewBestInRank.localized()
             setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
         // New arrival in ranking
         else if somePost[indexPath.row].type == TimelineEvents.NewArrivalInRanking.rawValue,
         let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
-            cell.titleLabel.text = "Let's go taste"
+            cell.titleLabel.text = MyStrings.postNewInTopRank.localized()
             setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
@@ -336,7 +336,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             if nativeAds.count > 0{
                 // Ad Cell
                 let nativeAdCell = tableView.dequeueReusableCell(
-                    withIdentifier: "UnifiedNativeAdCell", for: indexPath)
+                    withIdentifier: self.unifiedCellIdentifier, for: indexPath)
                 configureAddCell(nativeAdCell: nativeAdCell, index: adsLoadedIndex)
                 adsLoadedIndex += 1
                 if adsLoadedIndex == (adsToLoad - 1) {
@@ -349,9 +349,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             else{
                 let spinnerCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
                 spinnerCell.textLabel?.textColor = .label
-                spinnerCell.textLabel?.text = "Advertise here!"
+                spinnerCell.textLabel?.text = FoodzLayout.FoodzStrings.adPlaceholderShortTitle.localized()
                 spinnerCell.detailTextLabel?.textColor = .label
-                spinnerCell.detailTextLabel?.text = "Contact support@foodz.guru"
+                spinnerCell.detailTextLabel?.text = FoodzLayout.FoodzStrings.adPlaceholderShortMsg.localized()
                 spinnerCell.imageView?.image = UIImage(named: "idea")
                 spinnerCell.selectionStyle = .none
                 return spinnerCell
@@ -387,12 +387,12 @@ extension HomeViewController{
         cell.dateLabel.text = localDate
         
         if (type == TimelineEvents.FoodzGuruPost.rawValue){
-            cell.titleLabel.text = "foodz.guru"
+            cell.titleLabel.text = FoodzLayout.FoodzStrings.appName.localized()
             cell.bodyLabel.text = payload
             cell.iconLabel.text = "💬"
         }
         else if (type == TimelineEvents.NativeAd.rawValue){
-            cell.titleLabel.text = "Advertise here!"
+            cell.titleLabel.text = FoodzLayout.FoodzStrings.adPlaceholderShortTitle.localized()
             cell.bodyLabel.text = payload
             cell.iconLabel.text = "💡"
         }
@@ -649,5 +649,38 @@ extension HomeViewController: GADUnifiedNativeAdLoaderDelegate{
         addNativeAdds()
         
         
+    }
+}
+
+// MARK: Localized Strings
+extension HomeViewController{
+    private enum MyStrings {
+        case postNewRanking
+        case postNewFollower
+        case postNewYum
+        case postNewReview
+        case postNewFavorite
+        case postNewBestInRank
+        case postNewInTopRank
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .postNewRanking:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWRANKING", comment: "Ranking"))
+            case .postNewFollower:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWFOLLOWER", comment: "Following"))
+            case .postNewYum:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWYUM", comment: "yummy"))
+            case .postNewReview:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWREVIEW", comment: "Comment"))
+            case .postNewFavorite:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWFAVORITE", comment: "Favorite"))
+            case .postNewBestInRank:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWBEST", comment: "Best one"))
+            case .postNewInTopRank:
+                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWINTOP", comment: "Top"))
+                
+            }
+        }
     }
 }

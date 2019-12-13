@@ -11,13 +11,17 @@ Localized strings.
 
 "LOG" = "foodz.guru: %d";
 "MSG_ERROR" = "Error";
+"MSG_LOADING" = "Waiting for Services";
 
+"AD_PLACEHOLDER_LONG" = "Advertise here! Contact support@foodz.guru";
+"AD_PLACEHOLDER_SHORT_TITLE" = "Advertise here!";
+"AD_PLACEHOLDER_SHORT_MSG" = "Contact support@foodz.guru";
+
+"FOODZ_APP_NAME" = "foodz.guru";
 "FOODZ_EULA_TERMSOFSERVICE" = "Terms of Service";
 "FOODZ_EULA_TERMS_URL" = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
 "FOODZ_EULA_PRIVACY_POLICY" = "Privacy Policy";
 "FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
-
-"HOME_FIRST_POST" = "Hello %u! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
 
 "LOGIN_EMAIL" = "Enter your e-mail";
 "LOGIN_CREATE_ACCOUNT" = "Create account";
@@ -72,3 +76,17 @@ Localized strings.
 
 "FIRSTLOG4_TITLE" = "Configure your profile (3/4)";
 "FIRSTLOG4_BUTTON_GO" = "Go";
+
+"HOME_FIRST_POST" = "Hello %u! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
+"HOME_POST_NEWRANKING" = "New Ranking";
+"HOME_POST_NEWFOLLOWER" = "Follower!";
+"HOME_POST_NEWYUM" = "Yum!";
+"HOME_POST_NEWREVIEW" = "New Review!";
+"HOME_POST_NEWFAVORITE" = "New Favorite!";
+"HOME_POST_NEWBEST" = "New Best!";
+"HOME_POST_NEWINTOP" ="Let's go taste";
+
+"FOODIES_SEARCH_PLACEHOLDER" = "Search for More Foodies";
+"FOODIES_LOADING" = "Getting Foodies' data";
+"FOODIES_EMPTYLIST_TITLE" = "You are not following anyone yet!";
+"FOODIES_EMPTYLIST_MSG" = "Use the search bar to find foodies.";

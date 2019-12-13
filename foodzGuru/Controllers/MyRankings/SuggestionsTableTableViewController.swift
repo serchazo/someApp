@@ -46,7 +46,7 @@ extension SuggestionsTableTableViewController {
     }
     
     private func createHighlightedString(text: String, rangeValues: [NSValue]) -> NSAttributedString {
-        let attributes = [NSAttributedString.Key.backgroundColor: UIColor(named: "suggestionHighlight")! ]
+        let attributes = [NSAttributedString.Key.backgroundColor: UIColor.systemIndigo ]
         let highlightedString = NSMutableAttributedString(string: text)
         
         // Each `NSValue` wraps an `NSRange` that can be used as a style attribute's range with `NSAttributedString`.

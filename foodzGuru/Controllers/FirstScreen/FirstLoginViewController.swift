@@ -108,7 +108,7 @@ class FirstLoginViewController: UIViewController {
                 // The username doesn't exist
                 self.userNameField.text = self.userName
                 self.userNameOKFlag = true
-                self.userNameTakenLabel.textColor = .darkText
+                self.userNameTakenLabel.textColor = .label 
                 self.userNameTakenLabel.text = MyStrings.nickOK.localized()
                 self.userNameTakenLabel.isHidden = false
             }

@@ -19,6 +19,8 @@ class LoginViewController: UIViewController {
     private var user:User!
     private var firstTimeFlag = false
     
+    private var userDevicesHandle:UInt!
+    
     // Facebook login permissions
     private let readPermissions: [Permission] =  [ .publicProfile, .email ]
     
@@ -85,17 +87,13 @@ class LoginViewController: UIViewController {
                     // User data is already created
                     if snapshot.exists(){
                         // [START] temp code, upload device token
-                        SomeApp.dbUserDevices.child(user!.uid).observeSingleEvent(of: .value, with: {snap in
-                            if !snap.exists(){
-                                InstanceID.instanceID().instanceID { (result, error) in
-                                    if let error = error {
-                                        print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
-                                    } else if let result = result {
-                                        SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: result.token)
-                                    }
-                                }
+                        InstanceID.instanceID().instanceID { (result, error) in
+                            if let error = error {
+                                print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
+                            } else if let result = result {
+                                SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: result.token)
                             }
-                        })
+                        }
                         // [END] temp code, upload device token
                         
                         // Verify if APN Token was changed
@@ -143,6 +141,13 @@ class LoginViewController: UIViewController {
         super.viewWillDisappear(animated)
         //Auth.auth().removeStateDidChangeListener(handle!)
         
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if self.userDevicesHandle != nil{
+            SomeApp.dbUserDevices.child(user!.uid).removeObserver(withHandle: self.userDevicesHandle)
+        }
     }
     
     // MARK: Login

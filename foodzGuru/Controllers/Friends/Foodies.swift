@@ -85,7 +85,7 @@ class Foodies: UIViewController {
         friendsSearchController.searchResultsUpdater = self
         friendsSearchController.hidesNavigationBarDuringPresentation = false
         friendsSearchController.obscuresBackgroundDuringPresentation = false
-        friendsSearchController.searchBar.placeholder = "Search for More Foodies"
+        friendsSearchController.searchBar.placeholder = MyStrings.searchPlaceholder.localized()
         friendsSearchController.searchBar.autocapitalizationType = .none
         navigationItem.titleView = friendsSearchController.searchBar
         definesPresentationContext = true
@@ -172,7 +172,7 @@ class Foodies: UIViewController {
     
     
     // MARK: Search
-    func filterContentForSearchText(_ searchText:String, scope: String = "ALL"){
+    func filterContentForSearchText(_ searchText:String){
         print(searchText)
         SomeApp.dbUserData.queryOrdered(byChild: "nickname").queryStarting(atValue: searchText).queryLimited(toFirst: 30).observeSingleEvent(of: .value, with: {snapshot in
             var tmpUserDetails:[UserDetails] = []
@@ -180,9 +180,8 @@ class Foodies: UIViewController {
             
             for child in snapshot.children{
                 if let userDataSnapshot = child as? DataSnapshot{
-                    
                     tmpUserDetails.append(UserDetails(snapshot: userDataSnapshot)!)
-                    //print(userDataSnapshot)
+
                     // Use the trick
                     count += 1
                     if count == snapshot.childrenCount{
@@ -254,7 +253,7 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard myFoodiesList.count > 0 || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Getting Foodies' data"
+            cell.textLabel?.text = MyStrings.loadingFoodies.localized()
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
@@ -280,8 +279,8 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
         else if emptyListFlag,
             let postCell = myFoodies.dequeueReusableCell(withIdentifier: self.timelineCellIdentifier, for: indexPath) as? TimelineCell{
             postCell.dateLabel.text = ""
-            postCell.titleLabel.text = "You are not following anyone yet!"
-            postCell.bodyLabel.text =  "Use the search bar to find foodies."
+            postCell.titleLabel.text = MyStrings.emptyListTitle.localized()
+            postCell.bodyLabel.text =  MyStrings.emptyListMsg.localized()
             postCell.iconLabel.text = "💬"
             
             return postCell
@@ -389,5 +388,29 @@ extension Foodies: GADBannerViewDelegate{
     // the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         //print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: Localized Strings
+extension Foodies{
+    private enum MyStrings {
+        case searchPlaceholder
+        case loadingFoodies
+        case emptyListTitle
+        case emptyListMsg
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .searchPlaceholder:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_SEARCH_PLACEHOLDER", comment: "Search"))
+            case .loadingFoodies:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_LOADING", comment: "Loading"))
+            case .emptyListTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_EMPTYLIST_TITLE", comment: "Empty list"))
+            case .emptyListMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_EMPTYLIST_MSG", comment: "Go to search bar"))
+                
+            }
+        }
     }
 }

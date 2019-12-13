@@ -789,11 +789,14 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 }else{
                     fatalError("Can't return restaurant cell")
                 }
+             }
+            // [END] Restaurant cells
+            // [] The last cell : Add resto to ranking
+            else if indexPath.section == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
+                cell.textLabel?.text = "Add new \(currentFood.name) place"
                 
-                // [END] Restaurant cells
-            }else if indexPath.section == 1 {
-                // The last cell : Add resto to ranking
-                return tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
+                return cell
             }else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 return cell
