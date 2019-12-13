@@ -43,15 +43,4 @@ class Comment{
         if let username = value["username"] as? String {self.username = username} else {self.username = ""}
         
         }
-    
-    // Turn Ranking to a Dictionary
-    /*func toAnyObject() -> Any {
-        return[
-            "restoname" : restoname,
-            "username" : username,
-            "title" : title,
-            "text" : text,
-            "timestamp" : timestamp,
-        ]
-    }*/
 }

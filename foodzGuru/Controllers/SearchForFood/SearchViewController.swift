@@ -138,7 +138,7 @@ class SearchViewController: UIViewController {
             //
             cityNavBarButton.setTitleTextAttributes([
             NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .footnote)], for: .normal)
-            cityNavBarButton.title = "Change City"
+            cityNavBarButton.title = MyStrings.buttonChangeCity.localized()
         }
     }
     
@@ -201,10 +201,10 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             // then go
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodCell", for: indexPath) as? SearchFoodCell {
                 cell.cellIcon.text = ""
-                cell.cellLabel.text = "waiting"
+                cell.cellLabel.text = FoodzLayout.FoodzStrings.loading.localized()
                 return cell
             }else{
-                fatalError("No cell")
+                fatalError("Cannot create cell")
             }
         }
         
@@ -247,7 +247,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
         
         // Cannot
         else{
-            fatalError("No cell")
+            fatalError("Cannot create cell")
         }
     }
     
@@ -393,5 +393,20 @@ extension SearchViewController{
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout
+    }
+}
+
+// MARK: Localized Strings
+extension SearchViewController{
+    private enum MyStrings {
+        case buttonChangeCity
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .buttonChangeCity:
+                return String.localizedStringWithFormat(NSLocalizedString("SEARCH_BUTTON_CHANGECITY", comment: "Change"))
+                
+            }
+        }
     }
 }

@@ -165,7 +165,7 @@ extension CountryChoser{
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Choose your country"
+        labelView.text = MyStrings.title.localized()
         
         headerView.addSubview(labelView)
         //countryChoserCollectionView.tableHeaderView = headerView
@@ -181,7 +181,7 @@ extension CountryChoser{
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Choose your city"
+        labelView.text = MyStrings.cityTitle.localized()
         
         headerView.addSubview(labelView)
         
@@ -268,7 +268,7 @@ extension CountryChoser: UICollectionViewDelegate, UICollectionViewDataSource{
         guard countryList.count > 0 else {
             // then go
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as? CountryChoserCell {
-                cell.countryNameLabel.text = "waiting"
+                cell.countryNameLabel.text = FoodzLayout.FoodzStrings.loading.localized()
                 return cell
             }else{
                 fatalError("No cell")
@@ -377,7 +377,7 @@ extension CountryChoser: UITableViewDelegate,UITableViewDataSource{
         if tableView == cityTable{
             guard cityList.count > 0 else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Loading cities"
+                cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 
                 spinner.startAnimating()
@@ -406,6 +406,25 @@ extension CountryChoser: UITableViewDelegate,UITableViewDataSource{
                 self.dismiss(animated: true, completion: nil)
             }else{
                 self.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+}
+
+// MARK: Localized Strings
+extension CountryChoser{
+    private enum MyStrings {
+        case title
+        case cityTitle
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_COUNTRY_TITLE", comment: "Choose"))
+            case .cityTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_CITY_TITLE", comment: "Choose city"))
+                
+                
             }
         }
     }

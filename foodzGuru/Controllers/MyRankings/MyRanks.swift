@@ -63,13 +63,15 @@ class MyRanks: UIViewController {
     @IBOutlet weak var followersButton: UIButton!{
         didSet{
             followersButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            followersButton.setTitle("Followers: -", for: .normal)
+            let followersTitle = MyStrings.followers.localized() + ": -"
+            followersButton.setTitle(followersTitle, for: .normal)
         }
     }
     @IBOutlet weak var followingButton: UIButton!{
         didSet{
             followingButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            followingButton.setTitle("Following: -", for: .normal)
+            let followingTitle = MyStrings.followers.localized() + ": -"
+            followingButton.setTitle(followingTitle, for: .normal)
         }
     }
     @IBOutlet weak var followButton: UIButton!{
@@ -204,10 +206,10 @@ class MyRanks: UIViewController {
     func blockedUserHeader(){
         navigationItem.rightBarButtonItem = nil
         navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
-        navigationItem.title = "Not found"
+        navigationItem.title = MyStrings.blockedProfileName.localized()
         changeCityButton.isHidden = true
         changeCityButton.isEnabled = false
-        bioLabel.text = "User not found"
+        bioLabel.text = MyStrings.blockedProfileBio.localized()
         
         //
     }
@@ -249,7 +251,7 @@ class MyRanks: UIViewController {
                 if self.currentCity != nil{
                     self.changeCityButton.setTitle(self.currentCity.name, for: .normal)
                 }else{
-                    self.changeCityButton.setTitle("Select city", for: .normal)
+                    self.changeCityButton.setTitle(MyStrings.selectCity.localized(), for: .normal)
                 }
         
                 // 4. User bio
@@ -260,7 +262,7 @@ class MyRanks: UIViewController {
                 }else{
                     if self.calledUser == nil{
                         self.bioLabel.textColor = .systemGray2
-                        self.bioLabel.text = "Click on Profile to add a bio."}
+                        self.bioLabel.text = MyStrings.emptyBio.localized()}
                 }
                 
                 // 5. Update ranking
@@ -280,10 +282,10 @@ class MyRanks: UIViewController {
             let tmpRef = SomeApp.dbUserFollowing.child(user.uid)
             tmpRef.child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
                 if snapshot.exists() {
-                    self.followButton.setTitle("Unfollow", for: .normal)
+                    self.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
                     self.followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
                 }else{
-                    self.followButton.setTitle("Follow", for: .normal)
+                    self.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
                     self.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
                 }
                 self.followButton.isHidden = false
@@ -292,21 +294,23 @@ class MyRanks: UIViewController {
         }
         
         // Followers button
+        var followersString = MyStrings.followers.localized() + ": 0"
+        followersButton.setTitle(followersString, for: .normal)
         followersHandle = SomeApp.dbUserNbFollowers.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let followers = snapshot.value as? Int {
-                self.followersButton.setTitle("Followers: \(followers)", for: .normal)
-            }else{
-                self.followersButton.setTitle("Followers: 0", for: .normal)
+                followersString = MyStrings.followers.localized() + ": " + String(followers)
+                self.followersButton.setTitle(followersString, for: .normal)
             }
         })
         // Following button
+        var followingString = MyStrings.following.localized() + ": 0"
+        followingButton.setTitle(followingString, for: .normal)
         followingHandle = SomeApp.dbUserNbFollowing.child(userId).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let following = snapshot.value as? Int {
-                self.followingButton.setTitle("Following: \(following)", for: .normal)
-            }else{
-                self.followingButton.setTitle("Following: 0", for: .normal)
+                followingString = MyStrings.following.localized() + ": " + String(following)
+                self.followingButton.setTitle(followingString, for: .normal)
             }
         })
         
@@ -511,7 +515,7 @@ class MyRanks: UIViewController {
     
     @objc func unfollow(){
         let alert = UIAlertController(
-        title: "Unfollow ?",
+        title: MyStrings.unfollow.localized() + "?",
         message: "You will no longer receive updates and notifications from this user.",
         preferredStyle: .alert)
         // OK
@@ -520,7 +524,7 @@ class MyRanks: UIViewController {
             style: .default, handler: nil))
         // Unfollow
         alert.addAction(UIAlertAction(
-            title: "Unfollow",
+            title: MyStrings.unfollow.localized(),
             style: .destructive,
             handler: {
                 (action: UIAlertAction)->Void in
@@ -613,7 +617,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         // The normal table
         guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Waiting for services"
+            cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
@@ -740,3 +744,38 @@ extension MyRanks: MyCitiesDelegate{
     }
 }
 
+// MARK: Localized Strings
+extension MyRanks{
+    private enum MyStrings {
+        case followers
+        case following
+        case blockedProfileName
+        case blockedProfileBio
+        case selectCity
+        case emptyBio
+        case follow
+        case unfollow
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .followers:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOWERS", comment: "Follow"))
+            case .following:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOWING", comment: "Follow"))
+            case .follow:
+                    return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOW", comment: "Follow"))
+            case .unfollow:
+                    return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_UNFOLLOW", comment: "Unfollow"))
+            case .blockedProfileName:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BLOCKEDPROFILE_NAME", comment: "Not found"))
+            case .blockedProfileBio:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BLOCKEDPROFILE_BIO", comment: "Not found"))
+            case .selectCity:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BUTTON_SELECTCITY", comment: "City"))
+            case .emptyBio:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BIO_EMPTY", comment: "Empty"))
+                
+            }
+        }
+    }
+}

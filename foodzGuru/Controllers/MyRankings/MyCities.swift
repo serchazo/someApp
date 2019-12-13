@@ -183,7 +183,7 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
             // The cities list
             guard cityList.count > 0 || emptyListFlag else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Getting cities for user"
+                cell.textLabel?.text = MyStrings.loadingCitites.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
@@ -193,8 +193,8 @@ extension MyCities: UITableViewDelegate, UITableViewDataSource{
             // Verify if the city list is empty
             if emptyListFlag{
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = "No rankings in yet!"
-                cell.detailTextLabel?.text = "Click on + and tell the world your favorite places to grab a bite !"
+                cell.textLabel?.text = MyStrings.emptyListTitle.localized()
+                cell.detailTextLabel?.text = MyStrings.emptyListMsg.localized()
                 cell.selectionStyle = .none
                 return cell
             }
@@ -251,8 +251,8 @@ extension MyCities: CountryChooserViewDelegate{
         }else{
             // Ranking already in list
             let alert = UIAlertController(
-                title: "Duplicate City",
-                message: "You already have rankings in \(city.name).",
+                title: MyStrings.duplicateTitle.localized(),
+                message: MyStrings.duplicateMsg.localized(arguments: [city.name]),
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
@@ -268,6 +268,33 @@ extension MyCities: CountryChooserViewDelegate{
                     //
             }))
             present(alert, animated: false, completion: nil)
+        }
+    }
+}
+
+// MARK: Localized Strings
+extension MyCities{
+    private enum MyStrings {
+        case loadingCitites
+        case emptyListTitle
+        case emptyListMsg
+        case duplicateTitle
+        case duplicateMsg
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .loadingCitites:
+                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Loading"))
+            case .emptyListTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Empty"))
+            case .emptyListMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Click"))
+            case .duplicateTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_DUPLICATE_TITLE", comment: "Double"))
+            case .duplicateMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_DUPLICATE_MSG", comment: "Already"), arguments)
+                
+            }
         }
     }
 }

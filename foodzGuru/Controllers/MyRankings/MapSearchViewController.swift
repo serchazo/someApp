@@ -213,7 +213,7 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
         if isLocationAuthorized{
             guard (SomeApp.currentLocation != nil)  else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = NSLocalizedString("LOCATION_SERVICES_WAITING", comment: "Waiting for location table cell")
+                cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner

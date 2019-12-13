@@ -121,12 +121,12 @@ class BestRestosViewController: UIViewController {
     // MARK: configure header
     func configureHeader(){
         // Navigation title
-        self.navigationItem.title = "foodz.guru"
+        self.navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         // Title and description
         tableHeaderFoodName.font = UIFont.preferredFont(forTextStyle: .title1)
-        tableHeaderFoodName.text = "Best \(currentFood.name) places in \(currentCity.name)"
+        tableHeaderFoodName.text = MyStrings.headerTitle.localized(arguments: [currentFood.name, currentCity.name])
         tableHeaderDescription.font = UIFont.preferredFont(forTextStyle: .footnote)
         tableHeaderDescription.text = SomeApp.getPhrase()
         
@@ -151,10 +151,10 @@ class BestRestosViewController: UIViewController {
         rankingFollowersHandle.append((handle: SomeApp.dbRankingFollowers.child(dbPath).observe(.value, with: {snapshot in
             
             if snapshot.exists() {
-                self.followButton.setTitle("Unfollow", for: .normal)
+                self.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
                 self.followButton.addTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
             }else{
-                self.followButton.setTitle("Follow", for: .normal)
+                self.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
                 self.followButton.addTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
             }
             self.followButton.isHidden = false
@@ -163,12 +163,13 @@ class BestRestosViewController: UIViewController {
         
         // Followers button
         let dbPathNb = currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
+        var followersString = MyStrings.followers.localized() + ": 0"
+        followersButton.setTitle(followersString, for: .normal)
         restoFollowersNbHandle.append((handle: SomeApp.dbRankingFollowersNb.child(dbPathNb).observe(.value, with: {snapshot in
             if snapshot.exists(),
                 let followers = snapshot.value as? Int {
-                self.followersButton.setTitle("Followers: \(followers)", for: .normal)
-            }else{
-                self.followersButton.setTitle("Followers: 0", for: .normal)
+                followersString = MyStrings.followers.localized() + ": " + String(followers)
+                self.followersButton.setTitle(followersString, for: .normal)
             }
         }),dbPath: dbPathNb))
     }
@@ -272,9 +273,9 @@ extension BestRestosViewController{
     
     @objc func unfollowRanking(){
         let alert = UIAlertController(
-        title: "Unfollow ?",
-        message: "You will no longer receive updates and notifications from this ranking.",
-        preferredStyle: .alert)
+            title: MyStrings.unfollow.localized() + "?",
+            message: MyStrings.unfollowMsg.localized(),
+            preferredStyle: .alert)
         // OK
         alert.addAction(UIAlertAction(
             title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
@@ -285,7 +286,7 @@ extension BestRestosViewController{
         }))
         // Unfollow
         alert.addAction(UIAlertAction(
-            title: "Unfollow",
+            title: MyStrings.unfollow.localized(),
             style: .destructive,
             handler: {
                 (action: UIAlertAction)->Void in
@@ -317,7 +318,7 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
         if indexPath.section == 0{
             guard thisRanking.count > 0 else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Loading restaurants"
+                cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
@@ -326,8 +327,8 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
             }
             guard !emptyListFlag else {
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = "Empty ranking"
-                cell.detailTextLabel?.text = "Add your favorite restaurants for the world to see!"
+                cell.textLabel?.text = MyStrings.emptyTitle.localized()
+                cell.detailTextLabel?.text = MyStrings.emptyMsg.localized()
                 cell.selectionStyle = .none
                 return cell
             }
@@ -570,5 +571,37 @@ extension BestRestosViewController: GADUnifiedNativeAdLoaderDelegate{
         addNativeAdds()
         
         
+    }
+}
+
+// MARK: Localized Strings
+extension BestRestosViewController{
+    private enum MyStrings {
+        case headerTitle
+        case follow
+        case unfollow
+        case followers
+        case unfollowMsg
+        case emptyTitle
+        case emptyMsg
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .headerTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_HEADER_TITLE", comment: "Best"),arguments)
+            case .follow:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_FOLLOW", comment: "Follow"),arguments)
+            case .unfollow:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_UNFOLLOW", comment: "Unfollow"),arguments)
+            case .followers:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_FOLLOWERS", comment: "Followers"),arguments)
+            case .unfollowMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_UNFOLLOW_MSG", comment: "Are you sure"),arguments)
+            case .emptyTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_TITLE", comment: "Empty"),arguments)
+            case .emptyMsg:
+                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_MSG", comment: "Can add"),arguments)
+            }
+        }
     }
 }

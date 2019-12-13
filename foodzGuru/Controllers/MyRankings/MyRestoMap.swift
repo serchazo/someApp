@@ -12,6 +12,7 @@ import MapKit
 class MyRestoMap: UIViewController {
     
     // Class variables
+    private let markerId = "marker"
     var selectedPin:MKPlacemark? = nil
     
     // To be taken from segue-r
@@ -34,7 +35,7 @@ class MyRestoMap: UIViewController {
         infoLabel.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1).withAlphaComponent(0.8)
         infoLabel.textAlignment = .center
         infoLabel.textColor = SomeApp.themeColor
-        infoLabel.text = "Click on the pin for directions"
+        infoLabel.text = MyStrings.boxTitle.localized()
         
         self.view.addSubview(infoLabel)
         
@@ -78,7 +79,7 @@ extension MyRestoMap: MKMapViewDelegate{
             return nil
         }
         // 3
-        let identifier = "marker"
+        let identifier = self.markerId
         var annotationView: MKMarkerAnnotationView
         // 4
         if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
@@ -87,14 +88,13 @@ extension MyRestoMap: MKMapViewDelegate{
             annotationView = dequeuedView
         } else {
             // 5
-            print("hao")
             annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             annotationView.canShowCallout = true
             annotationView.calloutOffset = CGPoint(x: -5, y: 5)
             //
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
             label.textAlignment = .center
-            label.text = "Get directions"
+            label.text = MyStrings.pinTitle.localized()
             annotationView.detailCalloutAccessoryView = label
             annotationView.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             
@@ -114,5 +114,23 @@ extension MyRestoMap: MKMapViewDelegate{
         //let location = view.mk
         let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
         mapItems[0].openInMaps(launchOptions: launchOptions)
+    }
+}
+
+// MARK: Localized Strings
+extension MyRestoMap{
+    private enum MyStrings {
+        case boxTitle
+        case pinTitle
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .boxTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("MYRESTOMAP_BOX", comment: "Click"))
+            case .pinTitle:
+            return String.localizedStringWithFormat(NSLocalizedString("MYRESTOMAP_PIN", comment: "Map"))
+                
+            }
+        }
     }
 }

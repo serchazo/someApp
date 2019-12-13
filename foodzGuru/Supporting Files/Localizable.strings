@@ -90,3 +90,36 @@ Localized strings.
 "FOODIES_LOADING" = "Getting Foodies' data";
 "FOODIES_EMPTYLIST_TITLE" = "You are not following anyone yet!";
 "FOODIES_EMPTYLIST_MSG" = "Use the search bar to find foodies.";
+
+"MYRANKS_FOLLOWERS" = "Followers";
+"MYRANKS_FOLLOWING" = "Following";
+"MYRANKS_FOLLOW" = "Follow";
+"MYRANKS_UNFOLLOW" = "Unfollow";
+"MYRANKS_BLOCKEDPROFILE_NAME" = "Not found";
+"MYRANKS_BLOCKEDPROFILE_BIO" = "User not found";
+"MYRANKS_BUTTON_SELECTCITY" = "Select City";
+"MYRANKS_BIO_EMPTY" "Go to My Foodz to edit your Bio.";
+
+"MYCITIES_LOADING" = "Loading Citites";
+"MYCITIES_EMPTYLIST_TITLE" = "No rankings yet!";
+"MYCITIES_EMPTYLIST_MSG" = "Click on + and tell the world your favorite places!";
+"MYCITIES_DUPLICATE_TITLE" = "Duplicate City";
+"MYCITIES_DUPLICATE_MSG" = "You already have rankings in %d.";
+
+// Search for Food
+"SEARCH_BUTTON_CHANGECITY" = "Change city";
+
+"BESTRESTOS_HEADER_TITLE" = "Best %f places in %c";
+"BESTRESTOS_FOLLOW" = "Follow";
+"BESTRESTOS_UNFOLLOW" = "Unfollow";
+"BESTRESTOS_FOLLOWERS" = "Followers",
+"BESTRESTOS_UNFOLLOW_MSG" = "You will no longer receive updates and notifications from this ranking.";
+"BESTRESTOS_EMPTY_TITLE" = "Empty ranking";
+"BESTRESTOS_EMPTY_MSG" = "Add your favorite restaurants for the world to see!";
+
+//General
+"MYRESTOMAP_BOX" = "Click on the pin for directions";
+"MYRESTOMAP_PIN" = "Get directions";
+
+"COUNTRYCHOSER_COUNTRY_TITLE" = "Choose your country";
+"COUNTRYCHOSER_CITY_TITLE" = "Choose your city";

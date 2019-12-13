@@ -120,7 +120,7 @@ extension ItemChooserViewController{
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Choose your country"
+        labelView.text = MyStrings.title.localized()
         
         headerView.addSubview(labelView)
         
@@ -135,7 +135,7 @@ extension ItemChooserViewController{
         labelView.textAlignment = NSTextAlignment.center
         labelView.textColor = SomeApp.themeColor
         labelView.font = UIFont.preferredFont(forTextStyle: .title2)
-        labelView.text = "Choose your city"
+        labelView.text = MyStrings.cityTitle.localized()
         
         headerView.addSubview(labelView)
         
@@ -247,7 +247,7 @@ extension ItemChooserViewController: UITableViewDelegate,UITableViewDataSource{
         }else{
             guard cityList.count > 0 else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                cell.textLabel?.text = "Loading cities"
+                cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
                 cell.accessoryView = spinner
@@ -284,4 +284,23 @@ extension ItemChooserViewController: UITableViewDelegate,UITableViewDataSource{
     }
     
     
+}
+
+// MARK: Localized Strings
+extension ItemChooserViewController{
+    private enum MyStrings {
+        case title
+        case cityTitle
+        
+        func localized(arguments: [CVarArg] = []) -> String{
+            switch self{
+            case .title:
+                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_COUNTRY_TITLE", comment: "Choose"))
+            case .cityTitle:
+                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_CITY_TITLE", comment: "Choose city"))
+                
+                
+            }
+        }
+    }
 }

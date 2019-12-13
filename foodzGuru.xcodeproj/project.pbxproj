@@ -47,7 +47,6 @@
 		34873A8E2333157900463AFE /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8D2333157900463AFE /* City.swift */; };
 		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
 		348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348919A02387D2520020934F /* SearchFoodImageCell.swift */; };
-		348B168C238FB71400FBF31A /* SearchFoodLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B168B238FB71400FBF31A /* SearchFoodLayout.swift */; };
 		348B16922390FAE700FBF31A /* CountryChoser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16912390FAE700FBF31A /* CountryChoser.swift */; };
 		348B16942391030500FBF31A /* CountryChoserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16932391030500FBF31A /* CountryChoserCell.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
@@ -58,7 +57,6 @@
 		3491B9392341ED1E00CECF80 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3491B9382341ED1E00CECF80 /* CommentCell.swift */; };
 		34942D87234DCFAF001DA068 /* HomeCellWithIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34942D86234DCFAF001DA068 /* HomeCellWithIcon.swift */; };
 		34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E292320FB30005951A2 /* FoodType.swift */; };
-		34A76E2E2321EAE9005951A2 /* SpinnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */; };
 		34A76E312322063B005951A2 /* Ranking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E302322063B005951A2 /* Ranking.swift */; };
 		34A76E3423225615005951A2 /* Resto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E3323225615005951A2 /* Resto.swift */; };
 		34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */; };
@@ -122,7 +120,6 @@
 		34873A8D2333157900463AFE /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		348919A02387D2520020934F /* SearchFoodImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodImageCell.swift; sourceTree = "<group>"; };
-		348B168B238FB71400FBF31A /* SearchFoodLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodLayout.swift; sourceTree = "<group>"; };
 		348B16912390FAE700FBF31A /* CountryChoser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoser.swift; sourceTree = "<group>"; };
 		348B16932391030500FBF31A /* CountryChoserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoserCell.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,7 +133,6 @@
 		34942D86234DCFAF001DA068 /* HomeCellWithIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithIcon.swift; sourceTree = "<group>"; };
 		34A0D089234E10080015E496 /* foodzGuru.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = foodzGuru.entitlements; sourceTree = "<group>"; };
 		34A76E292320FB30005951A2 /* FoodType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodType.swift; sourceTree = "<group>"; };
-		34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerCollectionViewCell.swift; sourceTree = "<group>"; };
 		34A76E302322063B005951A2 /* Ranking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranking.swift; sourceTree = "<group>"; };
 		34A76E3323225615005951A2 /* Resto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resto.swift; sourceTree = "<group>"; };
 		34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginAcceptEULA.swift; sourceTree = "<group>"; };
@@ -279,9 +275,7 @@
 				34FEE9C3231123A100FE0590 /* SearchFoodCell.swift */,
 				348919A02387D2520020934F /* SearchFoodImageCell.swift */,
 				341705BE234F10BE006123A7 /* CustomCollectionViewLayout.swift */,
-				348B168B238FB71400FBF31A /* SearchFoodLayout.swift */,
 				344EA295232E0B97001F1FBC /* FoodSelectorHeader.swift */,
-				34A76E2D2321EAE9005951A2 /* SpinnerCollectionViewCell.swift */,
 				346FE0E6230F70E9000556EB /* BestRestosViewController.swift */,
 				346FE0DE230E7D07000556EB /* RestoRankTableViewCell.swift */,
 			);
@@ -504,7 +498,6 @@
 				346FE0DF230E7D07000556EB /* RestoRankTableViewCell.swift in Sources */,
 				341DD165232A369E00102472 /* Foodies.swift in Sources */,
 				34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */,
-				34A76E2E2321EAE9005951A2 /* SpinnerCollectionViewCell.swift in Sources */,
 				34FEE9C4231123A100FE0590 /* SearchFoodCell.swift in Sources */,
 				34FEE9D023126F8500FE0590 /* MyRanksAddRankingViewController.swift in Sources */,
 				34FEE9D22312B3BB00FE0590 /* ThisRanking.swift in Sources */,
@@ -529,7 +522,6 @@
 				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,
 				341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */,
-				348B168C238FB71400FBF31A /* SearchFoodLayout.swift in Sources */,
 				344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */,
 				34942D87234DCFAF001DA068 /* HomeCellWithIcon.swift in Sources */,
 			);

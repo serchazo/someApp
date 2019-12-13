@@ -264,7 +264,7 @@ class ThisRanking: UIViewController {
     // MARK: myRanking Header
     private func configureHeader(userId: String){
         // Configure navbar
-        navigationItem.title = "foodz.guru"
+        navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
         if calledUser != nil{
@@ -652,7 +652,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 // [START] Spinner while downloading
                 guard thisRanking.count > 0 || emptyListFlag else{
                     let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    cell.textLabel?.text = "Waiting for services"
+                    cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
                     let spinner = UIActivityIndicatorView(style: .medium)
                     spinner.startAnimating()
                     cell.accessoryView = spinner
