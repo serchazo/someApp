@@ -691,7 +691,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     if (positionMultiple < 0) {positionMultiple = 1}
                     //write points
                     let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
-                    cell.pointsGivenLabel.text = "Points given: \(Int(pointsToAdd))"
+                    cell.pointsGivenLabel.text = MyStrings.pointsGiven.localized(arguments: Int(pointsToAdd))
                     
                     // Address
                     cell.addressLabel.text = thisRanking[indexPath.row].address
@@ -714,7 +714,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // [Below part]
                     
                     // Stack View border: only invisible in one option
-                    cell.borderStack.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1).cgColor
+                    cell.borderStack.layer.borderColor = UIColor.systemGray.cgColor
                     cell.borderStack.layer.borderWidth = 0.8
                     cell.borderStack.layer.cornerRadius = 10
                     cell.borderStack.layer.masksToBounds = true
@@ -727,7 +727,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     cell.borderStack.isHidden = false
                     
                     // [START] Like button
-                    cell.likeButton.setTitle("Yum!", for: .normal)
+                    cell.likeButton.setTitle(MyStrings.buttonYum.localized(), for: .normal)
                     cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                     cell.likeButton.isHidden = false
                     cell.likeButton.isEnabled = true
@@ -735,7 +735,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     // Action and color depending if the comment is liked
                     if thisRankingReviewsLiked[indexPath.row] {
                         cell.likeButton.setTitleColor(SomeApp.selectionColor, for: .normal)
-                        cell.likeButton.setTitle("Yummed", for: .normal)
+                        cell.likeButton.setTitle(MyStrings.buttonYummed.localized(), for: .normal)
                         cell.likeAction = {(cell) in
                             let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
                             SomeApp.dislikeReview(userid: self.user.uid,
@@ -761,7 +761,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     
                     // [START] Nb yums
                     cell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
-                    cell.nbLikesButton.setTitle("Yums! (\(thisRankingReviewsLikes[indexPath.row]))", for: .normal)
+                    cell.nbLikesButton.setTitle(MyStrings.buttonYumNb.localized(arguments: thisRankingReviewsLikes[indexPath.row]), for: .normal)
                     cell.nbLikesButton.isEnabled = false
                     // [END] Nb yums button when there is a comment
                     
@@ -771,7 +771,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         // Edit Review part
                         cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                         cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
-                        cell.editReviewButton.setTitle("Edit Review", for: .normal)
+                        cell.editReviewButton.setTitle(MyStrings.buttonEditReview.localized(), for: .normal)
                         cell.editReviewButton.isHidden = false
                         cell.editReviewButton.isEnabled = true
                         cell.editReviewAction = {(cell) in
@@ -794,8 +794,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             // [] The last cell : Add resto to ranking
             else if indexPath.section == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddRestoToRankingCell", for: indexPath)
-                cell.textLabel?.text = "Add new \(currentFood.name) place"
-                
+                cell.textLabel?.text = MyStrings.cellAddResto.localized(arguments: currentFood.name)
                 return cell
             }else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -1366,6 +1365,12 @@ extension ThisRanking{
         case emptyTitleUser
         case emptyMsgMe
         case emptyMsgUser
+        case pointsGiven
+        case buttonYum
+        case buttonYummed
+        case buttonYumNb
+        case buttonEditReview
+        case cellAddResto
     
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -1414,6 +1419,36 @@ extension ThisRanking{
                     format: NSLocalizedString("THISRANKING_EMPTY_MSG_USER", comment: "Empty"),
                     locale: .current,
                     arguments: arguments)
+            case .pointsGiven:
+            return String(
+                format: NSLocalizedString("THISRANKING_POINTS_GIVEN", comment: "Points"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonYum:
+                return String(
+                format: NSLocalizedString("THISRANKING_BUTTON_YUM", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonYummed:
+                return String(
+                format: NSLocalizedString("THISRANKING_BUTTON_YUMMED", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonYumNb:
+                return String(
+                format: NSLocalizedString("THISRANKING_BUTTON_YUMNB", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonEditReview:
+                return String(
+                    format: NSLocalizedString("THISRANKING_BUTTON_EDITREVIEW", comment: "Edit"),
+                    locale: .current,
+                    arguments: arguments)
+            case .cellAddResto:
+            return String(
+                format: NSLocalizedString("THISRANKING_CELL_ADDRESTO", comment: "Add place"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

@@ -145,6 +145,12 @@ Localized strings.
 "THISRANKING_EMPTY_TITLE_USER" = "No %@ places in %@'s list yet";
 "THISRANKING_EMPTY_MSG_ME" = "Click on + and tell the world about your favorite places!";
 "THISRANKING_EMPTY_MSG_USER" = "Come back soon and check the list!";
+"THISRANKING_POINTS_GIVEN" = "Points given %d";
+"THISRANKING_BUTTON_YUM" = "Yum!";
+"THISRANKING_BUTTON_YUMMED" = "Yummed";
+"THISRANKING_BUTTON_YUMNB" = "Yums! (%d)";
+"THISRANKING_BUTTON_EDITREVIEW" = "Edit Review";
+"THISRANKING_CELL_ADDRESTO" = "Add new %@ place";
 
 "MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
 "MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Feedback on Foodz.guru";
@@ -155,6 +161,14 @@ Localized strings.
 "MYPROFILE_BUTTON_BIO_EMPTY" = "Enter a bio.";
 "MYPROFILE_BUTTON_BIO_EDIT" = "Edit bio";
 "MYPROFILE_BUTTON_CHANGEPSSWD" = "Change Password";
+"MYPROFILE_BUTTON_CHANGEPSSWD_OLD" = "Old Password";
+"MYPROFILE_BUTTON_CHANGEPSSWD_NEW" = "New Password";
+"MYPROFILE_BUTTON_CHANGEPSSWD_NEWCONFIRM" = "Confirm Password";
+"MYPROFILE_BUTTON_CHANGEPSSWD_CONFIRM" = "Change";
+"MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_TITLE" = "Error!";
+"MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_MSG" = "Your Passwords do not match.";
+"MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_TITLE" = "Success";
+"MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_MSG" = "Password changed successfully.";
 "MYPROFILE_BUTTON_HELP" = "Help & Support";
 "MYPROFILE_BUTTON_MORE" = "More";
 "MYPROFILE_BUTTON_LOGOFF" = "Log out";

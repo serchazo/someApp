@@ -317,33 +317,44 @@ extension MyProfile{
             title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
             style: .cancel)
         
-        let saveAction = UIAlertAction(title: "Change", style: .default) { _ in
-            //Get e-mail and password from the alert
-            let oldPassword = alert.textFields![0].text!
-            let newPassword = alert.textFields![1].text!
-            let confirmPassword = alert.textFields![2].text!
-            
-            // Passwords don't match
-            if newPassword != confirmPassword {
-                let notMatchAlert = UIAlertController(title: "Passwords don't match", message: "Your New and Confirm password do not match.", preferredStyle: .alert)
-                let okAction = UIAlertAction(
-                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
-                    style: .default, handler: nil)
-                notMatchAlert.addAction(okAction)
-                self.present(notMatchAlert, animated: true, completion: nil)
-            }
+        let saveAction = UIAlertAction(
+            title: MyStrings.buttonPsswdConfirm.localized(),
+            style: .default) { _ in
+                //Get e-mail and password from the alert
+                let oldPassword = alert.textFields![0].text!
+                let newPassword = alert.textFields![1].text!
+                let confirmPassword = alert.textFields![2].text!
+                
+                // Passwords don't match
+                if newPassword != confirmPassword {
+                    let notMatchAlert = UIAlertController(
+                        title: MyStrings.buttonPsswdErrorTitle.localized(),
+                        message: MyStrings.buttonPsswdErrorMsg.localized(),
+                        preferredStyle: .alert)
+                    let okAction = UIAlertAction(
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
+                        style: .default, handler: nil)
+                    notMatchAlert.addAction(okAction)
+                    self.present(notMatchAlert, animated: true, completion: nil)
+                }
             // Call Firebase for an upgrade
             else{
                 self.changePassword(email: self.user.email!, currentPassword: oldPassword, newPassword: newPassword) { (error) in
                     if error != nil {
-                        let alert = UIAlertController(title: "Sign In Failed", message: error!.localizedDescription, preferredStyle: .alert)
+                        let alert = UIAlertController(
+                            title: MyStrings.buttonPsswdErrorTitle.localized(),
+                            message: error!.localizedDescription,
+                            preferredStyle: .alert)
                         alert.addAction(UIAlertAction(
                             title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                             style: .default))
                         self.present(alert,animated: true, completion: nil)
                     }
                     else {
-                        let alert = UIAlertController(title: "Success", message: "Password change successfully.", preferredStyle: .alert)
+                        let alert = UIAlertController(
+                            title: MyStrings.buttonPsswdSuccessTitle.localized(),
+                            message: MyStrings.buttonPsswdSuccessMsg.localized(),
+                            preferredStyle: .alert)
                         alert.addAction(UIAlertAction(
                             title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                             style: .default))
@@ -358,18 +369,18 @@ extension MyProfile{
         alert.addTextField { oldPassword in
             oldPassword.isSecureTextEntry = true
             oldPassword.autocapitalizationType = .none
-            oldPassword.placeholder = "Old Password"}
+            oldPassword.placeholder = MyStrings.buttonPsswdOld.localized()}
         
         alert.addTextField { newPassword in
             newPassword.isSecureTextEntry = true
             newPassword.autocapitalizationType = .none
-            newPassword.placeholder = "New Password"
+            newPassword.placeholder = MyStrings.buttonPsswdNew.localized()
         }
         
         alert.addTextField { confirmPassword in
             confirmPassword.isSecureTextEntry = true
             confirmPassword.autocapitalizationType = .none
-            confirmPassword.placeholder = "Confirm New Password"
+            confirmPassword.placeholder = MyStrings.buttonPsswdNewConfirm.localized()
         }
         
         alert.addAction(saveAction)
@@ -764,6 +775,14 @@ extension MyProfile{
         case buttonBioEmpty
         case buttonBioEdit
         case buttonPsswd
+        case buttonPsswdConfirm
+        case buttonPsswdErrorTitle
+        case buttonPsswdErrorMsg
+        case buttonPsswdSuccessTitle
+        case buttonPsswdSuccessMsg
+        case buttonPsswdOld
+        case buttonPsswdNew
+        case buttonPsswdNewConfirm
         case buttonHelp
         case buttonMore
         case buttonSignOut
@@ -815,6 +834,48 @@ extension MyProfile{
                 format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD", comment: "Password"),
                 locale: .current,
                 arguments: arguments)
+                
+            case .buttonPsswdConfirm:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_CONFIRM", comment: "Password"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonPsswdErrorTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_TITLE", comment: "Password"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonPsswdErrorMsg:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_MSG", comment: "Password"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonPsswdSuccessTitle:
+            return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_TITLE", comment: "Success"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonPsswdSuccessMsg:
+            return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_MSG", comment: "Success"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonPsswdOld:
+            return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_OLD", comment: "Success"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonPsswdNew:
+            return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_NEW", comment: "Success"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonPsswdNewConfirm:
+            return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD_NEWCONFIRM", comment: "Success"),
+                locale: .current,
+                arguments: arguments)
+            
             case .buttonHelp:
                 return String(
                 format: NSLocalizedString("MYPROFILE_BUTTON_HELP", comment: "Help"),
