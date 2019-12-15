@@ -126,7 +126,7 @@ class BestRestosViewController: UIViewController {
         
         // Title and description
         tableHeaderFoodName.font = UIFont.preferredFont(forTextStyle: .title1)
-        tableHeaderFoodName.text = MyStrings.headerTitle.localized(arguments: [currentFood.name, currentCity.name])
+        tableHeaderFoodName.text = MyStrings.headerTitle.localized(arguments: currentFood.name, currentCity.name)
         tableHeaderDescription.font = UIFont.preferredFont(forTextStyle: .footnote)
         tableHeaderDescription.text = SomeApp.getPhrase()
         
@@ -350,9 +350,9 @@ extension BestRestosViewController : UITableViewDelegate, UITableViewDataSource 
                 cell.restoNameLabel.text = thisResto.name
                 
                 cell.restoAddressLabel.text = thisResto.address
-                let tmpPointsString = MyStrings.points.localized(arguments: [thisResto.nbPoints])
+                let tmpPointsString = MyStrings.points.localized(arguments: thisResto.nbPoints)
                 cell.restoPointsLabel.text = tmpPointsString
-                let tmpReviewsString = MyStrings.reviews.localized(arguments: [thisResto.nbReviews])
+                let tmpReviewsString = MyStrings.reviews.localized(arguments: thisResto.nbReviews)
                 cell.restoOtherInfoLabel.text = tmpReviewsString
                 
                 return cell
@@ -568,26 +568,53 @@ extension BestRestosViewController{
         case points
         case reviews
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .headerTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_HEADER_TITLE", comment: "Best"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_HEADER_TITLE", comment: "Best"),
+                locale: .current,
+                arguments: arguments)
             case .follow:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_FOLLOW", comment: "Follow"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_FOLLOW", comment: "Follow"),
+                locale: .current,
+                arguments: arguments)
             case .unfollow:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_UNFOLLOW", comment: "Unfollow"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_UNFOLLOW", comment: "Unfollow"),
+                locale: .current,
+                arguments: arguments)
             case .followers:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_FOLLOWERS", comment: "Followers"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_FOLLOWERS", comment: "Followers"),
+                locale: .current,
+                arguments: arguments)
             case .unfollowMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_UNFOLLOW_MSG", comment: "Are you sure"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_UNFOLLOW_MSG", comment: "Are you sure"),
+                locale: .current,
+                arguments: arguments)
             case .emptyTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_TITLE", comment: "Empty"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_EMPTY_TITLE", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
             case .emptyMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_EMPTY_MSG", comment: "Can add"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_EMPTY_MSG", comment: "Can add"),
+                locale: .current,
+                arguments: arguments)
             case .points:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_POINTS", comment: "Points"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_POINTS", comment: "Points"),
+                locale: .current,
+                arguments: arguments)
             case .reviews:
-                return String.localizedStringWithFormat(NSLocalizedString("BESTRESTOS_REVIEWS", comment: "Comments"),arguments)
+                return String(
+                format: NSLocalizedString("BESTRESTOS_REVIEWS", comment: "Comments"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

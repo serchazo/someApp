@@ -399,16 +399,28 @@ extension Foodies{
         case emptyListTitle
         case emptyListMsg
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .searchPlaceholder:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_SEARCH_PLACEHOLDER", comment: "Search"))
+                return String(
+                format: NSLocalizedString("FOODIES_SEARCH_PLACEHOLDER", comment: "Search"),
+                locale: .current,
+                arguments: arguments)
             case .loadingFoodies:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_LOADING", comment: "Loading"))
+                return String(
+                format: NSLocalizedString("FOODIES_LOADING", comment: "Loading"),
+                locale: .current,
+                arguments: arguments)
             case .emptyListTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_EMPTYLIST_TITLE", comment: "Empty list"))
+                return String(
+                format: NSLocalizedString("FOODIES_EMPTYLIST_TITLE", comment: "Empty list"),
+                locale: .current,
+                arguments: arguments)
             case .emptyListMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODIES_EMPTYLIST_MSG", comment: "Go to search bar"))
+                return String(
+                format: NSLocalizedString("FOODIES_EMPTYLIST_MSG", comment: "Go to search bar"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }

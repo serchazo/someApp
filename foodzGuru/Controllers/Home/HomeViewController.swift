@@ -663,22 +663,43 @@ extension HomeViewController{
         case postNewBestInRank
         case postNewInTopRank
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .postNewRanking:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWRANKING", comment: "Ranking"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWRANKING", comment: "Ranking"),
+                locale: .current,
+                arguments: arguments)
             case .postNewFollower:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWFOLLOWER", comment: "Following"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWFOLLOWER", comment: "Following"),
+                locale: .current,
+                arguments: arguments)
             case .postNewYum:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWYUM", comment: "yummy"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWYUM", comment: "yummy"),
+                locale: .current,
+                arguments: arguments)
             case .postNewReview:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWREVIEW", comment: "Comment"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWREVIEW", comment: "Comment"),
+                locale: .current,
+                arguments: arguments)
             case .postNewFavorite:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWFAVORITE", comment: "Favorite"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWFAVORITE", comment: "Favorite"),
+                locale: .current,
+                arguments: arguments)
             case .postNewBestInRank:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWBEST", comment: "Best one"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWBEST", comment: "Best one"),
+                locale: .current,
+                arguments: arguments)
             case .postNewInTopRank:
-                return String.localizedStringWithFormat(NSLocalizedString("HOME_POST_NEWINTOP", comment: "Top"))
+                return String(
+                format: NSLocalizedString("HOME_POST_NEWINTOP", comment: "Top"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }

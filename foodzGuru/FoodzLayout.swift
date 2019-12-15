@@ -165,36 +165,78 @@ extension FoodzLayout{
         case adPlaceholderShortTitle
         case adPlaceholderShortMsg
         
-        func localized(arguments:[CVarArg]=[]) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .appName:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_APP_NAME", comment: "name"))
+                return String(
+                format: NSLocalizedString("FOODZ_APP_NAME", comment: "name"),
+                locale: .current,
+                arguments: arguments)
             case .appURL:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_URL", comment: "URL"))
+                return String(
+                format: NSLocalizedString("FOODZ_URL", comment: "URL"),
+                locale: .current,
+                arguments: arguments)
             case .buttonOK:
-                return String.localizedStringWithFormat(NSLocalizedString("BUTTON_OK", comment: "OK"))
+                return String(
+                format: NSLocalizedString("BUTTON_OK", comment: "OK"),
+                locale: .current,
+                arguments: arguments)
             case .buttonCancel:
-                return String.localizedStringWithFormat(NSLocalizedString("BUTTON_CANCEL", comment: "Cancel"))
+                return String(
+                format: NSLocalizedString("BUTTON_CANCEL", comment: "Cancel"),
+                locale: .current,
+                arguments: arguments)
             case .msgError:
-                return String.localizedStringWithFormat(NSLocalizedString("MSG_ERROR", comment: "Error"))
+                return String(
+                format: NSLocalizedString("MSG_ERROR", comment: "Error"),
+                locale: .current,
+                arguments: arguments)
             case .log:
-                return String.localizedStringWithFormat(NSLocalizedString("LOG", comment: "Log"),arguments)
+                return String(
+                format: NSLocalizedString("LOG", comment: "Log"),
+                locale: .current,
+                arguments: arguments)
             case .loading:
-                return String.localizedStringWithFormat(NSLocalizedString("MSG_LOADING", comment: "Loading"),arguments)
+                return String(
+                format: NSLocalizedString("MSG_LOADING", comment: "Loading"),
+                locale: .current,
+                arguments: arguments)
             case .eulaTermsOfService:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_TERMSOFSERVICE", comment: "EULA"))
+                return String(
+                format: NSLocalizedString("FOODZ_EULA_TERMSOFSERVICE", comment: "EULA"),
+                locale: .current,
+                arguments: arguments)
             case .eulaTermsOfServiceURL:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_TERMS_URL", comment: "URL"))
+                return String(
+                format: NSLocalizedString("FOODZ_EULA_TERMS_URL", comment: "URL"),
+                locale: .current,
+                arguments: arguments)
             case .eulaPrivacyPolicy:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY", comment: "Policy"))
+                return String(
+                format: NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY", comment: "Policy"),
+                locale: .current,
+                arguments: arguments)
             case .eulaPrivacyPolicyURL:
-                return String.localizedStringWithFormat(NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY_URL", comment: "URL"))
+                return String(
+                format: NSLocalizedString("FOODZ_EULA_PRIVACY_POLICY_URL", comment: "URL"),
+                locale: .current,
+                arguments: arguments)
             case .adPlaceholderLong:
-                return String.localizedStringWithFormat(NSLocalizedString("AD_PLACEHOLDER_LONG", comment: "Advertisement"))
+                return String(
+                format: NSLocalizedString("AD_PLACEHOLDER_LONG", comment: "Advertisement"),
+                locale: .current,
+                arguments: arguments)
             case .adPlaceholderShortTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("AD_PLACEHOLDER_SHORT_TITLE", comment: "Advertisement"))
+                return String(
+                format: NSLocalizedString("AD_PLACEHOLDER_SHORT_TITLE", comment: "Advertisement"),
+                locale: .current,
+                arguments: arguments)
             case .adPlaceholderShortMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("AD_PLACEHOLDER_SHORT_MSG", comment: "Advertisement"))
+                return String(
+                format: NSLocalizedString("AD_PLACEHOLDER_SHORT_MSG", comment: "Advertisement"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

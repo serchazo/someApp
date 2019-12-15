@@ -292,12 +292,18 @@ extension ItemChooserViewController{
         case title
         case cityTitle
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .title:
-                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_COUNTRY_TITLE", comment: "Choose"))
+                return String(
+                format: NSLocalizedString("COUNTRYCHOSER_COUNTRY_TITLE", comment: "Choose"),
+                locale: .current,
+                arguments: arguments)
             case .cityTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("COUNTRYCHOSER_CITY_TITLE", comment: "Choose city"))
+                return String(
+                format: NSLocalizedString("COUNTRYCHOSER_CITY_TITLE", comment: "Choose city"),
+                locale: .current,
+                arguments: arguments)
                 
                 
             }

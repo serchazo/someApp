@@ -192,24 +192,48 @@ extension FirstLoginViewController{
         case buttonGo
         case buttonVerify
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .title:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_TITLE", comment: "Configure"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_TITLE", comment: "Configure"),
+                locale: .current,
+                arguments: arguments)
             case .fieldPlaceholder:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_FIELD_PLACEHOLDER", comment: "username"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_FIELD_PLACEHOLDER", comment: "username"),
+                locale: .current,
+                arguments: arguments)
             case .nickInvalidTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_INVALID_TITLE", comment: "Invalid"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_INVALID_TITLE", comment: "Invalid"),
+                locale: .current,
+                arguments: arguments)
             case .nickInvalidMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_INVALID_MSG", comment: "Invalid"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_INVALID_MSG", comment: "Invalid"),
+                locale: .current,
+                arguments: arguments)
             case .nickTaken:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_NICK_TAKEN", comment: "Taken"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_NICK_TAKEN", comment: "Taken"),
+                locale: .current,
+                arguments: arguments)
             case .nickOK:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_NICK_OK", comment: "OK"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_NICK_OK", comment: "OK"),
+                locale: .current,
+                arguments: arguments)
             case .buttonGo:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_BUTTON_GO", comment: "Go"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_BUTTON_GO", comment: "Go"),
+                locale: .current,
+                arguments: arguments)
             case .buttonVerify:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG1_BUTTON_WAIT", comment: "Wait"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG1_BUTTON_WAIT", comment: "Wait"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

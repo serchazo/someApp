@@ -142,20 +142,38 @@ extension FirstLoginThirdScreen{
         case popupTitle
         case popupMsg
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .title:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_TITLE", comment: "Configure"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_TITLE", comment: "Configure"),
+                locale: .current,
+                arguments: arguments)
             case .buttonGo:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_GO", comment: "OK"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_BUTTON_GO", comment: "OK"),
+                locale: .current,
+                arguments: arguments)
             case .buttonSelect:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_SELECT", comment: "Select"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_BUTTON_SELECT", comment: "Select"),
+                locale: .current,
+                arguments: arguments)
             case .buttonChange:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_BUTTON_CHANGE", comment: "Change"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_BUTTON_CHANGE", comment: "Change"),
+                locale: .current,
+                arguments: arguments)
             case .popupTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_POPUP_TITLE", comment: "Nothing"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_POPUP_TITLE", comment: "Nothing"),
+                locale: .current,
+                arguments: arguments)
             case .popupMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG3_POPUP_MSG", comment: "Can change"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG3_POPUP_MSG", comment: "Can change"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

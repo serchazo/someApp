@@ -97,7 +97,7 @@ extension FirstLoginFourthScreen{
             changeRequest.photoURL = photoURL
             changeRequest.commitChanges(completion: {error in
                 if let error = error{
-                    print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
+                    print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription))
                 }
             })
         }
@@ -159,12 +159,18 @@ extension FirstLoginFourthScreen{
         case title
         case buttonGo
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .title:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG4_TITLE", comment: "Configure"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG4_TITLE", comment: "Configure"),
+                locale: .current,
+                arguments: arguments)
             case .buttonGo:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG4_BUTTON_GO", comment: "Go"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG4_BUTTON_GO", comment: "Go"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }

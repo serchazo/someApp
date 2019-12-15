@@ -9,7 +9,7 @@ Localized strings.
 "BUTTON_OK" = "OK";
 "BUTTON_CANCEL" = "Cancel";
 
-"LOG" = "foodz.guru: %d";
+"LOG" = "foodz.guru: %@";
 "MSG_ERROR" = "Error";
 "MSG_LOADING" = "Waiting for Services";
 
@@ -78,7 +78,7 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configure your profile (3/4)";
 "FIRSTLOG4_BUTTON_GO" = "Go";
 
-"HOME_FIRST_POST" = "Hello %u! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
+"HOME_FIRST_POST" = "Hello %@! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
 "HOME_POST_NEWRANKING" = "New Ranking";
 "HOME_POST_NEWFOLLOWER" = "Follower!";
 "HOME_POST_NEWYUM" = "Yum!";
@@ -100,12 +100,51 @@ Localized strings.
 "MYRANKS_BLOCKEDPROFILE_BIO" = "User not found";
 "MYRANKS_BUTTON_SELECTCITY" = "Select City";
 "MYRANKS_BIO_EMPTY" = "Go to My Foodz to edit your Bio.";
+"MYRANKS_REPORTPROFILE_TITLE" = "Report profile";
+"MYRANKS_REPORTPROFILE_ASK_FOR_REASON" = "Why do you want to report the profile?";
+"MYRANKS_REPORTPROFILE_CONFIRMATION_TITLE" = "User Reported";
+"MYRANKS_REPORTPROFILE_CONFIRMATION_MSG" = "We will analyze and take some action in 24 hours. Don't hesitate to contact us for more information.";
+"MYRANKS_BUTTON_BLOCK" = "Block User";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_TITLE" = "Block %@ ?";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_MSG" = "They won't be able to find your profile or reviews.  foodz.guru won't let them know that you've blocked them.";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_OK" = "Block";
+"MYRANKS_BUTTON_BLOCK_BLOCKED" = "User Blocked";
+"MYRANKS_BUTTON_UNBLOCK" = "Unblock User";
+
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_TITLE" = "Unblock %@?";
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_MSG" = "They will be able to see your profile and reviews.  foodz.guru won't let them know that you've blocked them.";
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_OK" = "Unblock";
+"MYRANKS_BUTTON_UNBLOCK_BLOCKED" = "User Unblocked";
+"MYRANKS_UNFOLLOW_ALERT_MSG" = "You will no longer receive updates and notifications from this user.";
+"MYRANKS_DUPLICATE_RANKING_TITLE" = "Duplicate ranking";
+"MYRANKS_DUPLICATE_RANKING_MSG" = "You already have a %@ ranking in %@.";
+"MYRANKS_EMPTY_RANKING_TITLE" = "No rankings in %@ yet!";
+"MYRANKS_EMPTY_RANKING_MSG" = "Click on + and tell the world about your favorite places!";
+"MYRANKS_BESTPLACES_TITLE" = "Best %@ in %@";
+
+"FOLLOWERS_NAVBAR_FOLLWERS" = "followers";
+"FOLLOWERS_NAVBAR_FOLLOWING" = "following";
+"FOLLOWERS_FOLLOWERS_EMPTY_ME" = "You don't have any followers yet.";
+"FOLLOWERS_FOLLOWERS_EMPTY_USER" = "%@ doesn't have any followers yet.";
+"FOLLOWERS_FOLLOWING_EMPTY_ME" = "You are not following anyone yet.";
+"FOLLOWERS_FOLLOWING_EMPTY_USER" = "%@ is not following anyone yet.";
+"FOLLOWERS_EMPTY_MSG" = "Come back soon!";
 
 "MYCITIES_LOADING" = "Loading Citites";
 "MYCITIES_EMPTYLIST_TITLE" = "No rankings yet!";
 "MYCITIES_EMPTYLIST_MSG" = "Click on + and tell the world your favorite places!";
 "MYCITIES_DUPLICATE_TITLE" = "Duplicate City";
-"MYCITIES_DUPLICATE_MSG" = "You already have rankings in %d.";
+"MYCITIES_DUPLICATE_MSG" = "You already have rankings in %@.";
+
+"THISRANKING_HEADER_TITLE_ME" = "My favorite %@ places in %@";
+"THISRANKING_HEADER_TITLE_USER" = "%@'s favorite %@ places in %@";
+"THISRANKING_DESCRIPTION_TITLE" = "Description";
+"THISRANKING_BUTTON_DELETE_ASK" = "Delete Restaurant?";
+"THISRANKING_BUTTON_DELETE_TITLE" = "Delete";
+"THISRANKING_EMPTY_TITLE_ME" = "No places in your %@ list yet!";
+"THISRANKING_EMPTY_TITLE_USER" = "No %@ places in %@'s list yet";
+"THISRANKING_EMPTY_MSG_ME" = "Click on + and tell the world about your favorite places!";
+"THISRANKING_EMPTY_MSG_USER" = "Come back soon and check the list!";
 
 "MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
 "MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Feedback on Foodz.guru";
@@ -120,7 +159,7 @@ Localized strings.
 "MYPROFILE_BUTTON_MORE" = "More";
 "MYPROFILE_BUTTON_LOGOFF" = "Log out";
 
-"MYRESTODETAIL_BANNER" = "%i %n added to your %f places!" ;
+"MYRESTODETAIL_BANNER" = "%@ %@ added to your %@ places!" ;
 "MYRESTODETAIL_BUTTON_ADDRESTO" = "Add to my Foodz";
 "MYRESTODETAIL_BUTTON_ADDRESS" = "Address";
 "MYRESTODETAIL_BUTTON_PHONE" = "Phone";
@@ -129,20 +168,20 @@ Localized strings.
 "MYRESTODETAIL_BUTTON_YUMS_EMPTY" = "Get yums!";
 "MYRESTODETAIL_BUTTON_YUM" = "Yum!";
 "MYRESTODETAIL_BUTTON_YUMMED" = "Yummed";
-"MYRESTODETAIL_BUTTON_YUMNB" = "Yums! (%n)";
+"MYRESTODETAIL_BUTTON_YUMNB" = "Yums! (%d)";
 
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Change city";
 
-"BESTRESTOS_HEADER_TITLE" = "Best %f places in %c";
+"BESTRESTOS_HEADER_TITLE" = "Best %@ places in %@";
 "BESTRESTOS_FOLLOW" = "Follow";
 "BESTRESTOS_UNFOLLOW" = "Unfollow";
 "BESTRESTOS_FOLLOWERS" = "Followers";
 "BESTRESTOS_UNFOLLOW_MSG" = "You will no longer receive updates and notifications from this ranking.";
 "BESTRESTOS_EMPTY_TITLE" = "Empty ranking";
 "BESTRESTOS_EMPTY_MSG" = "Add your favorite restaurants for the world to see!";
-"BESTRESTOS_POINTS" = "Points: %d";
-"BESTRESTOS_REVIEWS" = "Reviews: %d";
+"BESTRESTOS_POINTS" = "Points: %d ";
+"BESTRESTOS_REVIEWS" = "Reviews: %d ";
 
 //General
 "MYRESTOMAP_BOX" = "Click on the pin for directions";

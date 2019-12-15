@@ -123,12 +123,18 @@ extension MyRestoMap{
         case boxTitle
         case pinTitle
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .boxTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTOMAP_BOX", comment: "Click"))
+                return String(
+                format: NSLocalizedString("MYRESTOMAP_BOX", comment: "Click"),
+                locale: .current,
+                arguments: arguments)
             case .pinTitle:
-            return String.localizedStringWithFormat(NSLocalizedString("MYRESTOMAP_PIN", comment: "Map"))
+            return String(
+                format: NSLocalizedString("MYRESTOMAP_PIN", comment: "Map"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }

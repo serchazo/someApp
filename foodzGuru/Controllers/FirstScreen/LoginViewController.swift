@@ -89,7 +89,7 @@ class LoginViewController: UIViewController {
                         // [START] temp code, upload device token
                         InstanceID.instanceID().instanceID { (result, error) in
                             if let error = error {
-                                print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
+                                print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription))
                             } else if let result = result {
                                 SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: result.token)
                             }
@@ -341,7 +341,7 @@ class LoginViewController: UIViewController {
         
         Auth.auth().signIn(with: credential) { (authResult, error) in
             if let error = error {
-                print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
+                print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription))
                 return
             }
             // User is signed in, verify if it's his first login
@@ -483,50 +483,113 @@ extension LoginViewController{
         case eulaText
         case eulaTextAppend
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .enterEmail:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMAIL", comment: "Enter"))
+                return String(
+                format: NSLocalizedString("LOGIN_EMAIL", comment: "Enter"),
+                locale: .current,
+                arguments: arguments)
             case .createAccount:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_ACCOUNT", comment: "Create account"))
+                return String(
+                format: NSLocalizedString("LOGIN_CREATE_ACCOUNT", comment: "Create account"),
+                locale: .current,
+                arguments: arguments)
             case .createAccountGuide:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_GUIDE", comment: "Create"))
+                return String(
+                format: NSLocalizedString("LOGIN_CREATE_GUIDE", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
             case .createButton:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_BUTTON", comment: "Create"))
+                return String(
+                format: NSLocalizedString("LOGIN_CREATE_BUTTON", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
             case .createFailed:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_CREATE_FAILED", comment: "Create failed"))
+                return String(
+                format: NSLocalizedString("LOGIN_CREATE_FAILED", comment: "Create failed"),
+                locale: .current,
+                arguments: arguments)
             case .forgotPassword:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FORGOT_PSSWD", comment: "Forgot password"))
+                return String(
+                format: NSLocalizedString("LOGIN_FORGOT_PSSWD", comment: "Forgot password"),
+                locale: .current,
+                arguments: arguments)
             case .facebookLogin:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK", comment: "Facebook login"))
+                return String(
+                format: NSLocalizedString("LOGIN_FACEBOOK", comment: "Facebook login"),
+                locale: .current,
+                arguments: arguments)
             case .facebookCancelledTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_MSG", comment: "Cancel"))
+                return String(
+                format: NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_MSG", comment: "Cancel"),
+                locale: .current,
+                arguments: arguments)
             case .facebookCancelledMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_TITLE", comment: "Cancel"))
+                return String(
+                format: NSLocalizedString("LOGIN_FACEBOOK_CANCELLED_TITLE", comment: "Cancel"),
+                locale: .current,
+                arguments: arguments)
             case .emptyInfo:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMPTY", comment: "Empty"))
+                return String(
+                format: NSLocalizedString("LOGIN_EMPTY", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
             case .emptyInfoDetail:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EMPTY_DETAIL", comment: "Empty"))
+                return String(
+                format: NSLocalizedString("LOGIN_EMPTY_DETAIL", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
             case .loginFailed:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_FAILED", comment: "Failed"))
+                return String(
+                format: NSLocalizedString("LOGIN_FAILED", comment: "Failed"),
+                locale: .current,
+                arguments: arguments)
             case .psswdResetTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_TITLE", comment: "Password Reset"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_RESET_TITLE", comment: "Password Reset"),
+                locale: .current,
+                arguments: arguments)
             case .psswdResetMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_MSG", comment: "Enter your e-mail"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_RESET_MSG", comment: "Enter your e-mail"),
+                locale: .current,
+                arguments: arguments)
             case .psswdResetButton:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_RESET_BUTTON", comment: "Reset"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_RESET_BUTTON", comment: "Reset"),
+                locale: .current,
+                arguments: arguments)
             case .psswdCreate:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CREATE", comment: "To create"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_CREATE", comment: "To create"),
+                locale: .current,
+                arguments: arguments)
             case .psswdConfirm:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_CONFIRM", comment: "To confirm"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_CONFIRM", comment: "To confirm"),
+                locale: .current,
+                arguments: arguments)
             case .psswdNotMatch:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_NOTMATCH_TITLE", comment: "Not equal"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_NOTMATCH_TITLE", comment: "Not equal"),
+                locale: .current,
+                arguments: arguments)
             case .psswdNotMatchMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_PSSWD_NOTMATCH_MSG", comment: "Not equal"))
+                return String(
+                format: NSLocalizedString("LOGIN_PSSWD_NOTMATCH_MSG", comment: "Not equal"),
+                locale: .current,
+                arguments: arguments)
             case .eulaText:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EULA_TEXT", comment: "using"))
+                return String(
+                format: NSLocalizedString("LOGIN_EULA_TEXT", comment: "using"),
+                locale: .current,
+                arguments: arguments)
             case .eulaTextAppend:
-                return String.localizedStringWithFormat(NSLocalizedString("LOGIN_EULA_TEXT_APPEND", comment: "and"))
+                return String(
+                format: NSLocalizedString("LOGIN_EULA_TEXT_APPEND", comment: "and"),
+                locale: .current,
+                arguments: arguments)
             }
         }
         

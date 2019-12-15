@@ -252,7 +252,7 @@ extension MyCities: CountryChooserViewDelegate{
             // Ranking already in list
             let alert = UIAlertController(
                 title: MyStrings.duplicateTitle.localized(),
-                message: MyStrings.duplicateMsg.localized(arguments: [city.name]),
+                message: MyStrings.duplicateMsg.localized(arguments: city.name),
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
@@ -281,18 +281,33 @@ extension MyCities{
         case duplicateTitle
         case duplicateMsg
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .loadingCitites:
-                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Loading"))
+                return String(
+                format: NSLocalizedString("MYCITIES_LOADING", comment: "Loading"),
+                locale: .current,
+                arguments: arguments)
             case .emptyListTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Empty"))
+                return String(
+                format: NSLocalizedString("MYCITIES_LOADING", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
             case .emptyListMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_LOADING", comment: "Click"))
+                return String(
+                format: NSLocalizedString("MYCITIES_LOADING", comment: "Click"),
+                locale: .current,
+                arguments: arguments)
             case .duplicateTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_DUPLICATE_TITLE", comment: "Double"))
+                return String(
+                format: NSLocalizedString("MYCITIES_DUPLICATE_TITLE", comment: "Double"),
+                locale: .current,
+                arguments: arguments)
             case .duplicateMsg:
-                return String.localizedStringWithFormat(NSLocalizedString("MYCITIES_DUPLICATE_MSG", comment: "Already"), arguments)
+                return String(
+                format: NSLocalizedString("MYCITIES_DUPLICATE_MSG", comment: "Already"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }

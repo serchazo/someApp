@@ -297,9 +297,9 @@ class ThisRanking: UIViewController {
         
         // Title
         if calledUser == nil{
-            rankingTitleLabel.text = "My favorite \(currentFood.name) places in \(currentCity.name)"
+            rankingTitleLabel.text = MyStrings.headerTitleMe.localized(arguments: currentFood.name,currentCity.name)
         }else{
-            rankingTitleLabel.text = "\(calledUser.nickName)'s favorite \(currentFood.name) places"
+            rankingTitleLabel.text = MyStrings.headerTitleUser.localized(arguments: calledUser.nickName,currentFood.name,currentCity.name)
         }
         // Description
         userRankingHandle = self.userRankingsRef.observe(.value, with: {snapshot in
@@ -322,7 +322,7 @@ class ThisRanking: UIViewController {
         if calledUser == nil {
             FoodzLayout.configureButtonNoBorder(button: editDescriptionButton)
             
-            editDescriptionButton.setTitle("Description", for: .normal)
+            editDescriptionButton.setTitle(MyStrings.descriptionTitle.localized(), for: .normal)
             editDescriptionButton.addTarget(self, action: #selector(popUpEditDescriptionTable), for: .touchUpInside)
             editDescriptionButton.isHidden = false
             editDescriptionButton.isEnabled = true
@@ -621,13 +621,13 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 
                 editRestoCell.tapAction = { (cell) in
                     // If the delete button is pressed, we show an alert asking for confirmation
-                    let alert = UIAlertController(title: "Delete Restaurant?",
+                    let alert = UIAlertController(title: MyStrings.buttonDeleteAsk.localized(),
                                                   message: "",
                                                   preferredStyle: .alert)
                     let cancelAction = UIAlertAction(title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                                                      style: .cancel)
                     
-                    let delAction = UIAlertAction(title: "Delete", style: .destructive){ _ in
+                    let delAction = UIAlertAction(title: MyStrings.buttonDeleteTitle.localized(), style: .destructive){ _ in
                         //Get the indexPath
                         let delIndexPath = self.editRankTableView.indexPath(for: cell)
                         // Add to the list of operations
@@ -662,13 +662,13 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 // [START] Empty list
                 if emptyListFlag && calledUser == nil{
                     let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                    cell.textLabel?.text = "No restorants in your \(currentFood.name) list yet!"
-                    cell.detailTextLabel?.text = "Click on + and tell the world about your favorite places!"
+                    cell.textLabel?.text = MyStrings.emptyTitleMe.localized(arguments: currentFood.name)
+                    cell.detailTextLabel?.text = MyStrings.emptyMsgMe.localized()
                     return cell
                 }else if emptyListFlag && calledUser != nil{
                     let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                    cell.textLabel?.text = "No \(currentFood.name) places in \(calledUser.nickName)'s list yet"
-                    cell.detailTextLabel?.text = "Come back soon and check the list!"
+                    cell.textLabel?.text = MyStrings.emptyTitleUser.localized(arguments: currentFood.name, calledUser.nickName)
+                    cell.detailTextLabel?.text = MyStrings.emptyMsgUser.localized()
                     return cell
                 }// [END] Empty list
                 
@@ -1351,5 +1351,70 @@ extension ThisRanking: GADBannerViewDelegate{
     /// the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         //print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: Localized Strings
+extension ThisRanking{
+    private enum MyStrings {
+        case headerTitleMe
+        case headerTitleUser
+        case descriptionTitle
+        case buttonDeleteAsk
+        case buttonDeleteTitle
+        case emptyTitleMe
+        case emptyTitleUser
+        case emptyMsgMe
+        case emptyMsgUser
+    
+        func localized(arguments: CVarArg...) -> String{
+            switch self{
+            case .headerTitleMe:
+                return String(
+                    format: NSLocalizedString("THISRANKING_HEADER_TITLE_ME", comment: "Favorite"),
+                    locale: .current,
+                    arguments: arguments)
+            case .headerTitleUser:
+                return String(
+                    format: NSLocalizedString("THISRANKING_HEADER_TITLE_USER", comment: "Favorite"),
+                    locale: .current,
+                    arguments: arguments)
+            case .descriptionTitle:
+                return String(
+                    format: NSLocalizedString("THISRANKING_DESCRIPTION_TITLE", comment: "To describe"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonDeleteAsk:
+                return String(
+                    format: NSLocalizedString("THISRANKING_BUTTON_DELETE_ASK", comment: "To delete"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonDeleteTitle:
+                return String(
+                    format: NSLocalizedString("THISRANKING_BUTTON_DELETE_TITLE", comment: "To delete"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyTitleMe:
+                return String(
+                    format: NSLocalizedString("THISRANKING_EMPTY_TITLE_ME", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyTitleUser:
+                return String(
+                    format: NSLocalizedString("THISRANKING_EMPTY_TITLE_USER", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyMsgMe:
+                return String(
+                    format: NSLocalizedString("THISRANKING_EMPTY_MSG_ME", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyMsgUser:
+                return String(
+                    format: NSLocalizedString("THISRANKING_EMPTY_MSG_USER", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            }
+        }
     }
 }

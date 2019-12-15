@@ -650,13 +650,13 @@ extension MyProfile: UIImagePickerControllerDelegate,UINavigationControllerDeleg
                     // Upload data and metadata
                     imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
                         if let error = error {
-                            print(print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription])))
+                            print(print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription)))
                         }else{
                             // Then get the download URL
                             imageRef.downloadURL { (url, error) in
                                 guard let downloadURL = url else {
                                     // Uh-oh, an error occurred!
-                                    print(print(FoodzLayout.FoodzStrings.log.localized(arguments: [error!.localizedDescription])))
+                                    print(print(FoodzLayout.FoodzStrings.log.localized(arguments: error!.localizedDescription)))
                                     return
                                 }
                                 // Update the current photo
@@ -768,32 +768,68 @@ extension MyProfile{
         case buttonMore
         case buttonSignOut
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .supportEmailAddress:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_ADDRESS", comment: "email"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_ADDRESS", comment: "email"),
+                locale: .current,
+                arguments: arguments)
             case .supportEmailSubject:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_SUBJECT", comment: "Subject"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_SUBJECT", comment: "Subject"),
+                locale: .current,
+                arguments: arguments)
             case .supportEmailBody:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_BODY", comment: "Body"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_SUPPORT_EMAIL_BODY", comment: "Body"),
+                locale: .current,
+                arguments: arguments)
             case .navBarTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_NAVBAR_TITLE", comment: "Title"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_NAVBAR_TITLE", comment: "Title"),
+                locale: .current,
+                arguments: arguments)
             case .buttonChangeProfilePic:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_CHANGEPIC", comment: "Title"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPIC", comment: "Title"),
+                locale: .current,
+                arguments: arguments)
             case .buttonBio:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_NAME", comment: "Biography"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_BIO_NAME", comment: "Biography"),
+                locale: .current,
+                arguments: arguments)
             case .buttonBioEmpty:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_EMPTY", comment: "Biography"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_BIO_EMPTY", comment: "Biography"),
+                locale: .current,
+                arguments: arguments)
             case .buttonBioEdit:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_BIO_EDIT", comment: "Biography"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_BIO_EDIT", comment: "Biography"),
+                locale: .current,
+                arguments: arguments)
             case .buttonPsswd:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD", comment: "Password"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_CHANGEPSSWD", comment: "Password"),
+                locale: .current,
+                arguments: arguments)
             case .buttonHelp:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_HELP", comment: "Help"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_HELP", comment: "Help"),
+                locale: .current,
+                arguments: arguments)
             case .buttonMore:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_MORE", comment: "More"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_MORE", comment: "More"),
+                locale: .current,
+                arguments: arguments)
             case .buttonSignOut:
-                return String.localizedStringWithFormat(NSLocalizedString("MYPROFILE_BUTTON_LOGOFF", comment: "Sign out"))
+                return String(
+                format: NSLocalizedString("MYPROFILE_BUTTON_LOGOFF", comment: "Sign out"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

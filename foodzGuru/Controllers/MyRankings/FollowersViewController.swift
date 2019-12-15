@@ -90,9 +90,9 @@ class FollowersViewController: UIViewController {
         
         switch whatList{
         case .Followers:
-            self.navigationItem.title = "followers"
+            self.navigationItem.title = MyStrings.navBarFollowers.localized()
         case .Following:
-            self.navigationItem.title = "following"
+            self.navigationItem.title = MyStrings.navBarFollowing.localized()
         default: break
         }
         
@@ -151,22 +151,25 @@ class FollowersViewController: UIViewController {
                 self.followTableView.reloadData()
             }
             // If I have friends
-            self.emptyListFlag = false
-            for child in snapshot.children{
-                if let childSnapshot = child as? DataSnapshot{
-                    SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
-                        tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
-                        
-                        // Use the trick
-                        count += 1
-                        if count == snapshot.childrenCount {
-                            self.follows = tmpUserDetails.sorted(by: {$0.nickName < $1.nickName})
-                            self.followTableView.reloadData()
-                        }
-                    })
+            else{
+                self.emptyListFlag = false
+                for child in snapshot.children{
+                    if let childSnapshot = child as? DataSnapshot{
+                        SomeApp.dbUserData.child(childSnapshot.key).observe(.value, with: { userDataSnap in
+                            tmpUserDetails.append(UserDetails(snapshot: userDataSnap)!)
+                            
+                            // Use the trick
+                            count += 1
+                            if count == snapshot.childrenCount {
+                                self.follows = tmpUserDetails.sorted(by: {$0.nickName < $1.nickName})
+                                self.followTableView.reloadData()
+                            }
+                        })
+                    }
                 }
             }
-            //
+            
+            // If I have friends
         })
     }
     
@@ -175,14 +178,14 @@ class FollowersViewController: UIViewController {
         var returnText = ""
         switch whatList{
         case .Followers:
-            returnText = "You don't have any followers yet."
+            returnText = MyStrings.followersEmptyMe.localized()
             if calledUser != nil{
-                returnText = "\(calledUser!.nickName) doesn't have any followers yet."
+                returnText = MyStrings.followersEmtyUser.localized(arguments: calledUser!.nickName)
             }
         case .Following:
-            returnText = "You are not following anyone yet."
+            returnText = MyStrings.followingEmptyMe.localized()
             if calledUser != nil{
-                returnText = "\(calledUser!.nickName) is not following anyone yet."
+                returnText = MyStrings.followingEmptyUser.localized(arguments: calledUser!.nickName)
             }
         default: break
         }
@@ -224,19 +227,18 @@ extension FollowersViewController: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard follows.count > 0 || emptyListFlag else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Getting Foodies' data"
+            cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
             return cell
         }
-        
         // Start] Empty table
         if emptyListFlag,
             let postCell = followTableView.dequeueReusableCell(withIdentifier: self.timelineCellIdentifier, for: indexPath) as? TimelineCell{
             postCell.dateLabel.text = ""
-            postCell.titleLabel.text = emptyFollowTitle()
-            postCell.bodyLabel.text =  "Come back soon to see the list!"
+            postCell.titleLabel.text = MyStrings.emptyMsg.localized()
+            postCell.bodyLabel.text =  emptyFollowTitle()
             postCell.iconLabel.text = "💬"
             
             return postCell
@@ -262,4 +264,57 @@ extension FollowersViewController: UITableViewDelegate,UITableViewDataSource{
         }
     }
     
+}
+
+// MARK: Localized Strings
+extension FollowersViewController{
+    private enum MyStrings {
+        case navBarFollowers
+        case navBarFollowing
+        case followersEmptyMe
+        case followersEmtyUser
+        case followingEmptyMe
+        case followingEmptyUser
+        case emptyMsg
+        
+        func localized(arguments: CVarArg...) -> String{
+            switch self{
+            case .navBarFollowers:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_NAVBAR_FOLLWERS", comment: "Follow"),
+                    locale: .current,
+                    arguments: arguments)
+            case .navBarFollowing:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_NAVBAR_FOLLOWING", comment: "Follow"),
+                    locale: .current,
+                    arguments: arguments)
+            case .followersEmptyMe:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_FOLLOWERS_EMPTY_ME", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .followersEmtyUser:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_FOLLOWERS_EMPTY_USER", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .followingEmptyMe:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_FOLLOWING_EMPTY_ME", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .followingEmptyUser:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_FOLLOWING_EMPTY_USER", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyMsg:
+                return String(
+                    format: NSLocalizedString("FOLLOWERS_EMPTY_MSG", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            }
+        }
+    }
 }

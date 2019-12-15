@@ -137,22 +137,43 @@ extension FirstLoginAcceptEULA{
         case popupNotAgreeTitle
         case popupNotAgreeMsg
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
         switch self{
         case .title:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_TITLE", comment: "I do"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_TITLE", comment: "I do"),
+                locale: .current,
+                arguments: arguments)
         case .popupTitle:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_TITLE", comment: "I do"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_TITLE", comment: "I do"),
+                locale: .current,
+                arguments: arguments)
         case .popupMsg:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_MSG", comment: "I do"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_MSG", comment: "I do"),
+                locale: .current,
+                arguments: arguments)
         case .popupAgree:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_AGREE", comment: "I do"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_AGREE", comment: "I do"),
+                locale: .current,
+                arguments: arguments)
         case .popupNotAgree:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE", comment: "I do not"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE", comment: "I do not"),
+                locale: .current,
+                arguments: arguments)
         case .popupNotAgreeTitle:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE", comment: "Cannot"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE", comment: "Cannot"),
+                locale: .current,
+                arguments: arguments)
         case .popupNotAgreeMsg:
-            return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE_MSG", comment: "I do not"))
+            return String(
+                format: NSLocalizedString("FIRSTLOG_EULA_POPUP_NOTAGREE_MSG", comment: "I do not"),
+                locale: .current,
+                arguments: arguments)
         }
         }
     }

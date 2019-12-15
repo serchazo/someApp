@@ -143,13 +143,13 @@ extension FirstLoginSecondScreen: UIImagePickerControllerDelegate,UINavigationCo
                     // Upload data and metadata
                     imageRef.putData(imageData, metadata: metadata) { (metadata, error) in
                         if let error = error {
-                            print(FoodzLayout.FoodzStrings.log.localized(arguments: [error.localizedDescription]))
+                            print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription))
                         }else{
                             // Then get the download URL
                             imageRef.downloadURL { (url, error) in
                                 guard let downloadURL = url else {
                                     // Uh-oh, an error occurred!
-                                    print(FoodzLayout.FoodzStrings.log.localized(arguments: [error!.localizedDescription]))
+                                    print(FoodzLayout.FoodzStrings.log.localized(arguments: error!.localizedDescription))
                                     return
                                 }
                                 // Update the current photo
@@ -229,16 +229,28 @@ extension FirstLoginSecondScreen{
         case buttonGo
         case buttonUpload
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .title:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_TITLE", comment: "Configure"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG2_TITLE", comment: "Configure"),
+                locale: .current,
+                arguments: arguments)
             case .warningLabel:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_WARNING", comment: "can change"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG2_WARNING", comment: "can change"),
+                locale: .current,
+                arguments: arguments)
             case .buttonGo:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_BUTTON_GO", comment: "Go"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG2_BUTTON_GO", comment: "Go"),
+                locale: .current,
+                arguments: arguments)
             case .buttonUpload:
-                return String.localizedStringWithFormat(NSLocalizedString("FIRSTLOG2_BUTTON_UPLOAD", comment: "upload"))
+                return String(
+                format: NSLocalizedString("FIRSTLOG2_BUTTON_UPLOAD", comment: "upload"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

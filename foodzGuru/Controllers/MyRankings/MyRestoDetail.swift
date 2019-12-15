@@ -91,7 +91,7 @@ class MyRestoDetail: UIViewController {
         tmpView.textAlignment = .center
         tmpView.textColor = SomeApp.themeColor
         tmpView.font = UIFont.preferredFont(forTextStyle: .headline)
-        tmpView.text = MyStrings.bannerTitle.localized(arguments: [self.currentFood.icon, self.currentResto.name, self.currentFood.name])
+        tmpView.text = MyStrings.bannerTitle.localized(arguments: self.currentFood.icon, self.currentResto.name, self.currentFood.name)
         
         let banner = NotificationBanner(customView: tmpView)
         banner.show()
@@ -463,7 +463,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 // NbLikes label
                 postCell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
-                postCell.nbLikesButton.setTitle(MyStrings.buttonYum.localized(arguments: [restoReviewsLikeNb[indexPath.row]]),for: .normal)
+                postCell.nbLikesButton.setTitle(MyStrings.buttonYum.localized(arguments: restoReviewsLikeNb[indexPath.row]),for: .normal)
                 
                 // Report button
                 // [START] If it's not the first comment, then we can add some actions
@@ -1036,28 +1036,58 @@ extension MyRestoDetail{
         case buttonYummed
         case buttonYumNb
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .bannerTitle:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BANNER", comment: "Added"), arguments)
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BANNER", comment: "Added"),
+                locale: .current,
+                arguments: arguments)
             case .buttonAddResto:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESTO", comment: "Add"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESTO", comment: "Add"),
+                locale: .current,
+                arguments: arguments)
             case .address:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESS", comment: "address"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESS", comment: "address"),
+                locale: .current,
+                arguments: arguments)
             case .phone:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_PHONE", comment: "phone"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_PHONE", comment: "phone"),
+                locale: .current,
+                arguments: arguments)
             case .url:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_URL", comment: "url"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_URL", comment: "url"),
+                locale: .current,
+                arguments: arguments)
             case .reviews:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_REVIEWS", comment: "reviews"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_REVIEWS", comment: "reviews"),
+                locale: .current,
+                arguments: arguments)
             case .buttonYumsEmpty:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMS_EMPTY", comment: "get more"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_YUMS_EMPTY", comment: "get more"),
+                locale: .current,
+                arguments: arguments)
             case .buttonYum:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUM", comment: "yum"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_YUM", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
             case .buttonYummed:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMMED", comment: "yum"))
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_YUMMED", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
             case .buttonYumNb:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRESTODETAIL_BUTTON_YUMNB", comment: "yum"), arguments)
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_YUMNB", comment: "yum"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

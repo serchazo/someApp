@@ -369,15 +369,22 @@ class MyRanks: UIViewController {
         preferredStyle: .actionSheet)
         
         // [START] Report Profile Action
-        let reportProfileAction = UIAlertAction(title: "Report profile", style: .destructive, handler: {  _ in
-            let reasonForReporting = UIAlertController(
-                title: "Report Profile", message: "Why do you want to report the profile", preferredStyle: .actionSheet)
+        let reportProfileAction = UIAlertAction(
+            title: MyStrings.reportProfileTitle.localized(),
+            style: .destructive, handler: {  _ in
+                let reasonForReporting = UIAlertController(
+                    title: MyStrings.reportProfileTitle.localized(),
+                    message: MyStrings.reportProfileReasonAsk.localized(),
+                    preferredStyle: .actionSheet)
             // Choose your decision
             for content in ReportActions.allCases {
                 let reportAction = UIAlertAction(title: content.rawValue, style: .default, handler: { _ in
                     SomeApp.reportUser(userId: self.user.uid, reportedId: self.calledUser!.key, reason: content)
                     // Warn the user
-                    let thanks = UIAlertController(title: "User Reported", message: "We will analyze and take some action in 24 hours. Don't hesitate to contact us for more information.", preferredStyle: .alert)
+                    let thanks = UIAlertController(
+                        title: MyStrings.reportProfileConfirmationTitle.localized(),
+                        message: MyStrings.reportProfileConfirmationMsg.localized(),
+                        preferredStyle: .alert)
                     let okAction = UIAlertAction(
                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler: nil)
@@ -397,17 +404,27 @@ class MyRanks: UIViewController {
         // [END] Report Profile Action
         
         // [START] Block user action
-        var tmpTitle = "Block user"
-        if innerBlockedFlag {tmpTitle = "Unblock user"}
+        var tmpTitle = MyStrings.buttonBlock.localized()
+        if innerBlockedFlag {tmpTitle = MyStrings.buttonUnblock.localized()}
         
         let blockProfileAction = UIAlertAction(title: tmpTitle, style: .destructive, handler: { _ in
             // [START] If haven't blocked yet : ask to block
             if !self.innerBlockedFlag{
-                let confirmAlert = UIAlertController(title: "Block \(self.calledUser!.nickName) ?", message: "They won't be able to find your profile or reviews.  foodz.guru won't let them know that you've blocked them.", preferredStyle: .alert)
-                let blockAction = UIAlertAction(title: "Block", style: .destructive, handler: { _ in
-                    SomeApp.blockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
+                
+                let confirmAlert = UIAlertController(
+                    title: MyStrings.buttonBlockConfirmAskTitle.localized(self.calledUser!.nickName),
+                    message: MyStrings.buttonBlockConfirmAskMsg.localized(),
+                    preferredStyle: .alert)
+                let blockAction = UIAlertAction(
+                    title: MyStrings.buttonBlockConfirmOK.localized(),
+                    style: .destructive,
+                    handler: { _ in
+                        SomeApp.blockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
                     // Alert the user
-                    let thanks = UIAlertController(title: "User Blocked", message: nil, preferredStyle: .alert)
+                    let thanks = UIAlertController(
+                        title: MyStrings.buttonBlockBlocked.localized(),
+                        message: nil,
+                        preferredStyle: .alert)
                     let okAction = UIAlertAction(
                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler: nil)
@@ -424,16 +441,22 @@ class MyRanks: UIViewController {
             
             // [START] If I have blocked : ask to unblock
             else{
-                let confirmAlert = UIAlertController(title: "Unblock \(self.calledUser!.nickName) ?", message: "They will be able to see your profile and reviews.  foodz.guru won't let them know that you've blocked them.", preferredStyle: .alert)
-                let blockAction = UIAlertAction(title: "Unblock", style: .destructive, handler: { _ in
-                    SomeApp.unblockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
-                    // Alert the user
-                    let thanks = UIAlertController(title: "User Unblocked", message: nil, preferredStyle: .alert)
-                    let okAction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
-                        style: .default, handler: nil)
-                    thanks.addAction(okAction)
-                    self.present(thanks,animated: true)
+                let confirmAlert = UIAlertController(
+                    title: MyStrings.buttonUnblockConfirmAskTitle.localized( self.calledUser!.nickName),
+                    message: MyStrings.buttonUnblockConfirmAskMsg.localized(),
+                    preferredStyle: .alert)
+                let blockAction = UIAlertAction(
+                    title: MyStrings.buttonUnblockConfirmOK.localized(),
+                    style: .destructive,
+                    handler: { _ in
+                        SomeApp.unblockUser(userId: self.user.uid, blockedUserId: self.calledUser!.key)
+                        // Alert the user
+                        let thanks = UIAlertController(title: MyStrings.buttonUnblockBlocked.localized(), message: nil, preferredStyle: .alert)
+                        let okAction = UIAlertAction(
+                            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
+                            style: .default, handler: nil)
+                        thanks.addAction(okAction)
+                        self.present(thanks,animated: true)
                 })
                 let cancelAction = UIAlertAction(
                     title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
@@ -516,7 +539,7 @@ class MyRanks: UIViewController {
     @objc func unfollow(){
         let alert = UIAlertController(
         title: MyStrings.unfollow.localized() + "?",
-        message: "You will no longer receive updates and notifications from this user.",
+        message: MyStrings.unfollowAlertMsg.localized(),
         preferredStyle: .alert)
         // OK
         alert.addAction(UIAlertAction(
@@ -553,8 +576,8 @@ extension MyRanks: AddRankingDelegate{
         }else{
             // Ranking already in list
             let alert = UIAlertController(
-                title: "Duplicate ranking",
-                message: "You already have a \(withFood.name) ranking in \(city.name).",
+                title: MyStrings.duplicateRankingTitle.localized(),
+                message: MyStrings.duplicateRankingMsg.localized(withFood.name, city.name),
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
@@ -627,8 +650,8 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         
         if emptyListFlag{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            cell.textLabel?.text = "No rankings in \(currentCity.name) yet!"
-            cell.detailTextLabel?.text = "Click on + and tell the world about your favorite places!"
+            cell.textLabel?.text = MyStrings.emptyRankingTitle.localized(currentCity.name)
+            cell.detailTextLabel?.text = MyStrings.emptyRankingMsg.localized()
             cell.selectionStyle = .none
             return cell
         }else{
@@ -636,7 +659,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = "Best " + foodItems[indexPath.row].name + " in " + currentCity.name
+                let tmpTitleText = MyStrings.bestPlacesTitle.localized(foodItems[indexPath.row].name, currentCity.name)
                 cell.titleLabel.text = tmpTitleText
                 cell.descriptionLabel.text = rankings[indexPath.row].description
             }
@@ -755,25 +778,169 @@ extension MyRanks{
         case emptyBio
         case follow
         case unfollow
+        case reportProfileTitle
+        case reportProfileReasonAsk
+        case reportProfileConfirmationTitle
+        case reportProfileConfirmationMsg
+        case buttonBlock
+        case buttonUnblock
+        case buttonBlockConfirmAskTitle
+        case buttonBlockConfirmAskMsg
+        case buttonBlockConfirmOK
+        case buttonBlockBlocked
+        case buttonUnblockConfirmAskTitle
+        case buttonUnblockConfirmAskMsg
+        case buttonUnblockConfirmOK
+        case buttonUnblockBlocked
+        case unfollowAlertMsg
+        case duplicateRankingTitle
+        case duplicateRankingMsg
+        case emptyRankingTitle
+        case emptyRankingMsg
+        case bestPlacesTitle
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(_ arguments: CVarArg...) -> String{
             switch self{
             case .followers:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOWERS", comment: "Follow"))
+                return String(
+                format: NSLocalizedString("MYRANKS_FOLLOWERS", comment: "Follow"),
+                locale: .current,
+                arguments: arguments)
             case .following:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOWING", comment: "Follow"))
+                return String(
+                format: NSLocalizedString("MYRANKS_FOLLOWING", comment: "Follow"),
+                locale: .current,
+                arguments: arguments)
             case .follow:
-                    return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_FOLLOW", comment: "Follow"))
+                    return String(
+                format: NSLocalizedString("MYRANKS_FOLLOW", comment: "Follow"),
+                locale: .current,
+                arguments: arguments)
             case .unfollow:
-                    return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_UNFOLLOW", comment: "Unfollow"))
+                    return String(
+                format: NSLocalizedString("MYRANKS_UNFOLLOW", comment: "Unfollow"),
+                locale: .current,
+                arguments: arguments)
             case .blockedProfileName:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BLOCKEDPROFILE_NAME", comment: "Not found"))
+                return String(
+                format: NSLocalizedString("MYRANKS_BLOCKEDPROFILE_NAME", comment: "Not found"),
+                locale: .current,
+                arguments: arguments)
             case .blockedProfileBio:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BLOCKEDPROFILE_BIO", comment: "Not found"))
+                return String(
+                format: NSLocalizedString("MYRANKS_BLOCKEDPROFILE_BIO", comment: "Not found"),
+                locale: .current,
+                arguments: arguments)
             case .selectCity:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BUTTON_SELECTCITY", comment: "City"))
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_SELECTCITY", comment: "City"),
+                locale: .current,
+                arguments: arguments)
             case .emptyBio:
-                return String.localizedStringWithFormat(NSLocalizedString("MYRANKS_BIO_EMPTY", comment: "Empty"))
+                return String(
+                format: NSLocalizedString("MYRANKS_BIO_EMPTY", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
+            case .reportProfileTitle:
+                return String(
+                format: NSLocalizedString("MYRANKS_REPORTPROFILE_TITLE", comment: "To report"),
+                locale: .current,
+                arguments: arguments)
+            case .reportProfileReasonAsk:
+                return String(
+                format: NSLocalizedString("MYRANKS_REPORTPROFILE_ASK_FOR_REASON", comment: "Why report"),
+                locale: .current,
+                arguments: arguments)
+            case .reportProfileConfirmationTitle:
+                return String(
+                format: NSLocalizedString("MYRANKS_REPORTPROFILE_CONFIRMATION_TITLE", comment: "confirmation"),
+                locale: .current,
+                arguments: arguments)
+            case .reportProfileConfirmationMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_REPORTPROFILE_CONFIRMATION_MSG", comment: "We will analyse"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonBlock:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_BLOCK", comment: "Block"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonUnblock:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_UNBLOCK", comment: "Unblock"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonBlockConfirmAskTitle:
+                return String(
+                    format: NSLocalizedString("MYRANKS_BUTTON_BLOCK_CONFIRM_TITLE", comment: "Block"),
+                    locale: .current,
+                    arguments: arguments)
+            case .buttonBlockConfirmAskMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_BLOCK_CONFIRM_MSG", comment: "Please confirm"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonBlockConfirmOK:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_BLOCK_CONFIRM_OK", comment: "Block"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonBlockBlocked:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_BLOCK_BLOCKED", comment: "Blocked"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonUnblockConfirmAskTitle:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_UNBLOCK_CONFIRM_TITLE", comment: "Block"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonUnblockConfirmAskMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_UNBLOCK_CONFIRM_MSG", comment: "Please confirm"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonUnblockConfirmOK:
+                return String(
+                format: NSLocalizedString("MYRANKS_UNBUTTON_BLOCK_CONFIRM_OK", comment: "Block"),
+                locale: .current,
+                arguments: arguments)
+            case .buttonUnblockBlocked:
+                return String(
+                format: NSLocalizedString("MYRANKS_BUTTON_UNBLOCK_BLOCKED", comment: "Blocked"),
+                locale: .current,
+                arguments: arguments)
+            case .unfollowAlertMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_UNFOLLOW_ALERT_MSG", comment: "Unfollow"),
+                locale: .current,
+                arguments: arguments)
+            case .duplicateRankingTitle:
+                return String(
+                format: NSLocalizedString("MYRANKS_DUPLICATE_RANKING_TITLE", comment: "Double"),
+                locale: .current,
+                arguments: arguments)
+            case .duplicateRankingMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_DUPLICATE_RANKING_MSG", comment: "Double"),
+                locale: .current,
+                arguments: arguments)
+            case .emptyRankingTitle:
+                return String(
+                    format: NSLocalizedString("MYRANKS_EMPTY_RANKING_TITLE", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyRankingMsg:
+                return String(
+                format: NSLocalizedString("MYRANKS_DUPLICATE_RANKING_MSG", comment: "Empty"),
+                locale: .current,
+                arguments: arguments)
+            case .bestPlacesTitle:
+                return String(
+                    format: NSLocalizedString("MYRANKS_BESTPLACES_TITLE", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
                 
             }
         }

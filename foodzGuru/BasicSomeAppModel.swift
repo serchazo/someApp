@@ -111,7 +111,10 @@ class SomeApp{
         
         // Create the first timeline post
         let timestamp = NSDate().timeIntervalSince1970 * 1000
-        let payLoad = String.localizedStringWithFormat(NSLocalizedString("HOME_FIRST_POST", comment: "First Post"), username)
+        let payLoad = String(
+            format: NSLocalizedString("HOME_FIRST_POST", comment: "First Post"),
+            locale: .current,
+            arguments: [username])
         let userTimelineDBRef = dbUserTimeline.child(userId).child("systemNotification:"+userId+":welcometofoodzguru")
         let firstTimelinePost:[String:Any] = ["timestamp": timestamp,
                                  "type" : "systemNotification",

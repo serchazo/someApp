@@ -401,10 +401,13 @@ extension SearchViewController{
     private enum MyStrings {
         case buttonChangeCity
         
-        func localized(arguments: [CVarArg] = []) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .buttonChangeCity:
-                return String.localizedStringWithFormat(NSLocalizedString("SEARCH_BUTTON_CHANGECITY", comment: "Change"))
+                return String(
+                format: NSLocalizedString("SEARCH_BUTTON_CHANGECITY", comment: "Change"),
+                locale: .current,
+                arguments: arguments)
                 
             }
         }
