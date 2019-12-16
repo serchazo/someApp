@@ -64,6 +64,17 @@ class BestRestosViewController: UIViewController {
     
     @IBOutlet weak var adView: UIView!
     
+    // MARK: Cool Strings
+    let rankingDescription:[String] =
+        [MyStrings.coolPhrase1.localized(),
+         MyStrings.coolPhrase2.localized(),
+         MyStrings.coolPhrase3.localized(),
+         MyStrings.coolPhrase4.localized()]
+    
+    func getPhrase() -> String{
+        let number = Int.random(in: 0 ..< rankingDescription.count)
+        return rankingDescription[number]
+    }
     
     // MARK: Timeline stuff
     override func viewWillAppear(_ animated: Bool) {
@@ -128,7 +139,7 @@ class BestRestosViewController: UIViewController {
         tableHeaderFoodName.font = UIFont.preferredFont(forTextStyle: .title1)
         tableHeaderFoodName.text = MyStrings.headerTitle.localized(arguments: currentFood.name, currentCity.name)
         tableHeaderDescription.font = UIFont.preferredFont(forTextStyle: .footnote)
-        tableHeaderDescription.text = SomeApp.getPhrase()
+        tableHeaderDescription.text = getPhrase()
         
         // Prepare the file first
         let storagePath = currentCity.country + "/" + currentFood.key + ".png"
@@ -555,6 +566,7 @@ extension BestRestosViewController: GADUnifiedNativeAdLoaderDelegate{
     }
 }
 
+
 // MARK: Localized Strings
 extension BestRestosViewController{
     private enum MyStrings {
@@ -567,6 +579,10 @@ extension BestRestosViewController{
         case emptyMsg
         case points
         case reviews
+        case coolPhrase1
+        case coolPhrase2
+        case coolPhrase3
+        case coolPhrase4
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -615,6 +631,26 @@ extension BestRestosViewController{
                 format: NSLocalizedString("BESTRESTOS_REVIEWS", comment: "Comments"),
                 locale: .current,
                 arguments: arguments)
+            case .coolPhrase1:
+                return String(
+                    format: NSLocalizedString("BESTRESTOS_COOLPHRASE_1", comment: "Comments"),
+                    locale: .current,
+                    arguments: arguments)
+            case .coolPhrase2:
+                return String(
+                    format: NSLocalizedString("BESTRESTOS_COOLPHRASE_2", comment: "Comments"),
+                    locale: .current,
+                    arguments: arguments)
+            case .coolPhrase3:
+                return String(
+                    format: NSLocalizedString("BESTRESTOS_COOLPHRASE_3", comment: "Comments"),
+                    locale: .current,
+                    arguments: arguments)
+            case .coolPhrase4:
+                return String(
+                    format: NSLocalizedString("BESTRESTOS_COOLPHRASE_4", comment: "Comments"),
+                    locale: .current,
+                    arguments: arguments)
             }
         }
     }

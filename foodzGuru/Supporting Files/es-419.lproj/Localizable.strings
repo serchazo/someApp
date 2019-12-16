@@ -1,0 +1,276 @@
+/*
+See LICENSE folder for this sample’s licensing information.
+
+Abstract:
+Localized strings.
+*/
+
+
+"BUTTON_OK" = "Aceptar";
+"BUTTON_CANCEL" = "Cancelar";
+
+"LOG" = "foodz.guru: %@";
+"MSG_ERROR" = "Error";
+"MSG_LOADING" = "Cargando";
+
+"AD_PLACEHOLDER_LONG" = "¡Anuncie aquí! Póngase en contacto con support@foodz.guru";
+"AD_PLACEHOLDER_SHORT_TITLE" = "¡Anuncie aquí!";
+"AD_PLACEHOLDER_SHORT_MSG" = "Póngase en contacto con support@foodz.guru";
+
+"FOODZ_APP_NAME" = "foodz.guru";
+"FOODZ_URL" = "http://foodz.guru";
+"FOODZ_EULA_TERMSOFSERVICE" = "Términos de servicio";
+"FOODZ_EULA_TERMS_URL" = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
+"FOODZ_EULA_PRIVACY_POLICY" = "Política de privacidad";
+"FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
+
+"FOODZ_DB_FOOD_TYPE" = "foodType_ES";
+
+"LOGIN_EMAIL" = "Ingrese su correo electrónico";
+"LOGIN_CREATE_ACCOUNT" = "Crear cuenta";
+"LOGIN_CREATE_BUTTON" = "Crear";
+"LOGIN_CREATE_GUIDE" = "Ingrese su correo electrónico y cree una contraseña.";
+"LOGIN_CREATE_FAILED" = "Error de creación";
+"LOGIN_FORGOT_PSSWD" = "- Olvidé mi contraseña -";
+"LOGIN_FACEBOOK" = "Facebook";
+"LOGIN_FACEBOOK_CANCELLED_TITLE" = "Cancelado";
+"LOGIN_FACEBOOK_CANCELLED_MSG" = "El usuario canceló el inicio de sesión";
+"LOGIN_EMPTY" = "Información vacía";
+"LOGIN_EMPTY_DETAIL" = "Su correo electrónico y/o contraseña no pueden estar vacíos";
+"LOGIN_FAILED" = "Error";
+"LOGIN_PSSWD_RESET_TITLE" = "Restablecer contraseña";
+"LOGIN_PSSWD_RESET_MSG" = "Ingrese su correo electrónico y le enviaremos las instrucciones.";
+"LOGIN_PSSWD_RESET_BUTTON" = "Restablecer";
+"LOGIN_PSSWD_CREATE" = "Crear una contraseña";
+"LOGIN_PSSWD_CONFIRM" = "Confirmar contraseña";
+"LOGIN_PSSWD_NOTMATCH_TITLE" = "Las contraseñas no coinciden";
+"LOGIN_PSSWD_NOTMATCH_MSG" = "La nueva contraseña no coincide con la confirmación";
+"LOGIN_EULA_TEXT" = "Al usar nuestra aplicación, usted acepta nuestros";
+"LOGIN_EULA_TEXT_APPEND" = "y nuestra";
+
+"FIRSTLOG_EULA_TITLE" = "Aceptar condiciones";
+"FIRSTLOG_EULA_POPUP_TITLE" = "Aceptar condiciones";
+"FIRSTLOG_EULA_POPUP_MSG" = "Acepto los Términos de Servicio y la Política de Privacidad de foodz.guru";
+"FIRSTLOG_EULA_POPUP_AGREE" = "Acepto";
+"FIRSTLOG_EULA_POPUP_NOTAGREE" = "No acepto";
+"FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE" = "No puede ir más lejos";
+"FIRSTLOG_EULA_POPUP_NOTAGREE_MSG" = "Si no acepta las condiciones, no puede usar la aplicación";
+
+"FIRSTLOG1_TITLE" = "Configure su perfil (1/4)";
+"FIRSTLOG1_FIELD_PLACEHOLDER" = "Crear un nombre de usuario";
+"FIRSTLOG1_INVALID_TITLE" = "Nombre no válido";
+"FIRSTLOG1_INVALID_MSG" = "Su nombre de usuario debe tener al menos 4 caracteres de longitud.";
+"FIRSTLOG1_NICK_TAKEN" = "Este nombre de usuario ya está en uso";
+"FIRSTLOG1_NICK_OK" = "¡Bien! Este nombre de usuario está disponible.";
+"FIRSTLOG1_BUTTON_GO" = "Continuar";
+"FIRSTLOG1_BUTTON_WAIT" = "Verificar nombre de usuario";
+
+"FIRSTLOG2_TITLE" = "Configure su perfil (2/4)";
+"FIRSTLOG2_WARNING" = "No se preocupe, puede cambiar la imagen más tarde";
+"FIRSTLOG2_BUTTON_GO" = "Continuar";
+"FIRSTLOG2_BUTTON_UPLOAD" = "Cargar";
+
+"FIRSTLOG3_TITLE" = "Configure su perfil (3/4)";
+"FIRSTLOG3_BUTTON_GO" = "Continuar";
+"FIRSTLOG3_BUTTON_SELECT" = "Seleccionar";
+"FIRSTLOG3_BUTTON_CHANGE" = "Cambiar ciudad";
+"FIRSTLOG3_POPUP_TITLE" = "No tiene ciudad seleccionada";
+"FIRSTLOG3_POPUP_MSG" = "Presione Seleccionar. Puede cambiar su ciudad más tarde.";
+
+"FIRSTLOG4_TITLE" = "Configure su perfil (3/4)";
+"FIRSTLOG4_BUTTON_GO" = "Continuar";
+
+"HOME_FIRST_POST" = "Hola% @! Bienvenido a foodz.guru, cuando le dé click en Seguir a los amantes de la comida y las clasificaciones, verá aquí sus actualizaciones más importantes.";
+"HOME_POST_NEWRANKING" = "Nuevo ranking";
+"HOME_POST_NEWFOLLOWER" = "¡Seguidor!";
+"HOME_POST_NEWYUM" = "¡Yum!";
+"HOME_POST_NEWREVIEW" = "¡Nueva revisión!";
+"HOME_POST_NEWFAVORITE" = "¡Nuevo favorito!";
+"HOME_POST_NEWBEST" = "¡Nuevo mejor en ranking!";
+"HOME_POST_NEWINTOP" = "Vamos a probar?";
+
+"FOODIES_SEARCH_PLACEHOLDER" = "Buscar más Foodies";
+"FOODIES_LOADING" = "Obteniendo datos de Foodies";
+"FOODIES_EMPTYLIST_TITLE" = "¡Todavía no está siguiendo a nadie!";
+"FOODIES_EMPTYLIST_MSG" = "Use la barra de búsqueda para encontrar Foodies.";
+
+"MYRANKS_FOLLOWERS" = "Seguidores";
+"MYRANKS_FOLLOWING" = "Siguiendo";
+"MYRANKS_FOLLOW" = "Seguir";
+"MYRANKS_UNFOLLOW" = "Dejar de seguir";
+"MYRANKS_BLOCKEDPROFILE_NAME" = "No encontrado";
+"MYRANKS_BLOCKEDPROFILE_BIO" = "Usuario no encontrado";
+"MYRANKS_BUTTON_SELECTCITY" = "Seleccionar ciudad";
+"MYRANKS_BIO_EMPTY" = "Vaya a Mis Foodz para editar su biografía";
+"MYRANKS_REPORTPROFILE_TITLE" = "Reportar perfil";
+"MYRANKS_REPORTPROFILE_ASK_FOR_REASON" = "¿Por qué desea reportar el perfil?";
+"MYRANKS_REPORTPROFILE_CONFIRMATION_TITLE" = "Reporte enviado";
+"MYRANKS_REPORTPROFILE_CONFIRMATION_MSG" = "Analizaremos y tomaremos medidas en 24 horas. No dude en contactarnos para obtener más información";
+"MYRANKS_BUTTON_BLOCK" = "Bloquear usuario";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_TITLE" = "Bloquear %@?";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_MSG" = "El usuario no podrá encontrar su perfil o comentarios. foodz.guru no le hará saber que ha sido";
+"MYRANKS_BUTTON_BLOCK_CONFIRM_OK" = "Bloquear";
+"MYRANKS_BUTTON_BLOCK_BLOCKED" = "Usuario bloqueado";
+"MYRANKS_BUTTON_UNBLOCK" = "Desbloquear usuario";
+
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_TITLE" = "Desbloquear %@?";
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_MSG" = "Podrán ver su perfil y comentarios. foodz.guru no les hará saber que los ha bloqueado.";
+"MYRANKS_BUTTON_UNBLOCK_CONFIRM_OK" = "Desbloquear";
+"MYRANKS_BUTTON_UNBLOCK_BLOCKED" = "Usuario desbloqueado";
+"MYRANKS_UNFOLLOW_ALERT_MSG" = "Ya no recibirá actualizaciones y notificaciones de este usuario";
+"MYRANKS_DUPLICATE_RANKING_TITLE" = "Ranking duplicado";
+"MYRANKS_DUPLICATE_RANKING_MSG" = "Ya tiene un ranking de %@ en %@.";
+"MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
+"MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
+"MYRANKS_BESTPLACES_TITLE" = "Mejores %@ en %@";
+
+"FOLLOWERS_NAVBAR_FOLLWERS" = "seguidores";
+"FOLLOWERS_NAVBAR_FOLLOWING" = "siguiendo";
+"FOLLOWERS_FOLLOWERS_EMPTY_ME" = "Aún no tiene seguidores";
+"FOLLOWERS_FOLLOWERS_EMPTY_USER" = "%@ todavía no tiene seguidores";
+"FOLLOWERS_FOLLOWING_EMPTY_ME" = "Todavía no sigue a nadie";
+"FOLLOWERS_FOLLOWING_EMPTY_USER" = "%@ todavía no sigue a nadie.";
+"FOLLOWERS_EMPTY_MSG" = "¡Vuelva pronto!";
+
+"MYCITIES_LOADING" = "Cargando ciudades";
+"MYCITIES_EMPTYLIST_TITLE" = "¡Aún no tiene rankings!";
+"MYCITIES_EMPTYLIST_MSG" = "¡Haz clic en + y dile al mundo tus lugares favoritos!";
+"MYCITIES_DUPLICATE_TITLE" = "Ciudad duplicada";
+"MYCITIES_DUPLICATE_MSG" = "Ya tienes rankings en %@.";
+
+"THISRANKING_HEADER_TITLE_ME" = "Mis %@ favoritos en %@";
+"THISRANKING_HEADER_TITLE_USER" = "%@ favoritos de %@ en %@";
+"THISRANKING_DESCRIPTION_TITLE" = "Descripción";
+"THISRANKING_BUTTON_DELETE_ASK" = "¿Eliminar restaurante?";
+"THISRANKING_BUTTON_DELETE_TITLE" = "Eliminar";
+"THISRANKING_EMPTY_TITLE_ME" = "¡Aún no hay lugares en su lista de %@!";
+"THISRANKING_EMPTY_TITLE_USER" = "Todavía no hay %@ en la lista de %@";
+"THISRANKING_EMPTY_MSG_ME" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
+"THISRANKING_EMPTY_MSG_USER" = "¡Regrese pronto y revise la lista!";
+"THISRANKING_POINTS_GIVEN" = "Puntos otorgados %d";
+"THISRANKING_BUTTON_YUM" = "¡Yum!";
+"THISRANKING_BUTTON_YUMMED" = "Yummed";
+"THISRANKING_BUTTON_YUMNB" = "¡Yums! (%d)";
+"THISRANKING_BUTTON_EDITREVIEW" = "Editar revisión";
+"THISRANKING_CELL_ADDRESTO" = "Agregar %@";
+"THISRANKING_DESCRIPTION_CELL" = "Haga clic para editar la descripción";
+"THISRANKING_DESCRIPTION_EDIT_TITLE" = "Edite la descripción de su Ranking";
+"THISRANKING_DESCRIPTION_EDIT_WARNING" = "(Máx. 250 caracteres)";
+"THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS" = "Ingrese una descripción para su Ranking";
+"THISRANKING_DESCRIPTION_EDIT_BUTTON_DONE" = "¡Listo!";
+"THISRANKING_REVIEW_EDIT_TITLE" = "Mi opinión sobre %@";
+"THISRANKING_REVIEW_EDIT_WARNING" = "Cuéntale al mundo tu opinión";
+"THISRANKING_REVIEW_EDIT_INSTRUCTIONS" = "Escriba su opinión aquí.";
+"THISRANKING_REVIEW_EDIT_BUTTON_DONE" = "¡Listo!";
+"THISRANKING_REPORT_TITLE" = "Reporte";
+"THISRANKING_REPORT_REASON_INAPPROPRIATE" = "Es inapropiado";
+"THISRANKING_REPORT_REASON_SPAM" = "Es spam";
+"THISRANKING_DUPLICATE_TITLE" = "Duplicado";
+"THISRANKING_DUPLICATE_MSG" = "El lugar ya está en su Ranking";
+
+"ADDRANKING_NAVBAR_TITLE" = "Agregar un Ranking";
+"ADDRANKING_HEADER_TITLE" = "Elija el tipo de lugar";
+"ADDRANKING_HEADER_CITY" = "Ciudad actual: %@";
+
+"MAPSEARCH_SEARCHBAR_PLACEHOLDER" = "Busque sus lugares favoritos";
+"MAPSEARCH_SEARCH_ERROR" = "No se encontraron lugares";
+"MAPSEARCH_LOCATION_DISABLED_TITLE" = "Servicios de ubicación deshabilitados";
+"MAPSEARCH_LOCATION_DISABLED_MSG" = "Habilitar servicios de ubicación para mejorar la precisión y velocidad de búsqueda";
+"MAPSEARCH_SEARCHCELL_PLACEHOLDER" = "Use la barra de búsqueda para buscar sus lugares favoritos";
+
+"MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
+"MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Comentarios sobre foodz.guru";
+"MYPROFILE_SUPPORT_EMAIL_BODY" = "Mi comentario:";
+"MYPROFILE_NAVBAR_TITLE" = "Mi perfil";
+"MYPROFILE_BUTTON_CHANGEPIC" = "Cambiar imagen de perfil";
+"MYPROFILE_BUTTON_BIO_NAME" = "Bio";
+"MYPROFILE_BUTTON_BIO_EMPTY" = "Ingrese una biografía";
+"MYPROFILE_BUTTON_BIO_EDIT" = "Editar biografía";
+"MYPROFILE_BUTTON_CHANGEPSSWD" = "Cambiar contraseña";
+"MYPROFILE_BUTTON_CHANGEPSSWD_OLD" = "Antigua Contraseña";
+"MYPROFILE_BUTTON_CHANGEPSSWD_NEW" = "Nueva contraseña";
+"MYPROFILE_BUTTON_CHANGEPSSWD_NEWCONFIRM" = "Confirmar contraseña";
+"MYPROFILE_BUTTON_CHANGEPSSWD_CONFIRM" = "Cambiar";
+"MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_TITLE" = "¡Error!";
+"MYPROFILE_BUTTON_CHANGEPSSWD_ERROR_MATCH_MSG" = "Sus contraseñas no coinciden";
+"MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_TITLE" = "Éxito";
+"MYPROFILE_BUTTON_CHANGEPSSWD_SUCCESS_MSG" = "La contraseña ha cambiado correctamente";
+"MYPROFILE_BUTTON_HELP" = "Ayuda y soporte técnico";
+"MYPROFILE_BUTTON_MORE" = "Más";
+"MYPROFILE_BUTTON_LOGOFF" = "Cerrar sesión";
+"MYPROFILE_EDITBIO_TITLE" = "Editar biografía";
+"MYPROFILE_EDITBIO_WARNING" = "Máximo 500 caracteres";
+"MYPROFILE_EDITBIO_INSTRUCTIONS" = "Escriba una biografía aquí";
+"MYPROFILE_EDITBIO_BUTTON_DONE" = "¡Listo!";
+"MYPROFILE_EDITBIO_TOOLONG_TITLE" = "Bio demasiado larga";
+"MYPROFILE_EDITBIO_TOOLONG_MSG" = "Su biografía no debe exceder los 500 caracteres";
+"MYPROFILE_EDITBIO_EMPTY_TITLE" = "Biografía vacía";
+"MYPROFILE_EDITBIO_EMPTY_MSG" = "Su biografía está vacía";
+"MYPROFILE_MORE_TITLE" = "Más acciones";
+"MYPROFILE_MORE_ABOUT" = "Acerca de";
+"MYPROFILE_MORE_ABOUT_VERSION" = "Versión";
+"MYPROFILE_MORE_ABOUT_BUILD" = "Compilación";
+"MYPROFILE_MORE_FEEDBACK" = "Enviar comentarios";
+"MYPROFILE_MORE_DELETE" = "Borrar perfil";
+"MYPROFILE_MORE_DELETE_POPUP_TITLE" = "¿Borrar perfil?";
+"MYPROFILE_MORE_DELETE_POPUP_MSG" = "Advertencia: esta acción es definitiva";
+"MYPROFILE_MORE_DELETE_POPUP_CONFIRM" = "Eliminar";
+
+
+"MYRESTODETAIL_BANNER" = "%@ %@ agregado a sus %@!" ;
+"MYRESTODETAIL_BUTTON_ADDRESTO" = "Añadir a mis Foodz";
+"MYRESTODETAIL_BUTTON_ADDRESS" = "Dirección";
+"MYRESTODETAIL_BUTTON_PHONE" = "Teléfono";
+"MYRESTODETAIL_BUTTON_URL" = "Sitio web";
+"MYRESTODETAIL_BUTTON_REVIEWS" = "Reseñas";
+"MYRESTODETAIL_BUTTON_YUMS_EMPTY" = "¡Obtenga yums!";
+"MYRESTODETAIL_BUTTON_YUM" = "¡Yum!";
+"MYRESTODETAIL_BUTTON_YUMMED" = "Yummed";
+"MYRESTODETAIL_BUTTON_YUMNB" = "¡Yums! (%d)";
+"MYRESTODETAIL_REPORT_TITLE" = "Reportar";
+"MYRESTODETAIL_REPORT_REASON_INAPPROPRIATE" = "Es inapropiado";
+"MYRESTODETAIL_REPORT_REASON_SPAM" = "Es spam";
+"MYRESTODETAIL_CALL_ERROR_TITLE" = "No se puede llamar";
+"MYRESTODETAIL_CALL_ERROR_MSG" = "Inténtelo de nuevo más tarde";
+"MYRESTODETAIL_URL_ERROR_TITLE" = "URL no válida";
+"MYRESTODETAIL_URL_ERROR_MSG" = "Inténtelo de nuevo más tarde";
+"MYRESTODETAIL_REVIEW_TITLE" = "Mi reseña sobre %@";
+"MYRESTODETAIL_REVIEW_WARNING" = "Cuéntale al mundo tu opinión";
+"MYRESTODETAIL_REVIEW_PLACEHOLDER" = "Escriba su reseña aquí.";
+"MYRESTODETAIL_REVIEW_DONE" = "¡Listo!";
+"MYRESTODETAIL_EMPTY_COMMENTS_TITLE" = "¡No hay comentarios!";
+"MYRESTODETAIL_EMPTY_COMMENTS_MSG" = "¡Sé el primero en agregar un comentario de %@! Ve a tu ranking de %@ y comienza a ser un influencer";
+"MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "¿Crear ranking?";
+"MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "¿No tiene %@, crear y agregar restaurante?";
+"MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Crear";
+
+// Search
+"SEARCH_BUTTON_CHANGECITY" = "Cambiar ciudad";
+
+"BESTRESTOS_HEADER_TITLE" = "Mejores %@ lugares en %@";
+"BESTRESTOS_FOLLOW" = "Seguir";
+"BESTRESTOS_UNFOLLOW" = "Dejar de seguir";
+"BESTRESTOS_FOLLOWERS" = "Seguidores";
+"BESTRESTOS_UNFOLLOW_MSG" = "Ya no recibirá actualizaciones y notificaciones de este ranking.";
+"BESTRESTOS_EMPTY_TITLE" = "Clasificación vacía";
+"BESTRESTOS_EMPTY_MSG" = "¡Agregue sus lugares favoritos para que el mundo los vea!";
+"BESTRESTOS_POINTS" = "Puntos: %d";
+"BESTRESTOS_REVIEWS" = "Reseñas: %d";
+"BESTRESTOS_COOLPHRASE_1" = "Y los ganadores son ...";
+"BESTRESTOS_COOLPHRASE_2" = "La gente ha hablado ...";
+"BESTRESTOS_COOLPHRASE_3" = "¿Está su lugar favorito en la lista?";
+"BESTRESTOS_COOLPHRASE_4" = "¡Preparados, listos, a probar!";
+
+//General
+"MYRESTOMAP_BOX" = "Haga clic en el pin para obtener direcciones";
+"MYRESTOMAP_PIN" = "Obtener direcciones";
+
+"COUNTRYCHOSER_COUNTRY_TITLE" = "Elija su país";
+"COUNTRYCHOSER_CITY_TITLE" = "Elija su ciudad";
+
+// More
+"FOODZ_REPORT_FAKE_ACCOUNT" = "Cuenta falsa o spam";
+"FOODZ_REPORT_FAKE_VIOLENCE" = "Violencia y comportamiento criminal";
+"FOODZ_REPORT_FAKE_HARASSMENT" = "Acoso, contenido abusivo u odioso";
+"FOODZ_REPORT_FAKE_PORNOGRAPHIC" = "Material pornográfico o abusivo";
+"FOODZ_REPORT_FAKE_OFFENSIVE" = "Irrespetuoso u ofensivo";

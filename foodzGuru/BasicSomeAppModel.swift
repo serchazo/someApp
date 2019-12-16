@@ -17,7 +17,7 @@ class SomeApp{
     
     // DB
     private static let dbRootRef:DatabaseReference = Database.database().reference()
-    static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child("foodType")
+    static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child(MyStrings.dbFoodType.localized())
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
     static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
@@ -83,17 +83,6 @@ class SomeApp{
     // Prod ads
     static let adBAnnerUnitID = "ca-app-pub-5723552712049473/6238131752"
     static let adNativeUnitID = "ca-app-pub-5723552712049473/6280641581"
-    
-    static let rankingDescription:[String] =
-    ["And the winners are...",
-    "People have spoken...",
-    "Is your favorite place in the list?",
-    "Ready, set, eat!"]
-    
-    static func getPhrase() -> String{
-        let number = Int.random(in: 0 ..< rankingDescription.count)
-        return rankingDescription[number]
-    }
     
     // the fonts
     static var titleFont: UIFont{
@@ -518,6 +507,53 @@ enum ReportActions:String,CaseIterable{
     case HatefulContent = "Harassment, Abusive or Hateful Content"
     case Pornography = "Pornographic or Abusive Material"
     case Disrespectul = "Disrespectful or Offensive"
+    
+    func localized(arguments: CVarArg...) -> String{
+        switch self{
+        case .FakeAccount:
+            return String(
+            format: NSLocalizedString("FOODZ_REPORT_FAKE_ACCOUNT", comment: "Configure"),
+            locale: .current,
+            arguments: arguments)
+        case .ViolentBehavior:
+        return String(
+            format: NSLocalizedString("FOODZ_REPORT_FAKE_VIOLENCE", comment: "Go"),
+            locale: .current,
+            arguments: arguments)
+        case .HatefulContent:
+          return String(
+            format: NSLocalizedString("FOODZ_REPORT_FAKE_HARASSMENT", comment: "Go"),
+            locale: .current,
+            arguments: arguments)
+        case .Pornography:
+            return String(
+            format: NSLocalizedString("FOODZ_REPORT_FAKE_PORNOGRAPHIC", comment: "Go"),
+            locale: .current,
+            arguments: arguments)
+        case .Disrespectul:
+            return String(
+            format: NSLocalizedString("FOODZ_REPORT_FAKE_OFFENSIVE", comment: "Go"),
+            locale: .current,
+            arguments: arguments)
+            
+        }
+    }
 }
 
-
+// MARK: Localized Strings
+extension SomeApp{
+    enum MyStrings {
+        case dbFoodType
+        
+        func localized(arguments: CVarArg...) -> String{
+            switch self{
+            case .dbFoodType:
+                return String(
+                format: NSLocalizedString("FOODZ_DB_FOOD_TYPE", comment: "Configure"),
+                locale: .current,
+                arguments: arguments)
+                
+            }
+        }
+    }
+}

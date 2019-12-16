@@ -70,7 +70,7 @@ class FoodzLayout{
         placeHolderAd.backgroundColor = .lightGray
         placeHolderAd.textAlignment = .center
         placeHolderAd.font = UIFont.preferredFont(forTextStyle: .footnote)
-        placeHolderAd.text = "Place your announcement here! support@foodz.guru"
+        placeHolderAd.text = FoodzStrings.adPlaceholderLong.localized()
         placeHolderAd.tag = 100
         adView.addSubview(placeHolderAd)
     }

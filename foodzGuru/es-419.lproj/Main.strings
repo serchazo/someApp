@@ -1,0 +1,375 @@
+
+/* Class = "UIButton"; normalTitle = "Privacy Policy."; ObjectID = "00x-eR-VXm"; */
+"00x-eR-VXm.normalTitle" = "Privacy Policy.";
+
+/* Class = "UILabel"; text = "Best restos in City"; ObjectID = "0GL-Y1-tFt"; */
+"0GL-Y1-tFt.text" = "Best restos in City";
+
+/* Class = "UILabel"; text = "City: Singapore"; ObjectID = "0q0-BG-bRB"; */
+"0q0-BG-bRB.text" = "City: Singapore";
+
+/* Class = "UIButton"; normalTitle = "Following: 15"; ObjectID = "1Sa-ke-fmP"; */
+"1Sa-ke-fmP.normalTitle" = "Following: 15";
+
+/* Class = "UILabel"; text = "Restaurant name"; ObjectID = "1f8-8y-V7u"; */
+"1f8-8y-V7u.text" = "Restaurant name";
+
+/* Class = "UIButton"; normalTitle = "Go"; ObjectID = "2EM-dW-Cxs"; */
+"2EM-dW-Cxs.normalTitle" = "Go";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "2Oz-QF-pYP"; */
+"2Oz-QF-pYP.text" = "Date";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "3NW-OT-agZ"; */
+"3NW-OT-agZ.text" = "Body";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "3V8-Qz-ew4"; */
+"3V8-Qz-ew4.text" = "Body";
+
+/* Class = "UILabel"; text = "Configure 3"; ObjectID = "3nk-Qg-XpZ"; */
+"3nk-Qg-XpZ.text" = "Configure 3";
+
+/* Class = "UILabel"; text = "Or"; ObjectID = "4vL-ux-LET"; */
+"4vL-ux-LET.text" = "Or";
+
+/* Class = "UIButton"; normalTitle = "Follow"; ObjectID = "5M6-Qw-f5s"; */
+"5M6-Qw-f5s.normalTitle" = "Follow";
+
+/* Class = "UILabel"; text = "This is my review bla bla bla"; ObjectID = "5ky-X7-hbi"; */
+"5ky-X7-hbi.text" = "This is my review bla bla bla";
+
+/* Class = "UITabBarItem"; title = "Home"; ObjectID = "6De-Go-MJ0"; */
+"6De-Go-MJ0.title" = "Inicio";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "6Ef-7S-Rve"; */
+"6Ef-7S-Rve.text" = "Title";
+
+/* Class = "UILabel"; text = "Configure 4"; ObjectID = "6JF-bV-Pap"; */
+"6JF-bV-Pap.text" = "Configure 4";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "6h3-Ii-Mkz"; */
+"6h3-Ii-Mkz.text" = "Body";
+
+/* Class = "UILabel"; text = "That username is already taken."; ObjectID = "6wy-B0-o9s"; */
+"6wy-B0-o9s.text" = "That username is already taken.";
+
+/* Class = "UIButton"; normalTitle = "Edit Review"; ObjectID = "80g-Hk-zRr"; */
+"80g-Hk-zRr.normalTitle" = "Edit Review";
+
+/* Class = "UILabel"; text = "Select a city"; ObjectID = "8eA-xO-TBi"; */
+"8eA-xO-TBi.text" = "Select a city";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "8yH-hG-5Dj"; */
+"8yH-hG-5Dj.text" = "Date";
+
+/* Class = "UILabel"; text = "🍽"; ObjectID = "92Z-k4-Bqk"; */
+"92Z-k4-Bqk.text" = "🍽";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "947-Ii-fCY"; */
+"947-Ii-fCY.text" = "Body";
+
+/* Class = "UILabel"; text = "Ranking Title"; ObjectID = "9GV-jg-ijU"; */
+"9GV-jg-ijU.text" = "Ranking Title";
+
+/* Class = "UILabel"; text = "Other:"; ObjectID = "9VJ-sG-H7E"; */
+"9VJ-sG-H7E.text" = "Other:";
+
+/* Class = "UIButton"; normalTitle = "Verify"; ObjectID = "AND-ae-ptr"; */
+"AND-ae-ptr.normalTitle" = "Verify";
+
+/* Class = "UILabel"; text = "Add new restaurant"; ObjectID = "AeJ-OR-Etb"; */
+"AeJ-OR-Etb.text" = "Add new restaurant";
+
+/* Class = "UIButton"; normalTitle = "Followers: 10"; ObjectID = "Aup-2s-EQ3"; */
+"Aup-2s-EQ3.normalTitle" = "Followers: 10";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "BXf-gD-mjo"; */
+"BXf-gD-mjo.text" = "Date";
+
+/* Class = "UILabel"; text = "Somewhere"; ObjectID = "BZu-pm-1Jc"; */
+"BZu-pm-1Jc.text" = "Somewhere";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "Bhh-7q-iSy"; */
+"Bhh-7q-iSy.placeholder" = "Password";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "Bn0-LL-kOv"; */
+"Bn0-LL-kOv.text" = "Title";
+
+/* Class = "UIButton"; normalTitle = "Change"; ObjectID = "CRZ-U8-Kbq"; */
+"CRZ-U8-Kbq.normalTitle" = "Change";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "CXF-z6-4H9"; */
+"CXF-z6-4H9.normalTitle" = "Login";
+
+/* Class = "UIButton"; normalTitle = "Forgot Password"; ObjectID = "Ccp-LX-41A"; */
+"Ccp-LX-41A.normalTitle" = "Forgot Password";
+
+/* Class = "UIButton"; normalTitle = "Login with Facebook"; ObjectID = "Cqz-Bx-i9O"; */
+"Cqz-Bx-i9O.normalTitle" = "Login with Facebook";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "DPO-78-3CA"; */
+"DPO-78-3CA.text" = "Title";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "DSX-qx-NkM"; */
+"DSX-qx-NkM.text" = "Address";
+
+/* Class = "UILabel"; text = "Restaurant Name"; ObjectID = "DoG-ax-s1p"; */
+"DoG-ax-s1p.text" = "Restaurant Name";
+
+/* Class = "UILabel"; text = "Configure 2"; ObjectID = "E2d-79-F8S"; */
+"E2d-79-F8S.text" = "Configure 2";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "EMq-Ex-5eU"; */
+"EMq-Ex-5eU.text" = "Title";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "FPu-ed-nZG"; */
+"FPu-ed-nZG.text" = "Address";
+
+/* Class = "UIButton"; normalTitle = "Select"; ObjectID = "G1V-1l-Zl7"; */
+"G1V-1l-Zl7.normalTitle" = "Select";
+
+/* Class = "UILabel"; text = "Configure 0"; ObjectID = "GF5-I1-6Dy"; */
+"GF5-I1-6Dy.text" = "Configure 0";
+
+/* Class = "UILabel"; text = "🍽"; ObjectID = "Gq6-KD-w1j"; */
+"Gq6-KD-w1j.text" = "🍽";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "I6M-rp-RON"; */
+"I6M-rp-RON.text" = "Address";
+
+/* Class = "UILabel"; text = "You can change your bio later (max 150 chars)."; ObjectID = "INn-9X-JKc"; */
+"INn-9X-JKc.text" = "You can change your bio later (max 150 chars).";
+
+/* Class = "UITabBarItem"; title = "Foodies"; ObjectID = "Izl-eu-3R6"; */
+"Izl-eu-3R6.title" = "Foodies";
+
+/* Class = "UIButton"; normalTitle = "Details"; ObjectID = "JEG-9s-4HZ"; */
+"JEG-9s-4HZ.normalTitle" = "Details";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "JJl-yT-pFi"; */
+"JJl-yT-pFi.text" = "Body";
+
+/* Class = "UILabel"; text = "Upload a profile picture"; ObjectID = "L9F-Xe-6gk"; */
+"L9F-Xe-6gk.text" = "Upload a profile picture";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "Mgi-Gj-UoI"; */
+"Mgi-Gj-UoI.text" = "Title";
+
+/* Class = "UILabel"; text = "You can change your picture later."; ObjectID = "Mwf-Di-V62"; */
+"Mwf-Di-V62.text" = "You can change your picture later.";
+
+/* Class = "UIButton"; normalTitle = "Follow"; ObjectID = "NF0-4v-tkI"; */
+"NF0-4v-tkI.normalTitle" = "Follow";
+
+/* Class = "UILabel"; text = "🍔"; ObjectID = "O7A-ec-fHa"; */
+"O7A-ec-fHa.text" = "🍔";
+
+/* Class = "UILabel"; text = "1"; ObjectID = "Of5-77-t6l"; */
+"Of5-77-t6l.text" = "1";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "OqZ-cE-n8o"; */
+"OqZ-cE-n8o.text" = "Title";
+
+/* Class = "UILabel"; text = "Configure 1"; ObjectID = "PE2-fT-VHp"; */
+"PE2-fT-VHp.text" = "Configure 1";
+
+/* Class = "UILabel"; text = "Following"; ObjectID = "PuA-4t-xyp"; */
+"PuA-4t-xyp.text" = "Following";
+
+/* Class = "UIBarButtonItem"; title = "Change City"; ObjectID = "QOc-vp-ZUY"; */
+"QOc-vp-ZUY.title" = "Change City";
+
+/* Class = "UIButton"; normalTitle = "Followers: -"; ObjectID = "RBV-uH-zZt"; */
+"RBV-uH-zZt.normalTitle" = "Followers: -";
+
+/* Class = "UILabel"; text = "You can change your city later"; ObjectID = "Rcf-gt-V6N"; */
+"Rcf-gt-V6N.text" = "You can change your city later";
+
+/* Class = "UILabel"; text = "Choose wisely"; ObjectID = "TLB-LK-2Lz"; */
+"TLB-LK-2Lz.text" = "Choose wisely";
+
+/* Class = "UINavigationItem"; title = "Select your Country"; ObjectID = "U5e-f4-CFj"; */
+"U5e-f4-CFj.title" = "Select your Country";
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "U8Z-9X-Pn6"; */
+"U8Z-9X-Pn6.placeholder" = "Email";
+
+/* Class = "UINavigationItem"; title = "Map"; ObjectID = "UQX-Hk-J9m"; */
+"UQX-Hk-J9m.title" = "Map";
+
+/* Class = "UINavigationItem"; title = "Any Cravings?"; ObjectID = "Wjm-Un-4Du"; */
+"Wjm-Un-4Du.title" = "Antojos?";
+
+/* Class = "UILabel"; text = "+"; ObjectID = "X2b-QB-M5U"; */
+"X2b-QB-M5U.text" = "+";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "XCJ-jD-wGM"; */
+"XCJ-jD-wGM.text" = "Body";
+
+/* Class = "UILabel"; text = "Points: "; ObjectID = "YOt-fR-3Di"; */
+"YOt-fR-3Di.text" = "Points: ";
+
+/* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "YSc-kP-6FY"; */
+"YSc-kP-6FY.title" = "Perfil";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "Ybg-4D-pbI"; */
+"Ybg-4D-pbI.text" = "Title";
+
+/* Class = "UILabel"; text = "Choose wisely"; ObjectID = "YrG-4P-xSm"; */
+"YrG-4P-xSm.text" = "Choose wisely";
+
+/* Class = "UIButton"; normalTitle = "Upload Image"; ObjectID = "Z7s-FG-5Ll"; */
+"Z7s-FG-5Ll.normalTitle" = "Upload Image";
+
+/* Class = "UITextField"; text = "Select a city"; ObjectID = "ZV5-ds-mlt"; */
+"ZV5-ds-mlt.text" = "Select a city";
+
+/* Class = "UINavigationItem"; title = "Details"; ObjectID = "aGR-2p-AwM"; */
+"aGR-2p-AwM.title" = "Details";
+
+/* Class = "UILabel"; text = "Create a new Ranking"; ObjectID = "amR-nV-ae3"; */
+"amR-nV-ae3.text" = "Create a new Ranking";
+
+/* Class = "UIButton"; normalTitle = "End User Licence Agreement"; ObjectID = "b2K-sY-9GH"; */
+"b2K-sY-9GH.normalTitle" = "End User Licence Agreement";
+
+/* Class = "UILabel"; text = "Write a short bio"; ObjectID = "bJf-po-FdT"; */
+"bJf-po-FdT.text" = "Write a short bio";
+
+/* Class = "UILabel"; text = "Add new city"; ObjectID = "bRT-Aq-3MK"; */
+"bRT-Aq-3MK.text" = "Add new city";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "bcx-rW-ecS"; */
+"bcx-rW-ecS.text" = "Body";
+
+/* Class = "UILabel"; text = "Food Type"; ObjectID = "bd6-i1-k96"; */
+"bd6-i1-k96.text" = "Food Type";
+
+/* Class = "UIButton"; normalTitle = "Add to my foodz"; ObjectID = "cOy-WV-ZRr"; */
+"cOy-WV-ZRr.normalTitle" = "Add to my foodz";
+
+/* Class = "UILabel"; text = "Resto Name"; ObjectID = "d4x-LB-vFN"; */
+"d4x-LB-vFN.text" = "Resto Name";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "dsA-b0-dKr"; */
+"dsA-b0-dKr.text" = "Title";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "dvn-Xh-onK"; */
+"dvn-Xh-onK.text" = "Date";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "ei5-AL-Qf2"; */
+"ei5-AL-Qf2.text" = "Date";
+
+/* Class = "UITextView"; text = "By using our app, you confirm that you agree to our Terms of Service and Privacy Policy."; ObjectID = "gmH-ai-pcp"; */
+"gmH-ai-pcp.text" = "By using our app, you confirm that you agree to our Terms of Service and Privacy Policy.";
+
+/* Class = "UIButton"; normalTitle = "Create Account"; ObjectID = "hFc-8l-ewP"; */
+"hFc-8l-ewP.normalTitle" = "Create Account";
+
+/* Class = "UILabel"; text = "Some bio"; ObjectID = "hKx-Oc-Bvs"; */
+"hKx-Oc-Bvs.text" = "Some bio";
+
+/* Class = "UILabel"; text = "Your promise to be wise"; ObjectID = "j15-9i-ZkC"; */
+"j15-9i-ZkC.text" = "Your promise to be wise";
+
+/* Class = "UITabBarItem"; title = "My Foodz"; ObjectID = "jGD-U0-LWf"; */
+"jGD-U0-LWf.title" = "Mis Foodz";
+
+/* Class = "UILabel"; text = "Something funny..."; ObjectID = "k0y-zN-cPY"; */
+"k0y-zN-cPY.text" = "Something funny...";
+
+/* Class = "UIButton"; normalTitle = "Yum!"; ObjectID = "kKX-sF-dPx"; */
+"kKX-sF-dPx.normalTitle" = "Yum!";
+
+/* Class = "UILabel"; text = "Points: 10"; ObjectID = "l2O-jM-x1v"; */
+"l2O-jM-x1v.text" = "Points: 10";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "lN3-vc-DKy"; */
+"lN3-vc-DKy.text" = "Date";
+
+/* Class = "UILabel"; text = "and"; ObjectID = "lVg-R2-q6f"; */
+"lVg-R2-q6f.text" = "and";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "lXK-7F-jfY"; */
+"lXK-7F-jfY.text" = "Date";
+
+/* Class = "UILabel"; text = "Body"; ObjectID = "ldU-eq-yTu"; */
+"ldU-eq-yTu.text" = "Body";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "m9z-hc-Jl5"; */
+"m9z-hc-Jl5.normalTitle" = "Next";
+
+/* Class = "UILabel"; text = "1."; ObjectID = "mNl-bd-GxQ"; */
+"mNl-bd-GxQ.text" = "1.";
+
+/* Class = "UILabel"; text = "Choose a username"; ObjectID = "mr7-gg-tcQ"; */
+"mr7-gg-tcQ.text" = "Choose a username";
+
+/* Class = "UILabel"; text = "Country"; ObjectID = "nBp-Kz-OuN"; */
+"nBp-Kz-OuN.text" = "Country";
+
+/* Class = "UIButton"; normalTitle = "Go"; ObjectID = "npf-fg-wDf"; */
+"npf-fg-wDf.normalTitle" = "Go";
+
+/* Class = "UILabel"; text = "🍽"; ObjectID = "oNl-zA-ReN"; */
+"oNl-zA-ReN.text" = "🍽";
+
+/* Class = "UINavigationItem"; title = "Add a ranking"; ObjectID = "ocY-V2-aZg"; */
+"ocY-V2-aZg.title" = "Add a ranking";
+
+/* Class = "UILabel"; text = "Some description"; ObjectID = "ono-g4-Ccd"; */
+"ono-g4-Ccd.text" = "Some description";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "pfa-16-PhF"; */
+"pfa-16-PhF.text" = "Subtitle";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "qEw-wj-iHG"; */
+"qEw-wj-iHG.text" = "Date";
+
+/* Class = "UILabel"; text = "+"; ObjectID = "qVj-o0-S64"; */
+"qVj-o0-S64.text" = "+";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "qYG-qn-1Wl"; */
+"qYG-qn-1Wl.text" = "Detail";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "rDP-gg-Hlc"; */
+"rDP-gg-Hlc.text" = "Title";
+
+/* Class = "UIButton"; normalTitle = "Go"; ObjectID = "tRd-tv-Tpf"; */
+"tRd-tv-Tpf.normalTitle" = "Go";
+
+/* Class = "UILabel"; text = "Choose food type"; ObjectID = "tzT-BP-9Kh"; */
+"tzT-BP-9Kh.text" = "Choose food type";
+
+/* Class = "UILabel"; text = "+"; ObjectID = "uWr-KC-akO"; */
+"uWr-KC-akO.text" = "+";
+
+/* Class = "UILabel"; text = "Food Type"; ObjectID = "v1y-Qe-tIR"; */
+"v1y-Qe-tIR.text" = "Food Type";
+
+/* Class = "UITabBarItem"; title = "Cravings"; ObjectID = "vbt-jy-dO4"; */
+"vbt-jy-dO4.title" = "Antojos";
+
+/* Class = "UIButton"; normalTitle = "Edit description"; ObjectID = "wUw-3P-AxW"; */
+"wUw-3P-AxW.normalTitle" = "Edit description";
+
+/* Class = "UILabel"; text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam fe"; ObjectID = "xXe-Kv-A2i"; */
+"xXe-Kv-A2i.text" = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam fe";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "xq4-ig-0ei"; */
+"xq4-ig-0ei.text" = "Title";
+
+/* Class = "UITextField"; placeholder = "Insert username"; ObjectID = "ynZ-eM-qWC"; */
+"ynZ-eM-qWC.placeholder" = "Insert username";
+
+/* Class = "UILabel"; text = "Best Japanese  in Singapore"; ObjectID = "yuE-e0-Uef"; */
+"yuE-e0-Uef.text" = "Best Japanese  in Singapore";
+
+/* Class = "UILabel"; text = "By using our app you agree to our"; ObjectID = "yy9-II-mdp"; */
+"yy9-II-mdp.text" = "By using our app you agree to our";
+
+/* Class = "UIButton"; normalTitle = "Get Yums!"; ObjectID = "zsY-Fg-a8Y"; */
+"zsY-Fg-a8Y.normalTitle" = "Get Yums!";
+
+/* Class = "UILabel"; text = "Foodz.guru"; ObjectID = "zuL-pu-Ihp"; */
+"zuL-pu-Ihp.text" = "Foodz.guru";

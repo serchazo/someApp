@@ -24,6 +24,8 @@ Localized strings.
 "FOODZ_EULA_PRIVACY_POLICY" = "Privacy Policy";
 "FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
 
+"FOODZ_DB_FOOD_TYPE" = "foodType";
+
 "LOGIN_EMAIL" = "Enter your e-mail";
 "LOGIN_CREATE_ACCOUNT" = "Create account";
 "LOGIN_CREATE_BUTTON" = "Create";
@@ -151,6 +153,20 @@ Localized strings.
 "THISRANKING_BUTTON_YUMNB" = "Yums! (%d)";
 "THISRANKING_BUTTON_EDITREVIEW" = "Edit Review";
 "THISRANKING_CELL_ADDRESTO" = "Add new %@ place";
+"THISRANKING_DESCRIPTION_CELL" = "Click to edit description";
+"THISRANKING_DESCRIPTION_EDIT_TITLE" = "Edit your Ranking description";
+"THISRANKING_DESCRIPTION_EDIT_WARNING" = "(Max 250 characters)";
+"THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS" = "Enter a description for your ranking.";
+"THISRANKING_DESCRIPTION_EDIT_BUTTON_DONE" = "Done!";
+"THISRANKING_REVIEW_EDIT_TITLE" = "My review for %@";
+"THISRANKING_REVIEW_EDIT_WARNING" = "Tell the world your honest opinion.";
+"THISRANKING_REVIEW_EDIT_INSTRUCTIONS" = "Write your Review here.";
+"THISRANKING_REVIEW_EDIT_BUTTON_DONE" = "Done!";
+"THISRANKING_REPORT_TITLE" = "Report";
+"THISRANKING_REPORT_REASON_INAPPROPRIATE" = "It's inappropriate";
+"THISRANKING_REPORT_REASON_SPAM" = "It's spam";
+"THISRANKING_DUPLICATE_TITLE" = "Duplicate restaurant";
+"THISRANKING_DUPLICATE_MSG" = "The restaurant is already in your ranking.";
 
 "ADDRANKING_NAVBAR_TITLE" = "Add a ranking";
 "ADDRANKING_HEADER_TITLE" = "Choose food type";
@@ -240,6 +256,10 @@ Localized strings.
 "BESTRESTOS_EMPTY_MSG" = "Add your favorite restaurants for the world to see!";
 "BESTRESTOS_POINTS" = "Points: %d ";
 "BESTRESTOS_REVIEWS" = "Reviews: %d ";
+"BESTRESTOS_COOLPHRASE_1" = "And the winners are...";
+"BESTRESTOS_COOLPHRASE_2" = "People have spoken...";
+"BESTRESTOS_COOLPHRASE_3" = "Is your favorite place in the list?";
+"BESTRESTOS_COOLPHRASE_4" = "Ready, set, eat!";
 
 //General
 "MYRESTOMAP_BOX" = "Click on the pin for directions";
@@ -247,3 +267,10 @@ Localized strings.
 
 "COUNTRYCHOSER_COUNTRY_TITLE" = "Choose your country";
 "COUNTRYCHOSER_CITY_TITLE" = "Choose your city";
+
+// More
+"FOODZ_REPORT_FAKE_ACCOUNT" = "Fake Account or Spam";
+"FOODZ_REPORT_FAKE_VIOLENCE"  = "Violence and Criminal Behavior";
+"FOODZ_REPORT_FAKE_HARASSMENT" = "Harassment, Abusive or Hateful Content";
+"FOODZ_REPORT_FAKE_PORNOGRAPHIC" = "Pornographic or Abusive Material";
+"FOODZ_REPORT_FAKE_OFFENSIVE"  = "Disrespectful or Offensive";

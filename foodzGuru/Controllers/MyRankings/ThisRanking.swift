@@ -851,7 +851,9 @@ extension ThisRanking{
     func setupDescriptionEditRankingCell(descriptionEditRankingCell: UITableViewCell){
         setupDescriptionCell(descriptionCell: descriptionEditRankingCell)
         // Label "Click to edit description"
-        let clickToEditString = NSAttributedString(string: "Click to edit description", attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
+        let clickToEditString = NSAttributedString(
+            string: MyStrings.descriptionCell.localized(),
+            attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
         let clickToEditSize = clickToEditString.size()
         let clickToEditLabel = UILabel(frame: CGRect(
             x: descriptionEditRankingCell.frame.width - (clickToEditSize.width),
@@ -872,11 +874,8 @@ extension ThisRanking{
     func configureEditDescriptionCell(cell: EditReviewCell){
         FoodzLayout.configureEditTextCell(cell: cell)
         
-        //title
-        cell.titleLabel.text = "Edit your Ranking description"
-        
-        // Warning Label
-        cell.warningLabel.text = "(Max 250 characters)"
+        cell.titleLabel.text = MyStrings.descriptionEditTitle.localized()
+        cell.warningLabel.text = MyStrings.descriptionEditWarning.localized()
         
         // set up the TextField
         if thisRankingDescription != "" {
@@ -884,14 +883,14 @@ extension ThisRanking{
             cell.editReviewTextView.text = thisRankingDescription
         }else{
             cell.editReviewTextView.textColor = .systemGray
-            cell.editReviewTextView.text = "Enter a description for your ranking."
+            cell.editReviewTextView.text = MyStrings.descriptionEditPlaceholder.localized()
         }
         cell.editReviewTextView.becomeFirstResponder()
         cell.editReviewTextView.tag = 100
         cell.editReviewTextView.delegate = self
         
         // Button
-        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.doneButton.setTitle(MyStrings.descriptionEditDone.localized(), for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdatingDescription(newDescription: cell.editReviewTextView.text)
         }
@@ -902,24 +901,22 @@ extension ThisRanking{
         FoodzLayout.configureEditTextCell(cell: cell)
         
         //title
-        cell.titleLabel.text = "My review for \(thisRanking[forIndex].name)"
-        cell.warningLabel.text = "Tell the world your honest opinion."
+        cell.titleLabel.text = MyStrings.reviewEditTitle.localized(arguments: thisRanking[forIndex].name)
+        cell.warningLabel.text = MyStrings.reviewEditWarning.localized()
         cell.editReviewTextView.delegate = self
         
         // set up the TextField placeholder
         if thisRankingReviews[forIndex].text.count < 3{
             cell.editReviewTextView.textColor = .systemGray
-            cell.editReviewTextView.text = "Write your Review here."
-            
+            cell.editReviewTextView.text = MyStrings.reviewEditPlaceholder.localized()
         }else{
             cell.editReviewTextView.textColor = .label
             cell.editReviewTextView.text = thisRankingReviews[forIndex].text
         }
-        //cell.editReviewTextView.becomeFirstResponder()
         cell.editReviewTextView.tag = 200
         
         // Done Button
-        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.doneButton.setTitle(MyStrings.reviewEditDone.localized(), for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
                               commentText: cell.editReviewTextView.text)
@@ -938,35 +935,44 @@ extension ThisRanking{
         cell.editReviewAction = {(cell) in
             let tmpIndexPath = self.myRankingTable.indexPath(for: cell)
             let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            let reportAction = UIAlertAction(title: "Report", style: .destructive, handler: {_ in
-                // [START] Inner Alert
-                let innerAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                let inappropriateAction = UIAlertAction(title: "It's inappropriate", style: .destructive, handler: {_ in
-                    
-                    SomeApp.reportReview(userid: self.calledUser.key,
-                                         resto: self.thisRanking[tmpIndexPath!.row],
-                                         city: self.currentCity,
-                                         foodId: self.currentFood.key,
-                                         text: self.thisRankingReviews[tmpIndexPath!.row].text,
-                                         reportReason: "Inappropriate",
-                                         postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
-                                         reporterId: self.user.uid)
-                    
-                    self.navigationController?.popViewController(animated: true)
+            let reportAction = UIAlertAction(
+                title: MyStrings.reportTitle.localized(),
+                style: .destructive,
+                handler: {_ in
+                    // [START] Inner Alert
+                    let innerAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                    let inappropriateAction = UIAlertAction(
+                        title: MyStrings.reportInappropriate.localized(),
+                        style: .destructive,
+                        handler: {_ in
+                            SomeApp.reportReview(
+                                userid: self.calledUser.key,
+                                resto: self.thisRanking[tmpIndexPath!.row],
+                                city: self.currentCity,
+                                foodId: self.currentFood.key,
+                                text: self.thisRankingReviews[tmpIndexPath!.row].text,
+                                reportReason: "Inappropriate",
+                                postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
+                                reporterId: self.user.uid)
+                            self.navigationController?.popViewController(animated: true)
                 })
                 
-                let spamAction = UIAlertAction(title: "It's spam", style: .destructive, handler: {_ in
-                    SomeApp.reportReview(userid: self.calledUser.key,
-                    resto: self.thisRanking[tmpIndexPath!.row],
-                    city: self.currentCity,
-                    foodId: self.currentFood.key,
-                    text: self.thisRankingReviews[tmpIndexPath!.row].text,
-                    reportReason: "Spam",
-                    postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
-                    reporterId: self.user.uid)
-                    
-                    self.navigationController?.popViewController(animated: true)
-                })
+                    let spamAction = UIAlertAction(
+                        title: MyStrings.reportSpam.localized(),
+                        style: .destructive,
+                        handler: {_ in
+                            SomeApp.reportReview(
+                                userid: self.calledUser.key,
+                                resto: self.thisRanking[tmpIndexPath!.row],
+                                city: self.currentCity,
+                                foodId: self.currentFood.key,
+                                text: self.thisRankingReviews[tmpIndexPath!.row].text,
+                                reportReason: "Spam",
+                                postTimestamp: self.thisRankingReviews[tmpIndexPath!.row].timestamp,
+                                reporterId: self.user.uid)
+                            
+                            self.navigationController?.popViewController(animated: true)
+                    })
                 let cancelAction = UIAlertAction(
                     title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
                     style: .cancel, handler: nil)
@@ -1157,8 +1163,8 @@ extension ThisRanking: MyRanksMapSearchViewDelegate{
     // Helper functions
     func showAlertDuplicateRestorant(){
         let alert = UIAlertController(
-            title: "Duplicate restaurant",
-            message: "The restaurant is already in your ranking.",
+            title: MyStrings.duplicateTitle.localized(),
+            message: MyStrings.duplicateMsg.localized(),
             preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(
@@ -1371,6 +1377,20 @@ extension ThisRanking{
         case buttonYumNb
         case buttonEditReview
         case cellAddResto
+        case descriptionCell
+        case descriptionEditTitle
+        case descriptionEditWarning
+        case descriptionEditPlaceholder
+        case descriptionEditDone
+        case reviewEditTitle
+        case reviewEditWarning
+        case reviewEditPlaceholder
+        case reviewEditDone
+        case reportTitle
+        case reportInappropriate
+        case reportSpam
+        case duplicateTitle
+        case duplicateMsg
     
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -1447,6 +1467,77 @@ extension ThisRanking{
             case .cellAddResto:
             return String(
                 format: NSLocalizedString("THISRANKING_CELL_ADDRESTO", comment: "Add place"),
+                locale: .current,
+                arguments: arguments)
+            case .descriptionCell:
+            return String(
+                format: NSLocalizedString("THISRANKING_DESCRIPTION_CELL", comment: "Write your description"),
+                locale: .current,
+                arguments: arguments)
+            
+            case .descriptionEditTitle:
+            return String(
+                format: NSLocalizedString("THISRANKING_DESCRIPTION_EDIT_TITLE", comment: "Write your description"),
+                locale: .current,
+                arguments: arguments)
+            case .descriptionEditWarning:
+            return String(
+                format: NSLocalizedString("THISRANKING_DESCRIPTION_EDIT_WARNING", comment: "Max characters"),
+                locale: .current,
+                arguments: arguments)
+            case .descriptionEditPlaceholder:
+            return String(
+                format: NSLocalizedString("THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS", comment: "Write your description"),
+                locale: .current,
+                arguments: arguments)
+            case .descriptionEditDone:
+            return String(
+                format: NSLocalizedString("THISRANKING_DESCRIPTION_EDIT_BUTTON_DONE", comment: "OK"),
+                locale: .current,
+                arguments: arguments)
+            case .reviewEditTitle:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REVIEW_EDIT_TITLE", comment: "Review"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewEditWarning:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REVIEW_EDIT_WARNING", comment: "Write something"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewEditPlaceholder:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REVIEW_EDIT_INSTRUCTIONS", comment: "Write here"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewEditDone:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REVIEW_EDIT_BUTTON_DONE", comment: "OK"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reportTitle:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REPORT_TITLE", comment: "To report"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reportInappropriate:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REPORT_REASON_INAPPROPRIATE", comment: "Inappropriate"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reportSpam:
+                return String(
+                    format: NSLocalizedString("THISRANKING_REPORT_REASON_SPAM", comment: "Spam"),
+                    locale: .current,
+                    arguments: arguments)
+            case .duplicateTitle:
+            return String(
+                format: NSLocalizedString("THISRANKING_DUPLICATE_TITLE", comment: "Duplicate"),
+                locale: .current,
+                arguments: arguments)
+            case .duplicateMsg:
+            return String(
+                format: NSLocalizedString("THISRANKING_DUPLICATE_MSG", comment: "Already here"),
                 locale: .current,
                 arguments: arguments)
             }

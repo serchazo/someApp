@@ -378,8 +378,11 @@ class MyRanks: UIViewController {
                     preferredStyle: .actionSheet)
             // Choose your decision
             for content in ReportActions.allCases {
-                let reportAction = UIAlertAction(title: content.rawValue, style: .default, handler: { _ in
-                    SomeApp.reportUser(userId: self.user.uid, reportedId: self.calledUser!.key, reason: content)
+                let reportAction = UIAlertAction(
+                    title: content.localized(),
+                    style: .default,
+                    handler: { _ in
+                        SomeApp.reportUser(userId: self.user.uid, reportedId: self.calledUser!.key, reason: content)
                     // Warn the user
                     let thanks = UIAlertController(
                         title: MyStrings.reportProfileConfirmationTitle.localized(),
