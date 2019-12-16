@@ -83,7 +83,7 @@ class MapSearchViewController: UIViewController {
         
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
-        searchBar.placeholder = "Search for your fav restorant"
+        searchBar.placeholder = MyStrings.searchBarPlaceholder.localized()
         
         resultSearchController?.hidesNavigationBarDuringPresentation = false
         resultSearchController?.obscuresBackgroundDuringPresentation = false
@@ -167,7 +167,10 @@ class MapSearchViewController: UIViewController {
     
     private func displaySearchError(_ error: Error?) {
         if let error = error as NSError?, let errorString = error.userInfo[NSLocalizedDescriptionKey] as? String {
-            let alertController = UIAlertController(title: "Could not find any places.", message: errorString, preferredStyle: .alert)
+            let alertController = UIAlertController(
+                title: MyStrings.searchError.localized(),
+                message: errorString,
+                preferredStyle: .alert)
             alertController.addAction(UIAlertAction(
                 title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default, handler: nil))
@@ -201,8 +204,8 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
             }
             else{
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = "Location Services Disabled"
-                cell.detailTextLabel?.text = "Enable location services to improve search accuracy and speed."
+                cell.textLabel?.text = MyStrings.locationDisabledTitle.localized()
+                cell.detailTextLabel?.text = MyStrings.locationDisabledMsg.localized()
                 cell.isUserInteractionEnabled = false
                 return cell
             }
@@ -229,14 +232,14 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
             }
             else{
                 let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.textLabel?.text = "Search for your fav' places!"
+                cell.textLabel?.text = MyStrings.searchCellPlaceholder.localized()
                 cell.selectionStyle = .none
                 cell.isUserInteractionEnabled = false
                 return cell
             }
         }else{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            cell.textLabel?.text = "Search for your fav' places!"
+            cell.textLabel?.text = MyStrings.searchCellPlaceholder.localized()
             cell.isUserInteractionEnabled = false
             return cell
         }
@@ -257,37 +260,7 @@ extension MapSearchViewController: UITableViewDelegate, UITableViewDataSource{
             self.delegate?.restaurantChosenFromMap(someMapItem: selectedItem!)
             self.navigationController?.popViewController(animated: true)
         }
-        
     }
-    
-    //TODO: Improve this one
-    func parseAddress(selectedItem:MKPlacemark) -> String {
-        // put a space between "4" and "Melrose Place"
-        let firstSpace = (selectedItem.subThoroughfare != nil &&
-            selectedItem.thoroughfare != nil) ? " " : ""
-        // put a comma between street and city/state
-        let comma = (selectedItem.subThoroughfare != nil || selectedItem.thoroughfare != nil) &&
-            (selectedItem.subAdministrativeArea != nil || selectedItem.administrativeArea != nil) ? ", " : ""
-        // put a space between "Washington" and "DC"
-        let secondSpace = (selectedItem.subAdministrativeArea != nil &&
-            selectedItem.administrativeArea != nil) ? ", " : " "
-        let addressLine = String(
-            format:"%@%@%@%@%@%@%@",
-            // street number
-            selectedItem.subThoroughfare ?? "",
-            firstSpace,
-            // street name
-            selectedItem.thoroughfare ?? "",
-            comma,
-            // city
-            selectedItem.locality ?? "",
-            secondSpace,
-            // state
-            selectedItem.administrativeArea ?? ""
-        )
-        return addressLine
-    }
-     
 }
 
 // MARK: Location stuff
@@ -305,7 +278,7 @@ extension MapSearchViewController: CLLocationManagerDelegate{
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error: \(error)")
+        print(FoodzLayout.FoodzStrings.log.localized(arguments: error.localizedDescription))
     }
 }
 
@@ -332,27 +305,64 @@ extension MapSearchViewController: HandleMapSearch {
 // MARK: search bar delegate stuff
 extension MapSearchViewController: UISearchBarDelegate{
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        print("1")
         searchBar.resignFirstResponder()
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        print("2")
         searchBar.setShowsCancelButton(true, animated: true)
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        print("3")
         searchBar.setShowsCancelButton(false, animated: true)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("4")
         searchBar.resignFirstResponder()
         dismiss(animated: true, completion: nil)
         
         // The user tapped search on the `UISearchBar` or on the keyboard. Since they didn't
         // select a row with a suggested completion, run the search with the query text in the search field.
         search(for: searchBar.text)
+    }
+}
+
+// MARK: Localized Strings
+extension MapSearchViewController{
+    private enum MyStrings {
+        case searchBarPlaceholder
+        case searchCellPlaceholder
+        case searchError
+        case locationDisabledTitle
+        case locationDisabledMsg
+        
+        func localized(arguments: CVarArg...) -> String{
+            switch self{
+            case .searchBarPlaceholder:
+                return String(
+                format: NSLocalizedString("MAPSEARCH_SEARCHBAR_PLACEHOLDER", comment: "Search"),
+                locale: .current,
+                arguments: arguments)
+            case .searchCellPlaceholder:
+                return String(
+                    format: NSLocalizedString("MAPSEARCH_SEARCHCELL_PLACEHOLDER", comment: "Search"),
+                    locale: .current,
+                    arguments: arguments)
+            case .searchError:
+                return String(
+                    format: NSLocalizedString("MAPSEARCH_SEARCH_ERROR", comment: "Error"),
+                    locale: .current,
+                    arguments: arguments)
+            case .locationDisabledTitle:
+                return String(
+                    format: NSLocalizedString("MAPSEARCH_LOCATION_DISABLED_TITLE", comment: "Services disabled"),
+                    locale: .current,
+                    arguments: arguments)
+            case .locationDisabledMsg:
+                return String(
+                    format: NSLocalizedString("MAPSEARCH_LOCATION_DISABLED_MSG", comment: "Please enable for better results"),
+                    locale: .current,
+                    arguments: arguments)
+            }
+        }
     }
 }

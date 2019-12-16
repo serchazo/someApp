@@ -80,7 +80,6 @@ class MyRanksAddRankingViewController: UIViewController {
             switch identifier{
             case "cityChoser":
                 if let seguedToCityChooser = segue.destination as? ItemChooserViewController{
-                    //seguedToCityChooser.setPickerValue()
                     seguedToCityChooser.delegate = self
                 }
             default:break
@@ -128,7 +127,7 @@ extension MyRanksAddRankingViewController : UICollectionViewDelegate, UICollecti
             
             return cell
         }else{
-            fatalError("No cell")
+            fatalError("Cannot create cell")
         }
     }
     

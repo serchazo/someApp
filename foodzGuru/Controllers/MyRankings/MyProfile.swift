@@ -452,27 +452,28 @@ extension MyProfile{
         
         FoodzLayout.configureEditTextCell(cell: cell)
         //title
-        cell.titleLabel.text = "Edit Bio"
-        cell.warningLabel.text = "Max 500 characters"
+        cell.titleLabel.text = MyStrings.editBioTitle.localized()
+        cell.warningLabel.text = MyStrings.editBioWarning.localized()
         
         // set up the TextField.  This var is defined in the class to take the value later
         if bioString == nil || bioString!.count < 3{
-            cell.editReviewTextView.text = "Write a Bio here."
+            cell.editReviewTextView.text = MyStrings.editBioInstructions.localized()
         }else{
             cell.editReviewTextView.text = bioString!
         }
         cell.editReviewTextView.becomeFirstResponder()
         
-        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.doneButton.setTitle(MyStrings.editBioButtonDone.localized(), for: .normal)
         cell.updateReviewAction = { (cell) in
             let tmpBio = cell.editReviewTextView.text
-            if tmpBio != "" && tmpBio != "Write a Bio here." {
+            if tmpBio != "" && tmpBio != MyStrings.editBioInstructions.localized() {
                 if tmpBio!.count > 500 {
                     // Too long
                     //Can't use FoodzLayout cz of the closure
-                    let alert = UIAlertController(title: "Bio too long",
-                                                  message: "Your bio shouldn't exceed 500 characters.",
-                                                  preferredStyle: .alert)
+                    let alert = UIAlertController(
+                        title: MyStrings.editBioTooLongTitle.localized(),
+                        message: MyStrings.editBioTooLongMsg.localized(),
+                        preferredStyle: .alert)
                     alert.addAction(UIAlertAction(
                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default))
@@ -493,8 +494,8 @@ extension MyProfile{
             }else{
                 //Empty bio
                 //Can't use FoodzLayout cz of the closure
-                let alert = UIAlertController(title: "Empty Bio",
-                                              message: "Your bio is empty.",
+                let alert = UIAlertController(title: MyStrings.editBioEmptyTitle.localized(),
+                                              message: MyStrings.editBioEmptyMsg.localized(),
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(
                     title: FoodzLayout.FoodzStrings.buttonOK.localized(),
@@ -522,22 +523,26 @@ extension MyProfile{
     // MARK: popup More menu
     @objc func popupMoreMenu(){
         let alert = UIAlertController(
-            title: "More actions",
+            title: MyStrings.moreTitle.localized(),
             message: nil,
             preferredStyle: .actionSheet)
         
         // About
-        let aboutAction = UIAlertAction(title: "About", style: .default, handler: {_ in
-            var version = "n/a"
-            if let versionOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String{
-                version = versionOp
-            }
-            var build = "n/a"
-            if let buildOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String{
-                build = buildOp
-            }
-            
-            let aboutPopUp = UIAlertController(title: "About", message: "Version: \(version) Build: \(build)", preferredStyle: .alert)
+        let aboutAction = UIAlertAction(
+            title: MyStrings.moreAbout.localized(),
+            style: .default, handler: {_ in
+                var version = "n/a"
+                if let versionOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String{
+                    version = versionOp
+                }
+                var build = "n/a"
+                if let buildOp = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String{
+                    build = buildOp
+                }
+                let aboutPopUp = UIAlertController(
+                    title: MyStrings.moreAbout.localized(),
+                    message: MyStrings.moreAboutVersion.localized() + ": \(version) " + MyStrings.moreAboutBuild.localized() + " \(build).",
+                    preferredStyle: .alert)
             let OKAbout = UIAlertAction(
                 title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                 style: .default, handler: nil)
@@ -546,7 +551,9 @@ extension MyProfile{
         })
         
         // Send feedback
-        let feedbackAction = UIAlertAction(title: "Send Feedback", style: .default, handler: { _ in
+        let feedbackAction = UIAlertAction(
+            title: MyStrings.moreFeedback.localized(),
+            style: .default, handler: { _ in
             let mailComposeViewController = self.configureMailComposer()
             if MFMailComposeViewController.canSendMail(){
                 self.present(mailComposeViewController, animated: true, completion: nil)
@@ -590,12 +597,18 @@ extension MyProfile{
         })
         
         // Delete Action
-        let deleteProfileAction = UIAlertAction(title: "Delete profile", style: .destructive, handler: {  _ in
-            let deleteAlert = UIAlertController(
-                title: "Delete Profile?", message: "Warning: this can't be undone.", preferredStyle: .alert)
-            let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {_ in
-                SomeApp.deleteUser(userId: self.user.uid)
-                self.logout()
+        let deleteProfileAction = UIAlertAction(
+            title: MyStrings.moreDelete.localized(),
+            style: .destructive, handler: {  _ in
+                let deleteAlert = UIAlertController(
+                    title: MyStrings.moreDeletePopupTitle.localized(),
+                    message: MyStrings.moreDeletePopupMsg.localized(),
+                    preferredStyle: .alert)
+            let deleteAction = UIAlertAction(
+                title: MyStrings.moreDeletePopupConfirm.localized(),
+                style: .destructive, handler: {_ in
+                    SomeApp.deleteUser(userId: self.user.uid)
+                    self.logout()
             })
             let cancelDelete = UIAlertAction(
                 title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
@@ -786,6 +799,23 @@ extension MyProfile{
         case buttonHelp
         case buttonMore
         case buttonSignOut
+        case editBioTitle
+        case editBioWarning
+        case editBioInstructions
+        case editBioButtonDone
+        case editBioTooLongTitle
+        case editBioTooLongMsg
+        case editBioEmptyTitle
+        case editBioEmptyMsg
+        case moreTitle
+        case moreAbout
+        case moreAboutVersion
+        case moreAboutBuild
+        case moreFeedback
+        case moreDelete
+        case moreDeletePopupTitle
+        case moreDeletePopupMsg
+        case moreDeletePopupConfirm
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -891,6 +921,93 @@ extension MyProfile{
                 format: NSLocalizedString("MYPROFILE_BUTTON_LOGOFF", comment: "Sign out"),
                 locale: .current,
                 arguments: arguments)
+            case .editBioTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_TITLE", comment: "Edit bio"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioWarning:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_WARNING", comment: "Warning"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioInstructions:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_INSTRUCTIONS", comment: "Instructions"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioButtonDone:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_BUTTON_DONE", comment: "OK"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioTooLongTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_TOOLONG_TITLE", comment: "Length"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioTooLongMsg:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_TOOLONG_MSG", comment: "Maximum"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioEmptyTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_EMPTY_TITLE", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .editBioEmptyMsg:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_EDITBIO_EMPTY_MSG", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+                
+            case .moreTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_TITLE", comment: "The rest"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreAbout:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_ABOUT", comment: "About"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreAboutVersion:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_ABOUT_VERSION", comment: "Version"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreAboutBuild:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_ABOUT_BUILD", comment: "Build"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreFeedback:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_FEEDBACK", comment: "Feedback"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreDelete:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_DELETE", comment: "Delete profile"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreDeletePopupTitle:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_DELETE_POPUP_TITLE", comment: "Are you sure?"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreDeletePopupMsg:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_DELETE_POPUP_MSG", comment: "Are you sure?"),
+                    locale: .current,
+                    arguments: arguments)
+            case .moreDeletePopupConfirm:
+                return String(
+                    format: NSLocalizedString("MYPROFILE_MORE_DELETE_POPUP_CONFIRM", comment: "Delete"),
+                    locale: .current,
+                    arguments: arguments)
+                
             }
         }
     }

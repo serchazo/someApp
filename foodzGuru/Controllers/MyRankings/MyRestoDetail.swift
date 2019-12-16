@@ -501,31 +501,46 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                     postCell.moreAction = {(cell) in
                         let tmpIndexPath = self.restoDetailTable.indexPath(for: cell)
                         let moreAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                        let reportAction = UIAlertAction(title: "Report", style: .destructive, handler: {_ in
-                            // [START] Inner Alert
-                            let innerAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                            let inappropriateAction = UIAlertAction(title: "It's inappropriate", style: .destructive, handler: {_ in
+                        
+                        let reportAction = UIAlertAction(
+                            title: MyStrings.reportTitle.localized(),
+                            style: .destructive,
+                            handler: {_ in
+                                // [START] Inner Alert
+                                let innerAlert = UIAlertController(
+                                    title: nil,
+                                    message: nil,
+                                    preferredStyle: .actionSheet)
+                                let inappropriateAction = UIAlertAction(
+                                    title: MyStrings.reportInappropriate.localized(),
+                                    style: .destructive,
+                                    handler: {_ in
                                 
-                                SomeApp.reportReview(userid: self.commentArray[tmpIndexPath!.row].key,
-                                                     resto: self.currentResto,
-                                                     city: self.currentCity,
-                                                     foodId: self.currentFood.key,
-                                                     text: self.commentArray[tmpIndexPath!.row].text,
-                                                     reportReason: "Inappropriate",
-                                                     postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
-                                                     reporterId: self.user.uid)
+                                SomeApp.reportReview(
+                                    userid: self.commentArray[tmpIndexPath!.row].key,
+                                    resto: self.currentResto,
+                                    city: self.currentCity,
+                                    foodId: self.currentFood.key,
+                                    text: self.commentArray[tmpIndexPath!.row].text,
+                                    reportReason: "Inappropriate",
+                                    postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
+                                    reporterId: self.user.uid)
                                 
                                 self.navigationController?.popViewController(animated: true)
                             })
-                            let spamAction = UIAlertAction(title: "It's spam", style: .destructive, handler: {_ in
-                                SomeApp.reportReview(userid: self.commentArray[tmpIndexPath!.row].key,
-                                resto: self.currentResto,
-                                city: self.currentCity,
-                                foodId: self.currentFood.key,
-                                text: self.commentArray[tmpIndexPath!.row].text,
-                                reportReason: "Spam",
-                                postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
-                                reporterId: self.user.uid)
+                            let spamAction = UIAlertAction(
+                                title: MyStrings.reportSpam.localized(),
+                                style: .destructive,
+                                handler: {_ in
+                                    SomeApp.reportReview(
+                                        userid: self.commentArray[tmpIndexPath!.row].key,
+                                        resto: self.currentResto,
+                                        city: self.currentCity,
+                                        foodId: self.currentFood.key,
+                                        text: self.commentArray[tmpIndexPath!.row].text,
+                                        reportReason: "Spam",
+                                        postTimestamp: self.commentArray[tmpIndexPath!.row].timestamp,
+                                        reporterId: self.user.uid)
                                 
                                 self.navigationController?.popViewController(animated: true)
                             })
@@ -578,8 +593,8 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                  }else{
                      // Can't call
                      let alert = UIAlertController(
-                         title: "Can't call",
-                         message: "Please try another restaurant.",
+                        title: MyStrings.callErrorTitle.localized(),
+                        message: MyStrings.callErrorMsg.localized(),
                          preferredStyle: .alert)
                      
                      alert.addAction(UIAlertAction(
@@ -605,7 +620,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 }
                 // No valid URL
                 else{
-                    let alert = UIAlertController(title: "Invalid URL", message: "This place has an invalid URL.", preferredStyle: .alert)
+                    let alert = UIAlertController(
+                        title: MyStrings.urlErrorTitle.localized(),
+                        message: MyStrings.urlErrorMsg.localized(),
+                        preferredStyle: .alert)
                     let OKaction = UIAlertAction(
                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                         style: .default, handler:nil)
@@ -626,18 +644,15 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         FoodzLayout.configureEditTextCell(cell: cell)
         
         //title
-        cell.titleLabel.text = "My review for \(currentResto.name)"
-        cell.warningLabel.text = "Tell the world your honest opinion."
-        
-        cell.editReviewTextView.text = "Write your Review here."
-        
+        cell.titleLabel.text = MyStrings.reviewTitle.localized(arguments: currentResto.name)
+        cell.warningLabel.text = MyStrings.reviewWarning.localized()
+        cell.editReviewTextView.text = MyStrings.reviewPlaceholder.localized()
         cell.editReviewTextView.becomeFirstResponder()
         cell.editReviewTextView.tag = 200
         cell.editReviewTextView.delegate = self
         
-        
         // Done Button
-        cell.doneButton.setTitle("Done!", for: .normal)
+        cell.doneButton.setTitle(MyStrings.reviewDone.localized(), for: .normal)
         cell.updateReviewAction = { (cell) in
             self.doneUpdating(resto: self.currentResto,
                               commentText: cell.editReviewTextView.text)
@@ -658,8 +673,13 @@ extension MyRestoDetail{
             guard snapshot.exists() else{
                 let tmpTimestamp = NSDate().timeIntervalSince1970 * 1000
                 self.firstCommentFlag = true
-                let tmpText = "Be the first to add a comment of \(self.currentResto.name)! Go to your \(self.currentFood.name) ranking and start being an influencer."
-                tmpCommentArray.append(Comment(username: "There are no reviews!", restoname: self.currentResto.name, text: tmpText, timestamp:  tmpTimestamp, title: "No comments yet"))
+                let tmpText = MyStrings.emptyCommentsMsg.localized(arguments: self.currentResto.name, self.currentFood.name)
+                tmpCommentArray.append(Comment(
+                    username: MyStrings.emptyCommentsTitle.localized(),
+                    restoname: self.currentResto.name,
+                    text: tmpText,
+                    timestamp:  tmpTimestamp,
+                    title: MyStrings.emptyCommentsTitle.localized()))
                 self.commentArray = tmpCommentArray
                 self.restoDetailTable.reloadData()
                 return
@@ -691,7 +711,12 @@ extension MyRestoDetail{
                         for i in 0 ..< tmpCommentArray.count{
                             if i % self.adFrequency == (self.adFrequency - 1){
                                 //
-                                let placeholderAd = Comment(username: "foodz.guru", restoname: "Placeholder", text: "Advertise here! Contact support@foodz.guru", timestamp: NSDate().timeIntervalSince1970, title: "Advertise here!")
+                                let placeholderAd = Comment(
+                                    username: FoodzLayout.FoodzStrings.appName.localized(),
+                                    restoname: "Placeholder",
+                                    text:  FoodzLayout.FoodzStrings.adPlaceholderShortMsg.localized(),
+                                    timestamp: NSDate().timeIntervalSince1970,
+                                    title: FoodzLayout.FoodzStrings.adPlaceholderShortTitle.localized())
                                 tmpCommentArray.insert(placeholderAd, at: i)
                             }
                         }
@@ -822,12 +847,13 @@ extension MyRestoDetail {
         SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             // Le ranking doesn't exist
             if !snapshot.exists(){
-                let alert = UIAlertController(title: "Create ranking",
-                                              message: "You don't have a \(self.currentFood.name), create and add restorant?",
-                                              preferredStyle: .alert)
-                let createAction = UIAlertAction(title: "Create", style: .default){ _ in
-                    // If we don't have the ranking, we add it to Firebase
-                    
+                let alert = UIAlertController(
+                    title: MyStrings.addRestoCreateRankingTitle.localized(),
+                    message: MyStrings.addRestoCreateRankingMsg.localized(arguments: self.currentFood.name),
+                    preferredStyle: .alert)
+                let createAction = UIAlertAction(
+                    title: MyStrings.addRestoCreateRankingConfirm.localized(),
+                style: .default){ _ in
                     SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
                     
                     // then add to ranking
@@ -837,10 +863,6 @@ extension MyRestoDetail {
                                               forFood: self.currentFood,
                                               foodId: self.currentFood.key,
                                               city: self.currentCity)
-                    // Need to update cell and header
-                    //asdfasf
-                    
-                    
                     // Show confirmation banner
                     self.bannerStuff()
                 }
@@ -1035,6 +1057,22 @@ extension MyRestoDetail{
         case buttonYum
         case buttonYummed
         case buttonYumNb
+        case reportTitle
+        case reportInappropriate
+        case reportSpam
+        case callErrorTitle
+        case callErrorMsg
+        case urlErrorTitle
+        case urlErrorMsg
+        case reviewTitle
+        case reviewWarning
+        case reviewPlaceholder
+        case reviewDone
+        case emptyCommentsTitle
+        case emptyCommentsMsg
+        case addRestoCreateRankingTitle
+        case addRestoCreateRankingMsg
+        case addRestoCreateRankingConfirm
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -1088,6 +1126,86 @@ extension MyRestoDetail{
                 format: NSLocalizedString("MYRESTODETAIL_BUTTON_YUMNB", comment: "yum"),
                 locale: .current,
                 arguments: arguments)
+            case .reportTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REPORT_TITLE", comment: "Report"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reportInappropriate:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REPORT_REASON_INAPPROPRIATE", comment: "Not appropriate"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reportSpam:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REPORT_REASON_SPAM", comment: "Spam"),
+                    locale: .current,
+                    arguments: arguments)
+            case .callErrorTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_CALL_ERROR_TITLE", comment: "Error calling"),
+                    locale: .current,
+                    arguments: arguments)
+            case .callErrorMsg:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_CALL_ERROR_MSG", comment: "Try again later"),
+                    locale: .current,
+                    arguments: arguments)
+            case .urlErrorTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_URL_ERROR_TITLE", comment: "Error URL"),
+                    locale: .current,
+                    arguments: arguments)
+            case .urlErrorMsg:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_URL_ERROR_MSG", comment: "Try again later"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REVIEW_TITLE", comment: "Review"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewWarning:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REVIEW_WARNING", comment: "Write something"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewPlaceholder:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REVIEW_PLACEHOLDER", comment: "Write here"),
+                    locale: .current,
+                    arguments: arguments)
+            case .reviewDone:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_REVIEW_DONE", comment: "OK"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyCommentsTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_EMPTY_COMMENTS_TITLE", comment: "No reviews"),
+                    locale: .current,
+                    arguments: arguments)
+            case .emptyCommentsMsg:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_EMPTY_COMMENTS_MSG", comment: "Go and review"),
+                    locale: .current,
+                    arguments: arguments)
+            case .addRestoCreateRankingTitle:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE", comment: "Create ranking"),
+                    locale: .current,
+                    arguments: arguments)
+            case .addRestoCreateRankingMsg:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG", comment: "OK to create?"),
+                    locale: .current,
+                    arguments: arguments)
+            case .addRestoCreateRankingConfirm:
+                return String(
+                    format: NSLocalizedString("MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM", comment: "Create"),
+                    locale: .current,
+                    arguments: arguments)
             }
         }
     }

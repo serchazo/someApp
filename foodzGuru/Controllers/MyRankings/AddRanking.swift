@@ -74,15 +74,13 @@ class AddRanking: UIViewController {
 extension AddRanking{
     private func configureHeader(){
         // Navigation bar
-        self.navigationItem.title = "Add a ranking"
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        self.navigationItem.title = MyStrings.navbarTitle.localized()
         
         // title
-        headerTitle.text = "Choose food type"
+        headerTitle.text = MyStrings.headerTitle.localized()
         
         // current city
-        currentCityLabel.text = "City: \(currentCity.name)"
-        
+        currentCityLabel.text = MyStrings.headerCity.localized(arguments:currentCity.name)
     }
 }
 
@@ -124,7 +122,7 @@ extension AddRanking: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard foodList.count > 0 else {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Loading food types for \(currentCity.country)"
+            cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             cell.accessoryView = spinner
@@ -144,4 +142,31 @@ extension AddRanking: UITableViewDelegate, UITableViewDataSource{
     }
 }
 
-
+// MARK: Localized Strings
+extension AddRanking{
+    private enum MyStrings {
+        case navbarTitle
+        case headerTitle
+        case headerCity
+        
+        func localized(arguments: CVarArg...) -> String{
+            switch self{
+            case .navbarTitle:
+                return String(
+                    format: NSLocalizedString("ADDRANKING_NAVBAR_TITLE", comment: "Add"),
+                    locale: .current,
+                    arguments: arguments)
+            case .headerTitle:
+                return String(
+                    format: NSLocalizedString("ADDRANKING_HEADER_TITLE", comment: "Add"),
+                    locale: .current,
+                    arguments: arguments)
+            case .headerCity:
+                return String(
+                    format: NSLocalizedString("ADDRANKING_HEADER_CITY", comment: "city"),
+                    locale: .current,
+                    arguments: arguments)
+            }
+        }
+    }
+}
