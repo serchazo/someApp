@@ -281,38 +281,97 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             
             return cell
         }
-        // New ranking
-        if somePost[indexPath.row].type == TimelineEvents.NewUserRanking.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserRanking, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = MyStrings.postNewRanking.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+        // MARK: New cells with localized text
+        // New follower
+        if somePost[indexPath.row].type == TimelineEvents.timelineFollower.rawValue,
+        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineUserFollowing, for: indexPath) as? HomeCellWithImage {
+            cell.titleLabel.text = MyStrings.postNewFollower.localized()
+            cell.setPhoto(userId: somePost[indexPath.row].initiator)
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set the body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            if parsedArray[1] == "you"{
+                cell.bodyLabel.text = MyStrings.timelineNewFollowerYouText.localized(arguments: parsedArray[1])
+            }else{
+                cell.bodyLabel.text = MyStrings.timelineNewFollowerText.localized(arguments: parsedArray[0],parsedArray[1])
+            }
             return cell
         }
+        // New Best in ranking
+        else if somePost[indexPath.row].type == TimelineEvents.timelineBestInRanking.rawValue,
+        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            cell.titleLabel.text = MyStrings.postNewBestInRank.localized()
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set icon
+            let tmpArray = somePost[indexPath.row].targetName.components(separatedBy: "/")
+            cell.iconLabel.text = "💬"
+            if tmpArray.count >= 3{
+                cell.iconLabel.text = tmpArray[2]
+            }
+            // Set body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            cell.bodyLabel.text = MyStrings.timelineNewBestInRank.localized(arguments: parsedArray[0],parsedArray[1],parsedArray[2])
+            
+            return cell
+        }
+        // New Resto among the top
+        else if somePost[indexPath.row].type == TimelineEvents.timelineNewInTopRanking.rawValue,
+        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            cell.titleLabel.text = MyStrings.postNewInTopRank.localized()
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set icon
+            let tmpArray = somePost[indexPath.row].targetName.components(separatedBy: "/")
+            cell.iconLabel.text = "💬"
+            if tmpArray.count >= 3{
+                cell.iconLabel.text = tmpArray[2]
+            }
+            // Set body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            cell.bodyLabel.text = MyStrings.timelineAmongTheTop.localized(arguments: parsedArray[0],parsedArray[1],parsedArray[2])
+            return cell
+        }
+        // New Yum!
+        else if somePost[indexPath.row].type == TimelineEvents.timelineYum.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
+            cell.titleLabel.text = MyStrings.postNewYum.localized()
+            cell.setPhoto(userId: somePost[indexPath.row].initiator)
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set the body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            cell.bodyLabel.text = MyStrings.timelineYum.localized(arguments: parsedArray[0],parsedArray[1])
+            
+            return cell
+        }
+        // New favorite
+        else if somePost[indexPath.row].type == TimelineEvents.timelineUserFavorite.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = MyStrings.postNewFavorite.localized()
+            cell.setPhoto(userId: somePost[indexPath.row].initiator)
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set the body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            cell.bodyLabel.text = MyStrings.timelineNewFavorite.localized(arguments: parsedArray[0],parsedArray[1],parsedArray[2])
+            return cell
+        }
+        // New review
+        else if somePost[indexPath.row].type == TimelineEvents.timelineNewReview.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = MyStrings.postNewReview.localized()
+            cell.setPhoto(userId: somePost[indexPath.row].initiator)
+            cell.setDate(timestamp: somePost[indexPath.row].timestamp)
+            // Set the body
+            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
+            cell.bodyLabel.text = MyStrings.timelineNewReview.localized(arguments: parsedArray[0],parsedArray[1])
+            return cell
+        }
+            
+            
+        
+        // MARK: Unlocalized version
         // User following
         else if somePost[indexPath.row].type == TimelineEvents.NewFollower.rawValue,
         let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineUserFollowing, for: indexPath) as? HomeCellWithImage {
             cell.titleLabel.text = MyStrings.postNewFollower.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New Yum!
-        else if somePost[indexPath.row].type == TimelineEvents.NewYum.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = MyStrings.postNewYum.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New review
-        else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = MyStrings.postNewReview.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New favorite
-        else if somePost[indexPath.row].type == TimelineEvents.NewUserFavorite.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = MyStrings.postNewFavorite.localized()
             setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
@@ -330,6 +389,29 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
             return cell
         }
+        // New Yum!
+        else if somePost[indexPath.row].type == TimelineEvents.NewYum.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
+            cell.titleLabel.text = MyStrings.postNewYum.localized()
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+        // New favorite
+        else if somePost[indexPath.row].type == TimelineEvents.NewUserFavorite.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = MyStrings.postNewFavorite.localized()
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+        // New review
+        else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
+            cell.titleLabel.text = MyStrings.postNewReview.localized()
+            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
+            return cell
+        }
+            
+        ///////
         // If it is an Ad, we have two options: load one or placeholder
         else if somePost[indexPath.row].type == TimelineEvents.NativeAd.rawValue{
             // If we have loaded Ads
@@ -399,7 +481,7 @@ extension HomeViewController{
 
     }
     
-    // MARK: new cells
+    // MARK: cells not localized (to delete after all have updated)
     // With icon
     func setIconDateBodyInCell(cell: HomeCellWithIcon, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
         // Set icon
@@ -453,7 +535,48 @@ extension HomeViewController{
     }
 }
 
-// MARK: parsing funcs
+// MARK: cell stuff
+extension HomeCellWithImage{
+    // Set image in cell
+    func setPhoto(userId: String){
+        let userRef = SomeApp.dbUserData
+        userRef.child(userId).observeSingleEvent(of: .value, with: {snapshot in
+            if let value = snapshot.value as? [String:Any],
+                let photoURL = value["photourl"] as? String{
+                self.cellImage.sd_setImage(
+                    with: URL(string: photoURL),
+                    placeholderImage: UIImage(named: "userdefault"),
+                    options: [],
+                    completed: nil)
+            }else{
+                self.cellImage.image = UIImage(named: "userdefault")
+            }
+        })
+    }
+    // Set date in cell (timestamp in Milliseconds
+    func setDate(timestamp: Double){
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        self.dateLabel.text = localDate
+    }
+}
+
+extension HomeCellWithIcon{
+    // Set date in cell (timestamp in Milliseconds
+    func setDate(timestamp: Double){
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
+        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+        let localDate = dateFormatter.string(from: date)
+        self.dateLabel.text = localDate
+    }
+}
+
+// MARK: parsing funcs for segue
 extension HomeViewController{
     //
     private func getCityFromNewRanking(target: String, targetName: String) -> City{
@@ -634,7 +757,6 @@ extension HomeViewController: GADUnifiedNativeAdLoaderDelegate{
     func adLoader(_ adLoader: GADAdLoader,
                   didFailToReceiveAdWithError error: GADRequestError) {
       print("\(adLoader) failed with error: \(error.localizedDescription)")
-
     }
 
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
@@ -662,6 +784,13 @@ extension HomeViewController{
         case postNewFavorite
         case postNewBestInRank
         case postNewInTopRank
+        case timelineNewFollowerText
+        case timelineNewFollowerYouText
+        case timelineNewBestInRank
+        case timelineAmongTheTop
+        case timelineYum
+        case timelineNewFavorite
+        case timelineNewReview
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -700,6 +829,42 @@ extension HomeViewController{
                 format: NSLocalizedString("HOME_POST_NEWINTOP", comment: "Top"),
                 locale: .current,
                 arguments: arguments)
+            case .timelineNewFollowerText:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_FOLLOWER", comment: "Follower"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineNewFollowerYouText:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_FOLLOWER_YOU", comment: "Follower"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineNewBestInRank:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_NEWBEST", comment: "In the top"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineAmongTheTop:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_AMONGTHEBEST", comment: "In the top"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineYum:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_YUM", comment: "Like"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineNewFavorite:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_USER_FAVORITE", comment: "Favorite"),
+                    locale: .current,
+                    arguments: arguments)
+            case .timelineNewReview:
+                return String(
+                    format: NSLocalizedString("HOME_TIMELINE_USER_REVIEW", comment: "New Review"),
+                    locale: .current,
+                    arguments: arguments)
+                
                 
             }
         }

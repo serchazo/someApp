@@ -88,6 +88,13 @@ Localized strings.
 "HOME_POST_NEWFAVORITE" = "New Favorite!";
 "HOME_POST_NEWBEST" = "New Best!";
 "HOME_POST_NEWINTOP" ="Let's go taste";
+"HOME_TIMELINE_FOLLOWER" = "%@ is now following %@.";
+"HOME_TIMELINE_FOLLOWER_YOU" = "%@ is now following you.";
+"HOME_TIMELINE_NEWBEST" = "%@ is now the best %@ place in %@.";
+"HOME_TIMELINE_AMONGTHEBEST" = "%@ is among the best %@ places in %@.";
+"HOME_TIMELINE_YUM" = "%@ has yummed your post on %@.";
+"HOME_TIMELINE_USER_FAVORITE" = "%@ has a new favorite %@ place in %@. Check it out!";
+"HOME_TIMELINE_USER_REVIEW" = "%@ added a review of %@."; 
 
 "FOODIES_SEARCH_PLACEHOLDER" = "Search for More Foodies";
 "FOODIES_LOADING" = "Getting Foodies' data";

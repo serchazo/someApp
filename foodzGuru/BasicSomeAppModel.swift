@@ -491,12 +491,20 @@ struct RankingOperation{
 
 enum TimelineEvents:String{
     case NewFollower = "newUserFollowing"
-    case NewUserRanking = "newRanking"
-    case NewUserFavorite = "newUserFavorite"
     case NewBestRestoInRanking = "newBestRestoInRanking"
     case NewArrivalInRanking = "newArrivalInRanking"
-    case NewUserReview = "newUserReview"
     case NewYum = "newYum"
+    case NewUserFavorite = "newUserFavorite"
+    case NewUserReview = "newUserReview"
+    
+    case timelineFollower = "timelineFollower"
+    case timelineBestInRanking = "timelineBestInRanking"
+    case timelineNewInTopRanking = "timelineNewInTop"
+    case timelineYum = "timelineYum"
+    case timelineUserFavorite = "timelineUserFavorite"
+    case timelineNewReview = "timelineNewReview"
+    
+    
     case NativeAd = "nativeAd" 
     case FoodzGuruPost = "systemNotification"
 }

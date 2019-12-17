@@ -88,6 +88,13 @@ Localized strings.
 "HOME_POST_NEWFAVORITE" = "¡Nuevo favorito!";
 "HOME_POST_NEWBEST" = "¡Nuevo mejor en ranking!";
 "HOME_POST_NEWINTOP" = "Vamos a probar?";
+"HOME_TIMELINE_FOLLOWER" = "%@ está siguiendo a %@.";
+"HOME_TIMELINE_FOLLOWER_YOU" = "%@ te está siguiendo.";
+"HOME_TIMELINE_NEWBEST" = "%@ es ahora el mejor luger de %@ en %@.";
+"HOME_TIMELINE_AMONGTHEBEST" = "%@ está entre los mejores lugares de %@ en %@.";
+"HOME_TIMELINE_YUM" = "%@ ha Yum! tu reseña sobre %@.";
+"HOME_TIMELINE_USER_FAVORITE" = "%@ tiene un nuevo lugar de %@ favorito en %@. Vamos a probar?";
+"HOME_TIMELINE_USER_REVIEW" = "%@ escribió una reseña sobre %@."; 
 
 "FOODIES_SEARCH_PLACEHOLDER" = "Buscar más Foodies";
 "FOODIES_LOADING" = "Obteniendo datos de Foodies";
