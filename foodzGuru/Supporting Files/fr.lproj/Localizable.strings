@@ -5,11 +5,10 @@ Abstract:
 Localized strings.
 */
 
-
 "BUTTON_OK" = "OK";
 "BUTTON_CANCEL" = "Annuler";
 
-"LOG" = "foodz.guru:% @";
+"LOG" = "foodz.guru: %@";
 "MSG_ERROR" = "Erreur";
 "MSG_LOADING" = "Téléchargement";
 
@@ -55,15 +54,6 @@ Localized strings.
 "FIRSTLOG_EULA_POPUP_NOTAGREE" = "Je ne suis pas d'accord";
 "FIRSTLOG_EULA_POPUP_NOTAGREE_TITLE" = "Impossible d'aller plus loin";
 "FIRSTLOG_EULA_POPUP_NOTAGREE_MSG" = "Si vous n'acceptez pas les conditions, vous ne pouvez pas utiliser l'application.";
-
-"FIRSTLOG1_TITLE" = "Configure your profile (1/4)";
-"FIRSTLOG1_FIELD_PLACEHOLDER" = "Create a username";
-"FIRSTLOG1_INVALID_TITLE" = "Invalid name";
-"FIRSTLOG1_INVALID_MSG" = "Your user name should be at least 4 characters long.";
-"FIRSTLOG1_NICK_TAKEN" = "This username is already taken.";
-"FIRSTLOG1_NICK_OK" = "Good! This username is available.";
-"FIRSTLOG1_BUTTON_GO" = "Go";
-"FIRSTLOG1_BUTTON_WAIT" = "Verify username";
 
 "FIRSTLOG1_TITLE" = "Configurez votre profil (1/4)";
 "FIRSTLOG1_FIELD_PLACEHOLDER" = "Créer un nom d'utilisateur";
@@ -167,7 +157,7 @@ Localized strings.
 "THISRANKING_BUTTON_YUM" = "Miam!";
 "THISRANKING_BUTTON_YUMMED" = "Miam";
 "THISRANKING_BUTTON_YUMNB" = "Miam! (%d)";
-"THISRANKING_BUTTON_EDITREVIEW" = "Modifier l'avis»;
+"THISRANKING_BUTTON_EDITREVIEW" = "Modifier l'avis";
 "THISRANKING_CELL_ADDRESTO" = "Ajouter un nouvel endroit de %@";
 "THISRANKING_DESCRIPTION_CELL" = "Cliquez pour modifier la description";
 "THISRANKING_DESCRIPTION_EDIT_TITLE" = "Modifier la description de votre classement";
@@ -268,7 +258,7 @@ Localized strings.
 "BESTRESTOS_FOLLOWERS" = "Abonnés";
 "BESTRESTOS_UNFOLLOW_MSG" = "Vous ne recevrez plus de mises à jour et de notifications de ce classement.";
 "BESTRESTOS_EMPTY_TITLE" = "Classement vide";
-"BESTRESTOS_EMPTY_MSG" = "Ajoutez vos endroits préférés!»;
+"BESTRESTOS_EMPTY_MSG" = "Ajoutez vos endroits préférés!";
 "BESTRESTOS_POINTS" = "Points: %d";
 "BESTRESTOS_REVIEWS" = "Avis: %d";
 "BESTRESTOS_COOLPHRASE_1" = "Et les gagnants sont ...";

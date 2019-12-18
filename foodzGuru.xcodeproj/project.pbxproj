@@ -98,6 +98,7 @@
 		3423A88523A9AF23007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/EditableRestoCell.strings; sourceTree = "<group>"; };
 		3423A88623A9AF23007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
 		3423A88723A9AF24007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3423A88823A9D30E007719E9 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/EditRankingTitleCell.strings"; sourceTree = "<group>"; };
 		3428F82223A7606D009D1340 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		3428F82323A76072009D1340 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Main.strings"; sourceTree = "<group>"; };
 		3428F82523A76187009D1340 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -144,7 +145,6 @@
 		34A76E3323225615005951A2 /* Resto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resto.swift; sourceTree = "<group>"; };
 		34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginAcceptEULA.swift; sourceTree = "<group>"; };
 		34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginViewController.swift; sourceTree = "<group>"; };
-		34D9C72123A8C809004AFA8B /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "es-419"; path = "es-419.lproj/EditRankingTitleCell.xib"; sourceTree = "<group>"; };
 		34D9C72323A8C812004AFA8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/EditRankingTitleCell.xib; sourceTree = "<group>"; };
 		34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithImage.swift; sourceTree = "<group>"; };
 		34DA7EB4234AEF4900EBD360 /* AddRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRanking.swift; sourceTree = "<group>"; };
@@ -579,9 +579,9 @@
 		34D9C72223A8C809004AFA8B /* EditRankingTitleCell.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				34D9C72123A8C809004AFA8B /* es-419 */,
 				34D9C72323A8C812004AFA8B /* Base */,
 				3423A88423A9AF22007719E9 /* fr */,
+				3423A88823A9D30E007719E9 /* es-419 */,
 			);
 			name = EditRankingTitleCell.xib;
 			sourceTree = "<group>";
