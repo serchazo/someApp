@@ -847,6 +847,8 @@ extension MyRestoDetail {
         SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             // Le ranking doesn't exist
             if !snapshot.exists(){
+                let defaultDescription = MyStrings.rankingDefaulDescription.localized(arguments: self.currentFood.name, self.currentCity.name)
+                
                 let alert = UIAlertController(
                     title: MyStrings.addRestoCreateRankingTitle.localized(),
                     message: MyStrings.addRestoCreateRankingMsg.localized(arguments: self.currentFood.name),
@@ -854,7 +856,7 @@ extension MyRestoDetail {
                 let createAction = UIAlertAction(
                     title: MyStrings.addRestoCreateRankingConfirm.localized(),
                 style: .default){ _ in
-                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
+                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood, description: defaultDescription)
                     
                     // then add to ranking
                     SomeApp.addRestoToRanking(userId: self.user.uid,
@@ -1073,6 +1075,7 @@ extension MyRestoDetail{
         case addRestoCreateRankingTitle
         case addRestoCreateRankingMsg
         case addRestoCreateRankingConfirm
+        case rankingDefaulDescription
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -1206,6 +1209,11 @@ extension MyRestoDetail{
                     format: NSLocalizedString("MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM", comment: "Create"),
                     locale: .current,
                     arguments: arguments)
+            case .rankingDefaulDescription:
+            return String(
+                format: NSLocalizedString("MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION", comment: "Description"),
+                locale: .current,
+                arguments: arguments)
             }
         }
     }

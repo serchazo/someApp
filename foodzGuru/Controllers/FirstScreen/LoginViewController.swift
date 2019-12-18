@@ -224,6 +224,7 @@ class LoginViewController: UIViewController {
             title: MyStrings.createAccount.localized(),
             message: MyStrings.createAccountGuide.localized(),
             preferredStyle: .alert)
+        
         let saveAction = UIAlertAction(title: MyStrings.createButton.localized(),
                                        style: .default) { _ in
             //Get e-mail and password from the alert
@@ -424,7 +425,7 @@ extension LoginViewController{
         //Privacy Policy
         let privacyTextToSee:String = FoodzLayout.FoodzStrings.eulaPrivacyPolicy.localized()
         let privacyAttributedText = NSMutableAttributedString(string: privacyTextToSee)
-        let privacyLink = FoodzLayout.FoodzStrings.eulaTermsOfServiceURL.localized()
+        let privacyLink = FoodzLayout.FoodzStrings.eulaPrivacyPolicyURL.localized()
         privacyAttributedText.addAttribute(NSAttributedString.Key.link, value: privacyLink, range: NSMakeRange(0, privacyTextToSee.count))
         
         result.append(NSMutableAttributedString(

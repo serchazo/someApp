@@ -89,6 +89,10 @@ class MyProfile: UIViewController {
                 }
             })
         }
+        // Deselect the rows to go back to normal
+        if let indexPath = myProfileTable.indexPathForSelectedRow {
+            myProfileTable.deselectRow(at: indexPath, animated: true)
+        }
         
     }
     

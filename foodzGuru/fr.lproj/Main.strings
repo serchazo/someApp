@@ -1,1 +1,68 @@
 
+/* Class = "UITabBarItem"; title = "Home"; ObjectID = "6De-Go-MJ0"; */
+"6De-Go-MJ0.title" = "Accueil";
+
+/* Class = "UITabBarItem"; title = "Cravings"; ObjectID = "vbt-jy-dO4"; */
+"vbt-jy-dO4.title" = "Envies";
+
+/* Class = "UITabBarItem"; title = "My Foodz"; ObjectID = "jGD-U0-LWf"; */
+"jGD-U0-LWf.title" = "Mes Foodz";
+
+/* Class = "UINavigationItem"; title = "Any Cravings?"; ObjectID = "Wjm-Un-4Du"; */
+"Wjm-Un-4Du.title" = "Des envies?";
+
+/* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "YSc-kP-6FY"; */
+"YSc-kP-6FY.title" = "Profil";
+
+// First login Strings
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "U8Z-9X-Pn6"; */
+"U8Z-9X-Pn6.placeholder" = "Courrier Electronique";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "Bhh-7q-iSy"; */
+"Bhh-7q-iSy.placeholder" = "Mot de passe";
+
+/* Class = "UILabel"; text = "Or"; ObjectID = "4vL-ux-LET"; */
+"4vL-ux-LET.text" = "Ou";
+
+/* Class = "UILabel"; text = "Your promise to be wise"; ObjectID = "j15-9i-ZkC"; */
+"j15-9i-ZkC.text" = "Vous devez être sage";
+
+/* Class = "UILabel"; text = "By using our app you agree to our"; ObjectID = "yy9-II-mdp"; */
+"yy9-II-mdp.text" = "En utilisant notre application, vous acceptez nos";
+
+/* Class = "UIButton"; normalTitle = "End User Licence Agreement"; ObjectID = "b2K-sY-9GH"; */
+"b2K-sY-9GH.normalTitle" = "Conditions d'utilisation";
+
+/* Class = "UILabel"; text = "and"; ObjectID = "lVg-R2-q6f"; */
+"lVg-R2-q6f.text" = "et notre";
+
+/* Class = "UIButton"; normalTitle = "Privacy Policy."; ObjectID = "00x-eR-VXm"; */
+"00x-eR-VXm.normalTitle" = "Politique de confidentialité";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "m9z-hc-Jl5"; */
+"m9z-hc-Jl5.normalTitle" = "Continuer";
+
+/* Class = "UILabel"; text = "Choose a username"; ObjectID = "mr7-gg-tcQ"; */
+"mr7-gg-tcQ.text" = "Créez un nom d'utilisateur";
+
+/* Class = "UILabel"; text = "Choose wisely"; ObjectID = "TLB-LK-2Lz"; */
+"TLB-LK-2Lz.text" = "Choisissez sagement";
+
+/* Class = "UILabel"; text = "Upload a profile picture"; ObjectID = "L9F-Xe-6gk"; */
+"L9F-Xe-6gk.text" = "Téléchargez une photo de profil";
+
+/* Class = "UILabel"; text = "Select a city"; ObjectID = "8eA-xO-TBi"; */
+"8eA-xO-TBi.text" = "Choisissez une ville";
+
+/* Class = "UITextField"; text = "Select a city"; ObjectID = "ZV5-ds-mlt"; */
+"ZV5-ds-mlt.text" = "Choisissez";
+
+/* Class = "UILabel"; text = "You can change your city later"; ObjectID = "Rcf-gt-V6N"; */
+"Rcf-gt-V6N.text" = "Vous pouvez changer ultérieurement";
+
+/* Class = "UILabel"; text = "Write a short bio"; ObjectID = "bJf-po-FdT"; */
+"bJf-po-FdT.text" = "Ecrivez une petite bio";
+
+/* Class = "UILabel"; text = "You can change your bio later (max 150 chars)."; ObjectID = "INn-9X-JKc"; */
+"INn-9X-JKc.text" = "Vous pouvez la modifier ultérieurement (max 150 caractères).";

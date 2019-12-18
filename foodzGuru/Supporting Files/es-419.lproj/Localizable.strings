@@ -45,8 +45,8 @@ Localized strings.
 "LOGIN_PSSWD_CONFIRM" = "Confirmar contraseña";
 "LOGIN_PSSWD_NOTMATCH_TITLE" = "Las contraseñas no coinciden";
 "LOGIN_PSSWD_NOTMATCH_MSG" = "La nueva contraseña no coincide con la confirmación";
-"LOGIN_EULA_TEXT" = "Al usar nuestra aplicación, usted acepta nuestros";
-"LOGIN_EULA_TEXT_APPEND" = "y nuestra";
+"LOGIN_EULA_TEXT" = "Al usar nuestra aplicación, usted acepta nuestros ";
+"LOGIN_EULA_TEXT_APPEND" = " y nuestra ";
 
 "FIRSTLOG_EULA_TITLE" = "Aceptar condiciones";
 "FIRSTLOG_EULA_POPUP_TITLE" = "Aceptar condiciones";
@@ -130,6 +130,7 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
 "MYRANKS_BESTPLACES_TITLE" = "Mejores %@ en %@";
+"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida buscando los mejors lugars de %@ en %@. Esta es la lista definitva.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "seguidores";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "siguiendo";
@@ -250,6 +251,7 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "¿Crear ranking?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "¿No tiene %@, crear y agregar restaurante?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Crear";
+"MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida buscando los mejors lugars de %@ en %@. Esta es la lista definitva.";
 
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Cambiar ciudad";

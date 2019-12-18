@@ -44,8 +44,8 @@ Localized strings.
 "LOGIN_PSSWD_CONFIRM" = "Confirmer le mot de passe";
 "LOGIN_PSSWD_NOTMATCH_TITLE" = "Les mots de passe ne correspondent pas";
 "LOGIN_PSSWD_NOTMATCH_MSG" = "Le nouveau mot de passe ne correspond pas à la confirmation.";
-"LOGIN_EULA_TEXT" = "En utilisant notre application, vous acceptez nos";
-"LOGIN_EULA_TEXT_APPEND" = "et notre";
+"LOGIN_EULA_TEXT" = "En utilisant notre application, vous acceptez nos ";
+"LOGIN_EULA_TEXT_APPEND" = " et notre ";
 
 "FIRSTLOG_EULA_TITLE" = "Accepter le contrat de licence";
 "FIRSTLOG_EULA_POPUP_TITLE" = "Accepter les conditions";
@@ -71,8 +71,8 @@ Localized strings.
 
 "FIRSTLOG3_TITLE" = "Configurez votre profil (3/4)";
 "FIRSTLOG3_BUTTON_GO" = "Continuer";
-"FIRSTLOG3_BUTTON_SELECT" = "Sélectionner";
-"FIRSTLOG3_BUTTON_CHANGE" = "Changer de ville";
+"FIRSTLOG3_BUTTON_SELECT" = "Choisir";
+"FIRSTLOG3_BUTTON_CHANGE" = "Changer";
 "FIRSTLOG3_POPUP_TITLE" = "Aucune ville sélectionnée";
 "FIRSTLOG3_POPUP_MSG" = "Appuyez sur Sélectionner. Vous pourrez changer d'avis ultérieurement.";
 
@@ -129,6 +129,7 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "Pas encore de classement à %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Cliquez sur + et informez le monde de vos endroits préférés!";
 "MYRANKS_BESTPLACES_TITLE" = "Meilleurs %@ à %@";
+"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "J'ai passé ma vie à chercher les meilleurs %@ à %@. Voici la liste définitive.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "Abonnés";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "Abonnements";
@@ -191,7 +192,7 @@ Localized strings.
 "MYPROFILE_BUTTON_CHANGEPIC" = "Modifier l'image de profil";
 "MYPROFILE_BUTTON_BIO_NAME" = "Bio";
 "MYPROFILE_BUTTON_BIO_EMPTY" = "Saisissez votre biographie.";
-"MYPROFILE_BUTTON_BIO_EDIT" = "Modifieez votre biographie";
+"MYPROFILE_BUTTON_BIO_EDIT" = "Modifiez votre biographie";
 "MYPROFILE_BUTTON_CHANGEPSSWD" = "Changer le mot de passe";
 "MYPROFILE_BUTTON_CHANGEPSSWD_OLD" = "Ancien mot de passe";
 "MYPROFILE_BUTTON_CHANGEPSSWD_NEW" = "Nouveau mot de passe";
@@ -248,6 +249,7 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "Créer un classement?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "Vous n'avez pas de classement de %@, créer le classement et ajouter l'endroit?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Créer";
+"MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "J'ai passé ma vie à chercher les meilleurs %@ à %@. Voici la liste définitive.";
 
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Changer de ville";

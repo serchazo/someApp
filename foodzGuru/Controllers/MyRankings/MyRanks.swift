@@ -415,7 +415,7 @@ class MyRanks: UIViewController {
             if !self.innerBlockedFlag{
                 
                 let confirmAlert = UIAlertController(
-                    title: MyStrings.buttonBlockConfirmAskTitle.localized(self.calledUser!.nickName),
+                    title: MyStrings.buttonBlockConfirmAskTitle.localized(arguments: self.calledUser!.nickName),
                     message: MyStrings.buttonBlockConfirmAskMsg.localized(),
                     preferredStyle: .alert)
                 let blockAction = UIAlertAction(
@@ -445,7 +445,7 @@ class MyRanks: UIViewController {
             // [START] If I have blocked : ask to unblock
             else{
                 let confirmAlert = UIAlertController(
-                    title: MyStrings.buttonUnblockConfirmAskTitle.localized( self.calledUser!.nickName),
+                    title: MyStrings.buttonUnblockConfirmAskTitle.localized( arguments: self.calledUser!.nickName),
                     message: MyStrings.buttonUnblockConfirmAskMsg.localized(),
                     preferredStyle: .alert)
                 let blockAction = UIAlertAction(
@@ -572,7 +572,8 @@ extension MyRanks: AddRankingDelegate{
         // Test if the ranking isn't in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood)
+            let defaultDescription = MyStrings.rankingDefaulDescription.localized(arguments: withFood.name, city.name)
+            SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood, description: defaultDescription)
             // Only need to reload.  The firebase observer will update the content
             myRanksTable.reloadData()
             
@@ -580,7 +581,7 @@ extension MyRanks: AddRankingDelegate{
             // Ranking already in list
             let alert = UIAlertController(
                 title: MyStrings.duplicateRankingTitle.localized(),
-                message: MyStrings.duplicateRankingMsg.localized(withFood.name, city.name),
+                message: MyStrings.duplicateRankingMsg.localized(arguments: withFood.name, city.name),
                 preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(
@@ -653,7 +654,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
         
         if emptyListFlag{
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            cell.textLabel?.text = MyStrings.emptyRankingTitle.localized(currentCity.name)
+            cell.textLabel?.text = MyStrings.emptyRankingTitle.localized(arguments: currentCity.name)
             cell.detailTextLabel?.text = MyStrings.emptyRankingMsg.localized()
             cell.selectionStyle = .none
             return cell
@@ -662,7 +663,7 @@ extension MyRanks: UITableViewDelegate, UITableViewDataSource{
             let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
             if let cell = tmpCell as? MyRanksTableViewCell {
                 cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = MyStrings.bestPlacesTitle.localized(foodItems[indexPath.row].name, currentCity.name)
+                let tmpTitleText = MyStrings.bestPlacesTitle.localized(arguments: foodItems[indexPath.row].name, currentCity.name)
                 cell.titleLabel.text = tmpTitleText
                 cell.descriptionLabel.text = rankings[indexPath.row].description
             }
@@ -801,8 +802,9 @@ extension MyRanks{
         case emptyRankingTitle
         case emptyRankingMsg
         case bestPlacesTitle
+        case rankingDefaulDescription
         
-        func localized(_ arguments: CVarArg...) -> String{
+        func localized(arguments: CVarArg...) -> String{
             switch self{
             case .followers:
                 return String(
@@ -936,12 +938,17 @@ extension MyRanks{
                     arguments: arguments)
             case .emptyRankingMsg:
                 return String(
-                format: NSLocalizedString("MYRANKS_DUPLICATE_RANKING_MSG", comment: "Empty"),
+                format: NSLocalizedString("MYRANKS_EMPTY_RANKING_MSG", comment: "Empty"),
                 locale: .current,
                 arguments: arguments)
             case .bestPlacesTitle:
                 return String(
                     format: NSLocalizedString("MYRANKS_BESTPLACES_TITLE", comment: "Empty"),
+                    locale: .current,
+                    arguments: arguments)
+            case .rankingDefaulDescription:
+                return String(
+                    format: NSLocalizedString("MYRANKS_RANKING_DEFAULT_DESCRIPTION", comment: "Empty"),
                     locale: .current,
                     arguments: arguments)
                 

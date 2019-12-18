@@ -52,6 +52,38 @@ class AddRanking: UIViewController {
         
     }
     
+    //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard let headerView = addRankingTableView.tableHeaderView else {
+            return
+        }
+
+        // The table view header is created with the frame size set in
+        // the Storyboard. Calculate the new size and reset the header
+        // view to trigger the layout.
+        // Calculate the minimum height of the header view that allows
+        // the text label to fit its preferred width.
+        let size = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+
+            // Need to set the header view property of the table view
+            // to trigger the new layout. Be careful to only do this
+            // once when the height changes or we get stuck in a layout loop.
+            addRankingTableView.tableHeaderView = headerView
+
+            // Now that the table view header is sized correctly have
+            // the table view redo its layout so that the cells are
+            // correcly positioned for the new header size.
+            // This only seems to be necessary on iOS 9.
+            addRankingTableView.layoutIfNeeded()
+        }
+    }
+    
 
     /*
     // MARK: - Navigation

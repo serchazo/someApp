@@ -107,6 +107,11 @@ extension FirstLoginFourthScreen{
             urlString = photoURL.absoluteString
         }
         
+        var deviceToken = ""
+        if SomeApp.deviceToken != nil{
+            deviceToken = SomeApp.deviceToken
+        }
+        
         // Create the user details
         SomeApp.createUserFirstLogin(
             userId: user.uid,
@@ -114,7 +119,7 @@ extension FirstLoginFourthScreen{
             bio: bio!,
             defaultCity: tmpCityString,
             photoURL: urlString,
-            deviceToken: SomeApp.deviceToken)
+            deviceToken: deviceToken)
         
         // Ad the first city
         SomeApp.addUserCity(userId: user.uid, city: currentCity, countryName: currentCountryName, stateName: currentStateName)

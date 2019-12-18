@@ -130,6 +130,7 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "No rankings in %@ yet!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Click on + and tell the world about your favorite places!";
 "MYRANKS_BESTPLACES_TITLE" = "Best %@ in %@";
+"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Spent all my life looking for the best %@ places in %@. This is the definitive list.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "followers";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "following";
@@ -250,6 +251,7 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "Create ranking?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "You don't have a %@, create and add restorant?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Create";
+"MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Spent all my life looking for the best %@ places in %@. This is the definitive list.";
 
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Change city";
