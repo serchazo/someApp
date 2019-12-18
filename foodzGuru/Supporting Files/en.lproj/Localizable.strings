@@ -139,7 +139,7 @@ Localized strings.
 "FOLLOWERS_FOLLOWING_EMPTY_USER" = "%@ is not following anyone yet.";
 "FOLLOWERS_EMPTY_MSG" = "Come back soon!";
 
-"MYCITIES_LOADING" = "Loading Citites";
+"MYCITIES_LOADING" = "Loading Cities";
 "MYCITIES_EMPTYLIST_TITLE" = "No rankings yet!";
 "MYCITIES_EMPTYLIST_MSG" = "Click on + and tell the world your favorite places!";
 "MYCITIES_DUPLICATE_TITLE" = "Duplicate City";

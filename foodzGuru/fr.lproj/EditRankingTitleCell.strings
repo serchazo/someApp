@@ -1,0 +1,12 @@
+
+/* Class = "UILabel"; text = "Drag & Drop your fav' places to edit your Ranking."; ObjectID = "eze-XO-fsq"; */
+"eze-XO-fsq.text" = "Drag & Drop your fav' places to edit your Ranking.";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "f7z-FX-sBF"; */
+"f7z-FX-sBF.normalTitle" = "Cancel";
+
+/* Class = "UILabel"; text = "Edit Ranking"; ObjectID = "juK-6E-I2u"; */
+"juK-6E-I2u.text" = "Edit Ranking";
+
+/* Class = "UIButton"; normalTitle = "Done!"; ObjectID = "xQh-Yy-yg6"; */
+"xQh-Yy-yg6.normalTitle" = "Done!";
