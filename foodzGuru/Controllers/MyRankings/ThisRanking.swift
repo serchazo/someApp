@@ -264,8 +264,7 @@ class ThisRanking: UIViewController {
     // MARK: myRanking Header
     private func configureHeader(userId: String){
         // Configure navbar
-        navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        //navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
         
         if calledUser != nil{
             navigationItem.rightBarButtonItem = nil

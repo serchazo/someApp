@@ -114,6 +114,12 @@ class BestRestosViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.isToolbarHidden = false
+        self.navigationController?.hidesBarsOnSwipe = false
+    }
+    
     //
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -166,7 +172,7 @@ class BestRestosViewController: UIViewController {
     func configureHeader(){
         // Navigation title
         self.navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        //self.navigationController?.hidesBarsOnSwipe = true
         
         // Title and description
         tableHeaderFoodName.font = UIFont.preferredFont(forTextStyle: .title1)

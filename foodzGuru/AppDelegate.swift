@@ -36,9 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set the colors of navigation bar
         let navigationBarAppearace = UINavigationBar.appearance()
         navigationBarAppearace.tintColor = .label // Butons color
-        navigationBarAppearace.barTintColor = .systemBackground //Background color
-        navigationBarAppearace.titleTextAttributes = [
-            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body)]
+        //navigationBarAppearace.barTintColor = .systemBackground //Background color
+        //navigationBarAppearace.titleTextAttributes = [
+        //    NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body)]
         
         // Location stuff
         locationManagerT.requestWhenInUseAuthorization()
@@ -49,7 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [START Notifications stuff]
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
-        UIApplication.shared.applicationIconBadgeNumber = 0
+        // Set the badge to zero on opening 
+        application.applicationIconBadgeNumber = 0
         
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(

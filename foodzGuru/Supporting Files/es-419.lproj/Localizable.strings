@@ -153,7 +153,7 @@ Localized strings.
 "MYCITIES_DUPLICATE_TITLE" = "Ciudad duplicada";
 "MYCITIES_DUPLICATE_MSG" = "Ya tienes rankings en %@.";
 
-"THISRANKING_HEADER_TITLE_ME" = "Mis %@ favoritos en %@";
+"THISRANKING_HEADER_TITLE_ME" = "Mis mejores %@ en %@";
 "THISRANKING_HEADER_TITLE_USER" = "Mejores %2$@ en %3$@ según %1$@";
 "THISRANKING_DESCRIPTION_TITLE" = "Descripción";
 "THISRANKING_BUTTON_DELETE_ASK" = "¿Eliminar restaurante?";
