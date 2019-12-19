@@ -49,6 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [START Notifications stuff]
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
+        UIApplication.shared.applicationIconBadgeNumber = 0
         
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(

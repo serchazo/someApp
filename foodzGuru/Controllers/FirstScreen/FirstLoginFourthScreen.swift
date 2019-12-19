@@ -51,6 +51,8 @@ class FirstLoginFourthScreen: UIViewController {
             guard let user = user else {return}
             self.user = user
         }
+        
+        self.hideKeyboardWhenTappedAround()
     }
     
 
@@ -65,6 +67,16 @@ class FirstLoginFourthScreen: UIViewController {
     */
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         return false
+    }
+    
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 

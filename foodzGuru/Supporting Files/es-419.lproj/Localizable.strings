@@ -73,11 +73,11 @@ Localized strings.
 "FIRSTLOG3_TITLE" = "Configure su perfil (3/4)";
 "FIRSTLOG3_BUTTON_GO" = "Continuar";
 "FIRSTLOG3_BUTTON_SELECT" = "Seleccionar";
-"FIRSTLOG3_BUTTON_CHANGE" = "Cambiar ciudad";
+"FIRSTLOG3_BUTTON_CHANGE" = "Cambiar";
 "FIRSTLOG3_POPUP_TITLE" = "No tiene ciudad seleccionada";
-"FIRSTLOG3_POPUP_MSG" = "Presione Seleccionar. Puede cambiar su ciudad más tarde.";
+"FIRSTLOG3_POPUP_MSG" = "Presione Seleccionar. Puede cambiar de ciudad más tarde.";
 
-"FIRSTLOG4_TITLE" = "Configure su perfil (3/4)";
+"FIRSTLOG4_TITLE" = "Configure su perfil (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Continuar";
 
 "HOME_FIRST_POST" = "Hola% @! Bienvenido a foodz.guru, cuando le dé click en Seguir a los amantes de la comida y las clasificaciones, verá aquí sus actualizaciones más importantes.";
@@ -95,6 +95,13 @@ Localized strings.
 "HOME_TIMELINE_YUM" = "%@ ha Yum! tu reseña sobre %@.";
 "HOME_TIMELINE_USER_FAVORITE" = "%@ tiene un nuevo lugar de %@ favorito en %@. Vamos a probar?";
 "HOME_TIMELINE_USER_REVIEW" = "%@ escribió una reseña sobre %@."; 
+
+"NOTIFICATION_YUM_TITLE" = "Yum!";
+"NOTIFICATION_YUM_MSG" = "%@ ha Yum! tu post.";
+"NOTIFICATION_FOLLOWER_TITLE" = "¡Nuevo Seguidor!";
+"NOTIFICATION_FOLLOWER_MSG" = "%@ te está siguiendo en foodz.guru.";
+"NOTIFICATION_BESTINRANK_TITLE" = "¡Nuevo mejor en ranking!";
+"NOTIFICATION_BESTINRANK_MSG" = "Hay un nuevo mejor lugar de %@ en %@! Vamos a probar?";
 
 "FOODIES_SEARCH_PLACEHOLDER" = "Buscar más Foodies";
 "FOODIES_LOADING" = "Obteniendo datos de Foodies";
@@ -130,7 +137,7 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
 "MYRANKS_BESTPLACES_TITLE" = "Mejores %@ en %@";
-"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida buscando los mejors lugars de %@ en %@. Esta es la lista definitva.";
+"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida probando %@ en %@. Esta es la lista definitva.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "seguidores";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "siguiendo";
@@ -147,7 +154,7 @@ Localized strings.
 "MYCITIES_DUPLICATE_MSG" = "Ya tienes rankings en %@.";
 
 "THISRANKING_HEADER_TITLE_ME" = "Mis %@ favoritos en %@";
-"THISRANKING_HEADER_TITLE_USER" = "%@ favoritos de %@ en %@";
+"THISRANKING_HEADER_TITLE_USER" = "Mejores %2$@ en %3$@ según %1$@";
 "THISRANKING_DESCRIPTION_TITLE" = "Descripción";
 "THISRANKING_BUTTON_DELETE_ASK" = "¿Eliminar restaurante?";
 "THISRANKING_BUTTON_DELETE_TITLE" = "Eliminar";
@@ -251,12 +258,12 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "¿Crear ranking?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "¿No tiene %@, crear y agregar restaurante?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Crear";
-"MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida buscando los mejors lugars de %@ en %@. Esta es la lista definitva.";
+"MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida probando %@ en %@. Esta es la lista definitva.";
 
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Cambiar ciudad";
 
-"BESTRESTOS_HEADER_TITLE" = "Mejores %@ lugares en %@";
+"BESTRESTOS_HEADER_TITLE" = "Mejores %@ en %@";
 "BESTRESTOS_FOLLOW" = "Seguir";
 "BESTRESTOS_UNFOLLOW" = "Dejar de seguir";
 "BESTRESTOS_FOLLOWERS" = "Seguidores";
@@ -267,7 +274,7 @@ Localized strings.
 "BESTRESTOS_REVIEWS" = "Reseñas: %d";
 "BESTRESTOS_COOLPHRASE_1" = "Y los ganadores son ...";
 "BESTRESTOS_COOLPHRASE_2" = "La gente ha hablado ...";
-"BESTRESTOS_COOLPHRASE_3" = "¿Está su lugar favorito en la lista?";
+"BESTRESTOS_COOLPHRASE_3" = "¿Está tu lugar favorito en la lista?";
 "BESTRESTOS_COOLPHRASE_4" = "¡Preparados, listos, a probar!";
 
 //General

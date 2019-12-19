@@ -271,7 +271,6 @@ class MyRanks: UIViewController {
         })
         
         // Change city button
-        //FoodzLayout.configureButton(button: changeCityButton)
         FoodzLayout.configureButtonNoBorder(button: changeCityButton)
         
         // Follow button

@@ -16,6 +16,9 @@
 
 // First login Strings
 
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "CXF-z6-4H9"; */
+"CXF-z6-4H9.normalTitle" = "S'identifier";
+
 /* Class = "UITextField"; placeholder = "Email"; ObjectID = "U8Z-9X-Pn6"; */
 "U8Z-9X-Pn6.placeholder" = "Courrier Electronique";
 

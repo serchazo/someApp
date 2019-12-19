@@ -77,7 +77,7 @@ Localized strings.
 "FIRSTLOG3_POPUP_TITLE" = "No city selected";
 "FIRSTLOG3_POPUP_MSG" = "Press Select City. You can change this later.";
 
-"FIRSTLOG4_TITLE" = "Configure your profile (3/4)";
+"FIRSTLOG4_TITLE" = "Configure your profile (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Go";
 
 "HOME_FIRST_POST" = "Hello %@! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
@@ -94,7 +94,14 @@ Localized strings.
 "HOME_TIMELINE_AMONGTHEBEST" = "%@ is among the best %@ places in %@.";
 "HOME_TIMELINE_YUM" = "%@ has yummed your post on %@.";
 "HOME_TIMELINE_USER_FAVORITE" = "%@ has a new favorite %@ place in %@. Check it out!";
-"HOME_TIMELINE_USER_REVIEW" = "%@ added a review of %@."; 
+"HOME_TIMELINE_USER_REVIEW" = "%@ added a review of %@.";
+
+"NOTIFICATION_YUM_TITLE" = "Yum!";
+"NOTIFICATION_YUM_MSG" = "%@ has Yummed! your post.";
+"NOTIFICATION_FOLLOWER_TITLE" = "New follower!";
+"NOTIFICATION_FOLLOWER_MSG" = "%@ is now following you on foodz.guru.";
+"NOTIFICATION_BESTINRANK_TITLE" = "New best!";
+"NOTIFICATION_BESTINRANK_MSG" = "There is a new best &@ place in %@! Let's go taste?";
 
 "FOODIES_SEARCH_PLACEHOLDER" = "Search for More Foodies";
 "FOODIES_LOADING" = "Getting Foodies' data";

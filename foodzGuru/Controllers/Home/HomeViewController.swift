@@ -291,7 +291,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             // Set the body
             let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
             if parsedArray[1] == "you"{
-                cell.bodyLabel.text = MyStrings.timelineNewFollowerYouText.localized(arguments: parsedArray[1])
+                cell.bodyLabel.text = MyStrings.timelineNewFollowerYouText.localized(arguments: parsedArray[0])
             }else{
                 cell.bodyLabel.text = MyStrings.timelineNewFollowerText.localized(arguments: parsedArray[0],parsedArray[1])
             }
