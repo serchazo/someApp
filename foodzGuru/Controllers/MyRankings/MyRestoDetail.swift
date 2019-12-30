@@ -8,8 +8,8 @@
 
 import UIKit
 import SafariServices
-import MapKit
 import Firebase
+import GooglePlaces
 import NotificationBannerSwift
 
 protocol MyRestoDelegate: class{
@@ -47,12 +47,7 @@ class MyRestoDetail: UIViewController {
     var currentResto: Resto!
     var currentCity: City!
     var currentFood: FoodType!
-    var dbMapReference: DatabaseReference!
     var seguer:MyRestoSeguer!
-    
-    // Variable to pass to map Segue
-    private var currentRestoMapItem : MKMapItem!
-    private var OKtoPerformSegue = true
     
     //Handles
     private var restoReviewsLikesHandle:[(handle: UInt, dbPath:String)] = []
@@ -62,6 +57,9 @@ class MyRestoDetail: UIViewController {
     //For Edit Review swipe-up
     private var editReviewTransparentView = UIView()
     private var editReviewTableView = UITableView()
+    
+    // Google Places stuff
+    private var placesClient: GMSPlacesClient!
     
     // MARK: Ad stuff
     private let adsToLoad = 5 //The number of native ads to load
@@ -75,9 +73,15 @@ class MyRestoDetail: UIViewController {
     
     @IBOutlet weak var restoNameLabel: UILabel!
     @IBOutlet weak var addToRankButton: UIButton!
-    
-    @IBOutlet weak var foodIcon: UILabel!
     @IBOutlet weak var adView: UIView!
+    @IBOutlet weak var restoImage: UIImageView!
+    @IBOutlet weak var imageAttributions: UITextView!{
+      didSet{
+        imageAttributions.delegate = self
+        imageAttributions.textContainerInset = .zero
+      }
+    }
+    
     
     // MARK: Add to ranking action
     @IBAction func addToRankAction(_ sender: Any) {
@@ -108,7 +112,7 @@ class MyRestoDetail: UIViewController {
             restoDetailTable.dataSource = self
             restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
             restoDetailTable.rowHeight = UITableView.automaticDimension
-            restoDetailTable.estimatedRowHeight = 150
+            restoDetailTable.estimatedRowHeight = 160
             restoDetailTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
             forCellReuseIdentifier: "UnifiedNativeAdCell")
         }
@@ -136,24 +140,9 @@ class MyRestoDetail: UIViewController {
             self.getReviewsFromDB()
         }
         
-        // Get the map from the database
-        self.dbMapReference.observeSingleEvent(of: .value, with: {snapshot in
-            if let value = snapshot.value as? [String: String],
-                let mapString = value["address"]{
-                
-                let decoder = JSONDecoder()
-                do{
-                    let tempMapArray = try decoder.decode(RestoMapArray.self, from: mapString.data(using: String.Encoding.utf8)!)
-                    self.currentRestoMapItem = tempMapArray.restoMapItem
-                }catch{
-                    self.OKtoPerformSegue = false
-                    print(error.localizedDescription)
-                }
-                
-            }else{
-                self.OKtoPerformSegue = false
-            }
-        })
+        // Get the info from the Google
+        placesClient = GMSPlacesClient.shared()
+        getDetailsfromPlaceID(placeID: currentResto.key)
         
         if let indexPath = restoDetailTable.indexPathForSelectedRow {
             restoDetailTable.deselectRow(at: indexPath, animated: true)
@@ -163,8 +152,6 @@ class MyRestoDetail: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let dbPath = currentCity.country+"/"+currentCity.state+"/"+currentCity.key+"/"+currentResto.key
-        dbMapReference = SomeApp.dbRestoAddress.child(dbPath)
         let dbReviewsPath = currentCity.country+"/"+currentCity.state + "/" + currentCity.key + "/" + currentFood.key + "/" + currentResto.key
         dbRestoReviews = SomeApp.dbRestoReviews.child(dbReviewsPath)
         
@@ -196,6 +183,7 @@ class MyRestoDetail: UIViewController {
         }
     }
     
+    /*
     //Dynamic header height.  Snippet from : https://useyourloaf.com/blog/variable-height-table-view-header/
     
     override func viewDidLayoutSubviews() {
@@ -226,50 +214,34 @@ class MyRestoDetail: UIViewController {
             // This only seems to be necessary on iOS 9.
             restoDetailTable.layoutIfNeeded()
         }
-    }
+    }*/
     
     // MARK: Configure header
     private func configureHeader(){
         restoNameLabel.text = currentResto.name
         
-        // Food Icon
-        foodIcon.layer.cornerRadius = 0.5 * foodIcon.frame.width
-        foodIcon.layer.borderColor = SomeApp.themeColor.cgColor
-        foodIcon.layer.borderWidth = 1.0
-        foodIcon.layer.masksToBounds = true
-        foodIcon.font = UIFont.preferredFont(forTextStyle: .largeTitle).withSize(50)
-        foodIcon.text = currentFood.icon
+        FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
+        self.addToRankButton.setTitle(MyStrings.buttonAddResto.localized(), for: .normal)
         
         // Add to my foodz button
         if restoInRankingFlag {
             self.addToRankButton.isEnabled = false
-            self.addToRankButton.isHidden = true
+            //self.addToRankButton.isHidden = true
         }else{
             self.addToRankButton.isEnabled = true
-            self.addToRankButton.isHidden = false
-            FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
-            self.addToRankButton.setTitle(MyStrings.buttonAddResto.localized(), for: .normal)
+            //self.addToRankButton.isHidden = false
         }
         
     }
     
     // MARK: - Navigation
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
-        switch(segue.identifier){
-        case MyRestoDetail.segueToMap:
-            if let seguedVC = segue.destination as? MyRestoMap{
-                seguedVC.mapItems = [currentRestoMapItem]
-            }
-        default:break
-        }
     }
+    */
     
-    //
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return OKtoPerformSegue
-    }
 }
 
 // MARK: Table stuff
@@ -292,7 +264,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
         // the normal table
         else{
             switch(section){
-                   case 0: return 4
+                   case 0: return 6
                    case 1:
                        guard commentArray.count > 0 else {return 1}
                        return commentArray.count
@@ -310,36 +282,78 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             return editReviewCell
         }
         
-        // The normal table
+        // [START] The normal table
         else if indexPath.section == 0 {
+            // Row 0: Price Level
             if indexPath.row == 0{
-                let cell = restoDetailTable.dequeueReusableCell(withIdentifier: self.addressCellId)
-                cell!.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell!.textLabel?.textColor = .label
-                cell!.textLabel?.text = MyStrings.address.localized()
-                cell!.detailTextLabel?.text = currentResto.address
-                return cell!
-            }else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.textColor = .label
-                cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = MyStrings.phone.localized()
-                cell.detailTextLabel?.text = currentResto.phoneNumber
+                cell.textLabel?.text = "Price Level"
+                
+                if currentResto.priceLevel != nil{
+                  switch(currentResto.priceLevel){
+                  case .cheap:
+                    cell.detailTextLabel?.text = "Cheap"
+                  case .medium:
+                    cell.detailTextLabel?.text = "Medium"
+                  case .high:
+                  cell.detailTextLabel?.text = "High"
+                  case .expensive:
+                    cell.detailTextLabel?.text = "Expensive"
+                  default:
+                    cell.detailTextLabel?.text = "Unknown"
+                  }
+                  
+                }
+                cell.selectionStyle = .none
                 return cell
-            }else if indexPath.row == 2 {
+            }
+            // Row 1: Address
+            else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.textColor = .label
-                cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = MyStrings.url.localized()
-                if currentResto.url != nil{
-                    cell.detailTextLabel?.text = currentResto.url!.absoluteString
-                }else{
-                    cell.detailTextLabel?.text = ""
+                cell.textLabel?.text = "Address"
+                
+                if currentResto.address != nil{
+                  cell.detailTextLabel?.text = currentResto.address
                 }
                 return cell
-            }else{
+            }
+            // Row 2: Phone
+            else if indexPath.row == 2 {
+                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.text = "Phone"
+                if currentResto.phoneNumber != nil{
+                  cell.detailTextLabel?.text = currentResto.phoneNumber
+                }
+                return cell
+            }
+            // Row 3: URL
+            else if indexPath.row == 3 {
+                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.text = "Web Site"
+                if currentResto.url != nil{
+                  cell.detailTextLabel?.text = currentResto.url.absoluteString
+                }
+                return cell
+            }
+            // Row 4: Opening hours
+            else if indexPath.row == 4 {
+                let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.text = "Open Status"
+                if currentResto.openStatus != nil{
+                  cell.detailTextLabel?.text = currentResto.openStatus
+                }
+                return cell
+            }
+            
+            // Row 5: Powered by Google
+                else if indexPath.row == 5 {
+                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                    cell.imageView?.image = UIImage(named: "poweredByGoogle")
+                    cell.selectionStyle = .none
+                    return cell
+                }
+            //
+            else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 // Title
                 cell.selectionStyle = .none
@@ -351,7 +365,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 return cell
             }
-        }else{
+        }// [END] The normal table
+        
+        // The comment section
+        else{
             guard commentArray.count > 0 else {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
@@ -586,56 +603,95 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
     // MARK: Actions
      func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
          if indexPath.section == 0{
-             if indexPath.row == 1{
-                 let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-                 if let number = URL(string: tmpModifiedPhone){
-                     UIApplication.shared.open(number)
-                 }else{
-                     // Can't call
-                     let alert = UIAlertController(
-                        title: MyStrings.callErrorTitle.localized(),
-                        message: MyStrings.callErrorMsg.localized(),
-                         preferredStyle: .alert)
-                     
-                     alert.addAction(UIAlertAction(
-                         title: FoodzLayout.FoodzStrings.buttonOK.localized(),
-                         style: .default,
-                         handler: {
-                             (action: UIAlertAction)->Void in
-                             //do nothing
-                     }))
-                     present(alert, animated: false, completion: nil)
-                     
-                 }
-             }else if indexPath.row == 2{
-                // URL clicked, open the web page
-                if currentResto.url != nil{
-                    let config = SFSafariViewController.Configuration()
-                    config.entersReaderIfAvailable = true
-                    
-                    let vc = SFSafariViewController(url: currentResto.url, configuration: config)
-                    vc.preferredBarTintColor = UIColor.systemBackground
-                    
-                    present(vc, animated: true)
+            // Row 0: Price level - nothing to do
+            
+            // [START] Row 1: Address
+            if indexPath.row == 1 && currentResto.address != nil{
+                let mapURLString = "https://www.google.com/maps/search/?api=1&query=\(currentResto.location.latitude),\(currentResto.location.longitude)&query_place_id=\(currentResto.key)"
+                let mapURL = URL(string: mapURLString)
+                
+                if mapURL != nil{
+                  let config = SFSafariViewController.Configuration()
+                  config.entersReaderIfAvailable = true
+                  
+                  let vc = SFSafariViewController(url: mapURL!, configuration: config)
+                  vc.preferredBarTintColor = UIColor.systemBackground
+                  
+                  present(vc, animated: true)
                 }
-                // No valid URL
+                  // No valid mapURL
                 else{
-                    let alert = UIAlertController(
-                        title: MyStrings.urlErrorTitle.localized(),
-                        message: MyStrings.urlErrorMsg.localized(),
-                        preferredStyle: .alert)
-                    let OKaction = UIAlertAction(
-                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
-                        style: .default, handler:nil)
-                    alert.addAction(OKaction)
-                    self.present(alert, animated:true)
-                    // Deselect row
-                    if let indexPath = restoDetailTable.indexPathForSelectedRow {
-                        restoDetailTable.deselectRow(at: indexPath, animated: true)
-                    }
+                  let alert = UIAlertController(
+                    title: "MyStrings.urlErrorTitle.localized()",
+                    message: "MyStrings.urlErrorMsg.localized()",
+                    preferredStyle: .alert)
+                  let OKaction = UIAlertAction(
+                    title: "FoodzLayout.FoodzStrings.buttonOK.localized()",
+                    style: .default, handler:nil)
+                  alert.addAction(OKaction)
+                  self.present(alert, animated:true)
                 }
-                //
-             }
+                // Deselect row
+                if let indexPath = self.restoDetailTable.indexPathForSelectedRow {
+                  self.restoDetailTable.deselectRow(at: indexPath, animated: true)
+                }
+            } // [END] Row 1
+            
+            // [START] Row 2: Phone number
+            if indexPath.row == 2 && currentResto.phoneNumber != nil {
+                let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+                if let number = URL(string: tmpModifiedPhone){
+                    UIApplication.shared.open(number)
+                }else{
+                    // Can't call
+                    let alert = UIAlertController(
+                       title: MyStrings.callErrorTitle.localized(),
+                       message: MyStrings.callErrorMsg.localized(),
+                        preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(
+                        title: FoodzLayout.FoodzStrings.buttonOK.localized(),
+                        style: .default,
+                        handler: {
+                            (action: UIAlertAction)->Void in
+                            //do nothing
+                    }))
+                    present(alert, animated: false, completion: nil)
+                    
+                }
+            }
+            // [END] Row 2: Phone number
+            
+            // [START] Row 3: URL
+            if indexPath.row == 3 && currentResto.url != nil{
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = true
+                
+                let vc = SFSafariViewController(url: currentResto.url , configuration: config)
+                vc.preferredBarTintColor = UIColor.systemBackground
+                
+                present(vc, animated: true)
+                // Deselect row
+                if let indexPath = restoDetailTable.indexPathForSelectedRow {
+                    restoDetailTable.deselectRow(at: indexPath, animated: true)
+                }
+            } // [END] Row 3: URL
+            
+            // [START] Row 4: Opening hours
+            if indexPath.row == 4 && currentResto.openingHours != nil {
+                let openingHoursTxt = currentResto.openingHours!.weekdayText!.joined(separator: "\n")
+                let openingHoursAlert = UIAlertController(
+                  title: "Opening Hours",
+                  message: openingHoursTxt,
+                  preferredStyle: .alert)
+                let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                openingHoursAlert.addAction(OKAction)
+                self.present(openingHoursAlert, animated: true)
+                // Deselect row
+                if let indexPath = restoDetailTable.indexPathForSelectedRow {
+                    restoDetailTable.deselectRow(at: indexPath, animated: true)
+                }
+            }// [END] Row 4: Opening hours
          }
      }
     
@@ -739,19 +795,22 @@ extension MyRestoDetail{
                 self.restoReviewLiked[i] = snapshot.exists()
                 
                 //2. Get the numb of likes
-                self.restoReviewsLikesNbHandle.append((handle: SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
-                    if likesNbSnap.exists(),
-                        let nbLikes = likesNbSnap.value as? Int{
-                        self.restoReviewsLikeNb[i] = nbLikes
-                    }else{
-                        self.restoReviewsLikeNb[i] = 0
-                    }
-                    // Update by row, section 1 (comments)
-                    self.restoDetailTable.reloadRows(
-                    at: [IndexPath(row: i, section: 1)],
-                    with: .none)
+                if snapshot.exists(){
+                    self.restoReviewsLikesNbHandle.append((handle: SomeApp.dbRestoReviewsLikesNb.child(dbPath).observe(.value, with: {likesNbSnap in
+                        if likesNbSnap.exists(),
+                            let nbLikes = likesNbSnap.value as? Int{
+                            self.restoReviewsLikeNb[i] = nbLikes
+                        }else{
+                            self.restoReviewsLikeNb[i] = 0
+                        }
+                        // Update by row, section 1 (comments)
+                        self.restoDetailTable.reloadRows(
+                            at: [IndexPath(row: i, section: 1)],
+                            with: .none)
+                        
+                    }),dbPath:dbPath))
                     
-                }),dbPath:dbPath))
+                }// [END] 2. Get the numb of likes
             }), dbPath:dbPath))
         }
         
@@ -767,6 +826,21 @@ extension MyRestoDetail: UITextViewDelegate {
         guard let stringRange = Range(range, in: currentText) else {return false}
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         return changedText.count <= 2500
+    }
+    
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        if textView == self.imageAttributions{
+            return false
+        }
+        return true
+        
+    }
+    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        if textView == self.imageAttributions{
+            return true
+        }
+        return false
     }
     
 }
@@ -861,7 +935,6 @@ extension MyRestoDetail {
                     // then add to ranking
                     SomeApp.addRestoToRanking(userId: self.user.uid,
                                               resto: self.currentResto,
-                                              mapItem: self.currentRestoMapItem,
                                               forFood: self.currentFood,
                                               foodId: self.currentFood.key,
                                               city: self.currentCity)
@@ -881,7 +954,6 @@ extension MyRestoDetail {
             else{
                 SomeApp.addRestoToRanking(userId: self.user.uid,
                                           resto: self.currentResto,
-                                          mapItem: self.currentRestoMapItem,
                                           forFood: self.currentFood,
                                           foodId: self.currentFood.key,
                                           city: self.currentCity)
@@ -1043,6 +1115,127 @@ extension MyRestoDetail: GADBannerViewDelegate{
     // the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         //print("adViewWillLeaveApplication")
+    }
+}
+
+// MARK: Picture stuff
+extension MyRestoDetail{
+  //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
+  func squareImage(image: UIImage) -> UIImage{
+      let originalWidth  = image.size.width
+      let originalHeight = image.size.height
+      var x: CGFloat = 0.0
+      var y: CGFloat = 0.0
+      var edge: CGFloat = 0.0
+      
+    /*
+      if (originalWidth > originalHeight) {
+          // landscape
+          edge = originalHeight
+          x = (originalWidth - edge) / 2.0
+          y = 0.0
+          
+      } else if (originalHeight >= originalWidth) {
+        // portrait
+        edge = originalWidth
+        x = 0.0
+        y = (originalHeight / 2.0 ) - (originalWidth * (9/16) / 2.0 )
+      }
+      */
+    edge = originalWidth
+    x = 0.0
+    y = (originalHeight / 2.0 ) - (1 / 2.0)*(originalWidth * (9/16))
+    
+      let cropSquare = CGRect(x: x, y: y, width: edge, height: edge*9/16)
+      let imageRef = image.cgImage!.cropping(to: cropSquare)!;
+      
+      return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
+  }
+}
+
+// MARK: Google stuff
+extension MyRestoDetail{
+    // Get and show the photo from Google
+    private func getDetailsfromPlaceID(placeID: String){
+        // Specify the place data types to return
+        let formattedAddressRawValue = UInt(GMSPlaceField.formattedAddress.rawValue)
+        let phoneRawValue = UInt(GMSPlaceField.phoneNumber.rawValue)
+        let webRawValue = UInt(GMSPlaceField.website.rawValue)
+        let gmsPhotosRaw = UInt(GMSPlaceField.photos.rawValue)
+        let gmsOpeningHoursRaw = UInt(GMSPlaceField.openingHours.rawValue)
+        let gmsUTCOffSetRaw = UInt(GMSPlaceField.utcOffsetMinutes.rawValue)  // needed to calculate openStatus
+        let gmsCoordinateRaw = UInt(GMSPlaceField.coordinate.rawValue)
+        let gmsPriceRaw = UInt(GMSPlaceField.priceLevel.rawValue)
+      
+        let fields: GMSPlaceField = GMSPlaceField(rawValue:
+            formattedAddressRawValue | phoneRawValue | webRawValue | gmsPhotosRaw | gmsOpeningHoursRaw | gmsUTCOffSetRaw | gmsCoordinateRaw | gmsPriceRaw)!
+        
+        placesClient.fetchPlace(
+            fromPlaceID: placeID,
+            placeFields: fields,
+            sessionToken: nil, callback: {
+                (place: GMSPlace?, error: Error?) in
+                if let error = error {
+                    print("An error occurred: \(error.localizedDescription)")
+                    return
+                }
+                if let place = place {
+                    
+                    // Save optional items
+                    self.currentResto.address = place.formattedAddress ?? ""
+                    self.currentResto.phoneNumber = place.phoneNumber ?? ""
+                    self.currentResto.url = place.website ?? nil
+                    self.currentResto.openingHours = place.openingHours ?? nil
+                    
+                    // Save non optinal items
+                    self.currentResto.location = place.coordinate
+                    self.currentResto.priceLevel = place.priceLevel
+                    
+                    // Save the opening Hours
+                    switch(place.isOpen()){
+                    case .open:
+                        self.currentResto.openStatus = "Open now"
+                    case .closed:
+                        self.currentResto.openStatus  = "Closed now"
+                    case .unknown:
+                        self.currentResto.openStatus  = "Unknown"
+                    default:
+                        print("cannot")
+                    }
+                    
+                    // Places attributions
+                    self.currentResto.attributions = place.attributions ?? nil
+                    if place.attributions != nil{
+                        print("XXXX")
+                        print(place.attributions)
+                    }
+                    
+                    // Get the metadata for the first photo in the place photo metadata list.
+                    let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
+                    
+                    // Call loadPlacePhoto to display the bitmap and attribution.
+                    self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
+                        if let error = error {
+                            // TODO: Handle the error.
+                            print("Error loading photo metadata: \(error.localizedDescription)")
+                            return
+                        } else {
+                            // Display the first image and its attributions
+                            let tmpImage = self.squareImage(image: photo!)
+                            self.restoImage?.contentMode = .center
+                            self.restoImage?.image = tmpImage
+                            
+                            self.imageAttributions.attributedText = photoMetadata.attributions
+                            
+                        }
+
+                        
+                    })
+                }
+        self.restoDetailTable.reloadData()
+        })
+        
+        
     }
 }
 

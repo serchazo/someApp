@@ -10,7 +10,9 @@ import UIKit
 import Firebase
 import FacebookCore
 import CoreLocation
-import UserNotifications 
+import UserNotifications
+import GoogleMaps
+import GooglePlaces
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let gcmMessageIDKey = "gcm.message_id"
     let locationManagerT = CLLocationManager()
+    // Same cred for both Maps and Places
+    let googleApiKey = "AIzaSyD71x1Yii0yuHnezO8JumRsCegwCORCvPQ"
+
     
     override init(){
         // Firebase config
@@ -36,9 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set the colors of navigation bar
         let navigationBarAppearace = UINavigationBar.appearance()
         navigationBarAppearace.tintColor = .label // Butons color
-        //navigationBarAppearace.barTintColor = .systemBackground //Background color
-        //navigationBarAppearace.titleTextAttributes = [
-        //    NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body)]
         
         // Location stuff
         locationManagerT.requestWhenInUseAuthorization()
@@ -68,6 +70,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }*/
         
         application.registerForRemoteNotifications()
+        
+        // [END] Notifications stuff
+        
+        //Initialize Google Services
+        GMSServices.provideAPIKey(googleApiKey)
+        GMSPlacesClient.provideAPIKey(googleApiKey)
         
         return true
     }

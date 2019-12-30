@@ -9,11 +9,12 @@
 import UIKit
 import MapKit
 import Firebase
+import GooglePlaces
+import GoogleMaps
 
 class ThisRanking: UIViewController {
     // class variables
     private static let showRestoDetail = "ShowResto"
-    private static let addResto = "addNewResto"
     private static let delRestoCell = "delRestoCell"
     private static let screenSize = UIScreen.main.bounds.size
     private let editReviewCell = "EditReviewCell"
@@ -37,7 +38,6 @@ class ThisRanking: UIViewController {
     private var userReviewsRef : DatabaseReference!
     private var restoDatabaseReference: DatabaseReference!
     private var restoPointsDatabaseReference: DatabaseReference!
-    private var restoAddressDatabaseReference: DatabaseReference!
     private var thisRanking: [Resto] = []
     private var thisEditableRanking: [Resto] = []
     private var thisRankingReviews: [(text: String, timestamp: Double)] = []
@@ -89,6 +89,11 @@ class ThisRanking: UIViewController {
     
     // Ad stuff
     private var bannerView: GADBannerView!
+    
+    // Google stuff
+    private let autocompleteController = GMSAutocompleteViewController()
+    private let locationManager = CLLocationManager()
+    private var placesClient: GMSPlacesClient!
     
     // Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -166,13 +171,15 @@ class ThisRanking: UIViewController {
         thisRankingId = currentCity.country + "/" + currentCity.state + "/" + currentCity.key+"/" + currentFood.key
         restoDatabaseReference = SomeApp.dbResto.child(thisRankingIdwithoutFood)
         restoPointsDatabaseReference = SomeApp.dbRestoPoints.child(thisRankingId)
-        restoAddressDatabaseReference = SomeApp.dbRestoAddress
         
         // Some setup
         myRankingTable.estimatedRowHeight = 100
         myRankingTable.rowHeight = UITableView.automaticDimension
-        
         myRankingTable.separatorInset = .zero
+        
+        // Location stuff
+        locationManager.delegate = self
+        locationManager.startUpdatingLocation()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -443,7 +450,7 @@ class ThisRanking: UIViewController {
     func initializeArray(withElements: Int) -> [Resto] {
         var tmpRestoList: [Resto] = []
         for _ in 0..<withElements {
-            tmpRestoList.append(Resto(name: "placeHolder", city: "placeholder"))
+            tmpRestoList.append(Resto(key: "0", name: "placeholder"))
         }
         return tmpRestoList
     }
@@ -484,11 +491,7 @@ class ThisRanking: UIViewController {
     
     // MARK: Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        if identifier == ThisRanking.addResto{
-            return true
-        }else{
-            return false
-        }
+        return false
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -510,11 +513,6 @@ class ThisRanking: UIViewController {
                     }
                     
                 }
-            case ThisRanking.addResto:
-                if let seguedMVC = segue.destination as? MapSearchViewController{
-                    seguedMVC.delegate = self
-                }
-                
             default: break
             }
         }
@@ -813,6 +811,39 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         }else{
             return UITableView.automaticDimension
         }
+    }
+    
+    // MARK : Actions
+    // MARK: Actions
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // [START] If press on Add ranking cell, then we go to google
+        if tableView == myRankingTable && indexPath.section == 1{
+            //Assign the parent view controller as the delegate property.
+            autocompleteController.delegate = self
+            autocompleteController.autocompleteBoundsMode = .restrict
+            
+            // Specify the place data types to return.
+            let nameRawValue = UInt(GMSPlaceField.name.rawValue)
+            //let formattedAddressRawValue = UInt(GMSPlaceField.formattedAddress.rawValue)
+            //let phoneRawValue = UInt(GMSPlaceField.phoneNumber.rawValue)
+            //let webRawValue = UInt(GMSPlaceField.website.rawValue)
+            let placeIDRawValue = UInt(GMSPlaceField.placeID.rawValue)
+            
+            let rawValueExpression:UInt = nameRawValue | placeIDRawValue
+            
+            let fields: GMSPlaceField = GMSPlaceField(rawValue:rawValueExpression)!
+            
+            autocompleteController.placeFields = fields
+            
+            //Add a GMSAutocompleteFilter to constrain the query to a particular type of place.
+            let filter = GMSAutocompleteFilter()
+            filter.type = .establishment
+            autocompleteController.autocompleteFilter = filter
+            
+            // Display the autocomplete view controller.
+            present(autocompleteController, animated: true, completion: nil)
+        }
+        // [START] If press on Add ranking cell, then we go to google
     }
 }
 
@@ -1139,49 +1170,6 @@ extension ThisRanking{
     
 }
 
-// MARK: Add new resto
-
-extension ThisRanking: MyRanksMapSearchViewDelegate{
-    //
-    func restaurantChosenFromMap(someMapItem: MKMapItem) {
-        var addressKey = ""
-        if someMapItem.placemark.thoroughfare != nil {
-            addressKey = someMapItem.placemark.thoroughfare!
-        }
-        
-        let tmpResto = Resto(name: someMapItem.placemark.name!, city: currentCity.key, addressKey: addressKey)
-        
-        // Verify if the resto exists in the ranking
-        if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
-           showAlertDuplicateRestorant()
-        }else{
-            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, mapItem: someMapItem, forFood: currentFood, foodId: currentFood.key, city: currentCity)
-        }
-    }
-    
-    // Helper functions
-    func showAlertDuplicateRestorant(){
-        let alert = UIAlertController(
-            title: MyStrings.duplicateTitle.localized(),
-            message: MyStrings.duplicateMsg.localized(),
-            preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
-            style: .default,
-            handler: {
-                (action: UIAlertAction)->Void in
-                //do nothing
-        }))
-        present(alert, animated: false, completion: nil)
-    }
-    // Helper func to convert to Any
-    func positionToAny(position: Int, restoKey: String) -> Any{
-        return ["position": position, "restoId": restoKey]
-    }
-    
-}
-
 // MARK: Extension for Drag
 extension ThisRanking: UITableViewDragDelegate{
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
@@ -1292,6 +1280,85 @@ extension ThisRanking: MyRestoDelegate{
             self.indexPlaceholder = index!
             editReview()
         }
+    }
+}
+
+// MARK: - CLLocationManagerDelegate
+extension ThisRanking: CLLocationManagerDelegate{
+    
+    // When we get the location we update the AutoComplete
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else {
+            return
+        }
+        
+        let lat = location.coordinate.latitude
+        let long = location.coordinate.longitude
+        print(lat.description + "  " + long.description)
+        
+        let offset = 200.0 / 1000.0;
+        let latMax = lat + offset;
+        let latMin = lat - offset;
+        
+        let lngOffset = offset * cos(lat * .pi / 200.0);
+        let lngMax = long + lngOffset;
+        let lngMin = long - lngOffset;
+        
+        let initialLocation = CLLocationCoordinate2D(latitude: latMax, longitude: lngMax)
+        let otherLocation = CLLocationCoordinate2D(latitude: latMin, longitude: lngMin)
+        let bounds = GMSCoordinateBounds(coordinate: initialLocation, coordinate: otherLocation)
+        
+        autocompleteController.autocompleteBounds = bounds
+    }
+}
+
+// MARK: GMSAutocompleteViewControllerDelegate stuff
+extension ThisRanking: GMSAutocompleteViewControllerDelegate{
+    // Handle the user's selection.
+    // This one will pass the result to the resto creator
+    func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        
+        let restoId = place.placeID ?? ""
+        let restoName = place.name ?? ""
+        
+        let tmpResto = Resto(key: restoId, name: restoName)
+        
+        // Verify if the resto exists in the ranking
+        if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
+           showAlertDuplicateRestorant()
+        }else{
+            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, forFood: currentFood, foodId: currentFood.key, city: currentCity)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+        print("An error occurred \(error.localizedDescription)")
+    }
+    
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    // Helper functions for adding a resto
+    func showAlertDuplicateRestorant(){
+        let alert = UIAlertController(
+            title: MyStrings.duplicateTitle.localized(),
+            message: MyStrings.duplicateMsg.localized(),
+            preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(
+            title: FoodzLayout.FoodzStrings.buttonOK.localized(),
+            style: .default,
+            handler: {
+                (action: UIAlertAction)->Void in
+                //do nothing
+        }))
+        present(alert, animated: false, completion: nil)
+    }
+    // Helper func to convert to Any
+    func positionToAny(position: Int, restoKey: String) -> Any{
+        return ["position": position, "restoId": restoKey]
     }
 }
 

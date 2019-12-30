@@ -25,6 +25,8 @@ Localized strings.
 "FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
 
 "FOODZ_DB_FOOD_TYPE" = "foodType";
+"FOODZ_DB_GEOGRAPY"="geography";
+"FOODZ_DB_GEOGRAPY_COUNTRIES"="geography-countries";
 
 "LOGIN_EMAIL" = "Enter your e-mail";
 "LOGIN_CREATE_ACCOUNT" = "Create account";
@@ -186,12 +188,6 @@ Localized strings.
 "ADDRANKING_NAVBAR_TITLE" = "Add a ranking";
 "ADDRANKING_HEADER_TITLE" = "Choose food type";
 "ADDRANKING_HEADER_CITY" = "Current city: %@";
-
-"MAPSEARCH_SEARCHBAR_PLACEHOLDER" = "Search for your fav' places";
-"MAPSEARCH_SEARCH_ERROR" = "Could not find any places.";
-"MAPSEARCH_LOCATION_DISABLED_TITLE" = "Location Services Disabled";
-"MAPSEARCH_LOCATION_DISABLED_MSG" = "Enable location services to improve search accuracy and speed.";
-"MAPSEARCH_SEARCHCELL_PLACEHOLDER" = "Use the search bar to look for your fav' places";
 
 "MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
 "MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Feedback on Foodz.guru";

@@ -240,7 +240,7 @@ class BestRestosViewController: UIViewController {
         restoPointsHandle.append((handle: SomeApp.dbRestoPoints.child(cityDBPath).observe(.value, with: { snapshot in
             // What to do if the list is empty
             guard snapshot.exists() else {
-                self.thisRanking.append(Resto(name: "placeholder", city: "placeholder"))
+                self.thisRanking.append(Resto(key: "0",name: "placeholder"))
                 self.restoRankTableView.reloadData()
                 self.emptyListFlag = true
                 return

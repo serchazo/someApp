@@ -25,6 +25,8 @@ Localized strings.
 "FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
 
 "FOODZ_DB_FOOD_TYPE" = "foodType_ES";
+"FOODZ_DB_GEOGRAPY"="geography_ES";
+"FOODZ_DB_GEOGRAPY_COUNTRIES"="geography-countries_ES";
 
 "LOGIN_EMAIL" = "Ingrese su correo electrónico";
 "LOGIN_CREATE_ACCOUNT" = "Crear cuenta";
@@ -80,7 +82,7 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configure su perfil (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Continuar";
 
-"HOME_FIRST_POST" = "Hola% @! Bienvenido a foodz.guru, cuando le dé click en Seguir a los amantes de la comida y las clasificaciones, verá aquí sus actualizaciones más importantes.";
+"HOME_FIRST_POST" = "Hola% @! Bienvenido a foodz.guru, cuando le dés click en seguir a los Foodies y los Rankings, verás aquí sus actualizaciones más importantes.";
 "HOME_POST_NEWRANKING" = "Nuevo ranking";
 "HOME_POST_NEWFOLLOWER" = "¡Seguidor!";
 "HOME_POST_NEWYUM" = "¡Yum!";
@@ -158,7 +160,7 @@ Localized strings.
 "THISRANKING_DESCRIPTION_TITLE" = "Descripción";
 "THISRANKING_BUTTON_DELETE_ASK" = "¿Eliminar restaurante?";
 "THISRANKING_BUTTON_DELETE_TITLE" = "Eliminar";
-"THISRANKING_EMPTY_TITLE_ME" = "¡Aún no hay lugares en su lista de %@!";
+"THISRANKING_EMPTY_TITLE_ME" = "¡Aún no hay lugares en su lista!";
 "THISRANKING_EMPTY_TITLE_USER" = "Todavía no hay %@ en la lista de %@";
 "THISRANKING_EMPTY_MSG_ME" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
 "THISRANKING_EMPTY_MSG_USER" = "¡Regrese pronto y revise la lista!";
@@ -186,12 +188,6 @@ Localized strings.
 "ADDRANKING_NAVBAR_TITLE" = "Agregar un Ranking";
 "ADDRANKING_HEADER_TITLE" = "Elija el tipo de lugar";
 "ADDRANKING_HEADER_CITY" = "Ciudad actual: %@";
-
-"MAPSEARCH_SEARCHBAR_PLACEHOLDER" = "Busque sus lugares favoritos";
-"MAPSEARCH_SEARCH_ERROR" = "No se encontraron lugares";
-"MAPSEARCH_LOCATION_DISABLED_TITLE" = "Servicios de ubicación deshabilitados";
-"MAPSEARCH_LOCATION_DISABLED_MSG" = "Habilitar servicios de ubicación para mejorar la precisión y velocidad de búsqueda";
-"MAPSEARCH_SEARCHCELL_PLACEHOLDER" = "Use la barra de búsqueda para buscar sus lugares favoritos";
 
 "MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
 "MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Comentarios sobre foodz.guru";
@@ -276,10 +272,6 @@ Localized strings.
 "BESTRESTOS_COOLPHRASE_2" = "La gente ha hablado ...";
 "BESTRESTOS_COOLPHRASE_3" = "¿Está tu lugar favorito en la lista?";
 "BESTRESTOS_COOLPHRASE_4" = "¡Preparados, listos, a probar!";
-
-//General
-"MYRESTOMAP_BOX" = "Haga clic en el pin para obtener direcciones";
-"MYRESTOMAP_PIN" = "Obtener direcciones";
 
 "COUNTRYCHOSER_COUNTRY_TITLE" = "Elija su país";
 "COUNTRYCHOSER_CITY_TITLE" = "Elija su ciudad";

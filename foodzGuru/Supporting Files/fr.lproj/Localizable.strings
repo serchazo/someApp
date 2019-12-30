@@ -24,6 +24,8 @@ Localized strings.
 "FOODZ_EULA_PRIVACY_POLICY_URL" = "https://foodzdotguru.wordpress.com/privacy-policy/";
 
 "FOODZ_DB_FOOD_TYPE" = "foodType_FR";
+"FOODZ_DB_GEOGRAPY"="geography_FR";
+"FOODZ_DB_GEOGRAPY_COUNTRIES"="geography-countries_FR";
 
 "LOGIN_EMAIL" = "Entrez votre e-mail";
 "LOGIN_CREATE_ACCOUNT" = "Créer un compte";
@@ -135,7 +137,7 @@ Localized strings.
 "MYRANKS_DUPLICATE_RANKING_MSG" = "Vous avez déjà un classement de %@ à %@.";
 "MYRANKS_EMPTY_RANKING_TITLE" = "Pas encore de classement à %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Cliquez sur + et informez le monde de vos endroits préférés!";
-"MYRANKS_BESTPLACES_TITLE" = "Meilleurs %@ à %@";
+"MYRANKS_BESTPLACES_TITLE" = "Les top %@ à %@";
 "MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "J'ai passé ma vie à chercher les meilleurs %@ à %@. Voici la liste définitive.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "Abonnés";
@@ -152,7 +154,7 @@ Localized strings.
 "MYCITIES_DUPLICATE_TITLE" = "Ville dupliquée";
 "MYCITIES_DUPLICATE_MSG" = "Vous avez déjà un classement à %@.";
 
-"THISRANKING_HEADER_TITLE_ME" = "Mes %@ préférés à %@";
+"THISRANKING_HEADER_TITLE_ME" = "Mes top %@ à %@";
 "THISRANKING_HEADER_TITLE_USER" = "La liste de %@: les top %@ à %@";
 "THISRANKING_DESCRIPTION_TITLE" = "Description";
 "THISRANKING_BUTTON_DELETE_ASK" = "Supprimer le restaurant?";
@@ -185,12 +187,6 @@ Localized strings.
 "ADDRANKING_NAVBAR_TITLE" = "Ajouter un classement";
 "ADDRANKING_HEADER_TITLE" = "Choisissez le type de nourriture";
 "ADDRANKING_HEADER_CITY" = "Ville actuelle: %@";
-
-"MAPSEARCH_SEARCHBAR_PLACEHOLDER" = "Rechercher vos endroits favoris";
-"MAPSEARCH_SEARCH_ERROR" = "Impossible de trouver des endroits.";
-"MAPSEARCH_LOCATION_DISABLED_TITLE" = "Services de localisation désactivés";
-"MAPSEARCH_LOCATION_DISABLED_MSG" = "Activez les services de localisation pour améliorer la précision et la vitesse de recherche.";
-"MAPSEARCH_SEARCHCELL_PLACEHOLDER" = "Utilisez la barre de recherche pour rechercher vos lieux favoris";
 
 "MYPROFILE_SUPPORT_EMAIL_ADDRESS" = "support@foodz.guru";
 "MYPROFILE_SUPPORT_EMAIL_SUBJECT" = "Commentaires sur foodz.guru";
@@ -261,7 +257,7 @@ Localized strings.
 // Search
 "SEARCH_BUTTON_CHANGECITY" = "Changer de ville";
 
-"BESTRESTOS_HEADER_TITLE" = "Les meilleurs %@ à %@";
+"BESTRESTOS_HEADER_TITLE" = "Les top %@ à %@";
 "BESTRESTOS_FOLLOW" = "Suivre";
 "BESTRESTOS_UNFOLLOW" = "Se désabonner";
 "BESTRESTOS_FOLLOWERS" = "Abonnés";

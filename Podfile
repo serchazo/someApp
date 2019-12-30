@@ -6,21 +6,25 @@ target 'foodzGuru' do
     use_frameworks!
 
     # Pods for foodzGuru
-    # add the Firebase pod for Google Analytics
+    
+    # Firebase pods
     pod 'Firebase/Analytics'
-
     pod 'Firebase/Core', :inhibit_warnings => true
     pod 'Firebase/Database', :inhibit_warnings => true
     pod 'Firebase/Auth', :inhibit_warnings => true
 
-    #Storage pod
+    # Firebase Storage pod
     pod 'Firebase/Storage'
     
-    #Messaging pod - for Push Notifications
+    # Firebase Messaging pod - for Push Notifications
     pod 'Firebase/Messaging' 
     
-    # add the Firebase pod for AdMob
+    # Firebase pod for AdMob
     pod 'Firebase/AdMob'
+    
+    # Google Maps and Places
+    pod 'GoogleMaps'
+    pod 'GooglePlaces'
     
     # Pods for Facebook
     pod 'FacebookCore'

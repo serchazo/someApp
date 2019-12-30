@@ -20,7 +20,6 @@ class SomeApp{
     static let dbFoodTypeRoot:DatabaseReference = dbRootRef.child(MyStrings.dbFoodType.localized())
     static let dbResto:DatabaseReference = dbRootRef.child("resto")
     static let dbRestoPoints:DatabaseReference = dbRootRef.child("resto-points")
-    static let dbRestoAddress: DatabaseReference = dbRootRef.child("resto-address")
     static let dbUserActivity:DatabaseReference = dbRootRef.child("user-activity")
     static let dbUserData:DatabaseReference = dbRootRef.child("user-data")
     static let dbUserDevices:DatabaseReference = dbRootRef.child("user-devices")
@@ -53,8 +52,8 @@ class SomeApp{
     static let dbRankingFollowersNb:DatabaseReference = dbRootRef.child("rankings-followers-nb")
     
     //geography
-    static let dbGeography:DatabaseReference = dbRootRef.child("geography")
-    static let dbGeographyCountry:DatabaseReference = dbRootRef.child("geography-countries")
+    static let dbGeography:DatabaseReference = dbRootRef.child(MyStrings.dbGeography.localized())
+    static let dbGeographyCountry:DatabaseReference = dbRootRef.child(MyStrings.dbGeographyCountries.localized())
     static let dbGeographyStates:DatabaseReference = dbRootRef.child("geography-state")
 
     // MARK: storage
@@ -84,10 +83,6 @@ class SomeApp{
     static let adBAnnerUnitID = "ca-app-pub-5723552712049473/6238131752"
     static let adNativeUnitID = "ca-app-pub-5723552712049473/6280641581"
     
-    // the fonts
-    static var titleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .title2).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(25.0))
-    }
     
     // MARK: User timeline
     static func createUserFirstLogin(userId: String, username: String, bio: String, defaultCity:String, photoURL: String = "", deviceToken:String = ""){
@@ -345,7 +340,7 @@ class SomeApp{
     }
     
     // Add resto to Ranking : we need to check the model first
-    static func addRestoToRanking(userId: String, resto: Resto, mapItem: MKMapItem, forFood:FoodType, foodId: String,city: City){
+    static func addRestoToRanking(userId: String, resto: Resto, forFood:FoodType, foodId: String,city: City){
         let dbPath = city.country + "/" + city.state + "/" + city.key
         
         // A. Check if the resto exists in the resto list
@@ -353,16 +348,8 @@ class SomeApp{
             
             // If the restorant doesn't exist, we need to create it and add it
             if !snapshot.exists(){
-                // Add resto details
-                if mapItem.url != nil{ resto.url = mapItem.url! }
-                if mapItem.phoneNumber != nil {resto.phoneNumber = mapItem.phoneNumber!}
-                if mapItem.placemark.formattedAddress != nil {
-                    resto.address = mapItem.placemark.formattedAddress!}
-                // Write to Resto DB
                 let newRestoRef = self.dbResto.child(dbPath).child(resto.key)
-                newRestoRef.setValue(resto.toAnyObject())
-                // Add the resto to the Address DB
-                SomeApp.addrestoAddressToModel(mapItem: mapItem, resto: resto, city:city)
+                newRestoRef.child("name").setValue(resto.name)
             }
             // Still need to add to ranking
             addRestoUserRanking(userid: userId, resto: resto, city: city, foodId: foodId)
@@ -390,24 +377,6 @@ class SomeApp{
                 }
             }
         })
-    }
-    
-    // Add restoAddressToModel
-    private static func addrestoAddressToModel(mapItem: MKMapItem, resto: Resto, city: City){
-        let dbPath = city.country + "/" + city.state + "/" + city.key
-        let restoAddress = RestoMapArray(fromMapItem: mapItem)
-        let encoder = JSONEncoder()
-        
-        do {
-            let encodedMapItem = try encoder.encode(restoAddress)
-            let encodedMapItemForFirebase = NSString(data: encodedMapItem, encoding: String.Encoding.utf8.rawValue)
-            
-            let again = dbRestoAddress.child(dbPath).child(resto.key).child("address")
-            again.setValue(encodedMapItemForFirebase)
-            
-        } catch {
-            print(error.localizedDescription)
-        }
     }
     
     // MARK: Add/update/Like/Disklike Review
@@ -551,6 +520,8 @@ enum ReportActions:String,CaseIterable{
 extension SomeApp{
     enum MyStrings {
         case dbFoodType
+        case dbGeography
+        case dbGeographyCountries
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -559,6 +530,16 @@ extension SomeApp{
                 format: NSLocalizedString("FOODZ_DB_FOOD_TYPE", comment: "Configure"),
                 locale: .current,
                 arguments: arguments)
+            case .dbGeography:
+                return String(
+                    format: NSLocalizedString("FOODZ_DB_GEOGRAPY", comment: "Citys"),
+                    locale: .current,
+                    arguments: arguments)
+            case .dbGeographyCountries:
+                return String(
+                    format: NSLocalizedString("FOODZ_DB_GEOGRAPY_COUNTRIES", comment: "Countries"),
+                    locale: .current,
+                    arguments: arguments)
                 
             }
         }

@@ -181,7 +181,6 @@ class SearchViewController: UIViewController {
 extension SearchViewController: CountryChooserViewDelegate{
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
-        cityNavBarButton.title = city.name
         loadFoodTypesFromDB()
     }
 }

@@ -27,8 +27,6 @@ class FirstLoginFourthScreen: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!{
         didSet{
-            titleLabel.font = SomeApp.titleFont
-            titleLabel.textColor = SomeApp.themeColor
             titleLabel.text = MyStrings.title.localized()
         }
     }
