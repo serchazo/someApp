@@ -103,7 +103,7 @@ Localized strings.
 "NOTIFICATION_FOLLOWER_TITLE" = "New follower!";
 "NOTIFICATION_FOLLOWER_MSG" = "%@ is now following you on foodz.guru.";
 "NOTIFICATION_BESTINRANK_TITLE" = "New best!";
-"NOTIFICATION_BESTINRANK_MSG" = "There is a new best &@ place in %@! Let's go taste?";
+"NOTIFICATION_BESTINRANK_MSG" = "There is a new best %@ place in %@! Let's go taste?";
 
 "FOODIES_SEARCH_PLACEHOLDER" = "Search for More Foodies";
 "FOODIES_LOADING" = "Getting Foodies' data";

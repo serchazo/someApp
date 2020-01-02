@@ -226,10 +226,10 @@ class MyRestoDetail: UIViewController {
         // Add to my foodz button
         if restoInRankingFlag {
             self.addToRankButton.isEnabled = false
-            //self.addToRankButton.isHidden = true
+            self.addToRankButton.isHidden = true
         }else{
             self.addToRankButton.isEnabled = true
-            //self.addToRankButton.isHidden = false
+            self.addToRankButton.isHidden = false
         }
         
     }
@@ -331,7 +331,9 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.text = "Web Site"
                 if currentResto.url != nil{
-                  cell.detailTextLabel?.text = currentResto.url.absoluteString
+                    cell.detailTextLabel?.text = currentResto.url.absoluteString
+                }else{
+                    cell.selectionStyle = .none
                 }
                 return cell
             }
@@ -340,7 +342,9 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.text = "Open Status"
                 if currentResto.openStatus != nil{
-                  cell.detailTextLabel?.text = currentResto.openStatus
+                    cell.detailTextLabel?.text = currentResto.openStatus
+                }else{
+                    cell.selectionStyle = .none
                 }
                 return cell
             }
@@ -1120,7 +1124,8 @@ extension MyRestoDetail: GADBannerViewDelegate{
 
 // MARK: Picture stuff
 extension MyRestoDetail{
-  //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
+  
+    //  Resize Image: from https://gist.github.com/licvido/55d12a8eb76a8103c753
   func squareImage(image: UIImage) -> UIImage{
       let originalWidth  = image.size.width
       let originalHeight = image.size.height
@@ -1144,9 +1149,9 @@ extension MyRestoDetail{
       */
     edge = originalWidth
     x = 0.0
-    y = (originalHeight / 2.0 ) - (1 / 2.0)*(originalWidth * (9/16))
+    y = (originalHeight / 2.0 ) - (1 / 2.0)*(originalWidth * (3/4))
     
-      let cropSquare = CGRect(x: x, y: y, width: edge, height: edge*9/16)
+      let cropSquare = CGRect(x: x, y: y, width: edge, height: edge*3/4)
       let imageRef = image.cgImage!.cropping(to: cropSquare)!;
       
       return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
@@ -1210,27 +1215,25 @@ extension MyRestoDetail{
                         print(place.attributions)
                     }
                     
-                    // Get the metadata for the first photo in the place photo metadata list.
-                    let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
-                    
-                    // Call loadPlacePhoto to display the bitmap and attribution.
-                    self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
-                        if let error = error {
-                            // TODO: Handle the error.
-                            print("Error loading photo metadata: \(error.localizedDescription)")
-                            return
-                        } else {
-                            // Display the first image and its attributions
-                            let tmpImage = self.squareImage(image: photo!)
-                            self.restoImage?.contentMode = .center
-                            self.restoImage?.image = tmpImage
-                            
-                            self.imageAttributions.attributedText = photoMetadata.attributions
-                            
-                        }
-
+                    if place.photos != nil{
+                        // Get the metadata for the first photo in the place photo metadata list.
+                        let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
                         
-                    })
+                        // Call loadPlacePhoto to display the bitmap and attribution.
+                        self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
+                            if let error = error {
+                                // TODO: Handle the error.
+                                print("Error loading photo metadata: \(error.localizedDescription)")
+                                return
+                            } else {
+                                // Display the first image and its attributions
+                                let tmpImage = self.squareImage(image: photo!)
+                                self.restoImage?.image = tmpImage
+                                
+                                self.imageAttributions.attributedText = photoMetadata.attributions
+                            }
+                        })
+                    }
                 }
         self.restoDetailTable.reloadData()
         })
