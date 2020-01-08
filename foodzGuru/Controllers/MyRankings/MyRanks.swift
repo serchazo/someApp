@@ -616,6 +616,10 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
         }
         // Icon cells
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
+            cell.layer.borderWidth = 0.9
+            cell.layer.cornerRadius = 7
+            cell.layer.masksToBounds = true
+            cell.layer.borderColor = UIColor.opaqueSeparator.cgColor
             
             cell.cellIcon.text = rankings[indexPath.row].icon
             cell.cellLabel.text = rankings[indexPath.row].name
@@ -637,60 +641,13 @@ extension MyRanks{
     func generateLayout() -> UICollectionViewLayout {
         // Insets
         let insets = NSDirectionalEdgeInsets(
-            top: 2,
-            leading: 2,
-            bottom: 2,
-            trailing: 2)
+            top: 6,
+            leading: 6,
+            bottom: 6,
+            trailing: 6)
+
       
-        // We have three row styles
-        // Style 1: 'Full': A full width photo
-        // Style 2: 'Main with pair': A 2/3 width photo with two 1/3 width photos stacked vertically
-        // Style 3: 'Triplet': Three 1/3 width photos stacked horizontally
-        
-        // I. First type. Full
-        let fullPhotoItem = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                //heightDimension: .fractionalWidth(3/4)))
-                heightDimension: .fractionalWidth(5.2/8))) // slightly smaller than 3/4 for the label not to be too big
-        
-        fullPhotoItem.contentInsets = insets
-      
-        // II. Second type: Main with pair
-        /* Reserve
-        let mainItem = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(2/3),
-                heightDimension: .fractionalHeight(1.0)))
-        
-        mainItem.contentInsets = insets
-      
-        // Pair items are inside a group
-        let pairItem = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalHeight(0.5)))
-        
-        pairItem.contentInsets = insets
-      
-        let trailingGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1/3),
-                heightDimension: .fractionalHeight(1.0)),
-            subitem: pairItem,
-            count: 2)
-      
-        // Then the group
-        
-        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(4/8)),
-                //heightDimension: .fractionalWidth(4/9)),
-            subitems: [mainItem, trailingGroup])
-         */
-        
-        // III. Third type. Twins
+        // I. Only type: Twins
         let twinItem = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(4/8),
@@ -704,23 +661,13 @@ extension MyRanks{
                 heightDimension: .fractionalWidth(3/8)),
             subitems: [twinItem, twinItem])
       
-        // IV. Fourth type. Reversed main with pair
-        /*
-        let mainWithPairReversedGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(4/9)),
-            subitems: [trailingGroup, mainItem])
-       */
         
         // V. Finally
         let nestedGroup = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                //heightDimension: .fractionalWidth(13/8)),
-                heightDimension: .fractionalWidth(8.2/8)),
-            //subitems: [ twinGroup, fullPhotoItem, mainWithPairGroup]
-            subitems: [ twinGroup, fullPhotoItem]
+                heightDimension: .fractionalWidth(3/8)),
+            subitems: [ twinGroup]
         )
         
         /*
