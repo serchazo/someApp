@@ -20,9 +20,7 @@ class MyRestoDetail: UIViewController {
     private static let screenSize = UIScreen.main.bounds.size
     private static let segueToMap = "showMap"
     
-    private let addressCellId = "AddressCell"
-    private let commentCell = "CommentCell"
-    private let commentCellNibId = "CommentCell"
+    private let commentCell2 = "commentCell"
     private let editReviewCell = "EditReviewCell"
     
     private var user:User!
@@ -110,7 +108,7 @@ class MyRestoDetail: UIViewController {
         didSet{
             restoDetailTable.delegate = self
             restoDetailTable.dataSource = self
-            restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
+            //restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
             restoDetailTable.rowHeight = UITableView.automaticDimension
             restoDetailTable.estimatedRowHeight = 160
             restoDetailTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
@@ -314,6 +312,8 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 
                 if currentResto.address != nil{
                   cell.detailTextLabel?.text = currentResto.address
+                }else{
+                    cell.selectionStyle = .none
                 }
                 return cell
             }
@@ -322,7 +322,9 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
                 cell.textLabel?.text = "Phone"
                 if currentResto.phoneNumber != nil{
-                  cell.detailTextLabel?.text = currentResto.phoneNumber
+                    cell.detailTextLabel?.text = currentResto.phoneNumber
+                }else{
+                    cell.selectionStyle = .none
                 }
                 return cell
             }
@@ -399,7 +401,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 }
                 // If not : placeholder
                 else{
-                    if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
+                    if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell2, for: indexPath) as? CommentCell{
                         postCell.dateLabel.isHidden = true
                         postCell.likeButton.isHidden = true
                         postCell.moreButton.isHidden = true
@@ -411,7 +413,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             }
             
             // Comment cell
-            if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell, for: indexPath) as? CommentCell{
+            if let postCell = restoDetailTable.dequeueReusableCell(withIdentifier: commentCell2, for: indexPath) as? CommentCell{
                 
                 // Date stuff
                 let date = Date(timeIntervalSince1970: TimeInterval(commentArray[indexPath.row].timestamp/1000)) // in milliseconds
@@ -486,7 +488,6 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 postCell.nbLikesButton.setTitleColor(.systemGray, for: .normal)
                 postCell.nbLikesButton.setTitle(MyStrings.buttonYum.localized(arguments: restoReviewsLikeNb[indexPath.row]),for: .normal)
                 
-                // Report button
                 // [START] If it's not the first comment, then we can add some actions
                 if !firstCommentFlag{
                     // We can Like
@@ -925,8 +926,6 @@ extension MyRestoDetail {
         SomeApp.dbUserRankings.child(dbPath).observeSingleEvent(of: .value, with: {snapshot in
             // Le ranking doesn't exist
             if !snapshot.exists(){
-                let defaultDescription = MyStrings.rankingDefaulDescription.localized(arguments: self.currentFood.name, self.currentCity.name)
-                
                 let alert = UIAlertController(
                     title: MyStrings.addRestoCreateRankingTitle.localized(),
                     message: MyStrings.addRestoCreateRankingMsg.localized(arguments: self.currentFood.name),
@@ -934,7 +933,7 @@ extension MyRestoDetail {
                 let createAction = UIAlertAction(
                     title: MyStrings.addRestoCreateRankingConfirm.localized(),
                 style: .default){ _ in
-                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood, description: defaultDescription)
+                    SomeApp.newUserRanking(userId: self.user.uid, city: self.currentCity, food: self.currentFood)
                     
                     // then add to ranking
                     SomeApp.addRestoToRanking(userId: self.user.uid,

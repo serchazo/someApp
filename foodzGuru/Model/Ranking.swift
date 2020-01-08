@@ -12,14 +12,12 @@ import Firebase
 class Ranking{
     let ref: DatabaseReference?
     let key: String
-    let description: String
     let name: String
     let icon: String
     
-    init(foodKey: String, name: String, icon:String = "🍴", description: String = ""){
+    init(foodKey: String, name: String, icon:String = "🍴"){
         self.ref = nil
         self.key = foodKey.lowercased()
-        self.description = description
         self.name = name
         self.icon = icon
     }
@@ -35,14 +33,11 @@ class Ranking{
         self.name = name
         
         if let icon = value["icon"] as? String {self.icon = icon} else {self.icon = "🍴"}
-        if let description = value["description"] as? String {self.description = description } else {self.description = ""}
-        
     }
     
     // Turn Ranking to a Dictionary
     func toAnyObject() -> Any {
         return[
-            "description" : description,
             "icon" : icon,
             "name" : name ]
     }

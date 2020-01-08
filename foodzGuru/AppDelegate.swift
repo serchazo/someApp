@@ -51,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [START Notifications stuff]
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
+        
         // Set the badge to zero on opening 
         application.applicationIconBadgeNumber = 0
         

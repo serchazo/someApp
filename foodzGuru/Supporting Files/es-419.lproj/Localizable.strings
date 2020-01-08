@@ -82,18 +82,18 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configure su perfil (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Continuar";
 
-"HOME_FIRST_POST" = "Hola% @! Bienvenido a foodz.guru, cuando le dés click en seguir a los Foodies y los Rankings, verás aquí sus actualizaciones más importantes.";
+"HOME_FIRST_POST" = "Hola %@! Bienvenido a foodz.guru, cuando le dés click en seguir a los Foodies y los Rankings, verás aquí sus actualizaciones más importantes.";
 "HOME_POST_NEWRANKING" = "Nuevo ranking";
 "HOME_POST_NEWFOLLOWER" = "¡Seguidor!";
 "HOME_POST_NEWYUM" = "¡Yum!";
 "HOME_POST_NEWREVIEW" = "¡Nueva revisión!";
 "HOME_POST_NEWFAVORITE" = "¡Nuevo favorito!";
-"HOME_POST_NEWBEST" = "¡Nuevo mejor en ranking!";
+"HOME_POST_NEWBEST" = "¡El más recomendado!";
 "HOME_POST_NEWINTOP" = "Vamos a probar?";
 "HOME_TIMELINE_FOLLOWER" = "%@ está siguiendo a %@.";
 "HOME_TIMELINE_FOLLOWER_YOU" = "%@ te está siguiendo.";
-"HOME_TIMELINE_NEWBEST" = "%@ es ahora el mejor luger de %@ en %@.";
-"HOME_TIMELINE_AMONGTHEBEST" = "%@ está entre los mejores lugares de %@ en %@.";
+"HOME_TIMELINE_NEWBEST" = "%@ es ahora el lugar más recomendado de %@ en %@.";
+"HOME_TIMELINE_AMONGTHEBEST" = "%@ está entre los lugares más recomendados de %@ en %@.";
 "HOME_TIMELINE_YUM" = "%@ ha Yum! tu reseña sobre %@.";
 "HOME_TIMELINE_USER_FAVORITE" = "%@ tiene un nuevo lugar de %@ favorito en %@. Vamos a probar?";
 "HOME_TIMELINE_USER_REVIEW" = "%@ escribió una reseña sobre %@."; 
@@ -139,7 +139,6 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
 "MYRANKS_BESTPLACES_TITLE" = "Mejores %@ en %@";
-"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida probando %@ en %@. Esta es la lista definitva.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "seguidores";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "siguiendo";
@@ -155,7 +154,7 @@ Localized strings.
 "MYCITIES_DUPLICATE_TITLE" = "Ciudad duplicada";
 "MYCITIES_DUPLICATE_MSG" = "Ya tienes rankings en %@.";
 
-"THISRANKING_HEADER_TITLE_ME" = "Mis mejores %@ en %@";
+"THISRANKING_HEADER_TITLE_ME" = "Mis recomendaciones de %@ en %@";
 "THISRANKING_HEADER_TITLE_USER" = "Mejores %2$@ en %3$@ según %1$@";
 "THISRANKING_DESCRIPTION_TITLE" = "Descripción";
 "THISRANKING_BUTTON_DELETE_ASK" = "¿Eliminar restaurante?";

@@ -54,6 +54,7 @@
 		34A76E312322063B005951A2 /* Ranking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E302322063B005951A2 /* Ranking.swift */; };
 		34A76E3423225615005951A2 /* Resto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A76E3323225615005951A2 /* Resto.swift */; };
 		34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */; };
+		34B3278223C181A20059976D /* MyReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B3278123C181A20059976D /* MyReview.swift */; };
 		34D2B4B3233AF336007C4B8F /* FirstLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */; };
 		34D9C72023A8C809004AFA8B /* EditRankingTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34D9C72223A8C809004AFA8B /* EditRankingTitleCell.xib */; };
 		34DA7EB3234AC2DF00EBD360 /* HomeCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */; };
@@ -136,6 +137,7 @@
 		34A76E302322063B005951A2 /* Ranking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ranking.swift; sourceTree = "<group>"; };
 		34A76E3323225615005951A2 /* Resto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resto.swift; sourceTree = "<group>"; };
 		34B1C1E42380090B00E22F3D /* FirstLoginAcceptEULA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginAcceptEULA.swift; sourceTree = "<group>"; };
+		34B3278123C181A20059976D /* MyReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyReview.swift; sourceTree = "<group>"; };
 		34D2B4B2233AF336007C4B8F /* FirstLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLoginViewController.swift; sourceTree = "<group>"; };
 		34D9C72323A8C812004AFA8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/EditRankingTitleCell.xib; sourceTree = "<group>"; };
 		34DA7EB2234AC2DF00EBD360 /* HomeCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCellWithImage.swift; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 				34DA7EB6234B29D400EBD360 /* MyCities.swift */,
 				34FEE9D12312B3BB00FE0590 /* ThisRanking.swift */,
 				34FEE9D32312B52300FE0590 /* ThisRankingCell.swift */,
+				34B3278123C181A20059976D /* MyReview.swift */,
 				34507DFF2345AE1B00BD7B3C /* EditReviewCell.swift */,
 				34873A8B2332071B00463AFE /* EditableRestoCell.swift */,
 				346F8D2B237657D500AD7D29 /* EditRankingTitleCell.swift */,
@@ -522,6 +525,7 @@
 				34FEE9D023126F8500FE0590 /* MyRanksAddRankingViewController.swift in Sources */,
 				34FEE9D22312B3BB00FE0590 /* ThisRanking.swift in Sources */,
 				3491B9392341ED1E00CECF80 /* CommentCell.swift in Sources */,
+				34B3278223C181A20059976D /* MyReview.swift in Sources */,
 				341DD162232A282200102472 /* UserDetails.swift in Sources */,
 				34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */,
 				34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */,

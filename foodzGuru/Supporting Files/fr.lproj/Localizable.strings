@@ -138,7 +138,6 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "Pas encore de classement à %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Cliquez sur + et informez le monde de vos endroits préférés!";
 "MYRANKS_BESTPLACES_TITLE" = "Les top %@ à %@";
-"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "J'ai passé ma vie à chercher les meilleurs %@ à %@. Voici la liste définitive.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "Abonnés";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "Abonnements";

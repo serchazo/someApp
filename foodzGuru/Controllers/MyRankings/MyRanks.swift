@@ -19,6 +19,7 @@ class MyRanks: UIViewController {
     // Class constants
     private static let addRanking = "addRankSegue"
     private static let showRakingDetail = "editRestoList"
+    private static let showRankingDetail = "showRankingDetail"
     private static let screenSize = UIScreen.main.bounds.size
     private let segueChangeCoty = "changeCity"
     private let segueMyProfile = "showMyProfile"
@@ -48,16 +49,14 @@ class MyRanks: UIViewController {
     }
     private var bioString:String!
     
-    // MARK: Outlets
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var myRanksTable: UITableView!{
+    @IBOutlet weak var myRanksCollection: UICollectionView!{
         didSet{
-            myRanksTable.dataSource = self
-            myRanksTable.delegate = self
+            myRanksCollection.delegate = self
+            myRanksCollection.dataSource = self
         }
     }
     
-    @IBOutlet weak var headerView: UIView!
+    
     @IBOutlet weak var profilePictureImage: UIImageView!
     @IBOutlet weak var bioLabel: UILabel!
     @IBOutlet weak var followersButton: UIButton!{
@@ -82,6 +81,7 @@ class MyRanks: UIViewController {
     }
     
     @IBOutlet weak var changeCityButton: UIButton!
+    @IBOutlet weak var titleLabel: UILabel!
     
     // MARK: Ad stuff
     @IBOutlet weak var adView: UIView!
@@ -112,17 +112,12 @@ class MyRanks: UIViewController {
         // Configure the banner ad
         configureBannerAd()
         
-        // Deselect the rows to go back to normal
-        if let indexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-        if let indexPath = myRanksTable.indexPathForSelectedRow {
-            myRanksTable.deselectRow(at: indexPath, animated: true)
-        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        myRanksCollection.collectionViewLayout = generateLayout()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -247,9 +242,10 @@ class MyRanks: UIViewController {
                 }else{
                     self.currentCity = City(country: "sg", state: "sg", key: "sin", name: "Singapore")
                 }
-                // Change city button
+                // Change city button and title
                 if self.currentCity != nil{
                     self.changeCityButton.setTitle(self.currentCity.name, for: .normal)
+                    self.titleLabel.text = "My recommendations in \(self.currentCity.name)"
                 }else{
                     self.changeCityButton.setTitle(MyStrings.selectCity.localized(), for: .normal)
                 }
@@ -264,6 +260,7 @@ class MyRanks: UIViewController {
                         self.bioLabel.textColor = .systemGray2
                         self.bioLabel.text = MyStrings.emptyBio.localized()}
                 }
+                
                 
                 // 5. Update ranking
                 self.updateTablewithRanking(userId: userId)
@@ -329,7 +326,8 @@ class MyRanks: UIViewController {
             if !snapshot.exists(){
                 // If we don't have a ranking, mark the empty list flag
                 self.emptyListFlag = true
-                self.myRanksTable.reloadData()
+                self.myRanksCollection.reloadData()
+                self.myRanksCollection.collectionViewLayout.invalidateLayout()
             }else{
                 self.emptyListFlag = false
                 for ranksPerUserAny in snapshot.children {
@@ -349,7 +347,8 @@ class MyRanks: UIViewController {
                             if count == snapshot.childrenCount {
                                 self.foodItems = tmpFoodType
                                 self.rankings = tmpRankings
-                                self.myRanksTable.reloadData()
+                                self.myRanksCollection.reloadData()
+                                self.myRanksCollection.collectionViewLayout.invalidateLayout()
                             }
                         })
                     }
@@ -485,19 +484,19 @@ class MyRanks: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         switch segue.identifier {
-        case MyRanks.showRakingDetail :
-            if let seguedMVC = segue.destination as? ThisRanking{
-                if let tmpCell = sender as? MyRanksTableViewCell,
-                    let tmpIndexPath = myRanksTable.indexPath(for: tmpCell){
-                    // I should send Food Key, and current city
-                    seguedMVC.currentCity = self.currentCity
-                    seguedMVC.currentFood = foodItems[tmpIndexPath.row]
-                    seguedMVC.profileImage = profilePictureImage.image
-                    if calledUser != nil {
-                        seguedMVC.calledUser = calledUser
-                    }
+        case MyRanks.showRankingDetail :
+        if let seguedMVC = segue.destination as? ThisRanking{
+            if let tmpCell = sender as? SearchFoodCell,
+                let tmpIndexPath = myRanksCollection.indexPath(for: tmpCell){
+                // I should send Food Key, and current city
+                seguedMVC.currentCity = self.currentCity
+                seguedMVC.currentFood = foodItems[tmpIndexPath.row]
+                seguedMVC.profileImage = profilePictureImage.image
+                if calledUser != nil {
+                    seguedMVC.calledUser = calledUser
                 }
             }
+        }
         case MyRanks.addRanking :
             if let seguedMVC = segue.destination as? AddRanking{
                 seguedMVC.delegate = self
@@ -571,10 +570,10 @@ extension MyRanks: AddRankingDelegate{
         // Test if the ranking isn't in our list
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
-            let defaultDescription = MyStrings.rankingDefaulDescription.localized(arguments: withFood.name, city.name)
-            SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood, description: defaultDescription)
+            SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood)
             // Only need to reload.  The firebase observer will update the content
-            myRanksTable.reloadData()
+            self.myRanksCollection.reloadData()
+            self.myRanksCollection.collectionViewLayout.invalidateLayout()
             
         }else{
             // Ranking already in list
@@ -595,94 +594,153 @@ extension MyRanks: AddRankingDelegate{
     }
 }
 
-// MARK: table stuff
-extension MyRanks: UITableViewDelegate, UITableViewDataSource{
-    func numberOfSections(in tableView: UITableView) -> Int {
-        // Verifiy if it's the myProfile table
-        return 1
+
+// MARK: Collection stuff
+extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard rankings.count > 0 else { return 1 }
+        return rankings.count
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section){
-        case 0:
-            guard rankings.count == foodItems.count else { return 1 }
-            if emptyListFlag == true{
-                return 1
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO: while loading display a spinner
+        guard rankings.count > 0 else {
+            // then go
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
+                cell.cellIcon.text = ""
+                cell.cellLabel.text = FoodzLayout.FoodzStrings.loading.localized()
+                return cell
             }else{
-                return rankings.count
+                fatalError("Cannot create cell")
             }
-        default: return 0
         }
-    }
-    
-    // Delete ranking on swipe
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        if tableView == myRanksTable && indexPath.section == 0 && calledUser == nil && !emptyListFlag{
-            return UITableViewCell.EditingStyle.delete
-        }else{
-            return UITableViewCell.EditingStyle.none
+        // Icon cells
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
             
-        }
-    }
-    
-    // then
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete && !emptyListFlag{
-            // Delete from model
-            SomeApp.deleteUserRanking(userId: user.uid, city: currentCity, foodId: rankings[indexPath.row].key)
-            
-            // Delete the row (only for smothness, we will download again)
-            rankings.remove(at: indexPath.row)
-            foodItems.remove(at: indexPath.row)
-            myRanksTable.deleteRows(at: [indexPath], with: .fade)
-        }
-    }
-    
-    //cellForRowAt
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // The normal table
-        guard (rankings.count > 0 && rankings.count == foodItems.count) || emptyListFlag else{
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = FoodzLayout.FoodzStrings.loading.localized()
-            let spinner = UIActivityIndicatorView(style: .medium)
-            spinner.startAnimating()
-            cell.accessoryView = spinner
+            cell.cellIcon.text = rankings[indexPath.row].icon
+            cell.cellLabel.text = rankings[indexPath.row].name
             
             return cell
         }
         
-        if emptyListFlag{
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            cell.textLabel?.text = MyStrings.emptyRankingTitle.localized(arguments: currentCity.name)
-            cell.detailTextLabel?.text = MyStrings.emptyRankingMsg.localized()
-            cell.selectionStyle = .none
-            return cell
-        }else{
-            // Rankings table
-            let tmpCell = tableView.dequeueReusableCell(withIdentifier: "MyRanksCell", for: indexPath)
-            if let cell = tmpCell as? MyRanksTableViewCell {
-                cell.iconLabel.text = foodItems[indexPath.row].icon
-                let tmpTitleText = MyStrings.bestPlacesTitle.localized(arguments: foodItems[indexPath.row].name, currentCity.name)
-                cell.titleLabel.text = tmpTitleText
-                cell.descriptionLabel.text = rankings[indexPath.row].description
-            }
-            return tmpCell
+        // Cannot
+        else{
+            fatalError("Cannot create cell")
         }
     }
 }
 
-// MARK: Some view stuff
+
+// MARK: Layout stuff
 extension MyRanks{
-    private var iconFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(64.0))
-    }
-    
-    private var cellTitleFont: UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
-    }
-    
-    private var cellCityNameFont:UIFont{
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.preferredFont(forTextStyle: .body).withSize(20.0))
+    // snippet from : https://www.raywenderlich.com/5436806-modern-collection-views-with-compositional-layouts
+    func generateLayout() -> UICollectionViewLayout {
+        // Insets
+        let insets = NSDirectionalEdgeInsets(
+            top: 2,
+            leading: 2,
+            bottom: 2,
+            trailing: 2)
+      
+        // We have three row styles
+        // Style 1: 'Full': A full width photo
+        // Style 2: 'Main with pair': A 2/3 width photo with two 1/3 width photos stacked vertically
+        // Style 3: 'Triplet': Three 1/3 width photos stacked horizontally
+        
+        // I. First type. Full
+        let fullPhotoItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                //heightDimension: .fractionalWidth(3/4)))
+                heightDimension: .fractionalWidth(5.2/8))) // slightly smaller than 3/4 for the label not to be too big
+        
+        fullPhotoItem.contentInsets = insets
+      
+        // II. Second type: Main with pair
+        /* Reserve
+        let mainItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(2/3),
+                heightDimension: .fractionalHeight(1.0)))
+        
+        mainItem.contentInsets = insets
+      
+        // Pair items are inside a group
+        let pairItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalHeight(0.5)))
+        
+        pairItem.contentInsets = insets
+      
+        let trailingGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1/3),
+                heightDimension: .fractionalHeight(1.0)),
+            subitem: pairItem,
+            count: 2)
+      
+        // Then the group
+        
+        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(4/8)),
+                //heightDimension: .fractionalWidth(4/9)),
+            subitems: [mainItem, trailingGroup])
+         */
+        
+        // III. Third type. Twins
+        let twinItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(4/8),
+                heightDimension: .fractionalHeight(1.0)))
+        
+        twinItem.contentInsets = insets
+        
+        let twinGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(3/8)),
+            subitems: [twinItem, twinItem])
+      
+        // IV. Fourth type. Reversed main with pair
+        /*
+        let mainWithPairReversedGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .fractionalWidth(4/9)),
+            subitems: [trailingGroup, mainItem])
+       */
+        
+        // V. Finally
+        let nestedGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                //heightDimension: .fractionalWidth(13/8)),
+                heightDimension: .fractionalWidth(8.2/8)),
+            //subitems: [ twinGroup, fullPhotoItem, mainWithPairGroup]
+            subitems: [ twinGroup, fullPhotoItem]
+        )
+        
+        /*
+        // Header
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(44))
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: self.headerKind,
+            alignment: .top)
+         section.boundarySupplementaryItems = [sectionHeader]
+        */
+        
+        let section = NSCollectionLayoutSection(group: nestedGroup)
+        
+        // Return the layout
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        
+        return layout
     }
 }
 
@@ -801,7 +859,6 @@ extension MyRanks{
         case emptyRankingTitle
         case emptyRankingMsg
         case bestPlacesTitle
-        case rankingDefaulDescription
         
         func localized(arguments: CVarArg...) -> String{
             switch self{
@@ -945,12 +1002,7 @@ extension MyRanks{
                     format: NSLocalizedString("MYRANKS_BESTPLACES_TITLE", comment: "Empty"),
                     locale: .current,
                     arguments: arguments)
-            case .rankingDefaulDescription:
-                return String(
-                    format: NSLocalizedString("MYRANKS_RANKING_DEFAULT_DESCRIPTION", comment: "Empty"),
-                    locale: .current,
-                    arguments: arguments)
-                
+
             }
         }
     }

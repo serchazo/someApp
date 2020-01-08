@@ -69,3 +69,8 @@
 
 /* Class = "UILabel"; text = "You can change your bio later (max 150 chars)."; ObjectID = "INn-9X-JKc"; */
 "INn-9X-JKc.text" = "La puede modificar más adelante (max 150 caracteres).";
+
+// MyReviews
+"UYG-we-GEL.text" = "Escribe tus comentarios";
+"KCv-Ol-0sr.title" = "Publicar";
+

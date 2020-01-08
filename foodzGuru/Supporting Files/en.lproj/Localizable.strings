@@ -82,8 +82,8 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configure your profile (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Go";
 
-"HOME_FIRST_POST" = "Hello %@! Welcome to foodz.guru, follow foodies and rankings and you'll see here their most important updates.";
-"HOME_POST_NEWRANKING" = "New Ranking";
+"HOME_FIRST_POST" = "Hello %@! Welcome to foodz.guru, follow foodies and foodz and you'll see here their most important updates.";
+"HOME_POST_NEWRANKING" = "New List";
 "HOME_POST_NEWFOLLOWER" = "Follower!";
 "HOME_POST_NEWYUM" = "Yum!";
 "HOME_POST_NEWREVIEW" = "New Review!";
@@ -92,8 +92,8 @@ Localized strings.
 "HOME_POST_NEWINTOP" ="Let's go taste";
 "HOME_TIMELINE_FOLLOWER" = "%@ is now following %@.";
 "HOME_TIMELINE_FOLLOWER_YOU" = "%@ is now following you.";
-"HOME_TIMELINE_NEWBEST" = "%@ is now the best %@ place in %@.";
-"HOME_TIMELINE_AMONGTHEBEST" = "%@ is among the best %@ places in %@.";
+"HOME_TIMELINE_NEWBEST" = "%@ is now the most recommended %@ place in %@.";
+"HOME_TIMELINE_AMONGTHEBEST" = "%@ is among the most recommended %@ places in %@.";
 "HOME_TIMELINE_YUM" = "%@ has yummed your post on %@.";
 "HOME_TIMELINE_USER_FAVORITE" = "%@ has a new favorite %@ place in %@. Check it out!";
 "HOME_TIMELINE_USER_REVIEW" = "%@ added a review of %@.";
@@ -139,7 +139,6 @@ Localized strings.
 "MYRANKS_EMPTY_RANKING_TITLE" = "No rankings in %@ yet!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Click on + and tell the world about your favorite places!";
 "MYRANKS_BESTPLACES_TITLE" = "Best %@ in %@";
-"MYRANKS_RANKING_DEFAULT_DESCRIPTION" = "Spent all my life looking for the best %@ places in %@. This is the definitive list.";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "followers";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "following";
@@ -155,8 +154,8 @@ Localized strings.
 "MYCITIES_DUPLICATE_TITLE" = "Duplicate City";
 "MYCITIES_DUPLICATE_MSG" = "You already have rankings in %@.";
 
-"THISRANKING_HEADER_TITLE_ME" = "My favorite %@ places in %@";
-"THISRANKING_HEADER_TITLE_USER" = "%@'s favorite %@ places in %@";
+"THISRANKING_HEADER_TITLE_ME" = "My recommended %@ places in %@";
+"THISRANKING_HEADER_TITLE_USER" = "%@'s recommended %@ places in %@";
 "THISRANKING_DESCRIPTION_TITLE" = "Description";
 "THISRANKING_BUTTON_DELETE_ASK" = "Delete Restaurant?";
 "THISRANKING_BUTTON_DELETE_TITLE" = "Delete";

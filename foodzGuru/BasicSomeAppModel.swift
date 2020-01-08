@@ -289,8 +289,8 @@ class SomeApp{
     
     // MARK: ranking functions
     // Add a new ranking
-    static func newUserRanking(userId: String, city: City, food: FoodType, description: String){
-        let newRanking = Ranking(foodKey: food.key,name: food.name, icon: food.icon, description: description)
+    static func newUserRanking(userId: String, city: City, food: FoodType){
+        let newRanking = Ranking(foodKey: food.key,name: food.name, icon: food.icon)
         // Create a child reference and update the value
         let pathId = userId + "/"+city.country+"/"+city.state+"/"+city.key
         let newRankingRef = SomeApp.dbUserRankings.child(pathId).child(newRanking.key)

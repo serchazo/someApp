@@ -7,14 +7,14 @@
 //
 
 import UIKit
-import MapKit
 import Firebase
 import GooglePlaces
 import GoogleMaps
 
 class ThisRanking: UIViewController {
     // class variables
-    private static let showRestoDetail = "ShowResto"
+    private static let showRestoDetailSegue = "ShowResto"
+    private static let showMyReviewSegue = "myReviewSegue"
     private static let delRestoCell = "delRestoCell"
     private static let screenSize = UIScreen.main.bounds.size
     private let editReviewCell = "EditReviewCell"
@@ -32,6 +32,7 @@ class ThisRanking: UIViewController {
     private var userMultiplier: Int = 10
     
     private var emptyListFlag = false
+    private var isSenderGoogle = false
     
     private var userRankingDetailRef: DatabaseReference!
     private var userRankingsRef: DatabaseReference!
@@ -53,18 +54,6 @@ class ThisRanking: UIViewController {
     private var userReviewsHandle:[(handle: UInt, dbPath: String)] = []
     private var userReviewsLikesNbHandle:[(handle: UInt, dbPath:String)] = []
     
-    //For Edit Review swipe-up
-    private var editReviewTransparentView = UIView()
-    private var editReviewTableView = UITableView()
-    private var indexPlaceholder:Int = 0
-    
-    //For Edit the description swipe-up
-    private var transparentView = UIView()
-    private var editDescriptionTableView = UITableView()
-    //private var editTextField = UITextView()
-    private let editDescriptionCellId = "EditReviewCell"
-    private let editDescriptionCellXib = "EditReviewCell"
-    
     //For "Edit the ranking" swipe left
     private var editRankTransparentView = UIView()
     private var editRankTableView = UITableView()
@@ -77,13 +66,6 @@ class ThisRanking: UIViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var rankingTitleLabel: UILabel!
-    @IBOutlet weak var rankingDescriptionLabel: UILabel!
-    @IBOutlet weak var editDescriptionButton: UIButton!{
-        didSet{
-            editDescriptionButton.isHidden = true
-            editDescriptionButton.isEnabled = false
-        }
-    }
     @IBOutlet weak var adView: UIView!
     @IBOutlet weak var editRankingBarButton: UIBarButtonItem!
     
@@ -245,11 +227,6 @@ class ThisRanking: UIViewController {
     
     // MARK: setup My tables
     private func setupMyTables(){
-        // The editDescriptionTableView needs to be loaded only if it's my data
-        editDescriptionTableView.delegate = self
-        editDescriptionTableView.dataSource = self
-        editDescriptionTableView.register(UINib(nibName: editDescriptionCellXib, bundle: nil), forCellReuseIdentifier: editDescriptionCellId)
-        
         // The editRankingTableView needs to be loaded only if it's my data
         editRankTableView.delegate = self
         editRankTableView.dataSource = self
@@ -260,12 +237,6 @@ class ThisRanking: UIViewController {
         editRankTableView.register(UINib(nibName: self.editRankTitleCellId, bundle: nil), forCellReuseIdentifier: self.editRankTitleCellXib)
         editRankTableView.estimatedRowHeight = 100
         editRankTableView.rowHeight = UITableView.automaticDimension
-        
-        // The editReviewTableView needs to be loaded only if it's my data
-        editReviewTableView.delegate = self
-        editReviewTableView.dataSource = self
-        editReviewTableView.register(UINib(nibName: editReviewCell, bundle: nil), forCellReuseIdentifier: editReviewCell)
-        
     }
 
     // MARK: myRanking Header
@@ -307,14 +278,6 @@ class ThisRanking: UIViewController {
         }else{
             rankingTitleLabel.text = MyStrings.headerTitleUser.localized(arguments: calledUser.nickName,currentFood.name,currentCity.name)
         }
-        // Description
-        userRankingHandle = self.userRankingsRef.observe(.value, with: {snapshot in
-            if let rankingItem = Ranking(snapshot: snapshot){
-                self.rankingDescriptionLabel.text = rankingItem.description
-                self.thisRankingDescription = rankingItem.description
-                //self.myRankingTable.reloadData()
-            }
-        })
         
         // Points multiplier
         SomeApp.dbUserPointsMultiplier.child(userId).observeSingleEvent(of: .value, with: {snapshot in
@@ -322,17 +285,6 @@ class ThisRanking: UIViewController {
                 self.userMultiplier = tmpValue
             }
         })
-        
-        
-        // Edit Description Button
-        if calledUser == nil {
-            FoodzLayout.configureButtonNoBorder(button: editDescriptionButton)
-            
-            editDescriptionButton.setTitle(MyStrings.descriptionTitle.localized(), for: .normal)
-            editDescriptionButton.addTarget(self, action: #selector(popUpEditDescriptionTable), for: .touchUpInside)
-            editDescriptionButton.isHidden = false
-            editDescriptionButton.isEnabled = true
-        }
         
     }
     
@@ -498,20 +450,35 @@ class ThisRanking: UIViewController {
         // Pass the selected object to the new view controller.
         if let identifier = segue.identifier{
             switch identifier{
-            case ThisRanking.showRestoDetail:
-                if let cell = sender as? ThisRankingCell,
+            case ThisRanking.showRestoDetailSegue:
+                if !isSenderGoogle,
+                    let cell = sender as? ThisRankingCell,
                     let indexPath = myRankingTable.indexPath(for: cell),
                     let seguedToResto = segue.destination as? MyRestoDetail{
                     seguedToResto.currentResto = thisRanking[indexPath.row]
                     seguedToResto.currentCity = currentCity
                     seguedToResto.currentFood = currentFood
-                    seguedToResto.delegate = self
                     if calledUser == nil {
                         seguedToResto.seguer = MyRestoDetail.MyRestoSeguer.ThisRankingMy
                     }else{
                         seguedToResto.seguer = MyRestoDetail.MyRestoSeguer.ThisRankingVisitor
                     }
-                    
+                }
+                // If the sender is the Google Search Menu
+                if isSenderGoogle,
+                    let resto = sender as? Resto,
+                    let seguedToResto = segue.destination as? MyRestoDetail{
+                    seguedToResto.currentResto = resto
+                    seguedToResto.currentCity = currentCity
+                    seguedToResto.currentFood = currentFood
+                }
+            case ThisRanking.showMyReviewSegue:
+                if let cell = sender as? ThisRankingCell,
+                let indexPath = myRankingTable.indexPath(for: cell),
+                let seguedToReview = segue.destination as? MyReview{
+                    seguedToReview.currentResto = thisRanking[indexPath.row]
+                    seguedToReview.currentCity = currentCity
+                    seguedToReview.currentFood = currentFood
                 }
             default: break
             }
@@ -523,13 +490,8 @@ class ThisRanking: UIViewController {
 extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        // if it's the editReview pop-up
-        if tableView == self.editReviewTableView{
-            return 1
-        }else if tableView == self.editDescriptionTableView{
-            // test if the table is the EditDescription pop-up
-            return 1
-        }else if tableView == self.editRankTableView{
+        // Editable TableView
+        if tableView == self.editRankTableView{
             return 2
         }else{
             // the normal table
@@ -544,13 +506,8 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == editReviewTableView{
-            return 1
-        }
         // test if the table is the EditDescription pop-up
-        else if tableView == self.editDescriptionTableView{
-            return 1
-        }else if tableView == self.editRankTableView{
+        if tableView == self.editRankTableView{
             if section == 0{
                 return 1
             }
@@ -577,21 +534,8 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
     
     // Cell for Row at
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Edit Review pop-up
-        if tableView == editReviewTableView,
-            let editReviewCell = editReviewTableView.dequeueReusableCell(withIdentifier: editReviewCell) as? EditReviewCell{
-            configureEditReviewCell(cell: editReviewCell, forIndex: indexPlaceholder)
-            
-            return editReviewCell
-        }
-        // EditDescription pop-up
-        else if tableView == self.editDescriptionTableView,
-            let cell = tableView.dequeueReusableCell(withIdentifier: editDescriptionCellId, for: indexPath) as? EditReviewCell{
-            configureEditDescriptionCell(cell: cell)
-            return cell
-        }
         // [START] The Editable Ranking Table
-        else if tableView == self.editRankTableView{
+        if tableView == self.editRankTableView{
             
             if indexPath.section == 0,
                 let titleCell = editRankTableView.dequeueReusableCell(withIdentifier: self.editRankTitleCellId, for: indexPath) as? EditRankingTitleCell{
@@ -705,7 +649,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     
                     // Details button
                     cell.showRestoDetailAction = {(cell) in
-                        self.performSegue(withIdentifier: ThisRanking.showRestoDetail, sender: cell)
+                        self.performSegue(withIdentifier: ThisRanking.showRestoDetailSegue, sender: cell)
                     }
                     
                     // [Below part]
@@ -772,8 +716,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         cell.editReviewButton.isHidden = false
                         cell.editReviewButton.isEnabled = true
                         cell.editReviewAction = {(cell) in
-                            self.indexPlaceholder = self.myRankingTable.indexPath(for: cell)!.row
-                            self.editReview()
+                            self.performSegue(withIdentifier: ThisRanking.showMyReviewSegue, sender: cell)
                         }
                     }
                         // Visiting: report
@@ -800,20 +743,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
         }//[END] The "normal" table
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if tableView == editReviewTableView{
-            return 450
-        }
-        // Test if it's the Edit Description table
-        else if tableView == self.editDescriptionTableView {
-            return 450
-        // All the others are automatic dimension
-        }else{
-            return UITableView.automaticDimension
-        }
-    }
-    
-    // MARK : Actions
     // MARK: Actions
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // [START] If press on Add ranking cell, then we go to google
@@ -843,7 +772,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
             // Display the autocomplete view controller.
             present(autocompleteController, animated: true, completion: nil)
         }
-        // [START] If press on Add ranking cell, then we go to google
     }
 }
 
@@ -898,60 +826,6 @@ extension ThisRanking{
         descriptionEditRankingCell.selectionStyle = .default
         
         descriptionEditRankingRowHeight = descriptionRowHeight + clickToEditSize.height
-    }
-    
-    // MARK: Edit Description Cell
-    func configureEditDescriptionCell(cell: EditReviewCell){
-        FoodzLayout.configureEditTextCell(cell: cell)
-        
-        cell.titleLabel.text = MyStrings.descriptionEditTitle.localized()
-        cell.warningLabel.text = MyStrings.descriptionEditWarning.localized()
-        
-        // set up the TextField
-        if thisRankingDescription != "" {
-            cell.editReviewTextView.textColor = .label
-            cell.editReviewTextView.text = thisRankingDescription
-        }else{
-            cell.editReviewTextView.textColor = .systemGray
-            cell.editReviewTextView.text = MyStrings.descriptionEditPlaceholder.localized()
-        }
-        cell.editReviewTextView.becomeFirstResponder()
-        cell.editReviewTextView.tag = 100
-        cell.editReviewTextView.delegate = self
-        
-        // Button
-        cell.doneButton.setTitle(MyStrings.descriptionEditDone.localized(), for: .normal)
-        cell.updateReviewAction = { (cell) in
-            self.doneUpdatingDescription(newDescription: cell.editReviewTextView.text)
-        }
-    }
-    
-    // MARK: Edit review cell
-    func configureEditReviewCell(cell: EditReviewCell, forIndex: Int){
-        FoodzLayout.configureEditTextCell(cell: cell)
-        
-        //title
-        cell.titleLabel.text = MyStrings.reviewEditTitle.localized(arguments: thisRanking[forIndex].name)
-        cell.warningLabel.text = MyStrings.reviewEditWarning.localized()
-        cell.editReviewTextView.delegate = self
-        
-        // set up the TextField placeholder
-        if thisRankingReviews[forIndex].text.count < 3{
-            cell.editReviewTextView.textColor = .systemGray
-            cell.editReviewTextView.text = MyStrings.reviewEditPlaceholder.localized()
-        }else{
-            cell.editReviewTextView.textColor = .label
-            cell.editReviewTextView.text = thisRankingReviews[forIndex].text
-        }
-        cell.editReviewTextView.tag = 200
-        
-        // Done Button
-        cell.doneButton.setTitle(MyStrings.reviewEditDone.localized(), for: .normal)
-        cell.updateReviewAction = { (cell) in
-            self.doneUpdating(resto: self.thisRanking[self.indexPlaceholder],
-                              commentText: cell.editReviewTextView.text)
-            
-        }
     }
     
     // MARK: report menu
@@ -1027,16 +901,6 @@ extension ThisRanking{
 // MARK: objc funcs
 
 extension ThisRanking{
-    // Update the description when the button is pressed
-    @objc func doneUpdatingDescription(newDescription: String){
-        let descriptionDBRef = userRankingsRef.child("description")
-        descriptionDBRef.setValue(newDescription)
-        
-        //Update view
-        onClickTransparentView()
-        onClickEditRankTransparentView()
-    }
-    
     // Perform the update
     @objc func performUpdate(){
         if operations.count > 0{
@@ -1058,61 +922,6 @@ extension ThisRanking{
     }
     
     //Disappear!
-    @objc func onClickTransparentView(){
-        // Animation when disapearing
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.transparentView.alpha = 0 //Start at value above, go to 0
-                        self.editDescriptionTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height ,
-                            width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
-                        self.editDescriptionTableView.endEditing(true)
-                        
-        },
-                       completion: nil)
-        
-        // Deselect the row to go back to normal
-        if let indexPath = editRankTableView.indexPathForSelectedRow {
-            editRankTableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
-    // MARK: Write review & close the pop-up table
-    func doneUpdating(resto: Resto, commentText: String){
-        // Write to model
-        if ![""," ","Write your Review here","Write your Review here."].contains(commentText){
-            SomeApp.updateUserReview(userid: user.uid, resto: resto, city: currentCity, foodId: currentFood.key ,text: commentText)
-        }
-        //Close the view
-        onClickEditReviewTransparentView()
-    }
-    
-    //Disappear!
-    @objc func onClickEditReviewTransparentView(){
-        // Animation when disapearing
-        UIView.animate(withDuration: 0.5,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 1.0,
-                       options: .curveEaseInOut,
-                       animations: {
-                        self.editReviewTransparentView.alpha = 0 //Start at value above, go to 0
-                        self.editReviewTableView.frame = CGRect(
-                            x: 0,
-                            y: ThisRanking.screenSize.height ,
-                            width: ThisRanking.screenSize.width,
-                            height: ThisRanking.screenSize.height * 0.9)
-                        self.editReviewTableView.endEditing(true)
-        },
-                       completion: nil)
-    }
-    
     @objc func onClickEditRankTransparentView(){
         //Set the variables back to normal
         updateTableFromDatabase()
@@ -1138,36 +947,7 @@ extension ThisRanking{
         },
                        completion: nil)
     }
-    
-    // MARK: Popup the Edit description table
-    @objc func popUpEditDescriptionTable(){
-        FoodzLayout.popupTable(viewController: self,
-                               transparentView: transparentView,
-                               tableView: editDescriptionTableView)
-        
-        // Set the first responder
-        if let cell = editDescriptionTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? EditReviewCell{
-            cell.editReviewTextView.becomeFirstResponder()
-        }
-        
-        // Go back to "normal" if we tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickTransparentView))
-        transparentView.addGestureRecognizer(tapGesture)
-    }
-    
-    // MARK: Popup the Edit Review table
-    @objc func editReview(){
-        editReviewTableView.reloadData()
-        
-        FoodzLayout.popupTable(viewController: self,
-                               transparentView: editReviewTransparentView,
-                               tableView: editReviewTableView)
-        
-        // Go back to "normal" if we tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onClickEditReviewTransparentView))
-        editReviewTransparentView.addGestureRecognizer(tapGesture)
-    }
-    
+   
 }
 
 // MARK: Extension for Drag
@@ -1250,11 +1030,6 @@ extension ThisRanking:UITextViewDelegate {
             guard let stringRange = Range(range, in: currentText) else {return false}
             let changedText = currentText.replacingCharacters(in: stringRange, with: text)
             return changedText.count <= 250
-        }else if textView.tag == 200{
-            let currentText = textView.text ?? ""
-            guard let stringRange = Range(range, in: currentText) else {return false}
-            let changedText = currentText.replacingCharacters(in: stringRange, with: text)
-            return changedText.count <= 1500
         }else{
             return false
         }
@@ -1268,17 +1043,6 @@ extension ThisRanking:UITextViewDelegate {
         }
         else{
             textView.textColor = UIColor.label
-        }
-    }
-}
-
-// MARK: Resto delegate
-extension ThisRanking: MyRestoDelegate{
-    func myRestoReceiveResto(currentResto: Resto){
-        let index = thisRanking.firstIndex{$0.key == currentResto.key}
-        if index != nil{
-            self.indexPlaceholder = index!
-            editReview()
         }
     }
 }
@@ -1322,6 +1086,10 @@ extension ThisRanking: GMSAutocompleteViewControllerDelegate{
         let restoName = place.name ?? ""
         
         let tmpResto = Resto(key: restoId, name: restoName)
+        
+        //
+        self.performSegue(withIdentifier: ThisRanking.showRestoDetailSegue , sender: tmpResto)
+        //
         
         // Verify if the resto exists in the ranking
         if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
