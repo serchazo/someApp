@@ -56,6 +56,20 @@ class MyRestoDetail: UIViewController {
     private var editReviewTransparentView = UIView()
     private var editReviewTableView = UITableView()
     
+    // MARK: pic stuff
+    var photoMetadata: [GMSPlacePhotoMetadata]!
+    var photoCurrentIndex:Int = 0
+    var photoCount:Int = 0{
+      didSet{
+        if photoCount <= 1{
+          self.forwardButton.isHidden = true
+          self.forwardButton.isEnabled = false
+          self.backButton.isHidden = true
+          self.backButton.isEnabled = false
+        }
+      }
+    }
+    
     // Google Places stuff
     private var placesClient: GMSPlacesClient!
     
@@ -79,6 +93,40 @@ class MyRestoDetail: UIViewController {
         imageAttributions.textContainerInset = .zero
       }
     }
+    @IBOutlet weak var forwardButton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
+    
+    @IBOutlet weak var picSpinner: UIActivityIndicatorView!{
+      didSet{
+        picSpinner.isHidden = true
+        picSpinner.stopAnimating()
+      }
+    }
+    
+    // Pictures Actions
+    @IBAction func forwardButtonPressed(_ sender: Any) {
+      self.restoImage.image = nil
+      self.picSpinner.isHidden = false
+      self.picSpinner.startAnimating()
+      self.photoCurrentIndex += 1
+      if photoCurrentIndex >= photoCount{
+        photoCurrentIndex = 0
+      }
+      
+      loadPictureAtCurrentIndex()
+    }
+    
+    @IBAction func previousButtonPressed(_ sender: Any) {
+      self.restoImage.image = nil
+         self.picSpinner.isHidden = false
+         self.picSpinner.startAnimating()
+         self.photoCurrentIndex -= 1
+         if photoCurrentIndex < 0 {
+           photoCurrentIndex = photoCount - 1
+         }
+      loadPictureAtCurrentIndex()
+    }
+    
     
     
     // MARK: Add to ranking action
@@ -285,21 +333,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 0: Price Level
             if indexPath.row == 0{
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.text = "Price Level"
+                cell.textLabel?.text = MyStrings.priceLevel.localized()
                 
                 if currentResto.priceLevel != nil{
-                  switch(currentResto.priceLevel){
-                  case .cheap:
-                    cell.detailTextLabel?.text = "Cheap"
-                  case .medium:
-                    cell.detailTextLabel?.text = "Medium"
-                  case .high:
-                  cell.detailTextLabel?.text = "High"
-                  case .expensive:
-                    cell.detailTextLabel?.text = "Expensive"
-                  default:
-                    cell.detailTextLabel?.text = "Unknown"
-                  }
+                    cell.detailTextLabel?.text = self.currentResto.priceLevel
                   
                 }
                 cell.selectionStyle = .none
@@ -308,7 +345,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 1: Address
             else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.text = "Address"
+                cell.textLabel?.text = MyStrings.address.localized()
                 
                 if currentResto.address != nil{
                   cell.detailTextLabel?.text = currentResto.address
@@ -320,7 +357,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 2: Phone
             else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.text = "Phone"
+                cell.textLabel?.text = MyStrings.phone.localized()
                 if currentResto.phoneNumber != nil{
                     cell.detailTextLabel?.text = currentResto.phoneNumber
                 }else{
@@ -331,7 +368,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 3: URL
             else if indexPath.row == 3 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.text = "Web Site"
+                cell.textLabel?.text = MyStrings.url.localized()
                 if currentResto.url != nil{
                     cell.detailTextLabel?.text = currentResto.url.absoluteString
                 }else{
@@ -342,7 +379,8 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 4: Opening hours
             else if indexPath.row == 4 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
-                cell.textLabel?.text = "Open Status"
+                cell.textLabel?.text = MyStrings.openStatus.localized()
+                
                 if currentResto.openStatus != nil{
                     cell.detailTextLabel?.text = currentResto.openStatus
                 }else{
@@ -627,11 +665,11 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                   // No valid mapURL
                 else{
                   let alert = UIAlertController(
-                    title: "MyStrings.urlErrorTitle.localized()",
-                    message: "MyStrings.urlErrorMsg.localized()",
+                    title: MyStrings.urlErrorTitle.localized(),
+                    message: MyStrings.urlErrorMsg.localized(),
                     preferredStyle: .alert)
                   let OKaction = UIAlertAction(
-                    title: "FoodzLayout.FoodzStrings.buttonOK.localized()",
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
                     style: .default, handler:nil)
                   alert.addAction(OKaction)
                   self.present(alert, animated:true)
@@ -686,10 +724,12 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             if indexPath.row == 4 && currentResto.openingHours != nil {
                 let openingHoursTxt = currentResto.openingHours!.weekdayText!.joined(separator: "\n")
                 let openingHoursAlert = UIAlertController(
-                  title: "Opening Hours",
+                    title: MyStrings.openingHours.localized(),
                   message: openingHoursTxt,
                   preferredStyle: .alert)
-                let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let OKAction = UIAlertAction(
+                    title: FoodzLayout.FoodzStrings.buttonOK.localized(),
+                    style: .default, handler: nil)
                 openingHoursAlert.addAction(OKAction)
                 self.present(openingHoursAlert, animated: true)
                 // Deselect row
@@ -1155,10 +1195,31 @@ extension MyRestoDetail{
       
       return UIImage(cgImage: imageRef, scale: UIScreen.main.scale, orientation: image.imageOrientation)
   }
+    
+    // Load the picture at current Index
+    private func loadPictureAtCurrentIndex(){
+        self.placesClient.loadPlacePhoto(self.photoMetadata[photoCurrentIndex], callback: { (photo, error) -> Void in
+            if let error = error {
+                // TODO: Handle the error.
+                print("Error loading photo metadata: \(error.localizedDescription)")
+                return
+            } else {
+                self.picSpinner.isHidden = true
+                self.picSpinner.stopAnimating()
+                // Show the next one!
+                let tmpImage = self.squareImage(image: photo!)
+                self.restoImage?.contentMode = .center
+                self.restoImage?.image = tmpImage
+                
+                self.imageAttributions.attributedText = self.photoMetadata[self.photoCurrentIndex].attributions
+            }
+        })
+    }
 }
 
 // MARK: Google stuff
 extension MyRestoDetail{
+    
     // Get and show the photo from Google
     private func getDetailsfromPlaceID(placeID: String){
         // Specify the place data types to return
@@ -1193,45 +1254,44 @@ extension MyRestoDetail{
                     
                     // Save non optinal items
                     self.currentResto.location = place.coordinate
-                    self.currentResto.priceLevel = place.priceLevel
+                    
+                    // Price level
+                    switch(place.priceLevel){
+                    case .cheap:
+                        self.currentResto.priceLevel  = MyStrings.priceLevelCheap.localized()
+                    case .medium:
+                        self.currentResto.priceLevel  = MyStrings.priceLevelMedium.localized()
+                    case .high:
+                        self.currentResto.priceLevel = MyStrings.priceLevelHigh.localized()
+                    case .expensive:
+                        self.currentResto.priceLevel  = MyStrings.priceLevelExpensive.localized()
+                    default:
+                        self.currentResto.priceLevel = MyStrings.priceLevelUnknown.localized()
+                    }
                     
                     // Save the opening Hours
                     switch(place.isOpen()){
                     case .open:
-                        self.currentResto.openStatus = "Open now"
+                        self.currentResto.openStatus = MyStrings.openStatusOpen.localized()
                     case .closed:
-                        self.currentResto.openStatus  = "Closed now"
+                        self.currentResto.openStatus  = MyStrings.openStatusClosed.localized()
                     case .unknown:
-                        self.currentResto.openStatus  = "Unknown"
+                        self.currentResto.openStatus  = MyStrings.openStatusUnknown.localized()
                     default:
                         print("cannot")
                     }
                     
                     // Places attributions
                     self.currentResto.attributions = place.attributions ?? nil
-                    if place.attributions != nil{
-                        print("XXXX")
-                        print(place.attributions)
-                    }
                     
                     if place.photos != nil{
-                        // Get the metadata for the first photo in the place photo metadata list.
-                        let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
+                        // Medatada array
+                        self.photoMetadata = place.photos!
+                        // The count array
+                        self.photoCount = place.photos!.count
                         
-                        // Call loadPlacePhoto to display the bitmap and attribution.
-                        self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
-                            if let error = error {
-                                // TODO: Handle the error.
-                                print("Error loading photo metadata: \(error.localizedDescription)")
-                                return
-                            } else {
-                                // Display the first image and its attributions
-                                let tmpImage = self.squareImage(image: photo!)
-                                self.restoImage?.image = tmpImage
-                                
-                                self.imageAttributions.attributedText = photoMetadata.attributions
-                            }
-                        })
+                        // At this stage the current index is 0
+                        self.loadPictureAtCurrentIndex()
                     }
                 }
         self.restoDetailTable.reloadData()
@@ -1246,9 +1306,22 @@ extension MyRestoDetail{
     private enum MyStrings {
         case bannerTitle
         case buttonAddResto
+        //
         case address
         case phone
         case url
+        case priceLevel
+        case openStatus
+        case openingHours
+        case priceLevelCheap
+        case priceLevelMedium
+        case priceLevelHigh
+        case priceLevelExpensive
+        case priceLevelUnknown
+        case openStatusOpen
+        case openStatusClosed
+        case openStatusUnknown
+        //
         case reviews
         case buttonYumsEmpty
         case buttonYum
@@ -1284,6 +1357,8 @@ extension MyRestoDetail{
                 format: NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESTO", comment: "Add"),
                 locale: .current,
                 arguments: arguments)
+                
+            // Detail table
             case .address:
                 return String(
                 format: NSLocalizedString("MYRESTODETAIL_BUTTON_ADDRESS", comment: "address"),
@@ -1299,6 +1374,62 @@ extension MyRestoDetail{
                 format: NSLocalizedString("MYRESTODETAIL_BUTTON_URL", comment: "url"),
                 locale: .current,
                 arguments: arguments)
+            case .priceLevel:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_PRICELEVEL", comment: "Price"),
+                locale: .current,
+                arguments: arguments)
+            case .openStatus:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_BUTTON_OPENSTATUS", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .openingHours:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_POPUP_OPENINGHOURS", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .priceLevelCheap:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_PRICELEVEL_CHEAP", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .priceLevelMedium:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_PRICELEVEL_MEDIUM", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .priceLevelHigh:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_PRICELEVEL_HIGH", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .priceLevelExpensive:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_PRICELEVEL_EXPENSIVE", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .priceLevelUnknown:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_PRICELEVEL_UNKNOWN", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .openStatusOpen:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_OPENSTATUS_OPEN", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .openStatusClosed:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_OPENSTATUS_CLOSED", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            case .openStatusUnknown:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_OPENSTATUS_UNKNOWN", comment: "Open"),
+                locale: .current,
+                arguments: arguments)
+            //
             case .reviews:
                 return String(
                 format: NSLocalizedString("MYRESTODETAIL_BUTTON_REVIEWS", comment: "reviews"),

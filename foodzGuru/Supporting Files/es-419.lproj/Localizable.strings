@@ -138,7 +138,7 @@ Localized strings.
 "MYRANKS_DUPLICATE_RANKING_MSG" = "Ya tiene un ranking de %@ en %@.";
 "MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
 "MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
-"MYRANKS_BESTPLACES_TITLE" = "Mejores %@ en %@";
+"MYRANKS_BESTPLACES_TITLE" = "Mis recomendaciones en %@";
 
 "FOLLOWERS_NAVBAR_FOLLWERS" = "seguidores";
 "FOLLOWERS_NAVBAR_FOLLOWING" = "siguiendo";
@@ -229,9 +229,22 @@ Localized strings.
 
 "MYRESTODETAIL_BANNER" = "%@ %@ agregado a sus %@!" ;
 "MYRESTODETAIL_BUTTON_ADDRESTO" = "Añadir a mis Foodz";
+//
 "MYRESTODETAIL_BUTTON_ADDRESS" = "Dirección";
 "MYRESTODETAIL_BUTTON_PHONE" = "Teléfono";
 "MYRESTODETAIL_BUTTON_URL" = "Sitio web";
+"MYRESTODETAIL_BUTTON_PRICELEVEL" = "Precio";
+"MYRESTODETAIL_BUTTON_OPENSTATUS" = "Estado";
+"MYRESTODETAIL_POPUP_OPENINGHOURS" = "Horarios de atención";
+"MYRESTODETAIL_PRICELEVEL_CHEAP" = "Barato";
+"MYRESTODETAIL_PRICELEVEL_MEDIUM" = "Medio";
+"MYRESTODETAIL_PRICELEVEL_HIGH" = "Alto";
+"MYRESTODETAIL_PRICELEVEL_EXPENSIVE" = "Caro";
+"MYRESTODETAIL_PRICELEVEL_UNKNOWN" = "Desconocido";
+"MYRESTODETAIL_OPENSTATUS_OPEN" = "Abierto";
+"MYRESTODETAIL_OPENSTATUS_CLOSED" = "Cerrado";
+"MYRESTODETAIL_OPENSTATUS_UNKNOWN" = "Desconocido";
+
 "MYRESTODETAIL_BUTTON_REVIEWS" = "Reseñas";
 "MYRESTODETAIL_BUTTON_YUMS_EMPTY" = "¡Obtenga yums!";
 "MYRESTODETAIL_BUTTON_YUM" = "¡Yum!";

@@ -24,7 +24,7 @@ class Resto{
     var address: String!
     var location:CLLocationCoordinate2D!
     var openingHours: GMSOpeningHours!
-    var priceLevel: GMSPlacesPriceLevel!
+    var priceLevel: String!
     var attributions: NSAttributedString!
     var openStatus: String!
     

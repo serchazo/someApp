@@ -1072,7 +1072,7 @@
                                             <attributedString key="attributedText">
                                                 <fragment content="-">
                                                     <attributes>
-                                                        <font key="NSFont" metaFont="message" size="11"/>
+                                                        <font key="NSFont" metaFont="menu" size="11"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
@@ -1084,18 +1084,44 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </textView>
+                                        <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5KX-cf-x5p">
+                                            <rect key="frame" x="376.5" y="237" width="17.5" height="17.5"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                            <color key="tintColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <state key="normal" image="arrowtriangle.right.fill" catalog="system"/>
+                                            <connections>
+                                                <action selector="forwardButtonPressed:" destination="xkY-9F-qMX" eventType="touchUpInside" id="fig-Qm-DaM"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zCt-aV-Kt0">
+                                            <rect key="frame" x="20" y="235" width="17.5" height="22"/>
+                                            <color key="tintColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <state key="normal" image="arrowtriangle.left.fill" catalog="system"/>
+                                            <connections>
+                                                <action selector="previousButtonPressed:" destination="xkY-9F-qMX" eventType="touchUpInside" id="BIo-SI-r6v"/>
+                                            </connections>
+                                        </button>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="nZK-Uv-2Ea">
+                                            <rect key="frame" x="188.5" y="227.5" width="37" height="37"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="sv8-vm-drx" secondAttribute="trailing" id="0pJ-S0-YuJ"/>
                                         <constraint firstItem="b3S-B0-2Ul" firstAttribute="top" secondItem="sv8-vm-drx" secondAttribute="bottom" constant="8" symbolic="YES" id="6Cp-OS-ygG"/>
+                                        <constraint firstItem="nZK-Uv-2Ea" firstAttribute="centerX" secondItem="sv8-vm-drx" secondAttribute="centerX" id="8sf-je-EIf"/>
                                         <constraint firstItem="gyw-cO-0AE" firstAttribute="top" secondItem="0rl-Pe-eIF" secondAttribute="bottom" constant="8" symbolic="YES" id="96c-wB-unF"/>
                                         <constraint firstItem="b3S-B0-2Ul" firstAttribute="centerX" secondItem="2iQ-1r-yPW" secondAttribute="centerX" id="A2K-Vf-BGb"/>
+                                        <constraint firstAttribute="trailing" secondItem="5KX-cf-x5p" secondAttribute="trailing" constant="20" symbolic="YES" id="Kj3-hQ-7vQ"/>
                                         <constraint firstAttribute="trailing" secondItem="0rl-Pe-eIF" secondAttribute="trailing" constant="20" symbolic="YES" id="Kq3-ZE-d5g"/>
+                                        <constraint firstItem="5KX-cf-x5p" firstAttribute="centerY" secondItem="zCt-aV-Kt0" secondAttribute="centerY" id="M0M-QC-faa"/>
                                         <constraint firstAttribute="trailing" secondItem="gyw-cO-0AE" secondAttribute="trailing" constant="20" symbolic="YES" id="M4l-65-mj4"/>
                                         <constraint firstItem="sv8-vm-drx" firstAttribute="top" secondItem="gyw-cO-0AE" secondAttribute="bottom" constant="8" symbolic="YES" id="QpB-4h-MHH"/>
                                         <constraint firstItem="0rl-Pe-eIF" firstAttribute="top" secondItem="2iQ-1r-yPW" secondAttribute="top" constant="20" symbolic="YES" id="YFr-SA-RRw"/>
+                                        <constraint firstItem="nZK-Uv-2Ea" firstAttribute="centerY" secondItem="sv8-vm-drx" secondAttribute="centerY" id="ZVd-fd-FTG"/>
+                                        <constraint firstItem="nZK-Uv-2Ea" firstAttribute="centerY" secondItem="zCt-aV-Kt0" secondAttribute="centerY" id="mPb-q6-oar"/>
                                         <constraint firstItem="sv8-vm-drx" firstAttribute="leading" secondItem="2iQ-1r-yPW" secondAttribute="leading" id="mm3-o5-dSq"/>
+                                        <constraint firstItem="zCt-aV-Kt0" firstAttribute="leading" secondItem="2iQ-1r-yPW" secondAttribute="leading" constant="20" symbolic="YES" id="qPu-TX-Kqc"/>
                                         <constraint firstItem="0rl-Pe-eIF" firstAttribute="leading" secondItem="2iQ-1r-yPW" secondAttribute="leading" constant="20" symbolic="YES" id="zqh-OP-JXH"/>
                                     </constraints>
                                 </view>
@@ -1213,7 +1239,10 @@
                     <connections>
                         <outlet property="adView" destination="b3S-B0-2Ul" id="VCB-Ij-oE8"/>
                         <outlet property="addToRankButton" destination="gyw-cO-0AE" id="eka-bc-ClS"/>
+                        <outlet property="backButton" destination="zCt-aV-Kt0" id="GAJ-iw-t0K"/>
+                        <outlet property="forwardButton" destination="5KX-cf-x5p" id="Z1M-xp-Cxr"/>
                         <outlet property="imageAttributions" destination="udZ-bH-RwC" id="DFm-Mh-kqG"/>
+                        <outlet property="picSpinner" destination="nZK-Uv-2Ea" id="xx9-s8-5FM"/>
                         <outlet property="restoDetailTable" destination="gyO-Yw-2Wx" id="h7l-2z-7dA"/>
                         <outlet property="restoImage" destination="sv8-vm-drx" id="uIG-nc-bQk"/>
                         <outlet property="restoNameLabel" destination="0rl-Pe-eIF" id="bcu-Hm-bX2"/>
@@ -2898,6 +2927,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrowtriangle.left.fill" catalog="system" width="64" height="56"/>
+        <image name="arrowtriangle.right.fill" catalog="system" width="64" height="56"/>
         <image name="icon_food" width="25" height="25"/>
         <image name="icon_foodies" width="25" height="25"/>
         <image name="icon_home" width="25" height="25"/>

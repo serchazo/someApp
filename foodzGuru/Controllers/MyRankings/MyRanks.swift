@@ -245,7 +245,8 @@ class MyRanks: UIViewController {
                 // Change city button and title
                 if self.currentCity != nil{
                     self.changeCityButton.setTitle(self.currentCity.name, for: .normal)
-                    self.titleLabel.text = "My recommendations in \(self.currentCity.name)"
+                    let title = MyRanks.MyStrings.bestPlacesTitle.localized(arguments: self.currentCity.name)
+                    self.titleLabel.text = title
                 }else{
                     self.changeCityButton.setTitle(MyStrings.selectCity.localized(), for: .normal)
                 }
