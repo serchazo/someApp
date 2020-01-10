@@ -328,6 +328,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 0: Price Level
             if indexPath.row == 0{
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = UIColor.systemIndigo
                 cell.textLabel?.text = MyStrings.priceLevel.localized()
                 
                 if currentResto.priceLevel != nil{
@@ -340,6 +341,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 1: Address
             else if indexPath.row == 1 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = UIColor.systemIndigo
                 cell.textLabel?.text = MyStrings.address.localized()
                 
                 if currentResto.address != nil{
@@ -352,7 +354,9 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 2: Phone
             else if indexPath.row == 2 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = UIColor.systemIndigo
                 cell.textLabel?.text = MyStrings.phone.localized()
+                
                 if currentResto.phoneNumber != nil{
                     cell.detailTextLabel?.text = currentResto.phoneNumber
                 }else{
@@ -363,7 +367,9 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 3: URL
             else if indexPath.row == 3 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = UIColor.systemIndigo
                 cell.textLabel?.text = MyStrings.url.localized()
+                
                 if currentResto.url != nil{
                     cell.detailTextLabel?.text = currentResto.url.absoluteString
                 }else{
@@ -374,6 +380,7 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
             // Row 4: Opening hours
             else if indexPath.row == 4 {
                 let cell = UITableViewCell(style: .value2, reuseIdentifier: nil)
+                cell.textLabel?.textColor = UIColor.systemIndigo
                 cell.textLabel?.text = MyStrings.openStatus.localized()
                 
                 if currentResto.openStatus != nil{
@@ -680,6 +687,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 let tmpModifiedPhone = "tel://" + currentResto.phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
                 if let number = URL(string: tmpModifiedPhone){
                     UIApplication.shared.open(number)
+                    // Deselect row
+                    if let indexPath = self.restoDetailTable.indexPathForSelectedRow {
+                      self.restoDetailTable.deselectRow(at: indexPath, animated: true)
+                    }
                 }else{
                     // Can't call
                     let alert = UIAlertController(
@@ -695,7 +706,10 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                             //do nothing
                     }))
                     present(alert, animated: false, completion: nil)
-                    
+                    // Deselect row
+                    if let indexPath = self.restoDetailTable.indexPathForSelectedRow {
+                      self.restoDetailTable.deselectRow(at: indexPath, animated: true)
+                    }
                 }
             }
             // [END] Row 2: Phone number

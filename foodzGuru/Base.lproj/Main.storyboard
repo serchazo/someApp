@@ -480,7 +480,7 @@
                                             <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some bio" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hKx-Oc-Bvs">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hKx-Oc-Bvs">
                                         <rect key="frame" x="128" y="20" width="226" height="67"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                         <nil key="textColor"/>
@@ -626,7 +626,7 @@
                                 </cells>
                             </collectionView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="gLc-7Z-H37" firstAttribute="leading" secondItem="Izr-qd-VWX" secondAttribute="leadingMargin" id="28P-R1-YGp"/>
                             <constraint firstItem="n53-hm-5iB" firstAttribute="top" secondItem="Bq1-nH-olX" secondAttribute="bottom" constant="8" symbolic="YES" id="3d7-CJ-fcs"/>
@@ -1101,7 +1101,7 @@
                                             <attributedString key="attributedText">
                                                 <fragment content="-">
                                                     <attributes>
-                                                        <font key="NSFont" metaFont="label" size="11"/>
+                                                        <font key="NSFont" metaFont="message" size="11"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
