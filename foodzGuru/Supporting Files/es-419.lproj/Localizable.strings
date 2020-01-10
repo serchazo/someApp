@@ -136,7 +136,7 @@ Localized strings.
 "MYRANKS_UNFOLLOW_ALERT_MSG" = "Ya no recibirá actualizaciones y notificaciones de este usuario";
 "MYRANKS_DUPLICATE_RANKING_TITLE" = "Ranking duplicado";
 "MYRANKS_DUPLICATE_RANKING_MSG" = "Ya tiene un ranking de %@ en %@.";
-"MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene ranking en %@!";
+"MYRANKS_EMPTY_RANKING_TITLE" = "¡Todavía no tiene rankings!";
 "MYRANKS_EMPTY_RANKING_MSG" = "¡Haga clic en + y cuéntele al mundo sobre sus lugares favoritos!";
 "MYRANKS_BESTPLACES_TITLE" = "Mis recomendaciones en %@";
 
@@ -167,16 +167,12 @@ Localized strings.
 "THISRANKING_BUTTON_YUM" = "¡Yum!";
 "THISRANKING_BUTTON_YUMMED" = "Yummed";
 "THISRANKING_BUTTON_YUMNB" = "¡Yums! (%d)";
-"THISRANKING_BUTTON_EDITREVIEW" = "Editar revisión";
+"THISRANKING_BUTTON_EDITREVIEW" = "Editar comentario";
 "THISRANKING_CELL_ADDRESTO" = "Agregar %@";
-"THISRANKING_DESCRIPTION_CELL" = "Haga clic para editar la descripción";
-"THISRANKING_DESCRIPTION_EDIT_TITLE" = "Edite la descripción de su Ranking";
-"THISRANKING_DESCRIPTION_EDIT_WARNING" = "(Máx. 250 caracteres)";
-"THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS" = "Ingrese una descripción para su Ranking";
 "THISRANKING_DESCRIPTION_EDIT_BUTTON_DONE" = "¡Listo!";
 "THISRANKING_REVIEW_EDIT_TITLE" = "Mi opinión sobre %@";
 "THISRANKING_REVIEW_EDIT_WARNING" = "Cuéntale al mundo tu opinión";
-"THISRANKING_REVIEW_EDIT_INSTRUCTIONS" = "Escriba su opinión aquí.";
+"THISRANKING_REVIEW_EDIT_INSTRUCTIONS" = "Escribe tu comentario aquí.";
 "THISRANKING_REVIEW_EDIT_BUTTON_DONE" = "¡Listo!";
 "THISRANKING_REPORT_TITLE" = "Reporte";
 "THISRANKING_REPORT_REASON_INAPPROPRIATE" = "Es inapropiado";
@@ -266,6 +262,10 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "¿Crear ranking?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "¿No tiene %@, crear y agregar restaurante?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Crear";
+"MYRESTODETAIL_REMOVERESTO_BUTTON" = "Suprimir de mis Foodz";
+"MYRESTODETAIL_REMOVERESTO_POPUP_TITLE" = "Estás seguro?";
+"MYRESTODETAIL_REMOVERESTO_POPUP_MESSAGE" = "El lugar será suprimido de su lista y sus comentarios serán destruídos";
+"MYRESTODETAIL_REMOVERESTO_CONFIRM" = "Suprimir";
 "MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Pasé mi vida probando %@ en %@. Esta es la lista definitva.";
 
 // Search

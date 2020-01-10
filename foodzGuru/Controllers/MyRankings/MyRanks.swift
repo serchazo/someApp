@@ -17,7 +17,7 @@ class MyRanks: UIViewController {
     var currentCity: City!
     
     // Class constants
-    private static let addRanking = "addRankSegue"
+    private static let addRankingSegue = "addRankingSegue"
     private static let showRakingDetail = "editRestoList"
     private static let showRankingDetail = "showRankingDetail"
     private static let screenSize = UIScreen.main.bounds.size
@@ -53,6 +53,7 @@ class MyRanks: UIViewController {
         didSet{
             myRanksCollection.delegate = self
             myRanksCollection.dataSource = self
+            myRanksCollection.showsHorizontalScrollIndicator = true
         }
     }
     
@@ -200,7 +201,7 @@ class MyRanks: UIViewController {
     // MARK: blocked User Header
     func blockedUserHeader(){
         navigationItem.rightBarButtonItem = nil
-        navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
+        //navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         navigationItem.title = MyStrings.blockedProfileName.localized()
         changeCityButton.isHidden = true
         changeCityButton.isEnabled = false
@@ -215,7 +216,7 @@ class MyRanks: UIViewController {
         if calledUser != nil{
             let reportButton = UIBarButtonItem(title: "...", style: .done, target: self, action: #selector(reportActions))
             navigationItem.rightBarButtonItem = reportButton
-            navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
+            //navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
         
         // First, go get some data from the DB
@@ -329,6 +330,8 @@ class MyRanks: UIViewController {
                 self.emptyListFlag = true
                 self.myRanksCollection.reloadData()
                 self.myRanksCollection.collectionViewLayout.invalidateLayout()
+
+                self.myRanksCollection.flashScrollIndicators()
             }else{
                 self.emptyListFlag = false
                 for ranksPerUserAny in snapshot.children {
@@ -350,6 +353,7 @@ class MyRanks: UIViewController {
                                 self.rankings = tmpRankings
                                 self.myRanksCollection.reloadData()
                                 self.myRanksCollection.collectionViewLayout.invalidateLayout()
+                                self.myRanksCollection.flashScrollIndicators()
                             }
                         })
                     }
@@ -498,11 +502,11 @@ class MyRanks: UIViewController {
                 }
             }
         }
-        case MyRanks.addRanking :
-            if let seguedMVC = segue.destination as? AddRanking{
-                seguedMVC.delegate = self
-                seguedMVC.currentCity = currentCity
-            }
+        case MyRanks.addRankingSegue :
+        if let seguedMVC = segue.destination as? AddRanking{
+            seguedMVC.delegate = self
+            seguedMVC.currentCity = currentCity
+        }
         case self.segueChangeCoty:
             if let cityChoserVC = segue.destination as? MyCities{
                 if calledUser != nil{
@@ -599,13 +603,16 @@ extension MyRanks: AddRankingDelegate{
 // MARK: Collection stuff
 extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard rankings.count > 0 else { return 1 }
-        return rankings.count
+        var countModifier = 0
+        if self.calledUser == nil { countModifier = 1}
+        
+        guard rankings.count > 0 else { return (1 + countModifier) }
+        return (rankings.count + countModifier)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // TODO: while loading display a spinner
-        guard rankings.count > 0 else {
+        guard rankings.count > 0 || emptyListFlag else {
             // then go
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
                 cell.cellIcon.text = ""
@@ -615,8 +622,22 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
                 fatalError("Cannot create cell")
             }
         }
+        // emptyRanking
+        if emptyListFlag{
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
+                cell.cellIcon.text = "⚠️"
+                cell.cellLabel.text = MyStrings.emptyRankingTitle.localized()
+                cell.isUserInteractionEnabled = false
+                return cell
+            }
+        }
+        
         // Icon cells
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "foodCell", for: indexPath) as? SearchFoodCell {
+        if indexPath.row < rankings.count,
+            let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "foodCell",
+            for: indexPath) as? SearchFoodCell {
+            
             cell.layer.borderWidth = 0.9
             cell.layer.cornerRadius = 7
             cell.layer.masksToBounds = true
@@ -627,6 +648,22 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
             
             return cell
         }
+        // Add Ranking cell
+            if indexPath.row == rankings.count,
+                let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "addRankingCell",
+                for: indexPath) as? SearchFoodCell {
+                
+                cell.layer.borderWidth = 0.9
+                cell.layer.cornerRadius = 7
+                cell.layer.masksToBounds = true
+                cell.layer.borderColor = UIColor.opaqueSeparator.cgColor
+                
+                //cell.cellIcon.text = rankings[indexPath.row].icon
+                //cell.cellLabel.text = rankings[indexPath.row].name
+                
+                return cell
+            }
         
         // Cannot
         else{
@@ -659,31 +696,17 @@ extension MyRanks{
         let twinGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(3/8)),
+                heightDimension: .fractionalWidth(3.5/8)),
             subitems: [twinItem, twinItem])
-      
         
-        // V. Finally
         let nestedGroup = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(3/8)),
-            subitems: [ twinGroup]
-        )
-        
-        /*
-        // Header
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(44))
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: self.headerKind,
-            alignment: .top)
-         section.boundarySupplementaryItems = [sectionHeader]
-        */
-        
+                heightDimension: .fractionalWidth(8/8)),
+            subitems: [twinGroup, twinGroup])
+      
         let section = NSCollectionLayoutSection(group: nestedGroup)
+        section.orthogonalScrollingBehavior = .continuous
         
         // Return the layout
         let layout = UICollectionViewCompositionalLayout(section: section)

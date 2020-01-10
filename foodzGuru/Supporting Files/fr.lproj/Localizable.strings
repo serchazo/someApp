@@ -135,7 +135,7 @@ Localized strings.
 "MYRANKS_UNFOLLOW_ALERT_MSG" = "Vous ne recevrez plus de mises à jour et de notifications de cet utilisateur.";
 "MYRANKS_DUPLICATE_RANKING_TITLE" = "Classement en double";
 "MYRANKS_DUPLICATE_RANKING_MSG" = "Vous avez déjà un classement de %@ à %@.";
-"MYRANKS_EMPTY_RANKING_TITLE" = "Pas encore de classement à %@!";
+"MYRANKS_EMPTY_RANKING_TITLE" = "Pas encore de classements!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Cliquez sur + et informez le monde de vos endroits préférés!";
 "MYRANKS_BESTPLACES_TITLE" = "Mes recommendations à %@";
 
@@ -168,7 +168,6 @@ Localized strings.
 "THISRANKING_BUTTON_YUMNB" = "Miam! (%d)";
 "THISRANKING_BUTTON_EDITREVIEW" = "Modifier l'avis";
 "THISRANKING_CELL_ADDRESTO" = "Ajouter un nouvel endroit de %@";
-"THISRANKING_DESCRIPTION_CELL" = "Cliquez pour modifier la description";
 "THISRANKING_DESCRIPTION_EDIT_TITLE" = "Modifier la description de votre classement";
 "THISRANKING_DESCRIPTION_EDIT_WARNING" = "(250 caractères max)";
 "THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS" = "Saisissez une description de votre classement.";
@@ -264,6 +263,10 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "Créer un classement?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "Vous n'avez pas de classement de %@, créer le classement et ajouter l'endroit?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Créer";
+"MYRESTODETAIL_REMOVERESTO_BUTTON" = "Supprimer de mes Foodz";
+"MYRESTODETAIL_REMOVERESTO_POPUP_TITLE" = "Vous êtes sûr?";
+"MYRESTODETAIL_REMOVERESTO_POPUP_MESSAGE" = "L'endroit sera supprimé de votre liste, et vos commentaires seront effacés.";
+"MYRESTODETAIL_REMOVERESTO_CONFIRM" = "Supprimer";
 "MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "J'ai passé ma vie à chercher les meilleurs %@ à %@. Voici la liste définitive.";
 
 // Search

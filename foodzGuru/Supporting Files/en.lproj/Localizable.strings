@@ -136,7 +136,7 @@ Localized strings.
 "MYRANKS_UNFOLLOW_ALERT_MSG" = "You will no longer receive updates and notifications from this user.";
 "MYRANKS_DUPLICATE_RANKING_TITLE" = "Duplicate ranking";
 "MYRANKS_DUPLICATE_RANKING_MSG" = "You already have a %@ ranking in %@.";
-"MYRANKS_EMPTY_RANKING_TITLE" = "No rankings in %@ yet!";
+"MYRANKS_EMPTY_RANKING_TITLE" = "No rankings yet!";
 "MYRANKS_EMPTY_RANKING_MSG" = "Click on + and tell the world about your favorite places!";
 "MYRANKS_BESTPLACES_TITLE" = "My Recommendations in %@";
 
@@ -157,8 +157,8 @@ Localized strings.
 "THISRANKING_HEADER_TITLE_ME" = "My recommended %@ places in %@";
 "THISRANKING_HEADER_TITLE_USER" = "%@'s recommended %@ places in %@";
 "THISRANKING_DESCRIPTION_TITLE" = "Description";
-"THISRANKING_BUTTON_DELETE_ASK" = "Delete Restaurant?";
-"THISRANKING_BUTTON_DELETE_TITLE" = "Delete";
+"THISRANKING_BUTTON_DELETE_ASK" = "Remove Restaurant?";
+"THISRANKING_BUTTON_DELETE_TITLE" = "Remove";
 "THISRANKING_EMPTY_TITLE_ME" = "No places in your %@ list yet!";
 "THISRANKING_EMPTY_TITLE_USER" = "No %@ places in %@'s list yet";
 "THISRANKING_EMPTY_MSG_ME" = "Click on + and tell the world about your favorite places!";
@@ -169,13 +169,12 @@ Localized strings.
 "THISRANKING_BUTTON_YUMNB" = "Yums! (%d)";
 "THISRANKING_BUTTON_EDITREVIEW" = "Edit Review";
 "THISRANKING_CELL_ADDRESTO" = "Add new %@ place";
-"THISRANKING_DESCRIPTION_CELL" = "Click to edit description";
 "THISRANKING_DESCRIPTION_EDIT_TITLE" = "Edit your Ranking description";
 "THISRANKING_DESCRIPTION_EDIT_WARNING" = "(Max 250 characters)";
 "THISRANKING_DESCRIPTION_EDIT_INSTRUCTIONS" = "Enter a description for your ranking.";
 "THISRANKING_DESCRIPTION_EDIT_BUTTON_DONE" = "Done!";
 "THISRANKING_REVIEW_EDIT_TITLE" = "My review for %@";
-"THISRANKING_REVIEW_EDIT_WARNING" = "Tell the world your honest opinion.";
+"THISRANKING_REVIEW_EDIT_WARNING" = "Tell the world your reviews.";
 "THISRANKING_REVIEW_EDIT_INSTRUCTIONS" = "Write your Review here.";
 "THISRANKING_REVIEW_EDIT_BUTTON_DONE" = "Done!";
 "THISRANKING_REPORT_TITLE" = "Report";
@@ -266,6 +265,10 @@ Localized strings.
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_TITLE" = "Create ranking?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_MSG" = "You don't have a %@, create and add restorant?";
 "MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM" = "Create";
+"MYRESTODETAIL_REMOVERESTO_BUTTON" = "Remove from my Foodz";
+"MYRESTODETAIL_REMOVERESTO_POPUP_TITLE" = "Are you sure?";
+"MYRESTODETAIL_REMOVERESTO_POPUP_MESSAGE" = "This place will be removed from your list, and your reviews will be deleted";
+"MYRESTODETAIL_REMOVERESTO_CONFIRM" = "Remove";
 "MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION" = "Spent all my life looking for the best %@ places in %@. This is the definitive list.";
 
 // Search

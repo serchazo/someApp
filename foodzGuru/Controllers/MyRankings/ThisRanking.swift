@@ -468,6 +468,9 @@ class ThisRanking: UIViewController {
                 if isSenderGoogle,
                     let resto = sender as? Resto,
                     let seguedToResto = segue.destination as? MyRestoDetail{
+                    // Clean up
+                    isSenderGoogle = false
+                    // Prepare
                     seguedToResto.currentResto = resto
                     seguedToResto.currentCity = currentCity
                     seguedToResto.currentFood = currentFood
@@ -634,9 +637,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     let pointsToAdd = ceil(Double(userMultiplier * positionMultiple) * 0.1);
                     cell.pointsGivenLabel.text = MyStrings.pointsGiven.localized(arguments: Int(pointsToAdd))
                     
-                    // Address
-                    cell.addressLabel.text = thisRanking[indexPath.row].address
-                    
                     // Review text
                     if !(thisRankingReviews.count > 0) {
                         cell.reviewLabel.text = " " // the space is important
@@ -669,7 +669,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     
                     // [START] Like button
                     cell.likeButton.setTitle(MyStrings.buttonYum.localized(), for: .normal)
-                    cell.likeButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                     cell.likeButton.isHidden = false
                     cell.likeButton.isEnabled = true
                     
@@ -710,7 +709,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                     if calledUser == nil {
                         
                         // Edit Review part
-                        cell.editReviewButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
                         cell.editReviewButton.setTitleColor(SomeApp.themeColor, for: .normal)
                         cell.editReviewButton.setTitle(MyStrings.buttonEditReview.localized(), for: .normal)
                         cell.editReviewButton.isHidden = false
@@ -783,7 +781,6 @@ extension ThisRanking{
         let descriptionLabel = UILabel()
         descriptionLabel.lineBreakMode = .byWordWrapping
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .body)
         descriptionLabel.text = thisRankingDescription
         
         //Get the label Size with the manip
@@ -803,29 +800,6 @@ extension ThisRanking{
         descriptionCell.selectionStyle = .none
         
         descriptionRowHeight = boundingBox.height + 35
-    }
-    
-    //MARK: Description cell for the Editable table
-    func setupDescriptionEditRankingCell(descriptionEditRankingCell: UITableViewCell){
-        setupDescriptionCell(descriptionCell: descriptionEditRankingCell)
-        // Label "Click to edit description"
-        let clickToEditString = NSAttributedString(
-            string: MyStrings.descriptionCell.localized(),
-            attributes: [.font : UIFont.preferredFont(forTextStyle: .footnote),.foregroundColor: #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1) ])
-        let clickToEditSize = clickToEditString.size()
-        let clickToEditLabel = UILabel(frame: CGRect(
-            x: descriptionEditRankingCell.frame.width - (clickToEditSize.width),
-            y: descriptionRowHeight+5,
-            width: clickToEditSize.width,
-            height: clickToEditSize.height+5))
-        clickToEditLabel.attributedText = clickToEditString
-        descriptionEditRankingCell.addSubview(clickToEditLabel)
-        
-        // Override from the original setup
-        descriptionEditRankingCell.isUserInteractionEnabled = true
-        descriptionEditRankingCell.selectionStyle = .default
-        
-        descriptionEditRankingRowHeight = descriptionRowHeight + clickToEditSize.height
     }
     
     // MARK: report menu
@@ -1022,30 +996,6 @@ extension ThisRanking : UITableViewDropDelegate {
     }
 }
 
-// MARK: UITextView Delegate
-extension ThisRanking:UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if textView.tag == 100{
-            let currentText = textView.text ?? ""
-            guard let stringRange = Range(range, in: currentText) else {return false}
-            let changedText = currentText.replacingCharacters(in: stringRange, with: text)
-            return changedText.count <= 250
-        }else{
-            return false
-        }
-    }
-    
-    // Act like placeholder
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.systemGray{
-            textView.text = nil
-            textView.textColor = UIColor.label
-        }
-        else{
-            textView.textColor = UIColor.label
-        }
-    }
-}
 
 // MARK: - CLLocationManagerDelegate
 extension ThisRanking: CLLocationManagerDelegate{
@@ -1058,7 +1008,6 @@ extension ThisRanking: CLLocationManagerDelegate{
         
         let lat = location.coordinate.latitude
         let long = location.coordinate.longitude
-        print(lat.description + "  " + long.description)
         
         let offset = 200.0 / 1000.0;
         let latMax = lat + offset;
@@ -1084,19 +1033,12 @@ extension ThisRanking: GMSAutocompleteViewControllerDelegate{
         
         let restoId = place.placeID ?? ""
         let restoName = place.name ?? ""
-        
         let tmpResto = Resto(key: restoId, name: restoName)
         
-        //
-        self.performSegue(withIdentifier: ThisRanking.showRestoDetailSegue , sender: tmpResto)
-        //
+        self.isSenderGoogle = true
         
-        // Verify if the resto exists in the ranking
-        if (thisRanking.filter {$0.key == tmpResto.key}).count > 0{
-           showAlertDuplicateRestorant()
-        }else{
-            SomeApp.addRestoToRanking(userId: user.uid, resto: tmpResto, forFood: currentFood, foodId: currentFood.key, city: currentCity)
-        }
+        self.performSegue(withIdentifier: ThisRanking.showRestoDetailSegue , sender: tmpResto)
+        
         dismiss(animated: true, completion: nil)
     }
     
@@ -1211,7 +1153,6 @@ extension ThisRanking{
         case buttonYumNb
         case buttonEditReview
         case cellAddResto
-        case descriptionCell
         case descriptionEditTitle
         case descriptionEditWarning
         case descriptionEditPlaceholder
@@ -1303,12 +1244,6 @@ extension ThisRanking{
                 format: NSLocalizedString("THISRANKING_CELL_ADDRESTO", comment: "Add place"),
                 locale: .current,
                 arguments: arguments)
-            case .descriptionCell:
-            return String(
-                format: NSLocalizedString("THISRANKING_DESCRIPTION_CELL", comment: "Write your description"),
-                locale: .current,
-                arguments: arguments)
-            
             case .descriptionEditTitle:
             return String(
                 format: NSLocalizedString("THISRANKING_DESCRIPTION_EDIT_TITLE", comment: "Write your description"),

@@ -36,7 +36,6 @@ class ThisRankingCell: UITableViewCell {
     @IBOutlet weak var positionLabel: UILabel!
     @IBOutlet weak var restoName: UILabel!
     @IBOutlet weak var pointsGivenLabel: UILabel!
-    @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var reviewLabel: UILabel!
     @IBOutlet weak var detailsButton: UIButton!
     

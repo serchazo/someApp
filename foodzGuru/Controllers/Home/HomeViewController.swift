@@ -20,7 +20,6 @@ class HomeViewController: UIViewController {
     private let timelineCellWithImageNibId = "TimelineCellWithImage"
     
     // Cell identifiers
-    private let timelineNewUserRanking = "timelineUserRanking"
     private let timelineUserFollowing = "timelineUserFollowing"
     private let timelineNewUserReview = "timelineUserNewReview"
     private let timelineNewFavorite = "timelineUserFavorite"

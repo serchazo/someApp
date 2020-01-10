@@ -98,8 +98,8 @@ class MyRestoDetail: UIViewController {
     
     @IBOutlet weak var picSpinner: UIActivityIndicatorView!{
       didSet{
-        picSpinner.isHidden = true
-        picSpinner.stopAnimating()
+        picSpinner.isHidden = false
+        picSpinner.startAnimating()
       }
     }
     
@@ -131,7 +131,11 @@ class MyRestoDetail: UIViewController {
     
     // MARK: Add to ranking action
     @IBAction func addToRankAction(_ sender: Any) {
-        addRestoToRanking()
+        if restoInRankingFlag{
+            removeRestoFromRanking()
+        }else{
+            addRestoToRanking()
+        }
     }
     
     private func bannerStuff(){
@@ -145,10 +149,6 @@ class MyRestoDetail: UIViewController {
         
         let banner = NotificationBanner(customView: tmpView)
         banner.show()
-        
-        // clean up
-        addToRankButton.isHidden = true
-        addToRankButton.isEnabled = false
     }
     
     
@@ -156,7 +156,6 @@ class MyRestoDetail: UIViewController {
         didSet{
             restoDetailTable.delegate = self
             restoDetailTable.dataSource = self
-            //restoDetailTable.register(UINib(nibName: commentCellNibId, bundle: nil), forCellReuseIdentifier: commentCell)
             restoDetailTable.rowHeight = UITableView.automaticDimension
             restoDetailTable.estimatedRowHeight = 160
             restoDetailTable.register(UINib(nibName: "UnifiedNativeAdCell", bundle: nil),
@@ -267,15 +266,11 @@ class MyRestoDetail: UIViewController {
         restoNameLabel.text = currentResto.name
         
         FoodzLayout.configureButtonNoBorder(button: self.addToRankButton)
-        self.addToRankButton.setTitle(MyStrings.buttonAddResto.localized(), for: .normal)
-        
         // Add to my foodz button
         if restoInRankingFlag {
-            self.addToRankButton.isEnabled = false
-            self.addToRankButton.isHidden = true
+            self.addToRankButton.setTitle(MyStrings.removeRestoButton.localized(), for: .normal)
         }else{
-            self.addToRankButton.isEnabled = true
-            self.addToRankButton.isHidden = false
+            self.addToRankButton.setTitle(MyStrings.buttonAddResto.localized(), for: .normal)
         }
         
     }
@@ -958,7 +953,7 @@ extension MyRestoDetail {
         editReviewTransparentView.addGestureRecognizer(tapGesture)
     }
     
-    //Add resto to Ranking
+    // MARK: Add/Remove resto
     func addRestoToRanking(){
         // Check if the user has this food already
         let dbPath = user.uid + "/" + currentCity.country + "/" + currentCity.state + "/" + currentCity.key + "/" + currentFood.key
@@ -1009,6 +1004,28 @@ extension MyRestoDetail {
                 self.restoDetailTable.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
             }
         })
+    }
+    
+    // Remove resto from ranking
+    func removeRestoFromRanking(){
+        let areYouSureAlert = UIAlertController(
+            title: MyStrings.removeRestoPopupTitle.localized(),
+            message: MyStrings.removeRestoPopupMsg.localized(),
+            preferredStyle: .alert)
+        let deleteAction = UIAlertAction(
+            title: MyStrings.removeRestoConfirm.localized(),
+            style: .destructive, handler: {_ in
+                SomeApp.deleteRestoFromRanking(userId: self.user.uid, city: self.currentCity, foodId: self.currentFood.key, restoId: self.currentResto.key)
+                self.navigationController?.popViewController(animated: true)
+        })
+        let cancelAction = UIAlertAction(
+            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
+            style: .default, handler: nil)
+        
+        areYouSureAlert.addAction(deleteAction)
+        areYouSureAlert.addAction(cancelAction)
+        
+        present(areYouSureAlert, animated: true)
     }
 }
 
@@ -1343,6 +1360,10 @@ extension MyRestoDetail{
         case addRestoCreateRankingTitle
         case addRestoCreateRankingMsg
         case addRestoCreateRankingConfirm
+        case removeRestoButton
+        case removeRestoPopupTitle
+        case removeRestoPopupMsg
+        case removeRestoConfirm
         case rankingDefaulDescription
         
         func localized(arguments: CVarArg...) -> String{
@@ -1535,6 +1556,26 @@ extension MyRestoDetail{
                     format: NSLocalizedString("MYRESTODETAIL_ADDRESTO_CREATERANKING_CONFIRM", comment: "Create"),
                     locale: .current,
                     arguments: arguments)
+            case .removeRestoButton:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_REMOVERESTO_BUTTON", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
+            case .removeRestoPopupTitle:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_REMOVERESTO_POPUP_TITLE", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
+            case .removeRestoPopupMsg:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_REMOVERESTO_POPUP_MESSAGE", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
+            case .removeRestoConfirm:
+                return String(
+                format: NSLocalizedString("MYRESTODETAIL_REMOVERESTO_CONFIRM", comment: "Create"),
+                locale: .current,
+                arguments: arguments)
             case .rankingDefaulDescription:
             return String(
                 format: NSLocalizedString("MYRESTODETAIL_RANKING_DEFAULT_DESCRIPTION", comment: "Description"),
