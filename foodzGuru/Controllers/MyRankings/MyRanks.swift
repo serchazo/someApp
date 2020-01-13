@@ -576,6 +576,8 @@ extension MyRanks: AddRankingDelegate{
         if (rankings.filter {$0.key == withFood.key}).count == 0{
             // If we don't have the ranking, we add it to Firebase
             SomeApp.newUserRanking(userId: user.uid, city: city, food: withFood)
+            // Automatically follow the ranking
+            SomeApp.followRanking(userId: user.uid, city: currentCity, foodId: withFood.key)
             // Only need to reload.  The firebase observer will update the content
             self.myRanksCollection.reloadData()
             self.myRanksCollection.collectionViewLayout.invalidateLayout()

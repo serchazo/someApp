@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import SDWebImage
+import GooglePlaces
 
 class HomeViewController: UIViewController {
     
@@ -25,6 +26,7 @@ class HomeViewController: UIViewController {
     private let timelineNewFavorite = "timelineUserFavorite"
     private let timelineRankingInfo = "timelineRankingInfoCell"
     private let timelineNewYum = "timelineNewYum"
+    private let timelineBestInRanking = "timelineBestInRanking"
     
     // Segue identifiers
     private let segueIDShowUserFromNewRanking = "showUserFromNewRanking"
@@ -32,12 +34,14 @@ class HomeViewController: UIViewController {
     private let segueIDShowUserReview = "showUserReview"
     private let segueIDShowUserFavorite = "showUserFavorite"
     private let segueIDShowTopRestos = "showTopRestos"
+    private let segueIDShowRanking = "showRankingSegue"
     private let segueIDShowYum = "showYum"
     
     // Instance variables
     private var user: User!
     private var somePost: [(key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)] = []
     private var userTimelineReference: DatabaseReference!
+    private var placesClient: GMSPlacesClient!
     
     // MARK: outlets
     @IBOutlet weak var headerView: UIView!
@@ -104,6 +108,9 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         self.navigationItem.title = FoodzLayout.FoodzStrings.appName.localized()
         
+        //Places issues
+        placesClient = GMSPlacesClient.shared()
+        
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
@@ -133,13 +140,17 @@ class HomeViewController: UIViewController {
                     let type = value["type"] as? String,
                     let timestamp = value["timestamp"] as? Double,
                     let payload = value["payload"] as? String{
-                    // Following could be empty
+                    
+                    // Next attributes could be empty
                     var tmpTarget = ""
-                    if let target = value["target"] as? String {tmpTarget = target}
+                    if let target = value["target"] as? String {
+                        tmpTarget = target
+                    }
                     var tmpTargetName = ""
                     if let targetName = value["targetName"] as? String {tmpTargetName = targetName}
                     var tmpInitiator = ""
                     if let initiator = value["initiator"] as? String {tmpInitiator = initiator}
+                    
                     
                     tmpPosts.append((
                         key: timeLineSnap.key,
@@ -149,7 +160,7 @@ class HomeViewController: UIViewController {
                         initiator: tmpInitiator,
                         target: tmpTarget,
                         targetName: tmpTargetName))
-                    
+
                     // Use the trick
                     count += 1
                         
@@ -257,6 +268,16 @@ class HomeViewController: UIViewController {
             topRestosVC.currentCity = parseResult.city
             topRestosVC.currentFood = parseResult.food
         }
+        // Show resto rank for ranking stuff - With image
+        else if segue.identifier == self.segueIDShowRanking,
+        let cell = sender as? HomeCellWithImage,
+        let indexPath = newsFeedTable.indexPath(for: cell),
+            let topRestosVC = segue.destination as? BestRestosViewController{
+            let parseResult = parseTopRestos(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            
+            topRestosVC.currentCity = parseResult.city
+            topRestosVC.currentFood = parseResult.food
+        }
         //
     }
 
@@ -298,18 +319,24 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         }
         // New Best in ranking
         else if somePost[indexPath.row].type == TimelineEvents.timelineBestInRanking.rawValue,
-        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineBestInRanking, for: indexPath) as? HomeCellWithImage {
+            let parsedTarget = somePost[indexPath.row].target.components(separatedBy: "/")
+            let parsedPayload = somePost[indexPath.row].payload.components(separatedBy: "/")
+            let parsedTargetName = somePost[indexPath.row].targetName.components(separatedBy: "/")
+            
             cell.titleLabel.text = MyStrings.postNewBestInRank.localized()
             cell.setDate(timestamp: somePost[indexPath.row].timestamp)
-            // Set icon
-            let tmpArray = somePost[indexPath.row].targetName.components(separatedBy: "/")
-            cell.iconLabel.text = "💬"
-            if tmpArray.count >= 3{
-                cell.iconLabel.text = tmpArray[2]
+            
+            // Set image
+            if parsedTarget.count >= 5{
+                cell.setGooglePhoto(restoId: parsedTarget[4], placesClient: self.placesClient)
             }
-            // Set body
-            let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
-            cell.bodyLabel.text = MyStrings.timelineNewBestInRank.localized(arguments: parsedArray[0],parsedArray[1],parsedArray[2])
+            
+            //let parseResult = parseTopRestos(target: somePost[indexPath.row].target, targetName: somePost[indexPath.row].targetName, initiator: somePost[indexPath.row].initiator)
+            //cell.setCellBody(target: somePost[indexPath.row].target, payload: somePost[indexPath.row].payload, currentCity: parseResult.city)
+            
+            //Set body
+            cell.bodyLabel.text = MyStrings.timelineNewBestInRank.localized(arguments: parsedPayload[0],parsedTargetName[2],parsedPayload[2])
             
             return cell
         }
@@ -363,54 +390,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             cell.bodyLabel.text = MyStrings.timelineNewReview.localized(arguments: parsedArray[0],parsedArray[1])
             return cell
         }
-            
-            
         
-        // MARK: Unlocalized version
-        // User following
-        else if somePost[indexPath.row].type == TimelineEvents.NewFollower.rawValue,
-        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineUserFollowing, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = MyStrings.postNewFollower.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New best in ranking
-        else if somePost[indexPath.row].type == TimelineEvents.NewBestRestoInRanking.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
-            cell.titleLabel.text = MyStrings.postNewBestInRank.localized()
-            setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New arrival in ranking
-        else if somePost[indexPath.row].type == TimelineEvents.NewArrivalInRanking.rawValue,
-        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
-            cell.titleLabel.text = MyStrings.postNewInTopRank.localized()
-            setIconDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New Yum!
-        else if somePost[indexPath.row].type == TimelineEvents.NewYum.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewYum, for: indexPath) as? HomeCellWithImage {
-            cell.titleLabel.text = MyStrings.postNewYum.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New favorite
-        else if somePost[indexPath.row].type == TimelineEvents.NewUserFavorite.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewFavorite, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = MyStrings.postNewFavorite.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-        // New review
-        else if somePost[indexPath.row].type == TimelineEvents.NewUserReview.rawValue,
-            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineNewUserReview, for: indexPath) as? HomeCellWithImage  {
-            cell.titleLabel.text = MyStrings.postNewReview.localized()
-            setImageDateBodyInCell(cell: cell, forPost:somePost[indexPath.row])
-            return cell
-        }
-            
-        ///////
         // If it is an Ad, we have two options: load one or placeholder
         else if somePost[indexPath.row].type == TimelineEvents.NativeAd.rawValue{
             // If we have loaded Ads
@@ -479,59 +459,6 @@ extension HomeViewController{
         }
 
     }
-    
-    // MARK: cells not localized (to delete after all have updated)
-    // With icon
-    func setIconDateBodyInCell(cell: HomeCellWithIcon, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
-        // Set icon
-        let tmpArray = forPost.targetName.components(separatedBy: "/")
-        if tmpArray.count >= 3{
-            cell.iconLabel.text = tmpArray[2]
-        }else{
-            cell.iconLabel.text = "💬"
-        }
-        
-        // Set Date
-        let date = Date(timeIntervalSince1970: TimeInterval(forPost.timestamp/1000)) // in milliseconds
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
-        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-        let localDate = dateFormatter.string(from: date)
-        cell.dateLabel.text = localDate
-        
-        // Body
-        cell.bodyLabel.text = forPost.payload
-    }
-    
-    // With image
-    func setImageDateBodyInCell(cell: HomeCellWithImage, forPost: (key: String, type:String, timestamp:Double, payload: String, initiator: String, target: String, targetName: String)){
-        // Set Image
-        let userRef = SomeApp.dbUserData
-        userRef.child(forPost.initiator).observeSingleEvent(of: .value, with: {snapshot in
-            if let value = snapshot.value as? [String:Any],
-                let photoURL = value["photourl"] as? String{
-                cell.cellImage.sd_setImage(
-                    with: URL(string: photoURL),
-                    placeholderImage: UIImage(named: "userdefault"),
-                    options: [],
-                    completed: nil)
-            }else{
-                cell.cellImage.image = UIImage(named: "userdefault")
-            }
-        })
-        
-        // Set Date
-        let date = Date(timeIntervalSince1970: TimeInterval(forPost.timestamp/1000)) // in milliseconds
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.none //Set time style
-        dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-        let localDate = dateFormatter.string(from: date)
-        cell.dateLabel.text = localDate
-        
-        // Body
-        cell.bodyLabel.text = forPost.payload
-        
-    }
 }
 
 // MARK: cell stuff
@@ -552,6 +479,57 @@ extension HomeCellWithImage{
             }
         })
     }
+    func setCellBody(target:String, payload:String, currentCity: City){
+        let parsedTarget = target.components(separatedBy: "/")
+        let parsedPayload = payload.components(separatedBy: "/")
+        
+        SomeApp.dbFoodTypeRoot.child(currentCity.country + "/" + parsedTarget[3] + "/name").observeSingleEvent(of: .value, with: {foodSnap in
+            if let foodName = foodSnap.value as? String{
+                print("xxxxxx")
+                print(foodName)
+                print(parsedPayload[2])
+                print(HomeViewController.MyStrings.timelineNewBestInRank.localized(arguments: parsedPayload[0],foodName,parsedPayload[2]))
+                
+                // Set body
+                self.bodyLabel.text = HomeViewController.MyStrings.timelineNewBestInRank.localized(arguments: parsedPayload[0],foodName,parsedPayload[2])
+            }
+        })
+    }
+    
+    // Set Google Place Photo in cell
+    func setGooglePhoto(restoId: String, placesClient: GMSPlacesClient){
+        // Specify the place data types to return (in this case, just photos).
+        let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt(GMSPlaceField.photos.rawValue))!
+
+        placesClient.fetchPlace(fromPlaceID: restoId,
+                                 placeFields: fields,
+                                 sessionToken: nil, callback: {
+          (place: GMSPlace?, error: Error?) in
+          if let error = error {
+            print("An error occurred: \(error.localizedDescription)")
+            return
+          }
+          if let place = place {
+            // Get the metadata for the first photo in the place photo metadata list.
+            let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
+
+            // Call loadPlacePhoto to display the bitmap and attribution.
+            placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
+              if let error = error {
+                // TODO: Handle the error.
+                print("Error loading photo metadata: \(error.localizedDescription)")
+                return
+              } else {
+                // Display the first image and its attributions.
+                
+                self.cellImage.image = photo;
+                //self.lblText?.attributedText = photoMetadata.attributions;
+              }
+            })
+          }
+        })
+    }
+    
     // Set date in cell (timestamp in Milliseconds
     func setDate(timestamp: Double){
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp/1000)) // in milliseconds
@@ -775,7 +753,7 @@ extension HomeViewController: GADUnifiedNativeAdLoaderDelegate{
 
 // MARK: Localized Strings
 extension HomeViewController{
-    private enum MyStrings {
+    enum MyStrings {
         case postNewRanking
         case postNewFollower
         case postNewYum

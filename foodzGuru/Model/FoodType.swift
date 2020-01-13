@@ -12,7 +12,7 @@ import Firebase
 class FoodType{
     let ref: DatabaseReference?
     let key: String
-    let name: String
+    var name: String
     let icon: String
     var imageURL:URL! //This is a helper value, don't put in the -> Any
     

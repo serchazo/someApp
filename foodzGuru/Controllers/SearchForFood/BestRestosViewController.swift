@@ -23,6 +23,7 @@ class BestRestosViewController: UIViewController {
     // Class Variables
     private let refreshControl = UIRefreshControl()
     private var emptyListFlag: Bool = false
+    private var userFollowingRankingFlag: Bool = false
     private var user:User!
     
     //Handlers
@@ -87,9 +88,20 @@ class BestRestosViewController: UIViewController {
         Auth.auth().addStateDidChangeListener {auth, user in
             guard let user = user else {return}
             self.user = user
-            // the user is needed in the header
-            self.configureHeader()
-            self.updateTableFromDatabase(cityDBPath: cityDBPath)
+            
+            // II. Update the food name in local
+            let foodDBPath = self.currentCity.country + "/" + self.currentFood.key + "/name"
+            SomeApp.dbFoodTypeRoot.child(foodDBPath).observeSingleEvent(of: .value, with: {foodSnap in
+                if let foodName = foodSnap.value as? String{
+                    self.currentFood.name = foodName
+                    
+                    // III. Go
+                    self.configureHeader()
+                    self.updateTableFromDatabase(cityDBPath: cityDBPath)
+                }
+            })
+            
+            
         }
         
         // Configure ads
@@ -201,14 +213,9 @@ class BestRestosViewController: UIViewController {
         rankingFollowersHandle.append((handle: SomeApp.dbRankingFollowers.child(dbPath).observe(.value, with: {snapshot in
             
             if snapshot.exists() {
-                self.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
-                self.followButton.addTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
-            }else{
-                self.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
-                self.followButton.addTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+                self.userFollowingRankingFlag = true
             }
-            self.followButton.isHidden = false
-            self.followButton.isEnabled = true
+            self.configureFollowButton()
         }), dbPath:dbPath))
         
         // Followers button
@@ -222,6 +229,19 @@ class BestRestosViewController: UIViewController {
                 self.followersButton.setTitle(followersString, for: .normal)
             }
         }),dbPath: dbPathNb))
+    }
+    
+    private func configureFollowButton(){
+        if userFollowingRankingFlag{
+            self.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
+            followButton.removeTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+            self.followButton.addTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
+            
+        }else{
+            self.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
+            followButton.removeTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
+            self.followButton.addTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+        }
     }
     
     // MARK: Fetch image from URL
@@ -317,8 +337,8 @@ extension BestRestosViewController{
     
     @objc func followRanking(){
         SomeApp.followRanking(userId: user.uid, city: currentCity, foodId: currentFood.key)
-        configureHeader()
-        self.followButton.removeTarget(self, action: #selector(self.followRanking), for: .touchUpInside)
+        self.userFollowingRankingFlag = true
+        configureFollowButton()
     }
     
     @objc func unfollowRanking(){
@@ -342,8 +362,8 @@ extension BestRestosViewController{
                 (action: UIAlertAction)->Void in
                 //Unfollow
                 SomeApp.unfollowRanking(userId: self.user.uid, city: self.currentCity, foodId: self.currentFood.key)
-                self.configureHeader()
-                self.followButton.removeTarget(self, action: #selector(self.unfollowRanking), for: .touchUpInside)
+                self.userFollowingRankingFlag = false
+                self.configureFollowButton()
         }))
         present(alert, animated: false, completion: nil)
     }
