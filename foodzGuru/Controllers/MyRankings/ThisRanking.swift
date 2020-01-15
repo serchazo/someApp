@@ -544,7 +544,6 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 let titleCell = editRankTableView.dequeueReusableCell(withIdentifier: self.editRankTitleCellId, for: indexPath) as? EditRankingTitleCell{
                 
                 titleCell.titleLabel.textColor = SomeApp.themeColor
-                
                 titleCell.doneButton.setTitleColor(SomeApp.themeColor, for: .normal)
                 titleCell.cancelButton.setTitleColor(SomeApp.themeColor, for: .normal)
                 titleCell.cancelAction = {(cell) in
@@ -620,14 +619,10 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                 else if let cell = tableView.dequeueReusableCell(withIdentifier: "EditRankingCell", for: indexPath) as? ThisRankingCell {
                     // Position label
                     let position = indexPath.row + 1
-                    cell.positionLabel.text = String(position)
-                    cell.positionLabel.layer.cornerRadius = 0.5 * cell.positionLabel.bounds.width
-                    cell.positionLabel.layer.borderColor = SomeApp.themeColor.cgColor
-                    cell.positionLabel.layer.borderWidth = 1.0
-                    cell.positionLabel.layer.masksToBounds = true
                     
                     // Name
-                    cell.restoName.text = thisRanking[indexPath.row].name
+                    let placeNameText = String(position) + ". " + thisRanking[indexPath.row].name
+                    cell.placeName.setTitle(placeNameText, for: .normal)
                     
                     // Points
                     var positionMultiple = 10 - indexPath.row
@@ -647,7 +642,7 @@ extension ThisRanking: UITableViewDelegate, UITableViewDataSource{
                         cell.reviewLabel.text = thisRankingReviews[indexPath.row].text
                     }
                     
-                    // Details button
+                    // Show details Action
                     cell.showRestoDetailAction = {(cell) in
                         self.performSegue(withIdentifier: ThisRanking.showRestoDetailSegue, sender: cell)
                     }

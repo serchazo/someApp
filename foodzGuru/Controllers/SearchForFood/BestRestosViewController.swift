@@ -126,12 +126,6 @@ class BestRestosViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.isToolbarHidden = false
-        self.navigationController?.hidesBarsOnSwipe = false
-    }
-    
     //
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

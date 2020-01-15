@@ -257,7 +257,6 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
         if kind == self.headerKind,
             let view = foodSelectorCollection.dequeueReusableSupplementaryView(
                 ofKind:self.headerKind,
-            //ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: SearchFoodHeaderView.reuseIdentifier,
             for: indexPath) as? SearchFoodHeaderView{
             view.label.font = UIFont.preferredFont(forTextStyle: .largeTitle)

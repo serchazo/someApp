@@ -19,6 +19,11 @@ class ThisRankingCell: UITableViewCell {
     @IBAction func detailsButtonPressed(_ sender: Any) {
         showRestoDetailAction?(self)
     }
+    
+    @IBAction func placeNameButtonPressed(_ sender: Any) {
+        showRestoDetailAction?(self)
+    }
+    
     @IBAction func editReviewPressed(_ sender: Any) {
         editReviewAction?(self)
     }
@@ -33,8 +38,9 @@ class ThisRankingCell: UITableViewCell {
     }
     
     // Outlets
-    @IBOutlet weak var positionLabel: UILabel!
-    @IBOutlet weak var restoName: UILabel!
+    
+    @IBOutlet weak var placeName: UIButton!
+    
     @IBOutlet weak var pointsGivenLabel: UILabel!
     @IBOutlet weak var reviewLabel: UILabel!
     @IBOutlet weak var detailsButton: UIButton!

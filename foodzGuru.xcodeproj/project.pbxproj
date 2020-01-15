@@ -16,6 +16,7 @@
 		341DD1602329DF2200102472 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD15F2329DF2200102472 /* Comment.swift */; };
 		341DD162232A282200102472 /* UserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD161232A282100102472 /* UserDetails.swift */; };
 		341DD165232A369E00102472 /* Foodies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DD164232A369E00102472 /* Foodies.swift */; };
+		341EB6FE23CDCC7F0026C021 /* MyRanksHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341EB6FD23CDCC7F0026C021 /* MyRanksHeader.swift */; };
 		3428F82423A76187009D1340 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3428F82623A76187009D1340 /* Localizable.strings */; };
 		3435198A235420A900A01CAA /* MyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34351989235420A900A01CAA /* MyProfile.swift */; };
 		3435198E235458B000A01CAA /* ChangeProfilePicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3435198D235458B000A01CAA /* ChangeProfilePicCell.xib */; };
@@ -87,6 +88,7 @@
 		341DD15F2329DF2200102472 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		341DD161232A282100102472 /* UserDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetails.swift; sourceTree = "<group>"; };
 		341DD164232A369E00102472 /* Foodies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foodies.swift; sourceTree = "<group>"; };
+		341EB6FD23CDCC7F0026C021 /* MyRanksHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRanksHeader.swift; sourceTree = "<group>"; };
 		3423A88323A9AF21007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		3423A88423A9AF22007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/EditRankingTitleCell.strings; sourceTree = "<group>"; };
 		3423A88523A9AF23007719E9 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/EditableRestoCell.strings; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				34FEE9CB23120F6300FE0590 /* MyRanks.swift */,
+				341EB6FD23CDCC7F0026C021 /* MyRanksHeader.swift */,
 				3489199E23878EA60020934F /* FollowersViewController.swift */,
 				34FEE9CD231229C000FE0590 /* MyRanksTableViewCell.swift */,
 				34DA7EB6234B29D400EBD360 /* MyCities.swift */,
@@ -495,6 +498,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				341EB6FE23CDCC7F0026C021 /* MyRanksHeader.swift in Sources */,
 				34DA7EB7234B29D400EBD360 /* MyCities.swift in Sources */,
 				34DA7EB3234AC2DF00EBD360 /* HomeCellWithImage.swift in Sources */,
 				34FEE9C22311207C00FE0590 /* SearchViewController.swift in Sources */,
@@ -730,7 +734,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -753,7 +757,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

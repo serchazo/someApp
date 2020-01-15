@@ -12,10 +12,10 @@ class HomeCellWithImage: UITableViewCell {
 
     @IBOutlet weak var cellImage: UIImageView!{
         didSet{
-            cellImage.layer.cornerRadius = 0.5 * cellImage.bounds.size.height
+            cellImage.layer.cornerRadius = 10 //0.5 * cellImage.bounds.size.height
             cellImage.layer.masksToBounds = true
-            cellImage.layer.borderColor = UIColor.systemGray.cgColor
-            cellImage.layer.borderWidth = 1.0;
+            //cellImage.layer.borderColor = UIColor.systemGray.cgColor
+            //cellImage.layer.borderWidth = 1.0;
         }
     }
     

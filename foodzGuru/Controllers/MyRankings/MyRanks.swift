@@ -8,8 +8,7 @@
 
 import UIKit
 import Firebase
-import GoogleMobileAds
-import SDWebImage
+//import GoogleMobileAds
 
 class MyRanks: UIViewController {
     //Control var
@@ -26,6 +25,8 @@ class MyRanks: UIViewController {
     private let segueFollowers = "followersSegue"
     private let segueFollowing = "followingSegue"
     
+    private let headerIdentifier = "myRanksHeader"
+    
     // Handles
     private var userDataHandle:UInt!
     private var followersHandle:UInt!
@@ -36,59 +37,21 @@ class MyRanks: UIViewController {
     
     // Instance variables
     private var user:User!
+    private var bioString:String!
     private var rankings:[Ranking] = []
     private var foodItems:[FoodType] = []
     private var emptyListFlag = false
     private var blockedFlag = false
     private var innerBlockedFlag = false
     private let defaults = UserDefaults.standard
-    private var photoURL: URL!{
-        didSet{
-            fetchImage()
-        }
-    }
-    private var bioString:String!
+    private var photoURL: URL!
     
     @IBOutlet weak var myRanksCollection: UICollectionView!{
         didSet{
             myRanksCollection.delegate = self
             myRanksCollection.dataSource = self
-            myRanksCollection.showsHorizontalScrollIndicator = true
         }
     }
-    
-    
-    @IBOutlet weak var profilePictureImage: UIImageView!
-    @IBOutlet weak var bioLabel: UILabel!
-    @IBOutlet weak var followersButton: UIButton!{
-        didSet{
-            followersButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            let followersTitle = MyStrings.followers.localized() + ": -"
-            followersButton.setTitle(followersTitle, for: .normal)
-        }
-    }
-    @IBOutlet weak var followingButton: UIButton!{
-        didSet{
-            followingButton.setTitleColor(SomeApp.themeColor, for: .normal)
-            let followingTitle = MyStrings.followers.localized() + ": -"
-            followingButton.setTitle(followingTitle, for: .normal)
-        }
-    }
-    @IBOutlet weak var followButton: UIButton!{
-        didSet{
-            followButton.isHidden = true
-            followButton.isEnabled = false
-        }
-    }
-    
-    @IBOutlet weak var changeCityButton: UIButton!
-    @IBOutlet weak var titleLabel: UILabel!
-    
-    // MARK: Ad stuff
-    @IBOutlet weak var adView: UIView!
-    // Ad stuff
-    private var bannerView: GADBannerView!
-    
     
     // MARK: Timeline funcs
     override func viewWillAppear(_ animated: Bool) {
@@ -111,7 +74,7 @@ class MyRanks: UIViewController {
         }
         
         // Configure the banner ad
-        configureBannerAd()
+        //configureBannerAd()
         
     }
     
@@ -149,9 +112,6 @@ class MyRanks: UIViewController {
                 SomeApp.dbUserRankings.child(dbPath).removeObserver(withHandle: handle)
             }
         }
-        //Remove banner delegate
-        // Configure the banner ad
-        bannerView.delegate = nil
     }
     
     // MARK: get city
@@ -160,52 +120,14 @@ class MyRanks: UIViewController {
         return City(country: cityArray[0], state: cityArray[1], key: cityArray[2], name: cityArray[3])
     }
     
-    // MARK: Fetch image from URL
-    private func fetchImage(){
-        FoodzLayout.configureProfilePicture(imageView: profilePictureImage)
-
-        profilePictureImage.sd_setImage(
-        with: photoURL,
-        placeholderImage: UIImage(named: "userdefault"),
-        options: [],
-        completed: nil)
-    }
     
-    private func goNinjago(userId:String){
-        // First, verify if the user is not blocked
-        if calledUser != nil {
-            let dbPath = calledUser!.key + "/" + user.uid
-            userBlockedHandle = SomeApp.dbUserBlocked.child(dbPath).observe(.value, with: {snapshot in
-                if snapshot.exists() {
-                    self.blockedFlag = true
-                    self.blockedUserHeader()
-                }
-                // If the user is not blocked
-                else{
-                    self.readFromDB(userId: userId)
-                }
-            })
-            // The "inner" handle: verify if I'm the blocker
-            let innerDBPath = self.user.uid + "/" + self.calledUser!.key
-            innerUserBlockedHandle = SomeApp.dbUserBlocked.child(innerDBPath).observe(.value, with: { innerSnap in
-                    self.innerBlockedFlag = innerSnap.exists()
-            })
-        }
-        // My own info
-        else{
-            readFromDB(userId: userId)
-        }
-        
-    }
     
-    // MARK: blocked User Header
+    // MARK: TODO blocked User Header
     func blockedUserHeader(){
         navigationItem.rightBarButtonItem = nil
         //navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         navigationItem.title = MyStrings.blockedProfileName.localized()
-        changeCityButton.isHidden = true
-        changeCityButton.isEnabled = false
-        bioLabel.text = MyStrings.blockedProfileBio.localized()
+        // bioLabel.text = MyStrings.blockedProfileBio.localized()
         
         //
     }
@@ -243,77 +165,46 @@ class MyRanks: UIViewController {
                 }else{
                     self.currentCity = City(country: "sg", state: "sg", key: "sin", name: "Singapore")
                 }
-                // Change city button and title
-                if self.currentCity != nil{
-                    self.changeCityButton.setTitle(self.currentCity.name, for: .normal)
-                    let title = MyRanks.MyStrings.bestPlacesTitle.localized(arguments: self.currentCity.name)
-                    self.titleLabel.text = title
-                }else{
-                    self.changeCityButton.setTitle(MyStrings.selectCity.localized(), for: .normal)
-                }
-        
+                
                 // 4. User bio
                 if let userBio = value["bio"] as? String,
                     userBio != ""{
-                    self.bioLabel.text = userBio
                     self.bioString = userBio
-                }else{
-                    if self.calledUser == nil{
-                        self.bioLabel.textColor = .systemGray2
-                        self.bioLabel.text = MyStrings.emptyBio.localized()}
                 }
-                
                 
                 // 5. Update ranking
                 self.updateTablewithRanking(userId: userId)
             }
         })
         
-        // Change city button
-        FoodzLayout.configureButtonNoBorder(button: changeCityButton)
-        
-        // Follow button
+    }
+    
+    private func goNinjago(userId:String){
+        // First, verify if the user is not blocked
         if calledUser != nil {
-            FoodzLayout.configureButtonNoBorder(button: followButton)
-            
-            // We need to verify if the user is already following the target
-            let tmpRef = SomeApp.dbUserFollowing.child(user.uid)
-            tmpRef.child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
+            let dbPath = calledUser!.key + "/" + user.uid
+            userBlockedHandle = SomeApp.dbUserBlocked.child(dbPath).observe(.value, with: {snapshot in
                 if snapshot.exists() {
-                    self.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
-                    self.followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
-                }else{
-                    self.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
-                    self.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+                    self.blockedFlag = true
+                    self.blockedUserHeader()
                 }
-                self.followButton.isHidden = false
-                self.followButton.isEnabled = true
+                // If the user is not blocked
+                else{
+                    self.readFromDB(userId: userId)
+                }
+            })
+            // The "inner" handle: verify if I'm the blocker
+            let innerDBPath = self.user.uid + "/" + self.calledUser!.key
+            innerUserBlockedHandle = SomeApp.dbUserBlocked.child(innerDBPath).observe(.value, with: { innerSnap in
+                    self.innerBlockedFlag = innerSnap.exists()
             })
         }
-        
-        // Followers button
-        var followersString = MyStrings.followers.localized() + ": 0"
-        followersButton.setTitle(followersString, for: .normal)
-        followersHandle = SomeApp.dbUserNbFollowers.child(userId).observe(.value, with: {snapshot in
-            if snapshot.exists(),
-                let followers = snapshot.value as? Int {
-                followersString = MyStrings.followers.localized() + ": " + String(followers)
-                self.followersButton.setTitle(followersString, for: .normal)
-            }
-        })
-        // Following button
-        var followingString = MyStrings.following.localized() + ": 0"
-        followingButton.setTitle(followingString, for: .normal)
-        followingHandle = SomeApp.dbUserNbFollowing.child(userId).observe(.value, with: {snapshot in
-            if snapshot.exists(),
-                let following = snapshot.value as? Int {
-                followingString = MyStrings.following.localized() + ": " + String(following)
-                self.followingButton.setTitle(followingString, for: .normal)
-            }
-        })
+        // My own info
+        else{
+            readFromDB(userId: userId)
+        }
         
     }
-
     
     // MARK: Update from DB
     func updateTablewithRanking(userId: String){
@@ -496,7 +387,7 @@ class MyRanks: UIViewController {
                 // I should send Food Key, and current city
                 seguedMVC.currentCity = self.currentCity
                 seguedMVC.currentFood = foodItems[tmpIndexPath.row]
-                seguedMVC.profileImage = profilePictureImage.image
+                
                 if calledUser != nil {
                     seguedMVC.calledUser = calledUser
                 }
@@ -517,7 +408,6 @@ class MyRanks: UIViewController {
         case self.segueMyProfile:
             if let myProfileVC = segue.destination as? MyProfile{
                 myProfileVC.bioString = bioString
-                myProfileVC.profileImage = profilePictureImage.image
             }
         case self.segueFollowers:
             if let followsVC = segue.destination as? FollowersViewController{
@@ -536,13 +426,13 @@ class MyRanks: UIViewController {
     }
     
     // MARK: objc functions
-    @objc func follow(){
+    @objc func follow(headerView: MyRanksHeader){
         SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
         readFromDB(userId: calledUser!.key)
-        followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
+        headerView.followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
     }
     
-    @objc func unfollow(){
+    @objc func unfollow(headerView: MyRanksHeader){
         let alert = UIAlertController(
         title: MyStrings.unfollow.localized() + "?",
         message: MyStrings.unfollowAlertMsg.localized(),
@@ -560,7 +450,7 @@ class MyRanks: UIViewController {
                 // Unfollow
                 SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
                 self.readFromDB(userId: self.calledUser!.key)
-                self.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
+                headerView.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
         }))
         present(alert, animated: false, completion: nil)
     }
@@ -672,6 +562,92 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
             fatalError("Cannot create cell")
         }
     }
+    
+    // MARK: Configure Header
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        switch(kind){
+        case UICollectionView.elementKindSectionHeader:
+            guard
+              let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: self.headerIdentifier,
+                for: indexPath) as? MyRanksHeader
+              else {
+                fatalError("Invalid view type")
+            }
+            // [START] Configure header
+            
+            // Profile Picture
+            headerView.photoURL = self.photoURL
+            
+            // Following / Followers buttons
+            var followersString = MyStrings.followers.localized() + ": 0"
+            var followingString = MyStrings.following.localized() + ": 0"
+            headerView.followersButton.setTitle(followersString, for: .normal)
+            headerView.followersButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            headerView.followingButton.setTitle(followingString, for: .normal)
+            headerView.followingButton.setTitleColor(SomeApp.themeColor, for: .normal)
+            FoodzLayout.configureButtonNoBorder(button: headerView.followButton)
+            FoodzLayout.configureButtonNoBorder(button: headerView.changeCityButton)
+            
+            if user != nil {
+                // Follow button
+                if calledUser != nil {
+                    SomeApp.dbUserFollowing.child(user.uid).child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
+                        if snapshot.exists() {
+                            headerView.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
+                            headerView.followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
+                        }else{
+                            headerView.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
+                            headerView.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+                        }
+                        headerView.followButton.isHidden = false
+                        headerView.followButton.isEnabled = true
+                    })
+                    
+                }// Follow Button
+                
+                // Followers / Following buttons
+                followersHandle = SomeApp.dbUserNbFollowers.child(user.uid).observe(.value, with: {snapshot in
+                    if snapshot.exists(),
+                        let followers = snapshot.value as? Int {
+                        followersString = MyStrings.followers.localized() + ": " + String(followers)
+                        headerView.followersButton.setTitle(followersString, for: .normal)
+                    }
+                })
+                followingHandle = SomeApp.dbUserNbFollowing.child(user.uid).observe(.value, with: {snapshot in
+                    if snapshot.exists(),
+                        let following = snapshot.value as? Int {
+                        followingString = MyStrings.following.localized() + ": " + String(following)
+                        headerView.followingButton.setTitle(followingString, for: .normal)
+                    }
+                })
+                
+                // Bio Label
+                headerView.bioLabel.text = self.bioString!
+                
+            }
+            // Change city button and title
+            if self.currentCity != nil{
+                headerView.changeCityButton.setTitle(self.currentCity.name, for: .normal)
+                let title = MyRanks.MyStrings.bestPlacesTitle.localized(arguments: self.currentCity.name)
+                headerView.titleLabel.text = title
+            }else{
+                headerView.changeCityButton.setTitle(MyStrings.selectCity.localized(), for: .normal)
+            }
+            
+            // Ads
+            headerView.configureBannerAd()
+            
+            // [END] Configure header
+            
+            return headerView
+            
+        default:
+            assert(false,"Invalid element")
+        }
+    }
 }
 
 
@@ -700,82 +676,25 @@ extension MyRanks{
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .fractionalWidth(3.5/8)),
             subitems: [twinItem, twinItem])
-        
-        let nestedGroup = NSCollectionLayoutGroup.vertical(
-            layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(8/8)),
-            subitems: [twinGroup, twinGroup])
       
-        let section = NSCollectionLayoutSection(group: nestedGroup)
-        section.orthogonalScrollingBehavior = .continuous
+        // Header
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(300))
+        
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top)
+        
+        let section = NSCollectionLayoutSection(group: twinGroup)
+        section.boundarySupplementaryItems = [sectionHeader]
+        //section.orthogonalScrollingBehavior = .continuous
         
         // Return the layout
         let layout = UICollectionViewCompositionalLayout(section: section)
         
         return layout
-    }
-}
-
-// MARK: Ad Stuff
-extension MyRanks: GADBannerViewDelegate{
-    // My funcs
-    private func configureBannerAd(){
-        bannerView = GADBannerView(adSize: kGADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = SomeApp.adBAnnerUnitID
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-        bannerView.delegate = self
-    }
-    
-    // Ad delegate
-    func addBannerViewToView(_ bannerView: GADBannerView) {
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        adView.addSubview(bannerView)
-    }
-    
-    // Tells the delegate an ad request loaded an ad.
-    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        //print("adViewDidReceiveAd")
-        FoodzLayout.removeDefaultAd(adView: adView)
-        
-        //small animation
-        bannerView.alpha = 0
-        UIView.animate(withDuration: 1, animations: {
-            bannerView.alpha = 1
-        })
-    }
-    
-    /// Tells the delegate an ad request failed.
-    func adView(_ bannerView: GADBannerView,
-                didFailToReceiveAdWithError error: GADRequestError) {
-        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
-        
-        // Default Ad
-        FoodzLayout.defaultAd(adView: adView)
-    }
-    
-    // Tells the delegate that a full-screen view will be presented in response
-    // to the user clicking on an ad.
-    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
-        //print("adViewWillPresentScreen")
-    }
-    
-    // Tells the delegate that the full-screen view will be dismissed.
-    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
-        //print("adViewWillDismissScreen")
-    }
-    
-    // Tells the delegate that the full-screen view has been dismissed.
-    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
-        //print("adViewDidDismissScreen")
-    }
-    
-    // Tells the delegate that a user click will open another app (such as
-    // the App Store), backgrounding the current app.
-    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
-        //print("adViewWillLeaveApplication")
     }
 }
 
@@ -786,7 +705,6 @@ extension MyRanks: MyCitiesDelegate{
             rankings.removeAll()
             foodItems.removeAll()
             currentCity = sender
-            changeCityButton.setTitle(currentCity.name, for: .normal)
             
             let tmpCityString = sender.country + "/" + sender.state + "/" + sender.key + "/" + sender.name
             // Save the default City

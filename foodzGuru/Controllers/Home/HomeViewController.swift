@@ -342,15 +342,18 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
         }
         // New Resto among the top
         else if somePost[indexPath.row].type == TimelineEvents.timelineNewInTopRanking.rawValue,
-        let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineRankingInfo, for: indexPath) as? HomeCellWithIcon {
+            let cell = newsFeedTable.dequeueReusableCell(withIdentifier: self.timelineBestInRanking, for: indexPath) as? HomeCellWithImage {
+            
+            let parsedTarget = somePost[indexPath.row].target.components(separatedBy: "/")
+            
             cell.titleLabel.text = MyStrings.postNewInTopRank.localized()
             cell.setDate(timestamp: somePost[indexPath.row].timestamp)
-            // Set icon
-            let tmpArray = somePost[indexPath.row].targetName.components(separatedBy: "/")
-            cell.iconLabel.text = "💬"
-            if tmpArray.count >= 3{
-                cell.iconLabel.text = tmpArray[2]
+            // Set image
+            print(somePost[indexPath.row].target)
+            if parsedTarget.count >= 5{
+                cell.setGooglePhoto(restoId: parsedTarget[4], placesClient: self.placesClient)
             }
+            
             // Set body
             let parsedArray = somePost[indexPath.row].payload.components(separatedBy: "/")
             cell.bodyLabel.text = MyStrings.timelineAmongTheTop.localized(arguments: parsedArray[0],parsedArray[1],parsedArray[2])
@@ -469,6 +472,12 @@ extension HomeCellWithImage{
         userRef.child(userId).observeSingleEvent(of: .value, with: {snapshot in
             if let value = snapshot.value as? [String:Any],
                 let photoURL = value["photourl"] as? String{
+                
+                self.cellImage.layer.cornerRadius = 0.5 * self.cellImage.bounds.size.height
+                self.cellImage.layer.masksToBounds = true
+                self.cellImage.layer.borderColor = UIColor.systemGray.cgColor
+                self.cellImage.layer.borderWidth = 1.0;
+                
                 self.cellImage.sd_setImage(
                     with: URL(string: photoURL),
                     placeholderImage: UIImage(named: "userdefault"),
@@ -520,8 +529,9 @@ extension HomeCellWithImage{
                 print("Error loading photo metadata: \(error.localizedDescription)")
                 return
               } else {
-                // Display the first image and its attributions.
                 
+                // Display the first image and its attributions.
+                //self.cellImage.contentMode = .center
                 self.cellImage.image = photo;
                 //self.lblText?.attributedText = photoMetadata.attributions;
               }
@@ -690,6 +700,7 @@ extension HomeViewController: GADUnifiedNativeAdLoaderDelegate{
         for i in 0 ..< somePost.count{
             if i == index{
                 newsFeedTable.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                //MARK: TODO reload ad
                 index += adFrequency
             }
         }

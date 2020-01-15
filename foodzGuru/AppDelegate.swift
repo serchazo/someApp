@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         
         // Set the badge to zero on opening 
-        application.applicationIconBadgeNumber = 0
+        application.applicationIconBadgeNumber = -1
         
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
