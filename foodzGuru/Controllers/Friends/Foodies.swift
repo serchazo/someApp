@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import SDWebImage
+
 
 class Foodies: UIViewController {
     private static let segueToFoodie = "showFoodie"
@@ -265,12 +267,17 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
             let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = filteredFoodies[indexPath.row].nickName
             cell.bodyLabel.text = filteredFoodies[indexPath.row].bio + " " //The space is important
+            
+            cell.cellImage.layer.cornerRadius = 0.5 * cell.cellImage.bounds.size.height
+            cell.cellImage.layer.masksToBounds = true
+            cell.cellImage.layer.borderColor = UIColor.systemGray.cgColor
+            cell.cellImage.layer.borderWidth = 1.0;
+            
             cell.cellImage.sd_setImage(
                 with: URL(string: filteredFoodies[indexPath.row].photoURLString),
                 placeholderImage: UIImage(named: "userdefault"),
                 options: [],
                 completed: nil)
-            cell.dateLabel.text = ""
             
             return cell
         }
@@ -290,13 +297,18 @@ extension Foodies:UITableViewDelegate, UITableViewDataSource{
         else if let cell = myFoodies.dequeueReusableCell(withIdentifier: Foodies.foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = myFoodiesList[indexPath.row].nickName
             cell.bodyLabel.text = myFoodiesList[indexPath.row].bio + " " // the extra space is important!
+            
+            cell.cellImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
             cell.cellImage.sd_setImage(
                 with: URL(string: myFoodiesList[indexPath.row].photoURLString),
                 placeholderImage: UIImage(named: "userdefault"),
                 options: [],
                 completed: nil)
             
-            cell.dateLabel.text = ""
+            cell.cellImage.layer.cornerRadius = 0.5 * cell.cellImage.bounds.size.height
+            cell.cellImage.layer.masksToBounds = true
+            cell.cellImage.layer.borderColor = UIColor.systemGray.cgColor
+            cell.cellImage.layer.borderWidth = 1.0;
             
             return cell
         }// [End] Normal table

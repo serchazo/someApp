@@ -42,6 +42,7 @@ class MyRanks: UIViewController {
     private var foodItems:[FoodType] = []
     private var emptyListFlag = false
     private var blockedFlag = false
+    private var followingFlag = false
     private var innerBlockedFlag = false
     private let defaults = UserDefaults.standard
     private var photoURL: URL!
@@ -69,7 +70,19 @@ class MyRanks: UIViewController {
             }else{
                 thisUserId = self.calledUser!.key
             }
-            // II. Go ninja Go
+            // II. Verify if I'm following
+            // Follow button
+            if self.calledUser != nil {
+                SomeApp.dbUserFollowing.child(user.uid).child(self.calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
+                    if snapshot.exists() {
+                        self.followingFlag = true
+                    }
+                })
+                
+            }
+            
+            
+            // III. Go ninja Go
             self.goNinjago(userId: thisUserId)
         }
         
@@ -427,35 +440,37 @@ class MyRanks: UIViewController {
     
     // MARK: objc functions
     @objc func follow(headerView: MyRanksHeader){
-        SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
-        readFromDB(userId: calledUser!.key)
-        headerView.followButton.removeTarget(self, action: #selector(self.follow), for: .touchUpInside)
+        if !followingFlag{
+            SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
+            readFromDB(userId: calledUser!.key)
+            followingFlag = true
+        }
+        // Unfollow user
+        else{
+            let alert = UIAlertController(
+            title: MyStrings.unfollow.localized() + "?",
+            message: MyStrings.unfollowAlertMsg.localized(),
+            preferredStyle: .alert)
+            // OK
+            alert.addAction(UIAlertAction(
+                title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
+                style: .default, handler: nil))
+            // Unfollow
+            alert.addAction(UIAlertAction(
+                title: MyStrings.unfollow.localized(),
+                style: .destructive,
+                handler: {
+                    (action: UIAlertAction)->Void in
+                    // Unfollow
+                    SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
+                    self.readFromDB(userId: self.calledUser!.key)
+                    self.followingFlag = false
+            }))
+            present(alert, animated: false, completion: nil)
+        }
+        
+    
     }
-    
-    @objc func unfollow(headerView: MyRanksHeader){
-        let alert = UIAlertController(
-        title: MyStrings.unfollow.localized() + "?",
-        message: MyStrings.unfollowAlertMsg.localized(),
-        preferredStyle: .alert)
-        // OK
-        alert.addAction(UIAlertAction(
-            title: FoodzLayout.FoodzStrings.buttonCancel.localized(),
-            style: .default, handler: nil))
-        // Unfollow
-        alert.addAction(UIAlertAction(
-            title: MyStrings.unfollow.localized(),
-            style: .destructive,
-            handler: {
-                (action: UIAlertAction)->Void in
-                // Unfollow
-                SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
-                self.readFromDB(userId: self.calledUser!.key)
-                headerView.followButton.removeTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
-        }))
-        present(alert, animated: false, completion: nil)
-    }
-    
-    
     
 }
 
@@ -594,18 +609,15 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
             if user != nil {
                 // Follow button
                 if calledUser != nil {
-                    SomeApp.dbUserFollowing.child(user.uid).child(calledUser!.key).observeSingleEvent(of: .value, with: {snapshot in
-                        if snapshot.exists() {
-                            headerView.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
-                            headerView.followButton.addTarget(self, action: #selector(self.unfollow), for: .touchUpInside)
-                        }else{
-                            headerView.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
-                            headerView.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
-                        }
-                        headerView.followButton.isHidden = false
-                        headerView.followButton.isEnabled = true
-                    })
+                    if self.followingFlag{
+                        headerView.followButton.setTitle(MyStrings.unfollow.localized(), for: .normal)
+                    }else{
+                        headerView.followButton.setTitle(MyStrings.follow.localized(), for: .normal)
+                    }
                     
+                    headerView.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
+                    headerView.followButton.isHidden = false
+                    headerView.followButton.isEnabled = true
                 }// Follow Button
                 
                 // Followers / Following buttons
@@ -625,7 +637,9 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
                 })
                 
                 // Bio Label
-                headerView.bioLabel.text = self.bioString!
+                if self.bioString != nil {
+                    headerView.bioLabel.text = self.bioString!
+                }
                 
             }
             // Change city button and title
