@@ -81,6 +81,12 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configurez votre profil (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Continuer";
 
+"FIRST_SELECT_FOODZ_BUTTON_GO" = "Continuer";
+"FIRST_SELECT_FOODZ_BUTTON_SKIP" = "Omettre l'étape";
+"FIRST_SELECT_EMPTYLIST_TITLE" = "Liste vide";
+"FIRST_SELECT_EMPTYLIST_MSG" = "Votre liste est vide";
+"FIRST_SELECT_EMPTYLIST_BUTTON" = "Omettre";
+
 "HOME_FIRST_POST" = "Bonjour %@! Bienvenu(e) sur foodz.guru, suivez les foodies et les classements et vous verrez ici leurs mises à jour les plus importantes.";
 "HOME_POST_NEWRANKING" = "Nouveau classement";
 "HOME_POST_NEWFOLLOWER" = "Suiveur!";

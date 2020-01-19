@@ -349,7 +349,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
             cell.titleLabel.text = MyStrings.postNewInTopRank.localized()
             cell.setDate(timestamp: somePost[indexPath.row].timestamp)
             // Set image
-            print(somePost[indexPath.row].target)
             if parsedTarget.count >= 5{
                 cell.setGooglePhoto(restoId: parsedTarget[4], placesClient: self.placesClient)
             }
@@ -494,11 +493,6 @@ extension HomeCellWithImage{
         
         SomeApp.dbFoodTypeRoot.child(currentCity.country + "/" + parsedTarget[3] + "/name").observeSingleEvent(of: .value, with: {foodSnap in
             if let foodName = foodSnap.value as? String{
-                print("xxxxxx")
-                print(foodName)
-                print(parsedPayload[2])
-                print(HomeViewController.MyStrings.timelineNewBestInRank.localized(arguments: parsedPayload[0],foodName,parsedPayload[2]))
-                
                 // Set body
                 self.bodyLabel.text = HomeViewController.MyStrings.timelineNewBestInRank.localized(arguments: parsedPayload[0],foodName,parsedPayload[2])
             }

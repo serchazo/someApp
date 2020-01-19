@@ -249,6 +249,12 @@ extension FollowersViewController: UITableViewDelegate,UITableViewDataSource{
         else if let cell = followTableView.dequeueReusableCell(withIdentifier: foodieCell) as? HomeCellWithImage{
             cell.titleLabel.text = follows[indexPath.row].nickName
             cell.bodyLabel.text = follows[indexPath.row].bio + " " // the extra space is important!
+            
+            cell.cellImage.layer.cornerRadius = 0.5 * cell.cellImage.bounds.size.height
+            cell.cellImage.layer.masksToBounds = true
+            cell.cellImage.layer.borderColor = UIColor.systemGray.cgColor
+            cell.cellImage.layer.borderWidth = 1.0;
+            
             cell.cellImage.sd_setImage(
                 with: URL(string: follows[indexPath.row].photoURLString),
                 placeholderImage: UIImage(named: "userdefault"),

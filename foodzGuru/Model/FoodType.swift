@@ -9,7 +9,15 @@
 import Foundation
 import Firebase
 
-class FoodType{
+class FoodType: Equatable{
+    static func == (lhs: FoodType, rhs: FoodType) -> Bool {
+        if lhs.key == rhs.key{
+            return true
+        }else{
+            return false
+        }
+    }
+    
     let ref: DatabaseReference?
     let key: String
     var name: String

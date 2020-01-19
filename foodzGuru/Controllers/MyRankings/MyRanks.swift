@@ -44,6 +44,8 @@ class MyRanks: UIViewController {
     private var blockedFlag = false
     private var followingFlag = false
     private var innerBlockedFlag = false
+    private var followingNb = 0
+    private var followersNb = 0
     private let defaults = UserDefaults.standard
     private var photoURL: URL!
     
@@ -80,6 +82,24 @@ class MyRanks: UIViewController {
                 })
                 
             }
+            
+            // Followers / Following buttons
+            var userId = user.uid
+            if self.calledUser != nil{
+                userId = self.calledUser!.key
+            }
+            self.followersHandle = SomeApp.dbUserNbFollowers.child(userId).observe(.value, with: {snapshot in
+                if snapshot.exists(),
+                    let followers = snapshot.value as? Int {
+                    self.followersNb = followers}
+            })
+            self.followingHandle = SomeApp.dbUserNbFollowing.child(userId).observe(.value, with: {snapshot in
+                if snapshot.exists(),
+                    let following = snapshot.value as? Int {
+                    self.followingNb = following
+                }
+            })
+            
             
             
             // III. Go ninja Go
@@ -151,7 +171,6 @@ class MyRanks: UIViewController {
         if calledUser != nil{
             let reportButton = UIBarButtonItem(title: "...", style: .done, target: self, action: #selector(reportActions))
             navigationItem.rightBarButtonItem = reportButton
-            //navigationItem.leftBarButtonItem = navigationItem.backBarButtonItem
         }
         
         // First, go get some data from the DB
@@ -442,6 +461,7 @@ class MyRanks: UIViewController {
     @objc func follow(headerView: MyRanksHeader){
         if !followingFlag{
             SomeApp.follow(userId: user.uid, toFollowId: calledUser!.key)
+            self.followersNb += 1
             readFromDB(userId: calledUser!.key)
             followingFlag = true
         }
@@ -463,6 +483,7 @@ class MyRanks: UIViewController {
                     (action: UIAlertAction)->Void in
                     // Unfollow
                     SomeApp.unfollow(userId: self.user.uid, unfollowId: self.calledUser!.key)
+                    self.followersNb -= 1
                     self.readFromDB(userId: self.calledUser!.key)
                     self.followingFlag = false
             }))
@@ -584,12 +605,12 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
         switch(kind){
         case UICollectionView.elementKindSectionHeader:
             guard
-              let headerView = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: self.headerIdentifier,
-                for: indexPath) as? MyRanksHeader
-              else {
-                fatalError("Invalid view type")
+                let headerView = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: self.headerIdentifier,
+                    for: indexPath) as? MyRanksHeader
+                else {
+                    fatalError("Invalid view type")
             }
             // [START] Configure header
             
@@ -618,23 +639,15 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
                     headerView.followButton.addTarget(self, action: #selector(self.follow), for: .touchUpInside)
                     headerView.followButton.isHidden = false
                     headerView.followButton.isEnabled = true
-                }// Follow Button
+                }
+                // Follow Button
                 
                 // Followers / Following buttons
-                followersHandle = SomeApp.dbUserNbFollowers.child(user.uid).observe(.value, with: {snapshot in
-                    if snapshot.exists(),
-                        let followers = snapshot.value as? Int {
-                        followersString = MyStrings.followers.localized() + ": " + String(followers)
-                        headerView.followersButton.setTitle(followersString, for: .normal)
-                    }
-                })
-                followingHandle = SomeApp.dbUserNbFollowing.child(user.uid).observe(.value, with: {snapshot in
-                    if snapshot.exists(),
-                        let following = snapshot.value as? Int {
-                        followingString = MyStrings.following.localized() + ": " + String(following)
-                        headerView.followingButton.setTitle(followingString, for: .normal)
-                    }
-                })
+                followersString = MyStrings.followers.localized() + ": " + String(self.followersNb)
+                headerView.followersButton.setTitle(followersString, for: .normal)
+                
+                followingString = MyStrings.following.localized() + ": " + String(self.followingNb)
+                headerView.followingButton.setTitle(followingString, for: .normal)
                 
                 // Bio Label
                 if self.bioString != nil {
@@ -659,7 +672,7 @@ extension MyRanks: UICollectionViewDelegate,UICollectionViewDataSource{
             return headerView
             
         default:
-            assert(false,"Invalid element")
+            fatalError("Unexpected element kind")
         }
     }
 }

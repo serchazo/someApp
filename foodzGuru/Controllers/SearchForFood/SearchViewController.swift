@@ -177,7 +177,7 @@ class SearchViewController: UIViewController {
     }
 }
 
-// MARK: get city from chose
+// MARK: get city from choser
 extension SearchViewController: CountryChooserViewDelegate{
     func itemChooserReceiveCity(city: City, countryName: String, stateName: String) {
         currentCity = city
@@ -213,7 +213,7 @@ extension SearchViewController: UICollectionViewDelegate,UICollectionViewDataSou
             
             // Image
             cell.foodImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.foodImage.sd_imageTransition = .curlUp
+            cell.foodImage.sd_imageTransition = .fade
             cell.foodImage!.sd_setImage(
                 with: foodList[indexPath.row].imageURL,
                 placeholderImage: nil,//UIImage(named: "defaultBest"),

@@ -393,6 +393,136 @@
             </objects>
             <point key="canvasLocation" x="5257" y="-868"/>
         </scene>
+        <!--First Select Foodz-->
+        <scene sceneID="roA-Ml-PSC">
+            <objects>
+                <viewController id="KaB-WF-YWX" customClass="FirstSelectFoodz" customModule="foodz_Guru" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pdX-Vg-Wha"/>
+                        <viewControllerLayoutGuide type="bottom" id="bf8-nH-aC3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UKG-6f-x8o">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vHa-um-MVV">
+                                <rect key="frame" x="20" y="770" width="374" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="zTb-Nw-WMD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <state key="normal" title="Skip step">
+                                    <color key="titleColor" systemColor="systemIndigoColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="goButtonPressed:" destination="KaB-WF-YWX" eventType="touchUpInside" id="T2b-Gc-YUm"/>
+                                    <segue destination="en7-xf-5FP" kind="show" identifier="goToApp" id="RZh-zE-zWl"/>
+                                </connections>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Di8-u4-CiJ">
+                                <rect key="frame" x="20" y="8" width="374" height="762"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="caW-WU-OXa">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="50" height="79"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FoodCellImage" id="4cI-Ci-Igh" customClass="FirstSelectFoodzCell" customModule="foodz_Guru" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="79" width="121" height="116"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="NVE-js-JG8">
+                                            <rect key="frame" x="0.0" y="0.0" width="121" height="116"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Food Type" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bVB-HC-bJF">
+                                                    <rect key="frame" x="20" y="68" width="81" height="48"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tVi-GD-87f">
+                                                    <rect key="frame" x="0.0" y="0.0" width="121" height="68"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="tVi-GD-87f" secondAttribute="height" multiplier="16:9" id="HDs-Lf-rB1"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="tVi-GD-87f" secondAttribute="trailing" id="H8r-vB-25I"/>
+                                                <constraint firstAttribute="trailing" secondItem="bVB-HC-bJF" secondAttribute="trailing" constant="20" symbolic="YES" id="K7D-83-gkd"/>
+                                                <constraint firstItem="bVB-HC-bJF" firstAttribute="top" secondItem="tVi-GD-87f" secondAttribute="bottom" id="dUz-B4-gJ5"/>
+                                                <constraint firstItem="bVB-HC-bJF" firstAttribute="leading" secondItem="NVE-js-JG8" secondAttribute="leading" constant="20" symbolic="YES" id="dVB-h1-gH2"/>
+                                                <constraint firstItem="tVi-GD-87f" firstAttribute="top" secondItem="NVE-js-JG8" secondAttribute="top" id="fKT-J5-DYx"/>
+                                                <constraint firstAttribute="bottom" secondItem="bVB-HC-bJF" secondAttribute="bottom" id="mDV-ci-mDb"/>
+                                                <constraint firstItem="tVi-GD-87f" firstAttribute="leading" secondItem="NVE-js-JG8" secondAttribute="leading" id="rQk-DI-h9p"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="121" height="116"/>
+                                        <connections>
+                                            <outlet property="foodImage" destination="tVi-GD-87f" id="k4w-ZH-6fp"/>
+                                            <outlet property="foodNameLabel" destination="bVB-HC-bJF" id="P5d-0d-CUR"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="foodSelectorHeader" id="ghN-po-tne" customClass="FirstSelectFoodzHeader" customModule="foodz_Guru" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="79"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select your favorite Foodz" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FSm-rA-3J6">
+                                            <rect key="frame" x="8" y="8" width="358" height="34"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You can select multiple items" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="onV-lJ-l96">
+                                            <rect key="frame" x="8" y="50" width="358" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="O6c-KQ-2yX"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <constraints>
+                                        <constraint firstItem="onV-lJ-l96" firstAttribute="leading" secondItem="ghN-po-tne" secondAttribute="leadingMargin" id="1Hq-HE-1mM"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="FSm-rA-3J6" secondAttribute="trailing" id="5nm-Mv-KSo"/>
+                                        <constraint firstItem="onV-lJ-l96" firstAttribute="top" secondItem="FSm-rA-3J6" secondAttribute="bottom" constant="8" symbolic="YES" id="Fip-NH-LON"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="onV-lJ-l96" secondAttribute="trailing" id="mq4-HD-lD9"/>
+                                        <constraint firstItem="FSm-rA-3J6" firstAttribute="top" secondItem="ghN-po-tne" secondAttribute="topMargin" id="rwD-Rm-J2P"/>
+                                        <constraint firstItem="FSm-rA-3J6" firstAttribute="leading" secondItem="ghN-po-tne" secondAttribute="leadingMargin" id="ryD-0J-31l"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="onV-lJ-l96" secondAttribute="bottom" id="ukN-8w-Zmj"/>
+                                    </constraints>
+                                    <connections>
+                                        <outlet property="firstSelectTitle" destination="FSm-rA-3J6" id="1Ls-fZ-7gR"/>
+                                        <outlet property="firstSelectWarningLabel" destination="onV-lJ-l96" id="1ta-Ip-KEf"/>
+                                    </connections>
+                                </collectionReusableView>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="Di8-u4-CiJ" firstAttribute="leading" secondItem="UKG-6f-x8o" secondAttribute="leadingMargin" id="7ag-TD-PVg"/>
+                            <constraint firstItem="Di8-u4-CiJ" firstAttribute="top" secondItem="pdX-Vg-Wha" secondAttribute="bottom" constant="8" symbolic="YES" id="HDt-ca-zSC"/>
+                            <constraint firstItem="vHa-um-MVV" firstAttribute="leading" secondItem="UKG-6f-x8o" secondAttribute="leadingMargin" id="WTi-QB-LjS"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="vHa-um-MVV" secondAttribute="trailing" id="acm-6n-56N"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Di8-u4-CiJ" secondAttribute="trailing" id="fZt-AJ-bjM"/>
+                            <constraint firstItem="bf8-nH-aC3" firstAttribute="top" secondItem="vHa-um-MVV" secondAttribute="bottom" constant="8" symbolic="YES" id="kId-y3-S4d"/>
+                            <constraint firstItem="vHa-um-MVV" firstAttribute="top" secondItem="Di8-u4-CiJ" secondAttribute="bottom" id="nh7-Es-UL2"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="yk1-a9-Pcj"/>
+                    <connections>
+                        <outlet property="foodSelectorCollection" destination="Di8-u4-CiJ" id="FY0-0h-qti"/>
+                        <outlet property="goButton" destination="vHa-um-MVV" id="rYh-0s-wjh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AYc-g8-PQY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-475.36231884057975" y="-340.17857142857139"/>
+        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="AT2-Sn-a71">
             <objects>
@@ -1092,7 +1222,7 @@
                                             <attributedString key="attributedText">
                                                 <fragment content="-">
                                                     <attributes>
-                                                        <font key="NSFont" metaFont="message" size="11"/>
+                                                        <font key="NSFont" metaFont="menu" size="11"/>
                                                         <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
@@ -1789,7 +1919,6 @@
                                 </state>
                                 <connections>
                                     <action selector="loginButtonPressed:" destination="hac-Z3-rKb" eventType="touchUpInside" id="T1a-3V-ZBT"/>
-                                    <segue destination="en7-xf-5FP" kind="show" identifier="loginOK" id="j96-5r-UVn"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cqz-Bx-i9O">
@@ -1890,11 +2019,13 @@
                         <outlet property="textFieldLoginEmail" destination="U8Z-9X-Pn6" id="AwC-t8-qOQ"/>
                         <outlet property="textFieldLoginPassword" destination="Bhh-7q-iSy" id="r2M-o7-4gf"/>
                         <outlet property="warningTextView" destination="gmH-ai-pcp" id="FYf-Ju-Fy7"/>
+                        <segue destination="KaB-WF-YWX" kind="show" identifier="selectFoodFirst" id="BE7-7T-NRj"/>
+                        <segue destination="en7-xf-5FP" kind="show" identifier="loginOK" id="4Up-75-hNs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xLt-ax-d5R" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4726" y="-883"/>
+            <point key="canvasLocation" x="-5414" y="-883"/>
         </scene>
         <!--First Login View Controller-->
         <scene sceneID="O2D-fV-Apw">
@@ -2000,7 +2131,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3vg-VG-rjY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2891.304347826087" y="-1560.2678571428571"/>
+            <point key="canvasLocation" x="-3707" y="-1536"/>
         </scene>
         <!--First Login Second Screen-->
         <scene sceneID="zJo-vV-fwb">
@@ -2109,7 +2240,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="g5h-wG-2NC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2120.289855072464" y="-1560.2678571428571"/>
+            <point key="canvasLocation" x="-2936" y="-1536"/>
         </scene>
         <!--First Login Third Screen-->
         <scene sceneID="hWx-zf-fvd">
@@ -2216,7 +2347,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K7P-qx-tJA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1359.4202898550725" y="-1560.2678571428571"/>
+            <point key="canvasLocation" x="-2175" y="-1536"/>
         </scene>
         <!--First Login Fourth Screen-->
         <scene sceneID="Vb3-Wi-bGQ">
@@ -2274,7 +2405,7 @@
                                     <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="en7-xf-5FP" kind="show" identifier="segueBioOK" id="LmG-dI-q1d"/>
+                                    <segue destination="KaB-WF-YWX" kind="show" identifier="segueBioOK" id="94K-ur-Ujt"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Configure 4" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6JF-bV-Pap">
@@ -2312,7 +2443,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="00e-xJ-Zbx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-591.304347826087" y="-1556.25"/>
+            <point key="canvasLocation" x="-1407" y="-1532"/>
         </scene>
         <!--My Foodz-->
         <scene sceneID="ETV-a1-ONN">
@@ -2938,7 +3069,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Uo-zr-h1z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3671.0144927536235" y="-1556.25"/>
+            <point key="canvasLocation" x="-4488" y="-1532"/>
         </scene>
     </scenes>
     <resources>
@@ -2954,8 +3085,9 @@
         <segue reference="B4g-Yk-vFu"/>
         <segue reference="CRx-fU-TT1"/>
         <segue reference="7KI-8z-099"/>
-        <segue reference="LmG-dI-q1d"/>
-        <segue reference="tG7-IG-o9k"/>
+        <segue reference="RZh-zE-zWl"/>
+        <segue reference="BE7-7T-NRj"/>
+        <segue reference="joi-8R-J0w"/>
         <segue reference="q3R-AJ-I6f"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

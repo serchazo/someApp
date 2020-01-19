@@ -15,6 +15,7 @@ import FacebookLogin
 class LoginViewController: UIViewController {
     private let cornerRadious:CGFloat = 9
     private let loginOKSegueID = "loginOK"
+    private let selectFoodSegue = "selectFoodFirst"
     private let firstTimeSegueID = "firstTime"
     private var user:User!
     private var firstTimeFlag = false
@@ -83,9 +84,11 @@ class LoginViewController: UIViewController {
                 // For testing the first screen
                 //self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
                 
+                // I. Verify if the user has filled his/her data
                 SomeApp.dbUserData.child(user!.uid).observeSingleEvent(of: .value, with: {snapshot in
-                    // User data is already created
+                    // I. AUser data is already created
                     if snapshot.exists(){
+                        
                         // [START] temp code, upload device token
                         InstanceID.instanceID().instanceID { (result, error) in
                             if let error = error {
@@ -100,8 +103,23 @@ class LoginViewController: UIViewController {
                         if SomeApp.tokenChangedFlag{
                             SomeApp.updateDeviceToken(userId: user!.uid, deviceToken: SomeApp.deviceToken)
                         }
-                        self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
-                    }else{
+                        
+                        // II. Verify if the user is following some foodz
+                        SomeApp.dbUserFollowingRankings.child(user!.uid).observeSingleEvent(of: .value, with: {foodSnap in
+                            print(foodSnap)
+                            // II.A. If the user is already following some foodz go to the app
+                            if foodSnap.exists(){
+                                self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
+                            }
+                            // II.B. If not, then first select foodz
+                            else{
+                                self.performSegue(withIdentifier: self.selectFoodSegue, sender: nil)
+                            }
+                        })
+                        
+                    }
+                    // I.B. If not, go look for the data first
+                    else{
                         self.performSegue(withIdentifier: self.firstTimeSegueID, sender: nil)
                     }
                 })

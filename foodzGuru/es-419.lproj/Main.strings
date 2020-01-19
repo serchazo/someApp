@@ -14,8 +14,7 @@
 /* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "YSc-kP-6FY"; */
 "YSc-kP-6FY.title" = "Perfil";
 
-// First login Strings
-
+// MARK: First login Strings
 /* Class = "UIButton"; normalTitle = "Login"; ObjectID = "CXF-z6-4H9"; */
 "CXF-z6-4H9.normalTitle" = "Iniciar sesión";
 
@@ -71,9 +70,13 @@
 "INn-9X-JKc.text" = "La puede modificar más adelante (max 150 caracteres).";
 
 // ThisRanking
-
 // Details : UIButton
 "JEG-9s-4HZ.normalTitle" = "Detalle";
+
+// MARK: FirstSelecFoodz
+// Header Title
+"FSm-rA-3J6.text" = "Selecciona tus Foodz favoritos";
+"onV-lJ-l96.text" = "Puedes seleccionar varios";
 
 // MyRestoDetail
 // Title NavBar

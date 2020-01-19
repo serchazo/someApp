@@ -37,13 +37,15 @@
 		346FE0E3230E8008000556EB /* BasicSomeAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */; };
 		346FE0E7230F70E9000556EB /* BestRestosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E6230F70E9000556EB /* BestRestosViewController.swift */; };
 		346FE0E9230FC632000556EB /* ItemChooserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FE0E8230FC632000556EB /* ItemChooserViewController.swift */; };
-		347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347F55A72324931700F85DB7 /* RestoMapArray.swift */; };
 		34873A8C2332071B00463AFE /* EditableRestoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8B2332071B00463AFE /* EditableRestoCell.swift */; };
 		34873A8E2333157900463AFE /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34873A8D2333157900463AFE /* City.swift */; };
 		3489199F23878EA60020934F /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3489199E23878EA60020934F /* FollowersViewController.swift */; };
 		348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348919A02387D2520020934F /* SearchFoodImageCell.swift */; };
 		348B16922390FAE700FBF31A /* CountryChoser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16912390FAE700FBF31A /* CountryChoser.swift */; };
 		348B16942391030500FBF31A /* CountryChoserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348B16932391030500FBF31A /* CountryChoserCell.swift */; };
+		348D118423D4020500FA0632 /* FirstSelectFoodz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348D118323D4020500FA0632 /* FirstSelectFoodz.swift */; };
+		348D118623D4023700FA0632 /* FirstSelectFoodzCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348D118523D4023700FA0632 /* FirstSelectFoodzCell.swift */; };
+		348D118823D4070900FA0632 /* FirstSelectFoodzHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348D118723D4070900FA0632 /* FirstSelectFoodzHeader.swift */; };
 		348EBFCE230E3E8A008026A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EBFCD230E3E8A008026A0 /* AppDelegate.swift */; };
 		348EBFD3230E3E8A008026A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD1230E3E8A008026A0 /* Main.storyboard */; };
 		348EBFD5230E3E8C008026A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348EBFD4230E3E8C008026A0 /* Assets.xcassets */; };
@@ -118,13 +120,15 @@
 		346FE0E2230E8008000556EB /* BasicSomeAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSomeAppModel.swift; sourceTree = "<group>"; };
 		346FE0E6230F70E9000556EB /* BestRestosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestRestosViewController.swift; sourceTree = "<group>"; };
 		346FE0E8230FC632000556EB /* ItemChooserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemChooserViewController.swift; sourceTree = "<group>"; };
-		347F55A72324931700F85DB7 /* RestoMapArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoMapArray.swift; sourceTree = "<group>"; };
 		34873A8B2332071B00463AFE /* EditableRestoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableRestoCell.swift; sourceTree = "<group>"; };
 		34873A8D2333157900463AFE /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		3489199E23878EA60020934F /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		348919A02387D2520020934F /* SearchFoodImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFoodImageCell.swift; sourceTree = "<group>"; };
 		348B16912390FAE700FBF31A /* CountryChoser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoser.swift; sourceTree = "<group>"; };
 		348B16932391030500FBF31A /* CountryChoserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryChoserCell.swift; sourceTree = "<group>"; };
+		348D118323D4020500FA0632 /* FirstSelectFoodz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstSelectFoodz.swift; sourceTree = "<group>"; };
+		348D118523D4023700FA0632 /* FirstSelectFoodzCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstSelectFoodzCell.swift; sourceTree = "<group>"; };
+		348D118723D4070900FA0632 /* FirstSelectFoodzHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstSelectFoodzHeader.swift; sourceTree = "<group>"; };
 		348EBFCA230E3E8A008026A0 /* foodz.Guru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foodz.Guru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		348EBFCD230E3E8A008026A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		348EBFD2230E3E8A008026A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -189,6 +193,9 @@
 				341705C0235009B4006123A7 /* FirstLoginSecondScreen.swift */,
 				341705C2235017D8006123A7 /* FirstLoginThirdScreen.swift */,
 				341705C4235017F9006123A7 /* FirstLoginFourthScreen.swift */,
+				348D118323D4020500FA0632 /* FirstSelectFoodz.swift */,
+				348D118523D4023700FA0632 /* FirstSelectFoodzCell.swift */,
+				348D118723D4070900FA0632 /* FirstSelectFoodzHeader.swift */,
 				34F197AA2320BB38007D556F /* LoginViewController.swift */,
 			);
 			path = FirstScreen;
@@ -324,7 +331,6 @@
 				34A76E302322063B005951A2 /* Ranking.swift */,
 				34A76E3323225615005951A2 /* Resto.swift */,
 				341DD15F2329DF2200102472 /* Comment.swift */,
-				347F55A72324931700F85DB7 /* RestoMapArray.swift */,
 				341DD161232A282100102472 /* UserDetails.swift */,
 			);
 			path = Model;
@@ -526,10 +532,12 @@
 				341DD165232A369E00102472 /* Foodies.swift in Sources */,
 				34507E002345AE1B00BD7B3C /* EditReviewCell.swift in Sources */,
 				34FEE9C4231123A100FE0590 /* SearchFoodCell.swift in Sources */,
+				348D118423D4020500FA0632 /* FirstSelectFoodz.swift in Sources */,
 				34FEE9D023126F8500FE0590 /* MyRanksAddRankingViewController.swift in Sources */,
 				34FEE9D22312B3BB00FE0590 /* ThisRanking.swift in Sources */,
 				3491B9392341ED1E00CECF80 /* CommentCell.swift in Sources */,
 				34B3278223C181A20059976D /* MyReview.swift in Sources */,
+				348D118823D4070900FA0632 /* FirstSelectFoodzHeader.swift in Sources */,
 				341DD162232A282200102472 /* UserDetails.swift in Sources */,
 				34B1C1E52380090B00E22F3D /* FirstLoginAcceptEULA.swift in Sources */,
 				34A76E2A2320FB30005951A2 /* FoodType.swift in Sources */,
@@ -544,8 +552,8 @@
 				3489199F23878EA60020934F /* FollowersViewController.swift in Sources */,
 				341705C5235017F9006123A7 /* FirstLoginFourthScreen.swift in Sources */,
 				345FB2FC2394C3C8006B462F /* SearchFoodHeaderView.swift in Sources */,
+				348D118623D4023700FA0632 /* FirstSelectFoodzCell.swift in Sources */,
 				348919A12387D2520020934F /* SearchFoodImageCell.swift in Sources */,
-				347F55A82324931700F85DB7 /* RestoMapArray.swift in Sources */,
 				34873A8E2333157900463AFE /* City.swift in Sources */,
 				341705C3235017D8006123A7 /* FirstLoginThirdScreen.swift in Sources */,
 				344EA296232E0B97001F1FBC /* FoodSelectorHeader.swift in Sources */,
@@ -734,7 +742,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -757,7 +765,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = foodzGuru/foodzGuru.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = TBWAD8R2FA;
 				INFOPLIST_FILE = foodzGuru/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

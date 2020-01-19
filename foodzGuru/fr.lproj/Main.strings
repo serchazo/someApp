@@ -70,9 +70,12 @@
 /* Class = "UILabel"; text = "You can change your bio later (max 150 chars)."; ObjectID = "INn-9X-JKc"; */
 "INn-9X-JKc.text" = "Vous pouvez la modifier ultérieurement (max 150 caractères).";
 
+// FirstSelecFoodz
+// Header Title
+"FSm-rA-3J6.text" = "Choisissez vos Foodz";
+"onV-lJ-l96.text" = "Vous pouvez en choisir plusieurs";
 
 // ThisRanking
-
 // Details : UIButton
 "JEG-9s-4HZ.normalTitle" = "Détail";
 

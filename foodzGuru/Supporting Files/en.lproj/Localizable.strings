@@ -82,6 +82,13 @@ Localized strings.
 "FIRSTLOG4_TITLE" = "Configure your profile (4/4)";
 "FIRSTLOG4_BUTTON_GO" = "Go";
 
+"FIRST_SELECT_FOODZ_BUTTON_GO" = "Go";
+"FIRST_SELECT_FOODZ_BUTTON_SKIP" = "Skip step";
+"FIRST_SELECT_EMPTYLIST_TITLE" = "Empty List";
+"FIRST_SELECT_EMPTYLIST_MSG" = "Your foodz list is empty";
+"FIRST_SELECT_EMPTYLIST_BUTTON" = "Skip for now";
+
+
 "HOME_FIRST_POST" = "Hello %@! Welcome to foodz.guru, follow foodies and foodz and you'll see here their most important updates.";
 "HOME_POST_NEWRANKING" = "New List";
 "HOME_POST_NEWFOLLOWER" = "Follower!";

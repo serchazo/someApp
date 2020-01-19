@@ -391,13 +391,15 @@ extension MyRestoDetail : UITableViewDataSource, UITableViewDelegate{
                 return cell
             }
             
-            // Row 5: Powered by Google
-                else if indexPath.row == 5 {
-                    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                    cell.imageView?.image = UIImage(named: "poweredByGoogle")
-                    cell.selectionStyle = .none
-                    return cell
-                }
+                // Row 5: Powered by Google
+            else if indexPath.row == 5 {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = " "
+                cell.detailTextLabel?.text = " "
+                cell.imageView?.image = UIImage(named: "poweredByGoogle")
+                cell.selectionStyle = .none
+                return cell
+            }
             //
             else{
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
