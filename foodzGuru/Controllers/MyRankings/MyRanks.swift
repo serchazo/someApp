@@ -20,7 +20,7 @@ class MyRanks: UIViewController {
     private static let showRakingDetail = "editRestoList"
     private static let showRankingDetail = "showRankingDetail"
     private static let screenSize = UIScreen.main.bounds.size
-    private let segueChangeCoty = "changeCity"
+    private let segueChangeCity = "segueChangeCity"
     private let segueMyProfile = "showMyProfile"
     private let segueFollowers = "followersSegue"
     private let segueFollowing = "followingSegue"
@@ -430,7 +430,7 @@ class MyRanks: UIViewController {
             seguedMVC.delegate = self
             seguedMVC.currentCity = currentCity
         }
-        case self.segueChangeCoty:
+        case self.segueChangeCity:
             if let cityChoserVC = segue.destination as? MyCities{
                 if calledUser != nil{
                     cityChoserVC.calledUser = calledUser
@@ -736,6 +736,7 @@ extension MyRanks: MyCitiesDelegate{
             let tmpCityString = sender.country + "/" + sender.state + "/" + sender.key + "/" + sender.name
             // Save the default City
             defaults.set(tmpCityString, forKey: SomeApp.currentCityDefault)
+            
             
             if calledUser == nil{
                 updateTablewithRanking(userId: user.uid)

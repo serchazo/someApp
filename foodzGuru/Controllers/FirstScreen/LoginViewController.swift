@@ -106,7 +106,6 @@ class LoginViewController: UIViewController {
                         
                         // II. Verify if the user is following some foodz
                         SomeApp.dbUserFollowingRankings.child(user!.uid).observeSingleEvent(of: .value, with: {foodSnap in
-                            print(foodSnap)
                             // II.A. If the user is already following some foodz go to the app
                             if foodSnap.exists(){
                                 self.performSegue(withIdentifier: self.loginOKSegueID, sender: nil)
