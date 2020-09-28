@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let gcmMessageIDKey = "gcm.message_id"
     let locationManagerT = CLLocationManager()
     // Same cred for both Maps and Places
-    let googleApiKey = "AIzaSyD71x1Yii0yuHnezO8JumRsCegwCORCvPQ"
+    let googleApiKey = "yourKeyHere"
 
     
     override init(){
